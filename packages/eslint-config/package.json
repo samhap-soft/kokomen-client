@@ -1,0 +1,16 @@
+{
+  "name": "eslint-config",
+  "packageManager": "yarn@4.9.1",
+  "version": "0.0.1",
+  "devDependencies": {
+    "@rushstack/eslint-config": "^4.3.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-next": "^0.0.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0"
+  },
+  "peerDependencies": {
+    "eslint": ">= 9",
+    "typescript": ">= 5"
+  }
+}
