@@ -835,8 +835,10 @@ __metadata:
     tailwindcss: "npm:^4.1.6"
     vite: "npm:^6.3.5"
   peerDependencies:
+    "@tailwindcss/postcss": ^4
     react: ^19.0.0
     react-dom: ^19.0.0
+    tailwindcss: ^4
     typescript: ^5.8.3
   languageName: unknown
   linkType: soft

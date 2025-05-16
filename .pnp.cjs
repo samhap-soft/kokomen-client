@@ -1045,9 +1045,12 @@ const RAW_RUNTIME_STATE =
           ["@storybook/react", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:8.6.12"],\
           ["@storybook/react-vite", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:8.6.12"],\
           ["@storybook/test", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:8.6.12"],\
+          ["@tailwindcss/postcss", "npm:4.1.6"],\
           ["@types/prop-types", "npm:15.7.14"],\
           ["@types/react", "npm:19.1.4"],\
           ["@types/react-dom", "virtual:a21e24cf4a793f04e2e07474217597c8b8491086897b7ceb58f7c959b6c65ef5decbff14fa97445a76a680e4e81febb25c198102b2ba038b85eb731f05365753#npm:19.1.5"],\
+          ["@types/tailwindcss", null],\
+          ["@types/tailwindcss__postcss", null],\
           ["@types/typescript", null],\
           ["autoprefixer", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:10.4.21"],\
           ["postcss", "npm:8.5.3"],\
@@ -1060,11 +1063,15 @@ const RAW_RUNTIME_STATE =
           ["vite", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:6.3.5"]\
         ],\
         "packagePeers": [\
+          "@tailwindcss/postcss",\
           "@types/react-dom",\
           "@types/react",\
+          "@types/tailwindcss",\
+          "@types/tailwindcss__postcss",\
           "@types/typescript",\
           "react-dom",\
           "react",\
+          "tailwindcss",\
           "typescript"\
         ],\
         "linkType": "SOFT"\
