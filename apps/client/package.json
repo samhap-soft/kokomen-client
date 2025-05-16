@@ -1,7 +1,9 @@
 {
   "name": "@kokomen/client",
   "version": "0.1.0",
+  "packageManager": "yarn@4.9.1",
   "private": true,
+  "main": "dist/packages/nextjs/src/index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
