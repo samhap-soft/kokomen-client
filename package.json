@@ -11,5 +11,10 @@
     "eslint-plugin-prettier": "^5.4.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "client:dev": "yarn workspace @kokomen/client dev",
+    "ui:dev": "yarn workspace @kokomen/ui storybook",
+    "docker-dev-up": "docker-compose -f compose.yaml up -d"
   }
 }
