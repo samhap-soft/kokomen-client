@@ -7,3 +7,4 @@
 !.yarn/versions
 *storybook.log
 *.env
+node_modules/
