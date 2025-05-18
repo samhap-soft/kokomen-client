@@ -1053,11 +1053,14 @@ const RAW_RUNTIME_STATE =
           ["@types/tailwindcss__postcss", null],\
           ["@types/typescript", null],\
           ["autoprefixer", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:10.4.21"],\
+          ["class-variance-authority", "npm:0.7.1"],\
+          ["clsx", "npm:2.1.1"],\
           ["postcss", "npm:8.5.3"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:19.1.0"],\
           ["react-dom", "virtual:a21e24cf4a793f04e2e07474217597c8b8491086897b7ceb58f7c959b6c65ef5decbff14fa97445a76a680e4e81febb25c198102b2ba038b85eb731f05365753#npm:19.1.0"],\
           ["storybook", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:8.6.14"],\
+          ["tailwind-merge", "npm:3.3.0"],\
           ["tailwindcss", "npm:4.1.7"],\
           ["typescript", "patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"],\
           ["vite", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:6.3.5"]\
@@ -1091,11 +1094,14 @@ const RAW_RUNTIME_STATE =
           ["@types/react", "npm:19.1.4"],\
           ["@types/react-dom", "virtual:a21e24cf4a793f04e2e07474217597c8b8491086897b7ceb58f7c959b6c65ef5decbff14fa97445a76a680e4e81febb25c198102b2ba038b85eb731f05365753#npm:19.1.5"],\
           ["autoprefixer", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:10.4.21"],\
+          ["class-variance-authority", "npm:0.7.1"],\
+          ["clsx", "npm:2.1.1"],\
           ["postcss", "npm:8.5.3"],\
           ["prop-types", "npm:15.8.1"],\
           ["react", "npm:19.1.0"],\
           ["react-dom", "virtual:a21e24cf4a793f04e2e07474217597c8b8491086897b7ceb58f7c959b6c65ef5decbff14fa97445a76a680e4e81febb25c198102b2ba038b85eb731f05365753#npm:19.1.0"],\
           ["storybook", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:8.6.14"],\
+          ["tailwind-merge", "npm:3.3.0"],\
           ["tailwindcss", "npm:4.1.7"],\
           ["vite", "virtual:d0bf121aa4ac364376ae81eeb00f1e27344bcd167388470f55146758620a8e1b151e50ea4168256dc7834a1866902352f6e74538a06554721ecd92c7fbe0ae1b#npm:6.3.5"]\
         ],\
@@ -3669,11 +3675,30 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["class-variance-authority", [\
+      ["npm:0.7.1", {\
+        "packageLocation": "./.yarn/cache/class-variance-authority-npm-0.7.1-74a7beaf7c-0f438cea22.zip/node_modules/class-variance-authority/",\
+        "packageDependencies": [\
+          ["class-variance-authority", "npm:0.7.1"],\
+          ["clsx", "npm:2.1.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["client-only", [\
       ["npm:0.0.1", {\
         "packageLocation": "./.yarn/cache/client-only-npm-0.0.1-07d3e9505c-9d6cfd0c19.zip/node_modules/client-only/",\
         "packageDependencies": [\
           ["client-only", "npm:0.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["clsx", [\
+      ["npm:2.1.1", {\
+        "packageLocation": "./.yarn/cache/clsx-npm-2.1.1-96125b98be-c4c8eb865f.zip/node_modules/clsx/",\
+        "packageDependencies": [\
+          ["clsx", "npm:2.1.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -7467,6 +7492,15 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@pkgr/core", "npm:0.2.4"],\
           ["synckit", "npm:0.11.6"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["tailwind-merge", [\
+      ["npm:3.3.0", {\
+        "packageLocation": "./.yarn/cache/tailwind-merge-npm-3.3.0-cb3cdea6cf-a50cd14110.zip/node_modules/tailwind-merge/",\
+        "packageDependencies": [\
+          ["tailwind-merge", "npm:3.3.0"]\
         ],\
         "linkType": "HARD"\
       }]\
