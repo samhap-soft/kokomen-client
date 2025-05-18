@@ -1,0 +1,40 @@
+# # 일반적인 제외 항목
+# .git
+# .gitignore
+# *.md
+# README.md # 프로젝트 루트의 README 등
+
+# # Node.js 관련
+# npm-debug.log
+# yarn-error.log
+# yarn-debug.log
+
+# #!packages/shared-dependency1 # client가 이 패키지를 필요로 하는 경우 주석 해제
+
+# # 다른 워크스페이스의 빌드 결과물 (존재한다면)
+# # apps/server/dist
+
+# # 운영체제 특정 파일
+# .DS_Store
+# Thumbs.db
+
+# # IDE 특정 파일
+# .vscode/
+# .idea/
+
+# # Next.js 빌드 캐시 (호스트의 것)
+# #.next/ # apps/client/.next 와 같은 워크스페이스 내부의.next는 제외하면 안됨
+
+# # Docker 관련 파일 자체
+# Dockerfile
+# docker-compose.yml
+# .dockerignore
+
+# # Yarn Berry 제로 인스톨 관련 파일은 빌드 컨텍스트에 포함되어야 하므로,
+# # 위의 광범위한 규칙에 의해 실수로 제외되지 않도록 주의한다.
+# #.yarn/cache,.pnp.cjs 등은 이미.gitignore에서 관리되므로,
+# # 특별히 여기서!.yarn/cache 등을 명시할 필요는 없으나,
+# # 상위 규칙이 너무 광범위하여 영향을 줄 경우 명시적 포함이 필요할 수 있다.
+# # 예를 들어, '.yarn/*'을 먼저 제외했다면 '!.yarn/cache' 등으로 다시 포함시켜야 한다.
+# # 현재 구조에서는 apps/*, packages/* 제외 후!apps/client 등으로 필요한 부분만 포함시키므로
+# #.yarn 디렉토리는 루트에 존재하며 자동으로 컨텍스트에 포함된다.
