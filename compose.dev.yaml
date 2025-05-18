@@ -1,7 +1,7 @@
 services:
   client-dev:
     container_name: kokomen-client
-    image: node:18
+    image: node:18-alpine
     ports:
       - "3000:3000"
     volumes:
@@ -13,15 +13,16 @@ services:
 
   storybook:
     container_name: kokomen-ui
-    image: node:18
+    image: node:18-alpine
     ports:
       - "6006:6006"
     volumes:
       - ./:/app
-    environment:
-      - NODE_ENV=development
     working_dir: /app
     command: sh -c "yarn install --immutable && yarn ui:dev"
+    environment:
+      - NODE_ENV=development
+
   nginx:
     container_name: kokomen-nginx
     image: nginx:latest
