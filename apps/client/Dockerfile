@@ -14,7 +14,7 @@ COPY . .
 RUN yarn install --immutable
 
 # 4. Next.js 앱 빌드 (웹 앱 기준으로 이동 후 실행)
-WORKDIR /repo/apps/client
+WORKDIR /app/apps/client
 RUN yarn build
 
 # 5. 런타임 이미지
