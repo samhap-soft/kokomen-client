@@ -15,6 +15,8 @@
   "scripts": {
     "client:dev": "yarn workspace @kokomen/client dev",
     "ui:dev": "yarn workspace @kokomen/ui storybook",
-    "docker-dev-up": "docker-compose -f compose.yaml up -d"
+    "docker-dev-up": "docker-compose -f compose.dev.yaml up -d",
+    "client:prod": "yarn workspace @kokomen/client start",
+    "docker-prod-up": "docker-compose -f compose.yaml up -d"
   }
 }
