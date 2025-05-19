@@ -32,7 +32,7 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/yarn.lock ./
 
 # Zero-Install 기반 실행용 의존성 설치
-RUN yarn install --immutable --production
+RUN yarn install --immutable
 
 EXPOSE 3000
 
