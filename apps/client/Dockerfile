@@ -23,8 +23,7 @@ WORKDIR /app
 
 RUN corepack enable
 
-COPY --from=builder /app/apps/client/public ./public
-COPY --from=builder /app/apps/client/.next ./.next
+COPY --from=builder /app/apps/client/ ./apps/client/
 COPY --from=builder /app/.yarn ./.yarn
 COPY --from=builder /app/.pnp.cjs ./
 COPY --from=builder /app/.yarnrc.yml ./
