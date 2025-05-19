@@ -17,22 +17,24 @@ RUN yarn install --immutable
 WORKDIR /app/apps/client
 RUN yarn build
 
-# 5. 런타임 이미지
-FROM node:22-alpine AS runner
 WORKDIR /app
-
-RUN corepack enable
-
-COPY --from=builder /app/apps/client/ ./apps/client/
-COPY --from=builder /app/.yarn ./.yarn
-COPY --from=builder /app/.pnp.cjs ./
-COPY --from=builder /app/.yarnrc.yml ./
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/yarn.lock ./
-
-# Zero-Install 기반 실행용 의존성 설치
-# RUN yarn install --immutable
-
-EXPOSE 3000
-
 CMD ["yarn", "client:prod"]
+
+# 5. 런타임 이미지
+# FROM node:22-alpine AS runner
+# WORKDIR /app
+
+# RUN corepack enable
+
+# COPY --from=builder /app/apps/client/ ./apps/client/
+# COPY --from=builder /app/.yarn ./.yarn
+# COPY --from=builder /app/.pnp.cjs ./
+# COPY --from=builder /app/.yarnrc.yml ./
+# COPY --from=builder /app/package.json ./
+# COPY --from=builder /app/yarn.lock ./
+
+# RUN yarn install
+
+# EXPOSE 3000
+
+# CMD ["yarn", "client:prod"]
