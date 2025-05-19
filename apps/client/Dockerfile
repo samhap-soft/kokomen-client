@@ -35,4 +35,4 @@ COPY --from=builder /app/yarn.lock ./
 
 EXPOSE 3000
 
-CMD ["yarn", "client:start"]
+CMD ["yarn", "client:prod"]
