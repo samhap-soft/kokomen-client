@@ -11,6 +11,7 @@
     "isolatedModules": true,
     "incremental": true,
     "baseUrl": ".",
+    "allowImportingTsExtensions": true,
     "paths": {
       "@kokomen/ui/*": ["./packages/ui/src/*"]
     }
