@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
-        with:
-          lfs: true
 
       - name: Decode EC2 private key
         run: |
@@ -22,12 +20,12 @@ jobs:
 
       - name: Copy project to EC2
         run: |
-          rsync -az -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/kokomen
+          rsync -az --delete -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/kokomen
 
       - name: Run Docker Compose on EC2
         run: |
           ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd kokomen
             docker compose -f compose.yaml down || true
-            docker compose -f compose.yaml up -d --build
+            docker compose -f compose.yaml up -d --build --no-cache
           EOF
