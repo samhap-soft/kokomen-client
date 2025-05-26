@@ -22,13 +22,3 @@ services:
     command: sh -c "yarn install --immutable && yarn ui:dev"
     environment:
       - NODE_ENV=development
-
-  nginx:
-    container_name: kokomen-nginx
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - client-dev
