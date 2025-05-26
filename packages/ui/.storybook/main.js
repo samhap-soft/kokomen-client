@@ -18,9 +18,22 @@ const config = {
     getAbsolutePath("@storybook/addon-onboarding"),
     getAbsolutePath("@storybook/addon-interactions"),
   ],
+  docs: {
+    autodocs: "tag",
+  },
+
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),
     options: {},
+  },
+  viteFinal: async (config, { configType }) => {
+    return config;
+  },
+  typescript: {
+    check: false,
+    reactDocgen: "react-docgen-typescript",
+    reactDocgenTypescriptOptions: {},
+    skipCompiler: false,
   },
 };
 export default config;
