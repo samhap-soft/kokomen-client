@@ -823,19 +823,21 @@ __metadata:
     "@storybook/react": "npm:^8.6.12"
     "@storybook/react-vite": "npm:^8.6.12"
     "@storybook/test": "npm:^8.6.12"
+    "@tailwindcss/postcss": "npm:^4.1.7"
+    "@tailwindcss/vite": "npm:^4.1.7"
     "@types/prop-types": "npm:^15"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     autoprefixer: "npm:^10.4.21"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
-    postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
     react: "npm:^19.1.0"
+    react-docgen-typescript: "npm:^2.2.2"
     react-dom: "npm:^19.1.0"
     storybook: "npm:^8.6.12"
     tailwind-merge: "npm:^3.3.0"
-    tailwindcss: "npm:^4.1.6"
+    tailwindcss: "npm:^4.1.7"
     vite: "npm:^6.3.5"
   peerDependencies:
     "@tailwindcss/postcss": ^4
@@ -1780,7 +1782,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/postcss@npm:^4":
+"@tailwindcss/postcss@npm:^4, @tailwindcss/postcss@npm:^4.1.7":
   version: 4.1.7
   resolution: "@tailwindcss/postcss@npm:4.1.7"
   dependencies:
@@ -1790,6 +1792,19 @@ __metadata:
     postcss: "npm:^8.4.41"
     tailwindcss: "npm:4.1.7"
   checksum: 10c0/3779c34001dfa2741efa037089b9331807e15946e766decc983baef8ba5d4d519a1b86e7f27fffcf1a028bda19e0fdf5a87479a89b9e1cd2d7df5769273777c8
+  languageName: node
+  linkType: hard
+
+"@tailwindcss/vite@npm:^4.1.7":
+  version: 4.1.7
+  resolution: "@tailwindcss/vite@npm:4.1.7"
+  dependencies:
+    "@tailwindcss/node": "npm:4.1.7"
+    "@tailwindcss/oxide": "npm:4.1.7"
+    tailwindcss: "npm:4.1.7"
+  peerDependencies:
+    vite: ^5.2.0 || ^6
+  checksum: 10c0/8733e509a6834385998a952cc276b17038356794f657ac727e01a1abd40e1ca4a4b92cdc716127640ba5348fe8be6df7b3f04a948edcf684899312eed0046b68
   languageName: node
   linkType: hard
 
@@ -6076,7 +6091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:4.1.7, tailwindcss@npm:^4, tailwindcss@npm:^4.1.6":
+"tailwindcss@npm:4.1.7, tailwindcss@npm:^4, tailwindcss@npm:^4.1.7":
   version: 4.1.7
   resolution: "tailwindcss@npm:4.1.7"
   checksum: 10c0/abe56f990bd4b03e0b332a2a39063e7f0f7359e6591282ba4e56ac18e5c58baca6b271072221253fcab7d9534d50f384f13fc41b66b06e0e427ef3f0ab2035bf
