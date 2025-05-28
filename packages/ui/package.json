@@ -3,8 +3,11 @@
   "version": "0.0.1",
   "type": "module",
   "packageManager": "yarn@4.9.1",
+  "imports": {
+    "#*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.6.12",
@@ -19,6 +22,7 @@
     "@types/prop-types": "^15",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.5.0",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -29,7 +33,8 @@
     "storybook": "^8.6.12",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "peerDependencies": {
     "@tailwindcss/postcss": "^4",
