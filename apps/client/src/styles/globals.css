@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../../../packages/ui/";
 
 :root {
   --background: #ffffff;
@@ -10,6 +11,48 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+@theme {
+  /* --- 기본 테마 색상 --- */
+  /* 주 색상: 신뢰감과 안정감을 주는 차분한 파란색 계열 */
+  --color-primary: #2563eb; /* Tailwind blue-600 */
+  --color-primary-hover: #8ec5ff; /* Tailwind blue-700 (호버 시 약간 더 어둡게) */
+  --color-primary-focus: #2b7fff; /* Tailwind blue-700 (호버 시 약간 더 어둡게) */
+  --color-primary-content: #ffffff; /* 주 색상 위의 텍스트/아이콘 색상 (밝은 색) */
+
+  /* 보조 색상: 주 색상을 보완하거나, 긍정적인 느낌을 주는 색상 */
+  --color-secondary: #10b981; /* Tailwind emerald-500 (성공, 긍정적 피드백) */
+  --color-secondary-hover: #059669; /* Tailwind emerald-600 */
+  --color-secondary-content: #ffffff;
+
+  /* 액센트 색상: 행동 유도 버튼 등에 사용될 수 있는 포인트 색상 (너무 튀지 않게) */
+  --color-accent: #f59e0b; /* Tailwind amber-500 (주의, 알림 등에 활용 가능) */
+  --color-accent-hover: #d97706; /* Tailwind amber-600 */
+  --color-accent-content: #ffffff;
+
+  /* --- 텍스트 색상 --- */
+  --color-text-base: #1f2937; /* Tailwind gray-800 (본문 텍스트) */
+  --color-text-muted: #6b7280; /* Tailwind gray-500 (보조 텍스트, 설명) */
+  --color-text-disabled: #9ca3af; /* Tailwind gray-400 (비활성화 텍스트) */
+
+  /* --- 배경 색상 --- */
+  --color-background-base: #ffffff; /* 기본 배경 (흰색) */
+  --color-background-alt: #f9fafb; /* 대체 배경 (아주 연한 회색) */
+  --color-background-muted: #f3f4f6; /* Tailwind gray-100 (구분 영역 등) */
+
+  /* --- 상태 색상 --- */
+  --color-success: #10b981; /* Tailwind emerald-500 (성공 메시지) */
+  --color-warning: #f59e0b; /* Tailwind amber-500 (경고 메시지) */
+  --color-error: #ef4444; /* Tailwind red-500 (오류 메시지) */
+  --color-info: #3b82f6; /* Tailwind blue-500 (정보 메시지, --color-primary와 유사하게 사용 가능) */
+
+  /* --- UI 요소 색상 --- */
+  --color-border: #d1d5db; /* Tailwind gray-300 (테두리 색상) */
+  --color-border-input: #d1d5dc; /* Tailwind gray-400 (입력 필드 테두리) */
+  --color-border-input-focus: #2b7fff;
+  /* 중립적인 느낌의 어두운 색 (네비게이션 바, 푸터 등에 활용 가능) */
+  --color-neutral-dark: #374151; /* Tailwind gray-700 */
+  --color-neutral-dark-content: #f3f4f6; /* 어두운 배경 위의 밝은 텍스트 */
 }
 
 @media (prefers-color-scheme: dark) {
