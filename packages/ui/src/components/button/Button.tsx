@@ -1,16 +1,25 @@
 import { cva, VariantProps } from "class-variance-authority";
 import React, { HTMLAttributes, RefObject } from "react";
-import { cn } from "../../utils/index.js";
+import { cn } from "../../utils/index.ts";
 
 type buttonVariantsProps = VariantProps<typeof buttonVariants>;
 const buttonVariants = cva(
-  `flex [&_svg]:size-5 text-white rounded-xl shadow-md shadow-gray-500 cursor-pointer text-center active:translate-y-1 border border-border-input`,
+  `flex cursor-pointer text-white rounded-xl text-center active:translate-y-0.5 items-center justify-center gap-2 whitespace-nowrap text-sm transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0`,
   {
     variants: {
       variant: {
         default: "bg-primary",
         outline: "bg-background-alt shadow-sm text-black",
         red: "bg-red-600",
+      },
+      border: {
+        default: "border border-border-input",
+        round: "border border-border-input rounded-full",
+        none: "border-none focus:outline-none",
+      },
+      shadow: {
+        default: "shadow-md shadow-gray-500",
+        none: "shadow-none",
       },
       size: {
         default: "px-6 py-2",
@@ -23,6 +32,8 @@ const buttonVariants = cva(
     defaultVariants: {
       variant: "default",
       size: "default",
+      border: "default",
+      shadow: "default",
     },
   }
 );
@@ -30,22 +41,30 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends HTMLAttributes<HTMLButtonElement>,
     buttonVariantsProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   ref?: RefObject<HTMLButtonElement>;
   icon?: React.ReactNode | SVGElement;
 }
-export const Button = ({ ref, variant, size, ...props }: ButtonProps) => (
+export const Button = ({
+  ref,
+  variant,
+  className,
+  size,
+  border,
+  shadow,
+  ...props
+}: ButtonProps) => (
   <button
     ref={ref}
     className={cn(
       buttonVariants({
         variant,
         size,
+        border,
+        shadow,
       }),
-      props.className
+      className
     )}
     {...props}
-  >
-    {props.children}
-  </button>
+  />
 );
