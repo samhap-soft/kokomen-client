@@ -44,6 +44,10 @@
   --color-neutral-dark-content: #f3f4f6; /* 어두운 배경 위의 밝은 텍스트 */
 }
 
+.transition-max-height {
+  transition: max-height 0.3s ease-in-out;
+}
+
 input[type="checkbox"] {
   width: 1.5rem;
   height: 1.5rem;
