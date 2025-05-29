@@ -20,8 +20,8 @@ export default function Interview() {
         className="absolute w-full h-[60%] object-cover z-0 top-0 left-0"
       />
       <InterviewProvider
-        interviewId={interview_id as string}
-        questionId={question_id as string}
+        interviewId={interview_id as unknown as number}
+        questionId={question_id as unknown as number}
         rootQuestion={root_question as string}
       >
         <InterviewSpeechBubble />

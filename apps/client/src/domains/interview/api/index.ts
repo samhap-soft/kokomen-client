@@ -8,8 +8,8 @@ export const interviewApiInstance = axios.create({
 });
 
 interface NewInterviewResponse {
-  interview_id: string;
-  question_id: string;
+  interview_id: number;
+  question_id: number;
   root_question: string;
 }
 

@@ -5,7 +5,7 @@ import { createContext, useContext, useState } from "react";
 
 interface InterviewProviderProps {
   children: React.ReactNode;
-  interviewId: string;
+  interviewId: number;
   message: string;
   status: RobotStatus;
   rootQuestion: string;
@@ -32,7 +32,7 @@ export const InterviewProvider = ({
   rootQuestion,
 }: {
   children: React.ReactNode;
-  interviewId: string;
+  interviewId: number;
   questionId: number;
   rootQuestion: string;
 }) => {

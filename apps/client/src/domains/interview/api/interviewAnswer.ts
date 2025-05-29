@@ -16,7 +16,7 @@ export async function submitInterviewAnswer({
   question_id,
   answer,
 }: {
-  interview_id: string;
+  interview_id: number;
   question_id: number;
   answer: string;
 }) {
