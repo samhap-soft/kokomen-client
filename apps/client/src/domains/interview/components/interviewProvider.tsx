@@ -1,5 +1,6 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
 import { RobotStatus } from "@/domains/interview/types";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 
@@ -66,11 +67,20 @@ export const InterviewProvider = ({
   const answerQuestion = async (answer: string) => {
     try {
       _setStatus("thinking");
-      const response = await submitInterviewAnswer({
-        interview_id: interviewId,
-        question_id: currentQuestionId,
-        answer,
-      });
+      const response = await axios.post(
+        `/api/interviews/${interviewId}/questions/${currentQuestionId}/answers`,
+        {
+          interview_id: interviewId,
+          question_id: currentQuestionId ?? questionId,
+          answer,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          timeout: 10000,
+        }
+      );
       if (response.status === 204) {
         _setStatus("finished");
         changeMessage("면접이 종료되었습니다. 고생 많으셨습니다.");
