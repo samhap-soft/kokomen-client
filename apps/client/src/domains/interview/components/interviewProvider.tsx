@@ -24,7 +24,6 @@ const INTERVIEW_STARTUP = [
   "면접이 끝나면, 피드백을 드릴 예정입니다.",
   "면접을 시작하겠습니다.",
 ];
-let startup_idx = 0;
 
 export const InterviewProvider = ({
   children,
@@ -45,15 +44,15 @@ export const InterviewProvider = ({
 
   const interviewStartup = () => {
     _setStatus("standby");
-    startupMessage();
+    startupMessage(0);
   };
-  const startupMessage = () => {
-    if (startup_idx < INTERVIEW_STARTUP.length) {
-      changeMessage(INTERVIEW_STARTUP[startup_idx++]);
-      setTimeout(startupMessage, 2000);
+  const startupMessage = (startupIdx: number) => {
+    if (startupIdx < INTERVIEW_STARTUP.length) {
+      changeMessage(INTERVIEW_STARTUP[startupIdx]);
+      setTimeout(() => startupMessage(startupIdx + 1), 2000);
       return;
     }
-    if (startup_idx === INTERVIEW_STARTUP.length) {
+    if (startupIdx === INTERVIEW_STARTUP.length) {
       changeMessage(rootQuestion);
       _setStatus("question");
       return;
@@ -65,10 +64,11 @@ export const InterviewProvider = ({
   };
 
   const answerQuestion = async (answer: string) => {
+    const prevMessage = message;
     try {
       _setStatus("thinking");
       const response = await axios.post(
-        `/api/interviews/${interviewId}/questions/${currentQuestionId}/answers`,
+        `/api/interviews/${interviewId}/questions/${currentQuestionId ?? questionId}/answers`,
         {
           interview_id: interviewId,
           question_id: currentQuestionId ?? questionId,
@@ -85,7 +85,7 @@ export const InterviewProvider = ({
         _setStatus("finished");
         changeMessage("면접이 종료되었습니다. 고생 많으셨습니다.");
         setTimeout(() => {
-          navigate.push(`/interview/${interviewId}/result`);
+          navigate.replace(`/interview/${interviewId}/result`);
         }, 3000);
         return;
       }
@@ -95,6 +95,10 @@ export const InterviewProvider = ({
     } catch {
       _setStatus("standby");
       changeMessage("답변을 제출하는데 실패했습니다. 다시 시도해주세요.");
+      setTimeout(() => {
+        _setStatus("question");
+        changeMessage(prevMessage);
+      }, 2000);
     }
   };
 
