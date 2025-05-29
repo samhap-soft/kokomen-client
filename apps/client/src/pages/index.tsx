@@ -1,4 +1,5 @@
 import { startNewInterview } from "@/domains/interview/api";
+import axios from "axios";
 import { Roboto } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
@@ -17,7 +18,7 @@ export default function Home() {
   const handleNewInterview = async () => {
     try {
       setLoading(true);
-      const { data } = await startNewInterview();
+      const { data } = await axios.post("/api/interviews");
       navigate.push({
         pathname: "/interview",
         query: {
