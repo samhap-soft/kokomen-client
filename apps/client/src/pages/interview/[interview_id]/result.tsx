@@ -82,11 +82,16 @@ export const getServerSideProps: GetServerSideProps<
       notFound: true,
     };
   }
-  const result = await getInterviewReport(interview_id);
-
-  return {
-    props: {
-      ...result,
-    },
-  };
+  try {
+    const { data } = await getInterviewReport(interview_id);
+    return {
+      props: {
+        ...data,
+      },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
 };
