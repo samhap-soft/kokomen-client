@@ -17,7 +17,7 @@ export async function submitInterviewAnswer({
   answer,
 }: {
   interview_id: string;
-  question_id: string;
+  question_id: number;
   answer: string;
 }) {
   return interviewApiInstance.post<
