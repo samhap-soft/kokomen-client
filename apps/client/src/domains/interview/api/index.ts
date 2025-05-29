@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 
 export const interviewApiInstance = axios.create({
-  baseURL: "http://13.124.13.60/api/v1",
+  baseURL: "http://api-dev.kokomen.kr/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
