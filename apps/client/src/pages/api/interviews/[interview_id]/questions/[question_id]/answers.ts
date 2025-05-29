@@ -8,8 +8,9 @@ export default async function handler(
   try {
     console.log(req.body);
     const { data } = await submitInterviewAnswer(req.body);
+    if (!data) return res.status(204).json({ message: "No content" });
     res.status(200).json(data);
-  } catch {
+  } catch (error) {
     res.status(500).json({ error: "Failed to submit answer" });
   }
 }
