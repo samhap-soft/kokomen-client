@@ -1,7 +1,8 @@
+import { startNewInterview } from "@/domains/interview/api";
 import { Roboto } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 const roboto = Roboto({
   variable: "--font-roboto-sans",
@@ -10,6 +11,21 @@ const roboto = Roboto({
 
 export default function Home() {
   const navigate = useRouter();
+  const handleNewInterview = async () => {
+    try {
+      const { data } = await startNewInterview();
+      navigate.push({
+        pathname: "/interview",
+        query: {
+          interview_id: data.interview_id,
+          question_id: data.question_id,
+          root_question: data.root_question,
+        },
+      });
+    } catch {
+      console.error("Failed to start new interview");
+    }
+  };
   return (
     <div
       className={`${roboto.className} min-h-[720px] min-w-[1024px] w-screen h-screen`}
@@ -53,7 +69,7 @@ export default function Home() {
             </p>
             <button
               className="mt-8 p-6 border border-gray-300 w-full cursor-pointer"
-              onClick={() => navigate.push("/interview")}
+              onClick={handleNewInterview}
             >
               인터뷰 시작하기
             </button>
