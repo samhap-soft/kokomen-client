@@ -39,7 +39,7 @@ import { InterviewReport } from "@/domains/interviewReport/types";
 
 function getInterviewReport(interview_id: string) {
   return interviewApiInstance.get<InterviewReport>(
-    `api/v1/interviews/${interview_id}/result`
+    `/interviews/${interview_id}/result`
   );
 }
 

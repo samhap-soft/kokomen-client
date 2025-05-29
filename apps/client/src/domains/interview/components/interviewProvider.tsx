@@ -33,11 +33,13 @@ export const InterviewProvider = ({
 }: {
   children: React.ReactNode;
   interviewId: string;
-  questionId: string;
+  questionId: number;
   rootQuestion: string;
 }) => {
   const [message, _setMessage] = useState<string>("");
   const [status, _setStatus] = useState<RobotStatus>("beforeStart");
+  const [currentQuestionId, setCurrentQuestionId] =
+    useState<number>(questionId);
   const navigate = useRouter();
 
   const interviewStartup = () => {
@@ -66,22 +68,20 @@ export const InterviewProvider = ({
       _setStatus("thinking");
       const response = await submitInterviewAnswer({
         interview_id: interviewId,
-        question_id: questionId,
+        question_id: currentQuestionId,
         answer,
       });
       if (response.status === 204) {
         _setStatus("finished");
         changeMessage("면접이 종료되었습니다. 고생 많으셨습니다.");
         setTimeout(() => {
-          navigate.push(`/interview/result/${interviewId}`);
+          navigate.push(`/interview/${interviewId}/result`);
         }, 3000);
         return;
       }
-      if (response.status === 201) {
-        changeMessage(response.data.question);
-        _setStatus("question");
-        return;
-      }
+      changeMessage(response.data.question);
+      _setStatus("question");
+      setCurrentQuestionId(response.data.question_id);
     } catch {
       _setStatus("standby");
       changeMessage("답변을 제출하는데 실패했습니다. 다시 시도해주세요.");
