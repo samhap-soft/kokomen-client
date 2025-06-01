@@ -3,11 +3,11 @@ import { FeedbackAccordion } from "@/domains/interviewReport/components/feedback
 import { InterviewReport } from "@/domains/interviewReport/types";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { Layout } from "@kokomen/ui/components/common/Layout";
+import { Layout } from "@kokomen/ui/components/layout";
 import Image from "next/image";
 import Link from "next/link";
 import { Roboto } from "next/font/google";
-import { Button } from "@kokomen/ui/components/button/Button";
+import { Button } from "@kokomen/ui/components/button";
 import { useRouter } from "next/router";
 import Head from "next/head";
 

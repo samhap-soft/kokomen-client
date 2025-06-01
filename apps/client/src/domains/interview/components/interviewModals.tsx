@@ -1,5 +1,5 @@
 import { Modal } from "@kokomen/ui/components/modal";
-import { Button } from "@kokomen/ui/components/button/Button";
+import { Button } from "@kokomen/ui/components/button";
 import { useInterviewContext } from "@/domains/interview/components/interviewProvider";
 export default function InterviewModals() {
   return <StartNewInterviewModal />;

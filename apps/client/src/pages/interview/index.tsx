@@ -1,4 +1,4 @@
-import { Layout } from "@kokomen/ui/components/common/Layout";
+import { Layout } from "@kokomen/ui/components/layout";
 import Robots from "@/domains/interview/components/robots";
 import InterviewSpeechBubble from "@/domains/interview/components/interviewSpeechBubble";
 import { InterviewProvider } from "@/domains/interview/components/interviewProvider";
