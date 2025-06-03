@@ -1,4 +1,3 @@
-import { startNewInterview } from "@/domains/interview/api";
 import axios from "axios";
 import { Roboto } from "next/font/google";
 import Head from "next/head";
@@ -42,10 +41,6 @@ export default function Home() {
           content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
         />
         <link rel="icon" href="/favicon.ico" />
-        <meta
-          http-equiv="Content-Security-Policy"
-          content="upgrade-insecure-requests"
-        />
       </Head>
       <div
         className={`${roboto.className} min-h-[720px] min-w-[1024px] w-screen h-screen`}

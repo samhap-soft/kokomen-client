@@ -29,10 +29,6 @@ export default function Result(
           content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
         />
         <link rel="icon" href="/favicon.ico" />
-        <meta
-          http-equiv="Content-Security-Policy"
-          content="upgrade-insecure-requests"
-        />
       </Head>
       <Layout className={`${roboto.className}`}>
         <header className="px-4 py-2 border-b border-gray-300 justify-between flex w-full items-center">

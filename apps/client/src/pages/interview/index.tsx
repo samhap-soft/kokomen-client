@@ -1,10 +1,10 @@
 import { Layout } from "@kokomen/ui/components/layout";
-import Robots from "@/domains/interview/components/robots";
-import InterviewSpeechBubble from "@/domains/interview/components/interviewSpeechBubble";
 import { InterviewProvider } from "@/domains/interview/components/interviewProvider";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
-import Image from "next/image";
 import { useRouter } from "next/router";
+import InterviewSpeechBubble from "@/domains/interview/components/interviewSpeechBubble";
+import Robots from "@/domains/interview/components/robots";
+import Image from "next/image";
 import InterviewModals from "@/domains/interview/components/interviewModals";
 import Head from "next/head";
 
@@ -20,10 +20,6 @@ export default function Interview() {
           content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
         />
         <link rel="icon" href="/favicon.ico" />
-        <meta
-          http-equiv="Content-Security-Policy"
-          content="upgrade-insecure-requests"
-        />
       </Head>
       <Layout className="relative p-8">
         <Image

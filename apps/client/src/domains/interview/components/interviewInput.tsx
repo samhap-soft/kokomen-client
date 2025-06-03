@@ -2,7 +2,7 @@ import { Button } from "@kokomen/ui/components/button";
 import { useInterviewContext } from "@/domains/interview/components/interviewProvider";
 import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { ArrowBigUp } from "lucide-react";
-import { ChangeEventHandler, RefObject, useRef, useState } from "react";
+import { ChangeEventHandler, RefObject, useState } from "react";
 
 export function InterviewAnswerInput() {
   const [interviewInput, setInterviewInput] = useState<string>("");
