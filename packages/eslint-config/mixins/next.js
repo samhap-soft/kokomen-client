@@ -1,13 +1,19 @@
 module.exports = {
-    plugins: ["react", "react-hooks", "jsx-a11y"],
-    extends: [
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:react/jsx-runtime",
-    ],
-    settings: {
-        react : {
-            version : "19"
-        }
-    }
-}
+  extends: [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:@next/next/recommended",
+    "plugin:@typescript-eslint/recommended",
+  ],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: "./tsconfig.json",
+  },
+  plugins: ["@typescript-eslint", "react", "jsx-a11y"],
+  rules: {
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+  },
+};

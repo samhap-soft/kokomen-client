@@ -1,6 +1,14 @@
+const path = require("path");
 module.exports = {
-    plugins: ["no-relative-import-paths"],
-    extends: [
-        '@rushstack/eslint-config/profile/web-app.'
-    ]
-}
+  root: true,
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint", "react"],
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  ignorePatterns: ["**/*.js", "**/*.mjs", "**/*.d.ts"],
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
+  rules: {},
+};

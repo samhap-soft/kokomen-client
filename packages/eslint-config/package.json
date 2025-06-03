@@ -1,16 +1,26 @@
 {
-  "name": "eslint-config",
+  "name": "@kokomen/eslint-config",
   "packageManager": "yarn@4.9.1",
+  "main": "eslint.config.js",
   "version": "0.0.1",
   "devDependencies": {
-    "@rushstack/eslint-config": "^4.3.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.28.0",
+    "@next/eslint-plugin-next": "^15.3.3",
+    "@rushstack/eslint-patch": "^1.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "8.57.1",
+    "eslint-config-next": "^15.3.3",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-next": "^0.0.0",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0"
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "install": "^0.13.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.33.0"
   },
   "peerDependencies": {
-    "eslint": ">= 9",
-    "typescript": ">= 5"
+    "eslint": ">= 8",
+    "typescript": "^5.8.3"
   }
 }
