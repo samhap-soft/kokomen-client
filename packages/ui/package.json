@@ -10,6 +10,7 @@
     ".": "./"
   },
   "devDependencies": {
+    "@kokomen/eslint-config": "workspace:*",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "^8.6.12",
     "@storybook/addon-onboarding": "^8.6.12",
@@ -26,6 +27,7 @@
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "eslint": "^8.57.1",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-docgen-typescript": "^2.2.2",
@@ -45,6 +47,7 @@
   },
   "scripts": {
     "storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "lint": "eslint ."
   }
 }
