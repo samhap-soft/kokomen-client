@@ -1,8 +1,8 @@
-type RobotStatus =
+type InterviewStatus =
   | "standby"
   | "thinking"
   | "question"
   | "finished"
   | "beforeStart";
 
-export type { RobotStatus };
+export type { InterviewStatus };

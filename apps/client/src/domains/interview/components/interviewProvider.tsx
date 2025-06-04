@@ -1,29 +1,79 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
-import { RobotStatus } from "@/domains/interview/types";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { createContext, useContext, useState } from "react";
+import { InterviewStatus } from "@/domains/interview/types";
+import { createContext, useContext, useReducer } from "react";
 
 interface InterviewProviderProps {
-  children: React.ReactNode;
   interviewId: number;
   message: string;
-  status: RobotStatus;
+  status: InterviewStatus;
   rootQuestion: string;
   answerQuestion: (answer: string) => Promise<void>;
-  exit: () => void;
   interviewStartup: () => void;
 }
 
 const InterviewContext = createContext<InterviewProviderProps | null>(null);
 
-const INTERVIEW_STARTUP = [
-  "안녕하세요! 반갑습니다.",
-  "면접에 참여해주셔서 감사합니다",
-  "면접은 편하게 진행되니, 긴장하지 마세요.",
-  "면접이 끝나면, 피드백을 드릴 예정입니다.",
-  "면접을 시작하겠습니다.",
-];
+const INTERVIEW_STARTUP =
+  "안녕하세요! 꼬꼬면 면접에 오신 것을 환영합니다. 면접을 시작하겠습니다.";
+const INTERVIEW_SUBMIT_FAILED = "답변 제출에 실패했습니다. 다시 시도해주세요.";
+interface InterviewState {
+  message: string;
+  status: InterviewStatus;
+  currentQuestionId: number;
+}
+interface InterviewAction {
+  type:
+    | "ANSWER_QUESTION"
+    | "START_UP"
+    | "INTERVIEW_END"
+    | "QUESTION"
+    | "SUBMIT_FAILED";
+  payload: {
+    message?: string;
+    status?: InterviewStatus;
+    currentQuestionId?: number | null;
+  };
+}
+
+function reducer(
+  state: InterviewState,
+  action: InterviewAction
+): InterviewState {
+  switch (action.type) {
+    case "ANSWER_QUESTION":
+      return {
+        ...state,
+        status: "thinking",
+      };
+    case "START_UP":
+      return {
+        ...state,
+        status: "standby",
+        message: INTERVIEW_STARTUP,
+      };
+    case "INTERVIEW_END":
+      return {
+        ...state,
+        status: "finished",
+        message: "면접이 종료되었습니다.",
+      };
+    case "QUESTION":
+      return {
+        ...state,
+        message: action?.payload?.message as string,
+        status: "question",
+        currentQuestionId: action?.payload?.currentQuestionId as number,
+      };
+    case "SUBMIT_FAILED":
+      return {
+        ...state,
+        status: "standby",
+        message: INTERVIEW_SUBMIT_FAILED,
+      };
+    default:
+      return state;
+  }
+}
 
 export const InterviewProvider = ({
   children,
@@ -36,87 +86,58 @@ export const InterviewProvider = ({
   questionId: number;
   rootQuestion: string;
 }) => {
-  const [message, _setMessage] = useState<string>("");
-  const [status, _setStatus] = useState<RobotStatus>("beforeStart");
-  const [currentQuestionId, setCurrentQuestionId] =
-    useState<number>(questionId);
-  const navigate = useRouter();
+  const [state, dispatch] = useReducer(reducer, {
+    message: INTERVIEW_STARTUP,
+    status: "beforeStart",
+    currentQuestionId: questionId,
+  });
 
   const interviewStartup = () => {
-    _setStatus("standby");
-    startupMessage(0);
-  };
-  const startupMessage = (startupIdx: number) => {
-    if (startupIdx < INTERVIEW_STARTUP.length) {
-      changeMessage(INTERVIEW_STARTUP[startupIdx]);
-      setTimeout(() => startupMessage(startupIdx + 1), 2000);
-      return;
-    }
-    if (startupIdx === INTERVIEW_STARTUP.length) {
-      changeMessage(rootQuestion);
-      _setStatus("question");
-      return;
-    }
-  };
-
-  const changeMessage = (newMessage: string) => {
-    _setMessage(newMessage);
+    dispatch({ type: "START_UP", payload: {} });
+    setTimeout(
+      () => dispatch({ type: "QUESTION", payload: { message: rootQuestion } }),
+      2000
+    );
   };
 
   const answerQuestion = async (answer: string) => {
-    const prevMessage = message;
+    const prevMessage = state.message;
     try {
-      _setStatus("thinking");
-      const response = await axios.post(
-        `/api/interviews/${interviewId}/questions/${currentQuestionId ?? questionId}/answers`,
-        {
-          interview_id: interviewId,
-          question_id: currentQuestionId ?? questionId,
-          answer,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          timeout: 10000,
-        }
-      );
+      dispatch({ type: "QUESTION", payload: { status: "thinking" } });
+      const response = await submitInterviewAnswer({
+        answer: answer,
+        interview_id: interviewId,
+        question_id: state.currentQuestionId,
+      });
       if (response.status === 204) {
-        _setStatus("finished");
-        changeMessage("면접이 종료되었습니다. 고생 많으셨습니다.");
-        setTimeout(() => {
-          navigate.replace(`/interview/${interviewId}/result`);
-        }, 3000);
+        dispatch({ type: "QUESTION", payload: { status: "finished" } });
         return;
       }
-      changeMessage(response.data.question);
-      _setStatus("question");
-      setCurrentQuestionId(response.data.question_id);
+      dispatch({
+        type: "QUESTION",
+        payload: {
+          status: "question",
+          message: response.data.question,
+          currentQuestionId: response.data.question_id,
+        },
+      });
     } catch {
-      _setStatus("standby");
-      changeMessage("답변을 제출하는데 실패했습니다. 다시 시도해주세요.");
+      dispatch({ type: "SUBMIT_FAILED", payload: {} });
       setTimeout(() => {
-        _setStatus("question");
-        changeMessage(prevMessage);
+        dispatch({
+          type: "QUESTION",
+          payload: { message: prevMessage, status: "question" },
+        });
       }, 2000);
-    }
-  };
-
-  const exit = () => {
-    if (status === "beforeStart") {
-      navigate.back();
-      return;
     }
   };
 
   return (
     <InterviewContext.Provider
       value={{
-        exit,
-        children,
         interviewId,
-        message,
-        status,
+        message: state.message,
+        status: state.status,
         rootQuestion,
         answerQuestion,
         interviewStartup,
