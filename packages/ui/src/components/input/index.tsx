@@ -1,3 +1,4 @@
+import { cn } from "#utils/index.ts";
 import { cva, VariantProps } from "class-variance-authority";
 import React from "react";
 
@@ -50,7 +51,7 @@ export const Input = ({
       dangerouslySetInnerHTML={undefined}
       ref={ref}
       type={type}
-      className={inputVariants({ variant, size })}
+      className={cn(inputVariants({ variant, size }), className)}
       id={name}
       {...props}
     />

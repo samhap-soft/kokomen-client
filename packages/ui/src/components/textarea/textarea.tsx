@@ -1,6 +1,6 @@
 import { cn } from "#utils/index.ts";
 import { cva, VariantProps } from "class-variance-authority";
-import React, { RefObject, useCallback, useEffect, useRef } from "react";
+import React, { RefObject, useEffect, useRef } from "react";
 
 type TextareaVariantProps = VariantProps<typeof textareaVariants>;
 const textareaVariants = cva("flex items-center rounded-xl p-2 s resize-none", {
@@ -44,7 +44,6 @@ export const Textarea = ({
   variant,
   size,
   border,
-  name,
   ref,
   autoAdjust = false,
   ...props
@@ -68,7 +67,6 @@ export const Textarea = ({
     <textarea
       className={cn(textareaVariants({ variant, size, border }), className)}
       ref={ref}
-      name="textarea"
       placeholder="Type your text here..."
       {...props}
     />
