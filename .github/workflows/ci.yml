@@ -1,0 +1,22 @@
+name: "CI"
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Install dependencies"
+        run: |
+          yarn install
+
+      - name: "Run linters"
+        run: |
+          yarn lint
