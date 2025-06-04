@@ -143,8 +143,7 @@ export function AccordionItem({
   className,
   ...props
 }: AccordionItemProps & HTMLAttributes<HTMLDivElement>) {
-  const { activeKeys, toggleItem, allowMultiple, getItemState } =
-    useAccordionContext();
+  const { toggleItem, getItemState } = useAccordionContext();
 
   const { isOpen: contextIsOpen, disabled: contextDisabled } =
     getItemState(itemKey);

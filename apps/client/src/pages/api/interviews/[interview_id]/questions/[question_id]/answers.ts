@@ -9,7 +9,7 @@ export default async function handler(
     const { data, status } = await submitInterviewAnswer(req.body);
     if (status === 204) return res.status(204).json({ message: "No content" });
     res.status(200).json(data);
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: "Failed to submit answer" });
   }
 }
