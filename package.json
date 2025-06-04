@@ -1,12 +1,12 @@
 {
   "name": "kokomen",
-  "packageManager": "yarn@4.9.1",
+  "packageManager": "yarn@4.9.2",
   "workspaces": [
     "packages/*",
     "apps/*"
   ],
   "devDependencies": {
-    "eslint": "^9.26.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "prettier": "^3.5.3",
