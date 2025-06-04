@@ -8,5 +8,10 @@ module.exports = {
     ecmaVersion: 2020,
   },
   extends: ["@kokomen/eslint-config", "@kokomen/eslint-config/mixins/next"],
+  settings: {
+    next: {
+      rootDir: __dirname,
+    },
+  },
   rules: {},
 };

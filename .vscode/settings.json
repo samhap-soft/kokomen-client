@@ -9,6 +9,7 @@
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "eslint.nodePath": ".yarn/sdks",
+  "eslint.workingDirectories": ["./apps/client", "./packages/ui"],
   "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
   "tailwindCSS.includeLanguages": {
     "javascript": "javascript",
