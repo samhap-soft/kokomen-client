@@ -1,6 +1,14 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
 import { InterviewStatus } from "@/domains/interview/types";
-import { createContext, useContext, useReducer } from "react";
+import {
+  Context,
+  createContext,
+  JSX,
+  ReactNode,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 interface InterviewProviderProps {
   interviewId: number;
@@ -11,11 +19,13 @@ interface InterviewProviderProps {
   interviewStartup: () => void;
 }
 
-const InterviewContext = createContext<InterviewProviderProps | null>(null);
+const InterviewContext: Context<InterviewProviderProps | undefined> =
+  createContext<InterviewProviderProps | undefined>(undefined);
 
-const INTERVIEW_STARTUP =
+const INTERVIEW_STARTUP: string =
   "안녕하세요! 꼬꼬면 면접에 오신 것을 환영합니다. 면접을 시작하겠습니다.";
-const INTERVIEW_SUBMIT_FAILED = "답변 제출에 실패했습니다. 다시 시도해주세요.";
+const INTERVIEW_SUBMIT_FAILED: string =
+  "답변 제출에 실패했습니다. 다시 시도해주세요.";
 interface InterviewState {
   message: string;
   status: InterviewStatus;
@@ -31,7 +41,7 @@ interface InterviewAction {
   payload: {
     message?: string;
     status?: InterviewStatus;
-    currentQuestionId?: number | null;
+    currentQuestionId?: number;
   };
 }
 
@@ -81,18 +91,21 @@ export const InterviewProvider = ({
   questionId,
   rootQuestion,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   interviewId: number;
   questionId: number;
   rootQuestion: string;
-}) => {
+}): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, {
     message: INTERVIEW_STARTUP,
     status: "beforeStart",
     currentQuestionId: questionId,
   });
+  useEffect(() => {
+    dispatch({ type: "START_UP", payload: {} });
+  }, []);
 
-  const interviewStartup = () => {
+  const interviewStartup = (): void => {
     dispatch({ type: "START_UP", payload: {} });
     setTimeout(
       () => dispatch({ type: "QUESTION", payload: { message: rootQuestion } }),
@@ -100,7 +113,7 @@ export const InterviewProvider = ({
     );
   };
 
-  const answerQuestion = async (answer: string) => {
+  const answerQuestion = async (answer: string): Promise<void> => {
     const prevMessage = state.message;
     try {
       dispatch({ type: "QUESTION", payload: { status: "thinking" } });
@@ -148,7 +161,7 @@ export const InterviewProvider = ({
   );
 };
 
-export function useInterviewContext() {
+export function useInterviewContext(): InterviewProviderProps {
   const context = useContext(InterviewContext);
   if (!context) {
     throw new Error(

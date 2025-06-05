@@ -1,8 +1,8 @@
 import { useInterviewContext } from "@/domains/interview/components/interviewProvider";
-import { RobotStatus } from "@/domains/interview/types";
+import { InterviewStatus } from "@/domains/interview/types";
 import Image from "next/image";
 
-const ROBOT_SOURCES: Record<RobotStatus, { src: string; alt: string }> = {
+const ROBOT_SOURCES: Record<InterviewStatus, { src: string; alt: string }> = {
   beforeStart: {
     src: "/interview/robot_standby.png",
     alt: "Robot Standby",
