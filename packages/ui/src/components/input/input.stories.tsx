@@ -1,6 +1,6 @@
+import { Input } from "#components/input/index.tsx";
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
-import { Input } from "./input.tsx";
 
 const meta: Meta<typeof Input> = {
   title: "Common/Input",
