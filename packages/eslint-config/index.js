@@ -1,9 +1,5 @@
-const path = require("path");
 module.exports = {
-  root: true,
-  parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "react"],
-  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  extends: ["@rushstack/eslint-config/profile/web-app"],
   ignorePatterns: ["**/*.js", "**/*.mjs", "**/*.d.ts"],
   settings: {
     react: {
