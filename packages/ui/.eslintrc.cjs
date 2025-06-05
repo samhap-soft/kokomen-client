@@ -5,7 +5,7 @@ module.exports = {
     project: "./tsconfig.json",
     tsconfigRootDir: __dirname,
     sourceType: "module",
-    ecmaVersion: 2020,
   },
+  ignorePatterns: ["*.cjs", "esm", ".turbo", ".cache"],
   extends: ["@kokomen/eslint-config"],
 };
