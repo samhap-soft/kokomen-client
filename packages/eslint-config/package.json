@@ -1,12 +1,13 @@
 {
   "name": "@kokomen/eslint-config",
   "packageManager": "yarn@4.9.1",
-  "main": "eslint.config.js",
+  "main": "index.js",
   "version": "0.0.1",
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.28.0",
     "@next/eslint-plugin-next": "^15.3.3",
+    "@rushstack/eslint-config": "^4.3.0",
     "@rushstack/eslint-patch": "^1.11.0",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
