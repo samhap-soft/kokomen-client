@@ -1,17 +1,23 @@
 require("@kokomen/eslint-config/patch");
 
 module.exports = {
-  parserOptions: {
-    project: "./tsconfig.json",
-    tsconfigRootDir: __dirname,
-    sourceType: "module",
-    ecmaVersion: 2020,
+  env: {
+    browser: true,
+    node: true,
   },
   extends: ["@kokomen/eslint-config", "@kokomen/eslint-config/mixins/next"],
+  root: true,
+  parserOptions: {
+    project: true,
+    tsconfigRootDir: __dirname,
+  },
   settings: {
-    next: {
-      rootDir: __dirname,
+    react: {
+      version: "19.0",
     },
   },
-  rules: {},
+
+  rules: {
+    "@typescript-eslint/no-floating-promises": "off",
+  },
 };
