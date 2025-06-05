@@ -1,6 +1,6 @@
+import { Button } from "#components/button/index.tsx";
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
-import { Button } from "./Button.jsx";
 
 const meta: Meta<typeof Button> = {
   // Meta<ButtonProps>도 가능
