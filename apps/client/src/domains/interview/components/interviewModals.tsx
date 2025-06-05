@@ -1,12 +1,14 @@
 import { Modal } from "@kokomen/ui/components/modal";
 import { Button } from "@kokomen/ui/components/button";
 import { useInterviewContext } from "@/domains/interview/components/interviewProvider";
+import { useRouter } from "next/router";
 export default function InterviewModals() {
   return <StartNewInterviewModal />;
 }
 
 function StartNewInterviewModal() {
-  const { interviewStartup, status, exit } = useInterviewContext();
+  const { interviewStartup, status } = useInterviewContext();
+  const router = useRouter();
   return (
     <Modal visible={status === "beforeStart"}>
       <div className="flex flex-col items-center justify-center p-8 w-1/2 min-w-[450px] bg-background-base rounded-xl">
@@ -17,7 +19,7 @@ function StartNewInterviewModal() {
             className="w-full"
             size={"lg"}
             variant={"red"}
-            onClick={() => exit()}
+            onClick={() => router.back()}
           >
             나가기
           </Button>
