@@ -7,14 +7,14 @@ export const interviewApiInstance = axios.create({
   },
 });
 
-interface NewInterviewResponse {
+interface INewInterviewResponse {
   interview_id: number;
   question_id: number;
   root_question: string;
 }
 
 export const startNewInterview = async (): Promise<
-  AxiosResponse<NewInterviewResponse>
+  AxiosResponse<INewInterviewResponse>
 > => {
   return interviewApiInstance.post("/interviews", {
     categories: ["OPERATING_SYSTEM"],

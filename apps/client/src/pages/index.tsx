@@ -14,7 +14,7 @@ const roboto = Roboto({
 export default function Home() {
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
-  const handleNewInterview = async () => {
+  const handleNewInterview = async (): Promise<void> => {
     try {
       setLoading(true);
       const { data } = await axios.post("/api/interviews");
