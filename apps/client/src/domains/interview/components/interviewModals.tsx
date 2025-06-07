@@ -1,16 +1,51 @@
 import { Modal } from "@kokomen/ui/components/modal";
 import { Button } from "@kokomen/ui/components/button";
-import { useInterviewContext } from "@/domains/interview/components/interviewProvider";
 import { useRouter } from "next/router";
-export default function InterviewModals() {
-  return <StartNewInterviewModal />;
+import {
+  IInterviewState,
+  InterviewActions,
+} from "@/domains/interview/hooks/useInterviewStatus";
+import { JSX, useState } from "react";
+
+export default function InterviewModals({
+  state,
+  dispatch,
+  rootQuestion,
+}: {
+  state: IInterviewState;
+  dispatch: InterviewActions;
+  rootQuestion: string;
+}): JSX.Element {
+  return (
+    <StartNewInterviewModal
+      state={state}
+      dispatch={dispatch}
+      rootQuestion={rootQuestion}
+    />
+  );
 }
 
-function StartNewInterviewModal() {
-  const { interviewStartup, status } = useInterviewContext();
+function StartNewInterviewModal({
+  state,
+  dispatch,
+  rootQuestion,
+}: {
+  state: IInterviewState;
+  dispatch: InterviewActions;
+  rootQuestion: string;
+}): JSX.Element {
+  const [interviewModal, setInterviewModal] = useState<boolean>(true);
   const router = useRouter();
+
+  const startup = (): void => {
+    dispatch({ type: "START_UP" });
+    setInterviewModal(false);
+    setTimeout(() => {
+      dispatch({ ...state, type: "QUESTION", message: rootQuestion });
+    }, 2000);
+  };
   return (
-    <Modal visible={status === "beforeStart"}>
+    <Modal visible={interviewModal}>
       <div className="flex flex-col items-center justify-center p-8 w-1/2 min-w-[450px] bg-background-base rounded-xl">
         <h2 className="text-2xl font-bold mb-4">인터뷰 시작하기</h2>
         <p className="text-lg">인터뷰를 시작합니다. 준비 되셨나요?</p>
@@ -27,7 +62,7 @@ function StartNewInterviewModal() {
             className="w-full"
             variant={"default"}
             size={"lg"}
-            onClick={() => interviewStartup()}
+            onClick={() => startup()}
           >
             시작하기
           </Button>

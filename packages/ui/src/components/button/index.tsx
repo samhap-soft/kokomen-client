@@ -1,8 +1,10 @@
 import { cva, VariantProps } from "class-variance-authority";
-import React, { ButtonHTMLAttributes, RefObject } from "react";
+import React, { ButtonHTMLAttributes, JSX, RefObject } from "react";
 import { cn } from "../../utils/index.ts";
 
-type buttonVariantsProps = VariantProps<typeof buttonVariants>;
+type ButtonVariantsProps = VariantProps<typeof buttonVariants>;
+
+// eslint-disable-next-line @rushstack/typedef-var
 const buttonVariants = cva(
   `flex cursor-pointer text-white rounded-xl text-center active:translate-y-0.5 items-center justify-center gap-2 whitespace-nowrap text-sm transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0`,
   {
@@ -38,9 +40,9 @@ const buttonVariants = cva(
   }
 );
 
-export interface ButtonProps
+export interface IButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
-    buttonVariantsProps {
+    ButtonVariantsProps {
   children?: React.ReactNode;
   ref?: RefObject<HTMLButtonElement>;
   icon?: React.ReactNode | SVGElement;
@@ -53,7 +55,7 @@ export const Button = ({
   border,
   shadow,
   ...props
-}: ButtonProps) => (
+}: IButtonProps): JSX.Element => (
   <button
     ref={ref}
     className={cn(

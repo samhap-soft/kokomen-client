@@ -1,17 +1,18 @@
 import axios from "axios";
+import { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import { Roboto } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { JSX, useState } from "react";
 
-const roboto = Roboto({
+const roboto: NextFontWithVariable = Roboto({
   variable: "--font-roboto-sans",
   subsets: ["latin"],
 });
 
-export default function Home() {
+export default function Home(): JSX.Element {
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
   const handleNewInterview = async (): Promise<void> => {
