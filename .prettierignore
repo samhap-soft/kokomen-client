@@ -1,0 +1,7 @@
+# .prettierignore
+
+dist
+build
+
+**/*.md
+
