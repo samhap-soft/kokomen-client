@@ -1,27 +1,80 @@
+import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
+import {
+  IInterviewState,
+  InterviewActions,
+} from "@/domains/interview/hooks/useInterviewStatus";
 import { Button } from "@kokomen/ui/components/button";
-import { useInterviewContext } from "@/domains/interview/components/interviewProvider";
 import { Textarea } from "@kokomen/ui/components/textarea/textarea";
+import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp } from "lucide-react";
-import { ChangeEventHandler, RefObject, useState } from "react";
+import { useRouter } from "next/router";
+import { JSX, useState } from "react";
 
-export function InterviewAnswerInput() {
+export function InterviewAnswerInput({
+  interviewState,
+  interviewId,
+  dispatch,
+}: {
+  interviewState: IInterviewState;
+  dispatch: InterviewActions;
+  interviewId: string;
+}): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
-  const { status, answerQuestion } = useInterviewContext();
-  const handleClick = async () => {
-    const inputValue = interviewInput;
-    setInterviewInput("");
-    try {
-      await answerQuestion(inputValue || "");
-    } catch {
-      setInterviewInput(inputValue);
-    }
-  };
+  const router = useRouter();
+  const { mutate } = useMutation({
+    mutationFn: submitInterviewAnswer,
+    onMutate: () => {
+      const previousMessage = {
+        prevMessage: interviewState.message,
+        prevQuestionId: interviewState.currentQuestionId,
+      };
+      dispatch({ type: "ANSWER_QUESTION" });
+      return {
+        previousMessage,
+      };
+    },
+    onSuccess: ({ status, data }) => {
+      if (status === 204) {
+        dispatch({ type: "INTERVIEW_END" });
+        setTimeout(() => {
+          router.push(`/interview/${interviewId}/result`);
+        }, 2000);
+        return;
+      }
+      dispatch({
+        type: "QUESTION",
+        message: data.next_question,
+        currentQuestionId: data.next_question_id,
+      });
+    },
+    onError: (_, __, context) => {
+      dispatch({ type: "SUBMIT_FAILED" });
+      setTimeout(() => {
+        if (context?.previousMessage) {
+          // 이전 상태로 복원
+          dispatch({
+            type: "QUESTION",
+            message: context.previousMessage.prevMessage,
+            currentQuestionId: context.previousMessage.prevQuestionId,
+          });
+        }
+      }, 2000);
+    },
+  });
 
   return (
     <div className="absolute z-20 bottom-10 gap-3 p-4 items-center w-3/4 left-[10%] border border-border-input rounded-xl bg-background-base ">
-      <AnswerInput
+      <Textarea
+        variant={"default"}
+        name="interview-input"
+        border={"none"}
+        className={`transition-all block w-full resize-none border-none focus:border-none`}
+        rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
         value={interviewInput}
+        autoAdjust={true}
+        disabled={interviewState.status === "standby"}
+        placeholder={"답변을 입력해주세요..."}
       />
       <div className="flex w-full gap-5">
         <div className="flex-1"></div>
@@ -29,42 +82,20 @@ export function InterviewAnswerInput() {
           shadow={"none"}
           border={"round"}
           className={`w-[50px] h-[50px] disabled:opacity-50 disabled:pointer-events-none transition-opacity duration-200`}
-          disabled={status !== "question" || !interviewInput.length}
-          onClick={() => handleClick()}
+          disabled={
+            interviewState.status !== "question" || !interviewInput.length
+          }
+          onClick={() =>
+            mutate({
+              interviewId: interviewId,
+              questionId: interviewState.currentQuestionId,
+              answer: interviewInput,
+            })
+          }
         >
           <ArrowBigUp className="text-primary-content" />
         </Button>
       </div>
     </div>
-  );
-}
-
-export function AnswerInput({
-  ref,
-  placeholder = "답변을 입력하세요...",
-  onChange,
-  value,
-}: {
-  ref?: RefObject<HTMLTextAreaElement | null>;
-  placeholder?: string;
-  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
-  value?: string;
-}) {
-  const { status } = useInterviewContext();
-
-  return (
-    <Textarea
-      variant={"default"}
-      name="interview-input"
-      border={"none"}
-      className={`transition-all block w-full resize-none border-none focus:border-none`}
-      ref={ref}
-      rows={1}
-      onChange={onChange}
-      value={value}
-      autoAdjust={true}
-      disabled={status !== "question"}
-      placeholder={placeholder}
-    />
   );
 }

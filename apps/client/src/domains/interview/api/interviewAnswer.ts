@@ -5,27 +5,27 @@ interface InterviewAnswerApiRequest {
   answer: string;
 }
 
-interface IntercviewAnswerApiResponse {
-  question_id: number;
-  question: string;
-  is_root: boolean;
+interface InterviewAnswerApiResponse {
+  cur_answer_rank: string;
+  next_question_id: number;
+  next_question: string;
 }
 
 export async function submitInterviewAnswer({
-  interview_id,
-  question_id,
+  interviewId,
+  questionId,
   answer,
 }: {
-  interview_id: number;
-  question_id: number;
+  interviewId: string;
+  questionId: number;
   answer: string;
-}) {
+}): Promise<AxiosResponse<InterviewAnswerApiResponse, any>> {
   return interviewApiInstance.post<
-    IntercviewAnswerApiResponse,
-    AxiosResponse<IntercviewAnswerApiResponse>,
+    InterviewAnswerApiResponse,
+    AxiosResponse<InterviewAnswerApiResponse>,
     InterviewAnswerApiRequest
   >(
-    `/interviews/${interview_id}/questions/${question_id}/answers`,
+    `/interviews/${interviewId}/questions/${questionId}/answers`,
     {
       answer: answer,
     },
