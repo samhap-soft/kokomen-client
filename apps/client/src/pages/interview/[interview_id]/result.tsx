@@ -10,15 +10,17 @@ import { Roboto } from "next/font/google";
 import { Button } from "@kokomen/ui/components/button";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { NextFontWithVariable } from "next/dist/compiled/@next/font";
+import { JSX } from "react";
 
-const roboto = Roboto({
+const roboto: NextFontWithVariable = Roboto({
   variable: "--font-roboto-sans",
   subsets: ["latin"],
 });
 
 export default function Result(
   data: InferGetServerSidePropsType<typeof getServerSideProps>
-) {
+): JSX.Element {
   const navigate = useRouter();
   return (
     <>
