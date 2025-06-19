@@ -8,4 +8,8 @@ module.exports = {
   },
   ignorePatterns: ["*.cjs", "esm", ".turbo", ".cache"],
   extends: ["@kokomen/eslint-config"],
+  rules: {
+    "@typescript-eslint/naming-convention": "off",
+    "@rushstack/typedef-var": "off",
+  },
 };
