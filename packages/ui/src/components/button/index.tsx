@@ -6,37 +6,67 @@ type ButtonVariantsProps = VariantProps<typeof buttonVariants>;
 
 // eslint-disable-next-line @rushstack/typedef-var
 const buttonVariants = cva(
-  `flex cursor-pointer text-white rounded-xl text-center active:translate-y-0.5 items-center justify-center gap-2 whitespace-nowrap text-sm transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0`,
+  `flex cursor-pointer text-text-light-solid rounded-xl text-center items-center justify-center gap-2 whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-6 [&_svg]:shrink-0 disabled:text-text-disabled disabled:bg-bg-container-disabled`,
   {
     variants: {
       variant: {
-        default: "bg-primary",
-        outline: "bg-background-alt shadow-sm text-black",
-        red: "bg-red-600",
-      },
-      border: {
-        default: "border border-border-input",
-        round: "border border-border-input rounded-full",
-        none: "border-none focus:outline-none",
-      },
-      shadow: {
-        default: "shadow-md shadow-gray-500",
-        none: "shadow-none",
+        default:
+          "bg-bg-base text-text-label outline-border hover:text-primary-hover hover:outline-primary-hover active:outline-primary-active active:text-primary-active outline-1",
+        primary:
+          "bg-primary active:bg-primary-active hover:bg-primary-hover  text-text-light-solid",
+        dashed:
+          "text-primary-text outline-border-secondary hover:outline-primary-border-hover  focus:outline-primary outline-dashed outline-2 hover:text-primary-hover",
+        text: "text-text-primary hover:bg-bg-text-hover active:bg-bg-text-active",
+        link: "text-primary",
       },
       size: {
-        default: "px-6 py-2",
-        sm: "px-4 py-1 text-sm",
-        lg: "px-6 py-3 text-lg",
-        xl: "px-8 py-4 text-xl",
-        "2xl": "px-10 py-3 text-2xl",
+        default: "p-sm text-sm",
+        small: "p-xs text-xs",
+        large: "p-md text-xl",
+      },
+      round: {
+        true: "rounded-full",
+        false: "rounded-md",
+      },
+      danger: {
+        true: "",
+        false: "",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "default",
-      border: "default",
-      shadow: "default",
     },
+    compoundVariants: [
+      {
+        variant: "primary",
+        danger: true,
+        className: "bg-error hover:bg-error-hover active:bg-error-active",
+      },
+      {
+        variant: "default",
+        danger: true,
+        className:
+          "outline-error text-error hover:outline-error-hover hover:text-error-hover active:outline-error-active active:text-error-active",
+      },
+      {
+        variant: "dashed",
+        danger: true,
+        className:
+          "outline-error text-error hover:outline-error-hover hover:text-error-hover active:outline-error-active active:text-error-active",
+      },
+      {
+        variant: "text",
+        danger: true,
+        className:
+          " text-error hover:bg-error-bg active:text-error-active active:bg-error-bg",
+      },
+      {
+        variant: "link",
+        danger: true,
+        className: "text-error active:text-error-active",
+      },
+    ],
   }
 );
 
@@ -52,8 +82,8 @@ export const Button = ({
   variant,
   className,
   size,
-  border,
-  shadow,
+  round = false,
+  danger = false,
   ...props
 }: IButtonProps): JSX.Element => (
   <button
@@ -62,8 +92,8 @@ export const Button = ({
       buttonVariants({
         variant,
         size,
-        border,
-        shadow,
+        round,
+        danger,
       }),
       className
     )}
