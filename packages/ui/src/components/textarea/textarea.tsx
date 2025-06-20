@@ -1,8 +1,9 @@
 import { cn } from "#utils/index.ts";
 import { cva, VariantProps } from "class-variance-authority";
-import React, { RefObject, useEffect, useRef } from "react";
+import React, { JSX, RefObject, useCallback, useEffect, useRef } from "react";
 
 type TextareaVariantProps = VariantProps<typeof textareaVariants>;
+
 const textareaVariants = cva("flex items-center rounded-xl p-2 s resize-none", {
   variants: {
     variant: {
@@ -19,7 +20,6 @@ const textareaVariants = cva("flex items-center rounded-xl p-2 s resize-none", {
       sm: "text-sm",
       lg: "text-lg",
       xl: "text-xl",
-      "2xl": "text-2xl",
     },
   },
   defaultVariants: {
@@ -34,7 +34,7 @@ interface TextareaProps
       "size" | "children" | "dangerouslySetInnerHTML"
     >,
     TextareaVariantProps {
-  ref?: RefObject<HTMLTextAreaElement | null>;
+  ref?: RefObject<HTMLTextAreaElement>;
   autoAdjust?: boolean;
   name: string;
 }
@@ -47,26 +47,25 @@ export const Textarea = ({
   ref,
   autoAdjust = false,
   ...props
-}: TextareaProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const currentRef = ref || textareaRef;
-  useEffect(() => {
-    if (
-      autoAdjust &&
-      currentRef &&
-      currentRef.current &&
-      props.value !== undefined
-    ) {
-      const textarea = currentRef.current;
-      textarea.style.height = "auto";
-      textarea.style.height = `${textarea.scrollHeight > 400 ? 400 : textarea.scrollHeight}px`;
-    }
-  }, [props.value, autoAdjust, ref]);
+}: TextareaProps): JSX.Element => {
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
+      if (autoAdjust) {
+        e.target.style.height = "auto";
+        e.target.style.height = `${e.target.scrollHeight > 400 ? 400 : e.target.scrollHeight}px`;
+      }
+      if (props.onChange) {
+        props.onChange(e);
+      }
+    },
+    [autoAdjust, props.onChange]
+  );
 
   return (
     <textarea
       className={cn(textareaVariants({ variant, size, border }), className)}
       ref={ref}
+      onChange={handleChange}
       placeholder="Type your text here..."
       {...props}
     />
