@@ -24,7 +24,10 @@ export const startNewInterview = async (
 ): Promise<NewInterviewResponse> => {
   const { data: responseData } = await interviewApiInstance.post(
     "/interviews",
-    data
+    data,
+    {
+      withCredentials: true,
+    }
   );
   return responseData;
 };
