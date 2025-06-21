@@ -33,7 +33,7 @@ export function middleware(request: NextRequest): NextResponse {
     return NextResponse.next();
   }
 
-  const sessionId = request.cookies.get("sessionid")?.value;
+  const sessionId = request.cookies.get("JSESSIONID")?.value;
   if (isProtectedPath(pathname)) {
     if (!sessionId) {
       return NextResponse.redirect(new URL(getLoginUrl(request)));
