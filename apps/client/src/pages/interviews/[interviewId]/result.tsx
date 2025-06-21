@@ -73,7 +73,10 @@ export default function Result(
               {data.user_cur_score - data.user_prev_score}){" "}
             </p>
           </div>
-          <Button size={"xl"} onClick={() => navigate.push({ pathname: "/" })}>
+          <Button
+            size={"large"}
+            onClick={() => navigate.push({ pathname: "/" })}
+          >
             홈으로
           </Button>
         </main>
