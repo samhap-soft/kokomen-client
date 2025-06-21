@@ -6,5 +6,7 @@ module.exports = {
       version: "detect",
     },
   },
-  rules: {},
+  rules: {
+    "@typescript-eslint/naming-convention": "off",
+  },
 };
