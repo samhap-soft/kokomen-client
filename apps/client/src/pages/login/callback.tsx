@@ -1,12 +1,19 @@
 import { postAuthorizationCode } from "@/domains/auth/api";
 import { useMutation } from "@tanstack/react-query";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { JSX, useEffect } from "react";
 
-export default function KakaoCallbackPage() {
+type KakaoCallbackPageProps = {
+  code: string;
+  state: string;
+};
+
+export default function KakaoCallbackPage({
+  code,
+  state,
+}: KakaoCallbackPageProps): JSX.Element | null {
   const router = useRouter();
-  const { code, state } = router.query;
 
   const authMutation = useMutation({
     mutationFn: ({
@@ -21,7 +28,7 @@ export default function KakaoCallbackPage() {
       console.log("로그인 성공:", data);
 
       // 로그인 성공 시 리다이렉트
-      const redirectTo = (state as string) || "/";
+      const redirectTo = state || "/";
       router.replace(redirectTo);
     },
 
@@ -81,11 +88,10 @@ export default function KakaoCallbackPage() {
 
   return null;
 }
-export const getServerSideProps = async (
+export const getServerSideProps = (
   context: GetServerSidePropsContext
-) => {
-  const { code } = context.query;
-
+): GetServerSidePropsResult<KakaoCallbackPageProps> => {
+  const { code, state } = context.query;
   // Authorization code가 없는 경우
   if (!code) {
     return {
@@ -96,6 +102,10 @@ export const getServerSideProps = async (
     };
   }
   return {
-    props: {}, // 이 페이지는 클라이언트에서 처리하므로 빈 props 반환
+    props: {
+      code: code as string,
+      state: state as string,
+    },
+
   };
 };

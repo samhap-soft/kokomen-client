@@ -8,13 +8,14 @@ interface KakaoLoginResponse {
 
 const postAuthorizationCode = async (
   code: string,
-  redirect_uri: string
+  redirectUri: string
+
 ): AxiosPromise<KakaoLoginResponse> => {
   return serverInstance.post(
     `/auth/kakao-login`,
     {
       code,
-      redirect_uri,
+      redirect_uri: redirectUri,
     },
     { withCredentials: true }
   );

@@ -1,19 +1,28 @@
 import { Layout } from "@kokomen/ui/components/layout";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
-import { useRouter } from "next/router";
 import Image from "next/image";
 import InterviewModals from "@/domains/interview/components/interviewModals";
 import Head from "next/head";
 import { JSX } from "react";
 import { useInterviewStatus } from "@/domains/interview/hooks/useInterviewStatus";
 import { ROBOT_SOURCES } from "@/domains/interview/constants";
+import { GetServerSideProps } from "next";
 
-export default function Interview(): JSX.Element {
-  const router = useRouter();
-  const { interview_id, question_id, root_question } = router.query;
+interface InterviewProps {
+  interviewId: string;
+  questionId: string;
+  root_question: string;
+}
+
+export default function Interview({
+  interviewId,
+  questionId,
+  root_question,
+}: InterviewProps): JSX.Element {
   const { state, dispatch } = useInterviewStatus({
-    questionId: question_id ? parseInt(question_id as string, 10) : 0,
-    rootQuestion: root_question as string,
+    questionId: +questionId,
+    rootQuestion: root_question,
+
   });
 
   return (
@@ -37,7 +46,8 @@ export default function Interview(): JSX.Element {
           height={720}
           className="absolute w-full h-[60%] object-cover z-0 top-0 left-0"
         />
-        <div className="p-4 absolute top-10 left-[10%] w-3/4 h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border-input rounded-xl bg-background-base">
+        <div className="p-4 absolute top-10 left-[10%] w-3/4 h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
+
           <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
             {state.message}
           </div>
@@ -54,14 +64,41 @@ export default function Interview(): JSX.Element {
         <InterviewAnswerInput
           interviewState={state}
           dispatch={dispatch}
-          interviewId={interview_id as string}
+          interviewId={interviewId}
         />
         <InterviewModals
           state={state}
           dispatch={dispatch}
-          rootQuestion={root_question as string}
+          rootQuestion={root_question}
+
         />
       </Layout>
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { interviewId, questionId, root_question } = context.query;
+
+  if (
+    !interviewId ||
+    !questionId ||
+    !root_question ||
+    Array.isArray(interviewId) ||
+    Array.isArray(questionId) ||
+    Array.isArray(root_question)
+  ) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      interviewId,
+      questionId,
+      root_question,
+    },
+  };
+};
+

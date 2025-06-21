@@ -74,10 +74,10 @@ export default function Home({
     mutationFn: startNewInterview,
     onSuccess: (data) => {
       router.push({
-        pathname: "/interviews",
+        pathname: `/interviews/${data.interview_id}`,
         query: {
-          interview_id: data.interview_id,
-          question_id: data.question_id,
+          questionId: data.question_id,
+
           root_question: data.root_question,
         },
       });

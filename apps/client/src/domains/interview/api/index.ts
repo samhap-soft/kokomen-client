@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
-export const interviewApiInstance = axios.create({
+export const interviewApiInstance: AxiosInstance = axios.create({
+
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
@@ -24,7 +25,11 @@ export const startNewInterview = async (
 ): Promise<NewInterviewResponse> => {
   const { data: responseData } = await interviewApiInstance.post(
     "/interviews",
-    data
+    data,
+    {
+      withCredentials: true,
+    }
+
   );
   return responseData;
 };

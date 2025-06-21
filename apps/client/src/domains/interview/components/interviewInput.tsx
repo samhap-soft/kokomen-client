@@ -37,7 +37,7 @@ export function InterviewAnswerInput({
       if (status === 204) {
         dispatch({ type: "INTERVIEW_END" });
         setTimeout(() => {
-          router.push(`/interview/${interviewId}/result`);
+          router.push(`/interviews/${interviewId}/result`);
         }, 2000);
         return;
       }
@@ -63,7 +63,7 @@ export function InterviewAnswerInput({
   });
 
   return (
-    <div className="absolute z-20 bottom-10 gap-3 p-4 items-center w-3/4 left-[10%] border border-border-input rounded-xl bg-background-base ">
+    <div className="absolute z-20 bottom-10 gap-3 p-4 items-center w-3/4 left-[10%] border border-border-secondary rounded-xl bg-background-base ">
       <Textarea
         variant={"default"}
         name="interview-input"
@@ -79,8 +79,7 @@ export function InterviewAnswerInput({
       <div className="flex w-full gap-5">
         <div className="flex-1"></div>
         <Button
-          shadow={"none"}
-          border={"round"}
+          round
           className={`w-[50px] h-[50px] disabled:opacity-50 disabled:pointer-events-none transition-opacity duration-200`}
           disabled={
             interviewState.status !== "question" || !interviewInput.length
@@ -92,6 +91,7 @@ export function InterviewAnswerInput({
               answer: interviewInput,
             })
           }
+          variant={"primary"}
         >
           <ArrowBigUp className="text-primary-content" />
         </Button>
