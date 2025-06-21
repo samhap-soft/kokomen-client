@@ -1,13 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { JSX } from "react";
 
-const navigation = [
+const navigation: { href: string; label: string; current: boolean }[] = [
   { href: "/", label: "홈", current: true },
   { href: "/interviews", label: "면접", current: false },
 ];
 
-export default function Header() {
+export default function Header(): JSX.Element {
   const location = useRouter();
   console.log(location);
   return (
