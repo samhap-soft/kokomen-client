@@ -1,0 +1,26 @@
+{
+  "name": "@kokomen/react-hooks",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "devDependencies": {
+    "@kokomen/eslint-config": "workspace:*",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^8.57.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5.8.3"
+  }
+}

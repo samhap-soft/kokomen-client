@@ -13,5 +13,7 @@ module.exports = {
   },
   rules: {
     "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/consistent-type-definitions": "off",
+    "@rushstack/no-new-null": "off",
   },
 };

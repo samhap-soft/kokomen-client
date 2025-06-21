@@ -4,6 +4,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
+    jest: true,
   },
   extends: ["@kokomen/eslint-config", "@kokomen/eslint-config/mixins/next"],
   root: true,

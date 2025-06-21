@@ -5,10 +5,11 @@
   "private": true,
   "main": "dist/packages/nextjs/src/index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@kokomen/ui": "workspace:*",
@@ -20,13 +21,26 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-typescript": "^7.27.1",
     "@kokomen/eslint-config": "workspace:*",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/babel__core": "^7",
+    "@types/babel__preset-env": "^7",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "babel-jest": "^30.0.2",
     "eslint": "8.57.1",
+    "jest": "^30.0.2",
+    "jest-environment-jsdom": "^30.0.2",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

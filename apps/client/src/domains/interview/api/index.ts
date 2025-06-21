@@ -1,22 +1,37 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosInstance } from "axios";
 
-export const interviewApiInstance = axios.create({
-  baseURL: "http://13.124.13.60/api/v1",
+export const interviewApiInstance: AxiosInstance = axios.create({
+
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
-interface INewInterviewResponse {
+interface NewInterviewResponse {
   interview_id: number;
   question_id: number;
   root_question: string;
 }
 
-export const startNewInterview = async (): Promise<
-  AxiosResponse<INewInterviewResponse>
-> => {
-  return interviewApiInstance.post("/interviews", {
-    categories: ["OPERATING_SYSTEM"],
-  });
+interface NewInterviewRequest {
+  category: string;
+  max_question_count: number;
+}
+
+export const startNewInterview = async (
+  data: NewInterviewRequest
+): Promise<NewInterviewResponse> => {
+  const { data: responseData } = await interviewApiInstance.post(
+    "/interviews",
+    data,
+    {
+      withCredentials: true,
+    }
+
+  );
+  return responseData;
 };
+
+export type { NewInterviewResponse, NewInterviewRequest };

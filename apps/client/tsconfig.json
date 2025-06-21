@@ -19,7 +19,8 @@
     "paths": {
       "@/*": ["./src/*", "../../packages/ui/src/*"],
       "@kokomen/ui/*": ["../../packages/ui/src/*"]
-    }
+    },
+    "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../../packages/ui/src"],
   "exclude": ["node_modules"]
