@@ -933,6 +933,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@kokomen/react@workspace:packages/react-hooks":
+  version: 0.0.0-use.local
+  resolution: "@kokomen/react@workspace:packages/react-hooks"
+  dependencies:
+    "@kokomen/eslint-config": "workspace:*"
+    "@types/react": "npm:^19.0.0"
+    "@types/react-dom": "npm:^19.0.0"
+    eslint: "npm:^8.57.1"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    react: ^19.0.0
+    react-dom: ^19.0.0
+    tailwindcss: ^4
+    typescript: ^5.8.3
+  languageName: unknown
+  linkType: soft
+
 "@kokomen/ui@workspace:*, @kokomen/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@kokomen/ui@workspace:packages/ui"
@@ -2131,12 +2150,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@npm:^19.0.0":
+  version: 19.1.6
+  resolution: "@types/react-dom@npm:19.1.6"
+  peerDependencies:
+    "@types/react": ^19.0.0
+  checksum: 10c0/7ba74eee2919e3f225e898b65fdaa16e54952aaf9e3472a080ddc82ca54585e46e60b3c52018d21d4b7053f09d27b8293e9f468b85f9932ff452cd290cc131e8
+  languageName: node
+  linkType: hard
+
 "@types/react@npm:^19":
   version: 19.1.4
   resolution: "@types/react@npm:19.1.4"
   dependencies:
     csstype: "npm:^3.0.2"
   checksum: 10c0/501350d4f9cef13c5dd1b1496fa70ebaff52f6fa359b623b51c9d817e5bc4333fa3c8b7a6a4cbc88c643385052d66a243c3ceccfd6926062f917a2dd0535f6b3
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^19.0.0":
+  version: 19.1.8
+  resolution: "@types/react@npm:19.1.8"
+  dependencies:
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/4908772be6dc941df276931efeb0e781777fa76e4d5d12ff9f75eb2dcc2db3065e0100efde16fde562c5bafa310cc8f50c1ee40a22640459e066e72cd342143e
   languageName: node
   linkType: hard
 

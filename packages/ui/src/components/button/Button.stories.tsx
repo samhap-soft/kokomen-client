@@ -26,7 +26,9 @@ type Story = StoryObj<typeof Button>; // 또는 StoryObj<ButtonProps>
 export const Primary: Story = {
   args: {
     children: "Primary Button", // Button 컴포넌트가 children으로 텍스트를 받는다고 가정
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
+    variant: "text", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
+    size: "default", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
+    round: false,
+    danger: false,
   },
 };
