@@ -5,13 +5,14 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { Layout } from "@kokomen/ui/components/layout";
 import Image from "next/image";
-import Link from "next/link";
 import { Roboto } from "next/font/google";
 import { Button } from "@kokomen/ui/components/button";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import { JSX } from "react";
+import { isAxiosError } from "axios";
+import Header from "@/shared/header";
 
 const roboto: NextFontWithVariable = Roboto({
   variable: "--font-roboto-sans",
@@ -33,17 +34,7 @@ export default function Result(
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout className={`${roboto.className}`}>
-        <header className="px-4 py-2 border-b border-gray-300 justify-between flex w-full items-center">
-          <div className="flex items-center gap-2">
-            <Image src={"/icon.png"} alt="logo" width={50} height={50} />
-            <span className="text-xl font-bold">꼬꼬면</span>
-          </div>
-          <ol className="flex gap-2">
-            <li>
-              <Link href={"/"}>홈</Link>
-            </li>
-          </ol>
-        </header>
+        <Header />
         <main className="p-8 flex w-full flex-col gap-5">
           <h1 className="text-3xl font-bold mb-4">면접 종료 및 피드백</h1>
           <div>
@@ -92,20 +83,33 @@ export const getServerSideProps: GetServerSideProps<
   InterviewReport,
   PageParams
 > = async (context) => {
-  const interview_id = context.params?.interview_id;
-  if (!interview_id) {
+  const interviewId = context.params?.interviewId;
+  if (!interviewId) {
     return {
       notFound: true,
     };
   }
   try {
-    const { data } = await getInterviewReport(interview_id);
+    const { data } = await getInterviewReport(
+      context.req.cookies,
+      interviewId as string
+    );
     return {
       props: {
         ...data,
       },
     };
-  } catch {
+  } catch (err) {
+    if (isAxiosError(err)) {
+      if (err.response?.status === 401) {
+        return {
+          redirect: {
+            destination: "/login",
+            permanent: false,
+          },
+        };
+      }
+    }
     return {
       notFound: true,
     };
