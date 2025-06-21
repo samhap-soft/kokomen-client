@@ -1,4 +1,5 @@
 import { NextConfig } from "next";
+
 import { NextRequest, NextResponse } from "next/server";
 
 const PROTECTED_PATHS: Array<string> = ["/interviews", "/dashboard"];
@@ -22,6 +23,7 @@ function getLoginUrl(request: NextRequest): string {
 }
 
 export function middleware(request: NextRequest): NextResponse {
+
   const { pathname } = request.nextUrl;
 
   if (
@@ -34,6 +36,7 @@ export function middleware(request: NextRequest): NextResponse {
   }
 
   const sessionId = request.cookies.get("JSESSIONID")?.value;
+
   if (isProtectedPath(pathname)) {
     if (!sessionId) {
       return NextResponse.redirect(new URL(getLoginUrl(request)));
@@ -51,5 +54,6 @@ export function middleware(request: NextRequest): NextResponse {
 }
 
 export const config: NextConfig = {
+
   matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };

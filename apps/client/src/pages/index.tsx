@@ -12,11 +12,13 @@ const roboto: NextFontWithVariable = Roboto({
 });
 
 const navigation: { href: string; label: string; current: boolean }[] = [
+
   { href: "/", label: "홈", current: true },
   { href: "/interviews", label: "면접", current: false },
 ];
 
 const features: { title: string; description: string; icon: string }[] = [
+
   {
     title: "운영체제",
     description: "프로세스, 스레드, 메모리 관리 등 핵심 개념을 체계적으로 학습",
@@ -201,6 +203,7 @@ export default function Home(): JSX.Element {
 
         {/* Footer */}
         <footer className="bg-bg-layout py-12">
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <Image

@@ -22,6 +22,7 @@ export default function Interview({
   const { state, dispatch } = useInterviewStatus({
     questionId: +questionId,
     rootQuestion: root_question,
+
   });
 
   return (
@@ -46,6 +47,7 @@ export default function Interview({
           className="absolute w-full h-[60%] object-cover z-0 top-0 left-0"
         />
         <div className="p-4 absolute top-10 left-[10%] w-3/4 h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
+
           <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
             {state.message}
           </div>
@@ -68,6 +70,7 @@ export default function Interview({
           state={state}
           dispatch={dispatch}
           rootQuestion={root_question}
+
         />
       </Layout>
     </>
@@ -98,3 +101,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+

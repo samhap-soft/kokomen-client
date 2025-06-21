@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
+
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
@@ -28,6 +29,7 @@ export const startNewInterview = async (
     {
       withCredentials: true,
     }
+
   );
   return responseData;
 };

@@ -14,6 +14,7 @@ import { JSX } from "react";
 import { isAxiosError } from "axios";
 import Header from "@/shared/header";
 
+
 const roboto: NextFontWithVariable = Roboto({
   variable: "--font-roboto-sans",
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function Result(
       </Head>
       <Layout className={`${roboto.className}`}>
         <Header />
+
         <main className="p-8 flex w-full flex-col gap-5">
           <h1 className="text-3xl font-bold mb-4">면접 종료 및 피드백</h1>
           <div>

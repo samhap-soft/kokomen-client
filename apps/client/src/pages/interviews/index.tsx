@@ -77,6 +77,7 @@ export default function Home({
         pathname: `/interviews/${data.interview_id}`,
         query: {
           questionId: data.question_id,
+
           root_question: data.root_question,
         },
       });

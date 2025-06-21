@@ -92,7 +92,6 @@ export const getServerSideProps = (
   context: GetServerSidePropsContext
 ): GetServerSidePropsResult<KakaoCallbackPageProps> => {
   const { code, state } = context.query;
-
   // Authorization code가 없는 경우
   if (!code) {
     return {
@@ -107,5 +106,6 @@ export const getServerSideProps = (
       code: code as string,
       state: state as string,
     },
+
   };
 };
