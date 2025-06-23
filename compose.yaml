@@ -5,13 +5,14 @@ services:
     build:
       context: .
       dockerfile: ./apps/client/Dockerfile
+      args:
+        NEXT_PUBLIC_BASE_URL: https://kokomen.kr
+        NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
     container_name: kokomen-client
     expose:
       - "3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_BASE_URL=https://kokomen.kr
-      - NEXT_PUBLIC_API_BASE_URL=https://api-dev.kokomen.kr/api/v1
     restart: always
 
   nginx:
