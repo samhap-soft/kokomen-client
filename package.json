@@ -19,6 +19,7 @@
     "docker-dev-up": "docker-compose -f compose.dev.yaml up -d",
     "client:prod": "yarn workspace @kokomen/client start",
     "docker-prod-up": "docker-compose -f compose.yaml up -d",
-    "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint"
+    "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint",
+    "test": "yarn workspace @kokomen/client test"
   }
 }

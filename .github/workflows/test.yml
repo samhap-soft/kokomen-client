@@ -1,0 +1,23 @@
+name: Test Workflow
+
+on:
+  pull_request:
+    branches:
+      - development
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: "Install dependencies"
+        run: |
+          yarn set version berry
+          yarn install
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
