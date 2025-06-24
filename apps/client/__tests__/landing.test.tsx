@@ -1,3 +1,10 @@
+jest.mock("next/router", () => ({
+  useRouter() {
+    return {
+      push: jest.fn(),
+    };
+  },
+}));
 import "@testing-library/jest-dom";
 import { screen, render } from "@testing-library/react";
 import Home from "@/pages";
