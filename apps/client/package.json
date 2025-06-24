@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watchAll"
   },
   "dependencies": {
     "@kokomen/ui": "workspace:*",
@@ -39,6 +40,8 @@
     "eslint": "8.57.1",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
+    "jest-fixed-jsdom": "^0.0.9",
+    "msw": "^2.10.2",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5"
