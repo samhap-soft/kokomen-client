@@ -252,7 +252,7 @@ export default function Home({
                     면접 시작 중...
                   </span>
                 ) : (
-                  `${interviewConfig.category} 면접 시작하기 (${interviewConfig.max_question_count}문제)`
+                  `${interviewConfig.category} 면접 시작하기`
                 )}
               </Button>
 
