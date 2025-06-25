@@ -16,8 +16,5 @@ jobs:
         run: |
           yarn set version berry
           yarn install
-      - name: Install dependencies
-        run: npm install
-
       - name: Run tests
-        run: npm test
+        run: yarn test
