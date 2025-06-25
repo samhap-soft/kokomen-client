@@ -49,7 +49,7 @@ jobs:
             const results = JSON.parse(fs.readFileSync("./apps/client/lhci_reports/manifest.json"));
             let comments = "";
 
-            results.forEach((result) => {
+            results.forEach((result, idx) => {
                 const { summary, jsonPath } = result;
                 
                 // details 변수를 summary 뒤에 선언
@@ -66,7 +66,9 @@ jobs:
                 const score = (res) => (res >= 90 ? "🟢" : res >= 50 ? "🟠" : "🔴");
 
                 const comment = [
-                `⚡️ Lighthouse report!`,
+                ``,
+                `## 🚀 Lighthouse Report for TEST${idx+1}`,
+                `### 📅 Date: ${new Date().toLocaleDateString()}`,
                 `| Category | Score |`,
                 `| --- | --- |`,
                 `| ${score(summary.performance)} Performance | ${summary.performance} |`,
