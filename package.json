@@ -26,7 +26,7 @@
     "docker-prod-up": "docker-compose -f compose.yaml up -d",
     "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint",
     "test": "yarn workspace @kokomen/client test",
-    "lhci": "yarn workspace @myproject/web lhci",
+    "lhci": "yarn workspace @kokomen/client lhci",
     "build": "yarn workspace @kokomen/client build"
   }
 }

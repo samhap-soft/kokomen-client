@@ -2635,6 +2635,7 @@ __metadata:
     jest: "npm:^30.0.2"
     jest-environment-jsdom: "npm:^30.0.2"
     jest-fixed-jsdom: "npm:^0.0.9"
+    jest-pnp-resolver: "npm:^1.2.3"
     lucide-react: "npm:^0.511.0"
     msw: "npm:^2.10.2"
     next: "npm:15.3.2"

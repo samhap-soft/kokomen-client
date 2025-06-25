@@ -45,6 +45,7 @@
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "jest-fixed-jsdom": "^0.0.9",
+    "jest-pnp-resolver": "^1.2.3",
     "msw": "^2.10.2",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
