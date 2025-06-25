@@ -9436,6 +9436,7 @@ __metadata:
     eslint-config-prettier: "npm:^10.1.5"
     eslint-plugin-prettier: "npm:^5.4.0"
     prettier: "npm:^3.5.3"
+    ts-node: "npm:^10.9.2"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
