@@ -1,0 +1,95 @@
+name: Lighthouse CI
+on:
+  pull_request:
+    branches: [main, development]
+  push:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: |
+          yarn set version berry
+          yarn install
+
+      - name: Build Next.js app
+        run: yarn build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
+          NEXT_PUBLIC_BASE_URL: https://localhost:3000
+
+      - name: Run Lighthouse CI
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        run: yarn lhci || echo "Failed to run Lighthouse CI"
+      - name: Format lighthouse score
+        id: format_lighthouse_score
+        uses: actions/github-script@v7 # 최신 버전 사용
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+
+            const fs = require('fs');
+
+            // 파일 경로 수정 (실제 경로로 변경 필요)
+            const results = JSON.parse(fs.readFileSync("./lhci_reports/manifest.json"));
+            let comments = "";
+
+            results.forEach((result) => {
+                const { summary, jsonPath } = result;
+                
+                // details 변수를 summary 뒤에 선언
+                const details = JSON.parse(fs.readFileSync(jsonPath));
+                const { audits } = details;
+
+                const formatResult = (res) => Math.round(res * 100);
+
+                Object.keys(summary).forEach(
+                (key) => (summary[key] = formatResult(summary[key]))
+                );
+
+                // 점수 색상 함수
+                const score = (res) => (res >= 90 ? "🟢" : res >= 50 ? "🟠" : "🔴");
+
+                const comment = [
+                `⚡️ Lighthouse report!`,
+                `| Category | Score |`,
+                `| --- | --- |`,
+                `| ${score(summary.performance)} Performance | ${summary.performance} |`,
+                `| ${score(summary.accessibility)} Accessibility | ${summary.accessibility} |`,
+                `| ${score(summary['best-practices'])} Best Practices | ${summary['best-practices']} |`,
+                `| ${score(summary.seo)} SEO | ${summary.seo} |`
+                ].join("\n");
+
+                const detail = [
+                ``,
+                `### 📊 Performance Details`,
+                `| Metric | Score | Value |`,
+                `| --- | --- | --- |`,
+                `| ${score(Math.round(audits["first-contentful-paint"].score * 100))} First Contentful Paint | ${Math.round(audits["first-contentful-paint"].score * 100)} | ${audits["first-contentful-paint"].displayValue} |`,
+                `| ${score(Math.round(audits["largest-contentful-paint"].score * 100))} Largest Contentful Paint | ${Math.round(audits["largest-contentful-paint"].score * 100)} | ${audits["largest-contentful-paint"].displayValue} |`,
+                `| ${score(Math.round(audits["cumulative-layout-shift"].score * 100))} Cumulative Layout Shift | ${Math.round(audits["cumulative-layout-shift"].score * 100)} | ${audits["cumulative-layout-shift"].displayValue} |`
+                ].join("\n");
+                
+                comments += comment + "\n" + detail + "\n\n";
+                }); 
+
+            // 출력 설정
+                core.setOutput('comments', comments);
+
+      - name: Comment PR
+        uses: unsplash/comment-on-pr@v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: ${{ steps.format_lighthouse_score.outputs.comments }}
