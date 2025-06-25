@@ -2,6 +2,10 @@
   "name": "kokomen",
   "packageManager": "yarn@4.9.2",
   "private": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=4.0.0"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -20,6 +24,7 @@
     "client:prod": "yarn workspace @kokomen/client start",
     "docker-prod-up": "docker-compose -f compose.yaml up -d",
     "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint",
-    "test": "yarn workspace @kokomen/client test"
+    "test": "yarn workspace @kokomen/client test",
+    "lhci": "yarn workspace @myproject/web lhci"
   }
 }
