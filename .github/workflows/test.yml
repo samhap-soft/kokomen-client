@@ -1,12 +1,15 @@
 name: Test Workflow
-
 on:
   pull_request:
     branches:
       - development
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
+      NEXT_PUBLIC_BASE_URL: https://localhost:3000
 
     steps:
       - name: Checkout code
@@ -16,5 +19,6 @@ jobs:
         run: |
           yarn set version berry
           yarn install
+
       - name: Run tests
         run: yarn test
