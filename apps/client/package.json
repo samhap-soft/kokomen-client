@@ -10,7 +10,10 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "lhci": "lhci autorun",
+    "lhci:collect": "lhci collect",
+    "lhci:upload": "lhci upload"
   },
   "dependencies": {
     "@kokomen/ui": "workspace:*",
@@ -26,6 +29,7 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-typescript": "^7.27.1",
     "@kokomen/eslint-config": "workspace:*",
+    "@lhci/cli": "^0.15.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
