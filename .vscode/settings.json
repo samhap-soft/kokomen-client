@@ -72,6 +72,5 @@
     "javascriptreact",
     "typescript",
     "typescriptreact"
-  ],
-  "jest.jestCommandLine": "yarn test"
+  ]
 }
