@@ -5,20 +5,12 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { Layout } from "@kokomen/ui/components/layout";
 import Image from "next/image";
-import { Roboto } from "next/font/google";
 import { Button } from "@kokomen/ui/components/button";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import { JSX } from "react";
 import { isAxiosError } from "axios";
 import Header from "@/shared/header";
-
-
-const roboto: NextFontWithVariable = Roboto({
-  variable: "--font-roboto-sans",
-  subsets: ["latin"],
-});
 
 export default function Result(
   data: InferGetServerSidePropsType<typeof getServerSideProps>
@@ -34,7 +26,7 @@ export default function Result(
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout className={`${roboto.className}`}>
+      <Layout>
         <Header />
 
         <main className="p-8 flex w-full flex-col gap-5">
