@@ -9,7 +9,7 @@ export function Layout({
   return (
     <div
       className={cn(
-        `max-w-[1280px] min-h-[720px] h-screen w-screen`,
+        `min-w-[1280px] min-h-[720px] w-screen h-screen`,
         className
       )}
       {...props}

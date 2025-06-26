@@ -2,7 +2,7 @@ import { NextConfig } from "next";
 
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED_PATHS: Array<string> = ["/dashboard"];
+const PROTECTED_PATHS: Array<string> = ["/interviews", "/dashboard"];
 
 const AUTH_PAGES: Array<string> = [];
 
@@ -23,6 +23,7 @@ function getLoginUrl(request: NextRequest): string {
 }
 
 export function middleware(request: NextRequest): NextResponse {
+
   const { pathname } = request.nextUrl;
 
   if (
@@ -53,5 +54,6 @@ export function middleware(request: NextRequest): NextResponse {
 }
 
 export const config: NextConfig = {
+
   matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"],
 };

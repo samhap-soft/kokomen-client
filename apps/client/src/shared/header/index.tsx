@@ -10,6 +10,7 @@ const navigation: { href: string; label: string; current: boolean }[] = [
 
 export default function Header(): JSX.Element {
   const location = useRouter();
+  console.log(location);
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">

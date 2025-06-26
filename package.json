@@ -2,10 +2,6 @@
   "name": "kokomen",
   "packageManager": "yarn@4.9.2",
   "private": true,
-  "engines": {
-    "node": ">=18.0.0",
-    "yarn": ">=4.0.0"
-  },
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -15,7 +11,6 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "prettier": "^3.5.3",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "scripts": {
@@ -24,9 +19,6 @@
     "docker-dev-up": "docker-compose -f compose.dev.yaml up -d",
     "client:prod": "yarn workspace @kokomen/client start",
     "docker-prod-up": "docker-compose -f compose.yaml up -d",
-    "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint",
-    "test": "yarn workspace @kokomen/client test",
-    "lhci": "yarn workspace @kokomen/client lhci",
-    "build": "yarn workspace @kokomen/client build"
+    "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint"
   }
 }

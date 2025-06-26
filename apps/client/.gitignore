@@ -41,8 +41,3 @@ yarn-error.log*
 next-env.d.ts
 
 certificates
-
-/.lighthouseci/*
-/lhci_reports/*
-# Sentry Config File
-.env.sentry-build-plugin
