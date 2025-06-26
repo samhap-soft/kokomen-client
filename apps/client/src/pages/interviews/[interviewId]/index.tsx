@@ -22,7 +22,6 @@ export default function Interview({
   const { state, dispatch } = useInterviewStatus({
     questionId: +questionId,
     rootQuestion: root_question,
-
   });
 
   return (
@@ -38,21 +37,20 @@ export default function Interview({
         <link rel="preload" as="image" href="/interview/robot_standby.png" />
         <link rel="preload" as="image" href="/interview/robot_thinking.png" />
       </Head>
-      <Layout className="relative p-8">
+      <Layout className="relative p-8 ">
         <Image
           src="/interview/background.png"
           alt="Background"
           width={1280}
           height={720}
-          className="absolute w-full h-[60%] object-cover z-0 top-0 left-0"
+          className="absolute w-full h-[30%] md:h-[60%] object-cover z-0 top-[10%] md:top-0 left-0"
         />
         <div className="p-4 absolute top-10 left-[10%] w-3/4 h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
-
           <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
             {state.message}
           </div>
         </div>
-        <div className="absolute top-[25%] left-[30%] w-[40%] z-10">
+        <div className="absolute top-[25%] left-[10%] md:left-[20%] w-[80%] md:w-[60%] z-10">
           <Image
             src={ROBOT_SOURCES[state.status].src}
             alt={ROBOT_SOURCES[state.status].alt}
@@ -70,7 +68,6 @@ export default function Interview({
           state={state}
           dispatch={dispatch}
           rootQuestion={root_question}
-
         />
       </Layout>
     </>
@@ -101,4 +98,3 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
-
