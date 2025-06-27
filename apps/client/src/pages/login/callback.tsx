@@ -49,7 +49,13 @@ export default function KakaoCallbackPage({
   });
 
   useEffect(() => {
-    if (!router.isReady || authMutation.isPending || authMutation.error) return;
+    if (
+      !router.isReady ||
+      authMutation.isPending ||
+      authMutation.error ||
+      authMutation.isSuccess
+    )
+      return;
 
     const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/callback`;
 
