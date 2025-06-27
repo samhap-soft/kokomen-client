@@ -122,11 +122,11 @@ export function Interviewer({
     }
   });
 
-  return gltf ? (
+  return (
     <group position={[0, -1.8, 1]}>
       <primitive object={gltf.scene} ref={avatarRef} scale={1} />
     </group>
-  ) : null;
+  );
 }
 
 export function AIBackgroundImage(): JSX.Element {
