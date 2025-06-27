@@ -62,6 +62,7 @@ export function InterviewAnswerInput({
         }
       }, 2000);
     },
+    retry: 3,
   });
 
   return (
