@@ -63,12 +63,12 @@ export function InterviewAnswerInput({
   });
 
   return (
-    <div className="absolute z-20 bottom-10 gap-3 p-4 items-center w-3/4 left-[10%] border border-border-secondary rounded-xl bg-background-base ">
+    <div className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
       <Textarea
         variant={"default"}
         name="interview-input"
         border={"none"}
-        className={`transition-all block w-full resize-none border-none focus:border-none`}
+        className={`transition-all block w-full resize-none border-none focus:border-none max-h-[250px]`}
         rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
         value={interviewInput}
