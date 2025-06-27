@@ -2,7 +2,7 @@ import { Layout } from "@kokomen/ui/components/layout";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
 import InterviewModals from "@/domains/interview/components/interviewModals";
 import Head from "next/head";
-import { JSX, useEffect, useState } from "react";
+import { JSX, Suspense, useEffect, useState } from "react";
 import { useInterviewStatus } from "@/domains/interview/hooks/useInterviewStatus";
 import { GetServerSideProps } from "next";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/domains/interview/components/interviewer";
 import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, Html } from "@react-three/drei";
 
 interface InterviewProps {
   interviewId: string;
@@ -49,9 +49,7 @@ export default function Interview({
           content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
         />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="preload" as="image" href="/interview/robot_question.png" />
-        <link rel="preload" as="image" href="/interview/robot_standby.png" />
-        <link rel="preload" as="image" href="/interview/robot_thinking.png" />
+        <link rel="preload" as="image" href="/interviewBg.jpg" />
       </Head>
       <Layout>
         <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
@@ -68,13 +66,23 @@ export default function Interview({
                   shadows
                   dpr={[1, 2]}
                 >
-                  <AIBackgroundImage />
-                  <Environment preset="lobby" resolution={2048} />
-                  <Interviewer
-                    emotion={interviewerEmotion}
-                    isSpeaking={isSpeaking}
-                    isListening={isListening}
-                  />
+                  <Suspense
+                    fallback={
+                      <Html fullscreen>
+                        <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-nowrap bg-primary-bg-hover bg-opacity-80">
+                          면접관님을 불러오고 있습니다...
+                        </div>
+                      </Html>
+                    }
+                  >
+                    <AIBackgroundImage />
+                    <Environment preset="lobby" resolution={2048} />
+                    <Interviewer
+                      emotion={interviewerEmotion}
+                      isSpeaking={isSpeaking}
+                      isListening={isListening}
+                    />
+                  </Suspense>
                 </Canvas>
               </div>
             </div>
