@@ -1,24 +1,30 @@
-services:
-  client-dev:
-    container_name: kokomen-client
-    image: node:18-alpine
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./:/app
-    working_dir: /app
-    command: sh -c "yarn install --immutable && yarn client:dev"
-    environment:
-      - NODE_ENV=development
+version: "3.8"
 
-  storybook:
-    container_name: kokomen-ui
-    image: node:18-alpine
-    ports:
-      - "6006:6006"
-    volumes:
-      - ./:/app
-    working_dir: /app
-    command: sh -c "yarn install --immutable && yarn ui:dev"
+services:
+  client:
+    build:
+      context: .
+      dockerfile: ./apps/client/Dockerfile
+      args:
+        NEXT_PUBLIC_BASE_URL: https://dev.kokomen.kr
+        NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
+    container_name: kokomen-client
+    expose:
+      - "3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: kokomen-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot
+    depends_on:
+      - client
+    restart: always
