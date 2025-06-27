@@ -2,11 +2,16 @@ import { Layout } from "@kokomen/ui/components/layout";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
 import InterviewModals from "@/domains/interview/components/interviewModals";
 import Head from "next/head";
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 import { useInterviewStatus } from "@/domains/interview/hooks/useInterviewStatus";
 import { GetServerSideProps } from "next";
-import { AIInterviewerCanvas } from "@/domains/interview/components/interviewer";
+import {
+  AIBackgroundImage,
+  Interviewer,
+} from "@/domains/interview/components/interviewer";
 import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
+import { Canvas } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
 
 interface InterviewProps {
   interviewId: string;
@@ -23,7 +28,18 @@ export default function Interview({
     questionId: +questionId,
     rootQuestion: root_question,
   });
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
+  useEffect(() => {
+    setIsSpeaking(true);
+    setTimeout(() => {
+      setIsSpeaking(false);
+    }, 2000);
+  }, [state.message]);
+
+  const listeningEmotion = isListening ? "happy" : "encouraging";
+  const interviewerEmotion = isSpeaking ? "neutral" : listeningEmotion;
   return (
     <>
       <Head>
@@ -46,12 +62,27 @@ export default function Interview({
               </div>
             </div>
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
-              <AIInterviewerCanvas />
+              <div className="bg-gradient-to-b w-full h-full from-blue-50 to-indigo-100 relative rounded-lg">
+                <Canvas
+                  camera={{ position: [0, 0, 2], fov: 40 }}
+                  shadows
+                  dpr={[1, 2]}
+                >
+                  <AIBackgroundImage />
+                  <Environment preset="lobby" resolution={2048} />
+                  <Interviewer
+                    emotion={interviewerEmotion}
+                    isSpeaking={isSpeaking}
+                    isListening={isListening}
+                  />
+                </Canvas>
+              </div>
             </div>
             <InterviewAnswerInput
               interviewState={state}
               dispatch={dispatch}
               interviewId={interviewId}
+              setIsListening={setIsListening}
             />
           </div>
           <InterviewSideBar />

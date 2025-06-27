@@ -8,16 +8,18 @@ import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp } from "lucide-react";
 import { useRouter } from "next/router";
-import { JSX, useState } from "react";
+import React, { JSX, useState } from "react";
 
 export function InterviewAnswerInput({
   interviewState,
   interviewId,
   dispatch,
+  setIsListening,
 }: {
   interviewState: IInterviewState;
   dispatch: InterviewActions;
   interviewId: string;
+  setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const router = useRouter();
@@ -75,6 +77,8 @@ export function InterviewAnswerInput({
         autoAdjust={true}
         disabled={interviewState.status === "standby"}
         placeholder={"답변을 입력해주세요..."}
+        onFocus={() => setIsListening(true)}
+        onBlur={() => setIsListening(false)}
       />
       <div className="flex w-full gap-5">
         <div className="flex-1"></div>
