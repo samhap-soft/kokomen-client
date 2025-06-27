@@ -7,7 +7,7 @@ services:
       dockerfile: ./apps/client/Dockerfile
       args:
         NEXT_PUBLIC_BASE_URL: https://kokomen.kr
-        NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
+        NEXT_PUBLIC_API_BASE_URL: https://api.kokomen.kr/api/v1
     container_name: kokomen-client
     expose:
       - "3000"
@@ -22,7 +22,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/certbot:/var/www/certbot
     depends_on:
