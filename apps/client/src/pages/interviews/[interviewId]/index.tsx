@@ -1,12 +1,12 @@
 import { Layout } from "@kokomen/ui/components/layout";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
-import Image from "next/image";
 import InterviewModals from "@/domains/interview/components/interviewModals";
 import Head from "next/head";
 import { JSX } from "react";
 import { useInterviewStatus } from "@/domains/interview/hooks/useInterviewStatus";
-import { ROBOT_SOURCES } from "@/domains/interview/constants";
 import { GetServerSideProps } from "next";
+import { AIInterviewerCanvas } from "@/domains/interview/components/interviewer";
+import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 
 interface InterviewProps {
   interviewId: string;
@@ -37,33 +37,25 @@ export default function Interview({
         <link rel="preload" as="image" href="/interview/robot_standby.png" />
         <link rel="preload" as="image" href="/interview/robot_thinking.png" />
       </Head>
-      <Layout className="relative p-8 ">
-        <Image
-          src="/interview/background.png"
-          alt="Background"
-          width={1280}
-          height={720}
-          className="absolute w-full h-[30%] md:h-[60%] object-cover z-0 top-[10%] md:top-0 left-0"
-        />
-        <div className="p-4 absolute top-10 left-[10%] w-3/4 h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
-          <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
-            {state.message}
+      <Layout>
+        <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
+          <div className="flex flex-col flex-1 relative min-w-0">
+            <div className="p-4 absolute top-20 left-[10%] w-[80%] h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
+              <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
+                {state.message}
+              </div>
+            </div>
+            <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
+              <AIInterviewerCanvas />
+            </div>
+            <InterviewAnswerInput
+              interviewState={state}
+              dispatch={dispatch}
+              interviewId={interviewId}
+            />
           </div>
+          <InterviewSideBar />
         </div>
-        <div className="absolute top-[25%] left-[10%] md:left-[20%] w-[80%] md:w-[60%] z-10">
-          <Image
-            src={ROBOT_SOURCES[state.status].src}
-            alt={ROBOT_SOURCES[state.status].alt}
-            width={300}
-            height={300}
-            className={`w-full absolute top-0 left-0`}
-          />
-        </div>
-        <InterviewAnswerInput
-          interviewState={state}
-          dispatch={dispatch}
-          interviewId={interviewId}
-        />
         <InterviewModals
           state={state}
           dispatch={dispatch}
