@@ -1,11 +1,11 @@
 import { serverInstance } from "@/api";
+import { AxiosPromise } from "axios";
 
 interface ICategoryResponse {
   categories: Array<string>;
 }
-const getCategories = async (): Promise<ICategoryResponse> => {
-  const { data } = await serverInstance.get<ICategoryResponse>("/categories");
-  return data;
+const getCategories = async (): AxiosPromise<ICategoryResponse> => {
+  return serverInstance.get<ICategoryResponse>("/categories");
 };
 
 export { getCategories };

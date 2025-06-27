@@ -31,6 +31,8 @@
     "@babel/preset-typescript": "^7.27.1",
     "@kokomen/eslint-config": "workspace:*",
     "@lhci/cli": "^0.15.0",
+    "@react-three/drei": "^10.3.0",
+    "@react-three/fiber": "^9.1.2",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -41,6 +43,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0",
     "babel-jest": "^30.0.2",
     "eslint": "8.57.1",
     "jest": "^30.0.2",
@@ -49,6 +52,7 @@
     "jest-pnp-resolver": "^1.2.3",
     "msw": "^2.10.2",
     "tailwindcss": "^4",
+    "three": "^0.177.0",
     "ts-node": "^10.9.2",
     "typescript": "^5"
   }
