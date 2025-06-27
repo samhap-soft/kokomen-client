@@ -8,5 +8,6 @@ module.exports = {
   },
   rules: {
     "@typescript-eslint/naming-convention": "off",
+    "@rushstack/no-new-null": "off",
   },
 };

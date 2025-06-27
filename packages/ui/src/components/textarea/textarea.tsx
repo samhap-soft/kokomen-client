@@ -46,6 +46,7 @@ export const Textarea = ({
   border,
   ref,
   autoAdjust = false,
+  onChange,
   ...props
 }: TextareaProps): JSX.Element => {
   const handleChange = useCallback(
@@ -54,20 +55,20 @@ export const Textarea = ({
         e.target.style.height = "auto";
         e.target.style.height = `${e.target.scrollHeight > 400 ? 400 : e.target.scrollHeight}px`;
       }
-      if (props.onChange) {
-        props.onChange(e);
+      if (onChange) {
+        onChange(e);
       }
     },
-    [autoAdjust, props.onChange]
+    [autoAdjust, onChange]
   );
 
   return (
     <textarea
       className={cn(textareaVariants({ variant, size, border }), className)}
       ref={ref}
-      onChange={handleChange}
       placeholder="Type your text here..."
       {...props}
+      onChange={handleChange}
     />
   );
 };

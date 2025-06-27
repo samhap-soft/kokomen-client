@@ -8,16 +8,18 @@ import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp } from "lucide-react";
 import { useRouter } from "next/router";
-import { JSX, useState } from "react";
+import React, { JSX, useState } from "react";
 
 export function InterviewAnswerInput({
   interviewState,
   interviewId,
   dispatch,
+  setIsListening,
 }: {
   interviewState: IInterviewState;
   dispatch: InterviewActions;
   interviewId: string;
+  setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const router = useRouter();
@@ -60,21 +62,24 @@ export function InterviewAnswerInput({
         }
       }, 2000);
     },
+    retry: 3,
   });
 
   return (
-    <div className="absolute z-20 bottom-10 gap-3 p-4 items-center w-3/4 left-[10%] border border-border-secondary rounded-xl bg-background-base ">
+    <div className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
       <Textarea
         variant={"default"}
         name="interview-input"
         border={"none"}
-        className={`transition-all block w-full resize-none border-none focus:border-none`}
+        className={`transition-all block w-full resize-none border-none focus:border-none max-h-[250px]`}
         rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
         value={interviewInput}
         autoAdjust={true}
         disabled={interviewState.status === "standby"}
         placeholder={"답변을 입력해주세요..."}
+        onFocus={() => setIsListening(true)}
+        onBlur={() => setIsListening(false)}
       />
       <div className="flex w-full gap-5">
         <div className="flex-1"></div>

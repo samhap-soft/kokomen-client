@@ -1,0 +1,32 @@
+name: Deployment (Dev)
+
+on:
+  push:
+    branches: [development]
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Decode EC2 private key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Copy project to EC2
+        run: |
+          rsync -az --delete -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/kokomen
+
+      - name: Run Docker Compose on EC2
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd kokomen
+            docker system prune -f
+            docker compose -f compose.dev.yaml down || true
+            docker compose -f compose.dev.yaml up -d --build
+          EOF

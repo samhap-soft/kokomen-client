@@ -9,6 +9,9 @@
   "exports": {
     ".": "./"
   },
+  "dependencies": {
+    "lucide-react": "^0.511.0"
+  },
   "devDependencies": {
     "@kokomen/eslint-config": "workspace:*",
     "@storybook/addon-essentials": "^8.6.12",

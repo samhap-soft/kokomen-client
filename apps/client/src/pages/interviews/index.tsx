@@ -1,7 +1,5 @@
 import { getCategories } from "@/api/category";
 import { GetServerSidePropsResult, InferGetServerSidePropsType } from "next";
-import { NextFontWithVariable } from "next/dist/compiled/@next/font";
-import { Roboto } from "next/font/google";
 import { useRouter } from "next/router";
 import { JSX, useState, useCallback, useMemo } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -15,11 +13,7 @@ import {
   startNewInterview,
 } from "@/domains/interview/api";
 import { Button } from "@kokomen/ui/components/button";
-
-const roboto: NextFontWithVariable = Roboto({
-  variable: "--font-roboto-sans",
-  subsets: ["latin"],
-});
+import { withCheckInServer } from "@/utils/auth";
 
 const CATEGORY_META = {
   ALGORITHM: {
@@ -149,22 +143,20 @@ export default function Home({
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div
-        className={`${roboto.className} min-h-[720px] min-w-[1280px] w-screen h-screen`}
-      >
+      <div className="min-h-screen bg-bg-layout">
         <Header />
-        <main className="w-full flex h-full">
-          <section className="px-8 py-4 w-full">
+        <main className="flex flex-col-reverse md:flex-row md:items-start mx-auto max-w-[1280px] px-8 py-4 gap-5">
+          <section className="w-full lg:flex-1 md:min-w-0 flex flex-col">
             {/* 카테고리 탭 */}
-            <nav className="w-full font-bold overflow-x-auto">
-              <ol className="flex">
+            <nav className="w-full font-bold overflow-x-auto px-2">
+              <ol className="flex py-4 gap-2 min-w-max">
                 {categories.map((category) => (
                   <li key={category}>
                     <Button
                       variant={"default"}
                       role="tab"
                       aria-selected={interviewConfig.category === category}
-                      className={`p-3 hover:bg-gray-100 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset outline-none rounded-none ${
+                      className={`p-3 hover:bg-gray-100 cursor-pointer transition-colors focus:outline-none ${
                         interviewConfig.category === category
                           ? "border-b-2 border-blue-500 text-blue-600"
                           : "text-gray-700"
@@ -180,7 +172,7 @@ export default function Home({
             </nav>
 
             {/* 메인 컨텐츠 */}
-            <div className="w-full flex flex-col items-center px-8 pt-8">
+            <div className="flex flex-col items-center px-8 pt-8 border bg-bg-base border-border rounded-lg py-24">
               <Image
                 src={selectedCategoryMeta.image}
                 alt={selectedCategoryMeta.alt}
@@ -191,12 +183,12 @@ export default function Home({
               <h1 className="text-4xl font-bold p-2">
                 {selectedCategoryMeta.title}
               </h1>
-              <p className="py-4 text-lg text-center max-w-4xl leading-relaxed">
+              <p className="py-4 text-lg text-center leading-relaxed">
                 {selectedCategoryMeta.description}
               </p>
 
               {/* 문제 개수 선택 */}
-              <div className="w-full flex justify-center flex-col items-center gap-5 my-7">
+              <div className="flex justify-center flex-col items-center gap-5 my-7 ">
                 <label
                   htmlFor="question-count"
                   className="block text-sm font-medium text-gray-700 mb-2"
@@ -261,7 +253,7 @@ export default function Home({
                     면접 시작 중...
                   </span>
                 ) : (
-                  `${interviewConfig.category} 면접 시작하기 (${interviewConfig.max_question_count}문제)`
+                  `${interviewConfig.category} 면접 시작하기`
                 )}
               </Button>
 
@@ -275,44 +267,39 @@ export default function Home({
             </div>
           </section>
 
-          <aside className="min-w-[380px] w-1/4 h-full border-l border-gray-200 py-8 bg-gray-50">
-            <div className="flex flex-col items-center h-full">
-              <div className="w-36 h-36 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
-                MVP
-              </div>
-              <span className="mt-6 text-xl font-bold text-gray-800">MVP</span>
-
-              <div className="w-full p-8 flex-1">
-                <h2 className="text-lg font-semibold mb-4 text-gray-800">
-                  최근에 본 면접
-                </h2>
-                <ul className="flex flex-col gap-3">
-                  <li>
-                    <Link
-                      href="/interview/1"
-                      className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
-                    >
-                      운영체제
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/interview/2"
-                      className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
-                    >
-                      데이터베이스
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/interview/3"
-                      className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
-                    >
-                      자료구조
-                    </Link>
-                  </li>
-                </ul>
-              </div>
+          <aside className="min-w-96 border rounded-lg border-border py-8 bg-bg-base flex flex-col items-center mt-4">
+            <span className="p-6 text-xl font-bold text-gray-800">MVP</span>
+            <hr className="w-full text-border" />
+            <div className="w-full p-8 flex-1">
+              <h2 className="text-lg font-semibold mb-4 text-gray-800">
+                최근에 본 면접
+              </h2>
+              <ul className="flex flex-col gap-3">
+                <li>
+                  <Link
+                    href="/interview/1"
+                    className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
+                  >
+                    운영체제
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/interview/2"
+                    className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
+                  >
+                    데이터베이스
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/interview/3"
+                    className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
+                  >
+                    자료구조
+                  </Link>
+                </li>
+              </ul>
             </div>
           </aside>
         </main>
@@ -324,19 +311,14 @@ export default function Home({
 export const getServerSideProps = async (): Promise<
   GetServerSidePropsResult<{ categories: string[] }>
 > => {
-  try {
-    const { categories } = await getCategories();
-    return {
-      props: {
-        categories,
-      },
-    };
-  } catch {
-    return {
-      redirect: {
-        destination: "/500",
-        permanent: false,
-      },
-    };
-  }
+  return withCheckInServer(getCategories, {
+    onError: () => {
+      return {
+        redirect: {
+          destination: "/500",
+          permanent: false,
+        },
+      };
+    },
+  });
 };

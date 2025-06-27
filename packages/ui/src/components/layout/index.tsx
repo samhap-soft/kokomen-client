@@ -8,10 +8,7 @@ export function Layout({
 }: HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) {
   return (
     <div
-      className={cn(
-        `min-w-[1280px] min-h-[720px] w-screen h-screen`,
-        className
-      )}
+      className={cn(`min-h-[720px] h-screen w-screen`, className)}
       {...props}
     >
       {children}
