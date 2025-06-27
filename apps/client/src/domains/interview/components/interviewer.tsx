@@ -47,15 +47,11 @@ export function Interviewer({
   useEffect(() => {
     const mesh = morphRef.current;
     if (!mesh || !mesh.morphTargetInfluences || !mesh.morphTargetDictionary) {
-      console.log("Wolf3D_Head not ready yet");
       return;
     }
 
     const dict = mesh.morphTargetDictionary;
     const influences = mesh.morphTargetInfluences;
-    console.log("✅ Wolf3D_Head morph system ready");
-    console.log("Morph target influences:", mesh);
-    console.log("Available morphs:", Object.keys(dict));
 
     // Reset all expressions
     for (let i = 0; i < influences.length; i++) {
