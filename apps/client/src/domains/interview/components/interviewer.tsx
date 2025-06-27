@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 import React, { useRef, useEffect, JSX } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { useFrame, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as THREE from "three";
 // import office from '../../../../public/office.hdr'
@@ -134,7 +133,7 @@ export function Interviewer({
   ) : null;
 }
 
-function BackgroundImage(): JSX.Element {
+export function AIBackgroundImage(): JSX.Element {
   const texture = useLoader(THREE.TextureLoader, "/interviewBg.jpg");
 
   return (
@@ -142,25 +141,5 @@ function BackgroundImage(): JSX.Element {
       <planeGeometry />
       <meshBasicMaterial map={texture} />
     </mesh>
-  );
-}
-
-export function AIInterviewerCanvas({
-  emotion = "happy",
-  isSpeaking = false,
-  isListening = false,
-}: InterviewerProps): JSX.Element {
-  return (
-    <div className="bg-gradient-to-b w-full h-full from-blue-50 to-indigo-100 relative rounded-lg">
-      <Canvas camera={{ position: [0, 0, 2], fov: 40 }} shadows dpr={[1, 2]}>
-        <BackgroundImage />
-        <Environment preset="lobby" resolution={2048} />
-        <Interviewer
-          emotion={emotion}
-          isSpeaking={isSpeaking}
-          isListening={isListening}
-        />
-      </Canvas>
-    </div>
   );
 }
