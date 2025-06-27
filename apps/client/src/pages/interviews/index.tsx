@@ -13,6 +13,7 @@ import {
   startNewInterview,
 } from "@/domains/interview/api";
 import { Button } from "@kokomen/ui/components/button";
+import { withCheckInServer } from "@/utils/auth";
 
 const CATEGORY_META = {
   ALGORITHM: {
@@ -144,8 +145,8 @@ export default function Home({
       </Head>
       <div className="min-h-screen bg-bg-layout">
         <Header />
-        <main className="flex mx-auto max-w-[1280px]">
-          <section className="w-full lg:flex-1 lg:min-w-0 px-8 py-4 flex flex-col">
+        <main className="flex flex-col-reverse md:flex-row md:items-start mx-auto max-w-[1280px] px-8 py-4 gap-5">
+          <section className="w-full lg:flex-1 md:min-w-0 flex flex-col">
             {/* 카테고리 탭 */}
             <nav className="w-full font-bold overflow-x-auto px-2">
               <ol className="flex py-4 gap-2 min-w-max">
@@ -266,44 +267,39 @@ export default function Home({
             </div>
           </section>
 
-          <aside className="min-w-96 border-l border-gray-200 py-8 hidden lg:block">
-            <div className="flex flex-col items-center h-full">
-              <div className="w-36 h-36 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
-                MVP
-              </div>
-              <span className="mt-6 text-xl font-bold text-gray-800">MVP</span>
-
-              <div className="w-full p-8 flex-1">
-                <h2 className="text-lg font-semibold mb-4 text-gray-800">
-                  최근에 본 면접
-                </h2>
-                <ul className="flex flex-col gap-3">
-                  <li>
-                    <Link
-                      href="/interview/1"
-                      className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
-                    >
-                      운영체제
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/interview/2"
-                      className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
-                    >
-                      데이터베이스
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/interview/3"
-                      className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
-                    >
-                      자료구조
-                    </Link>
-                  </li>
-                </ul>
-              </div>
+          <aside className="min-w-96 border rounded-lg border-border py-8 bg-bg-base flex flex-col items-center mt-4">
+            <span className="p-6 text-xl font-bold text-gray-800">MVP</span>
+            <hr className="w-full text-border" />
+            <div className="w-full p-8 flex-1">
+              <h2 className="text-lg font-semibold mb-4 text-gray-800">
+                최근에 본 면접
+              </h2>
+              <ul className="flex flex-col gap-3">
+                <li>
+                  <Link
+                    href="/interview/1"
+                    className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
+                  >
+                    운영체제
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/interview/2"
+                    className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
+                  >
+                    데이터베이스
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/interview/3"
+                    className="block w-full p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-white transition-all text-center"
+                  >
+                    자료구조
+                  </Link>
+                </li>
+              </ul>
             </div>
           </aside>
         </main>
@@ -315,19 +311,14 @@ export default function Home({
 export const getServerSideProps = async (): Promise<
   GetServerSidePropsResult<{ categories: string[] }>
 > => {
-  try {
-    const { categories } = await getCategories();
-    return {
-      props: {
-        categories,
-      },
-    };
-  } catch {
-    return {
-      redirect: {
-        destination: "/500",
-        permanent: false,
-      },
-    };
-  }
+  return withCheckInServer(getCategories, {
+    onError: () => {
+      return {
+        redirect: {
+          destination: "/500",
+          permanent: false,
+        },
+      };
+    },
+  });
 };
