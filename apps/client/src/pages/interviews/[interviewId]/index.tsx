@@ -1,18 +1,25 @@
 import { Layout } from "@kokomen/ui/components/layout";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
-import InterviewModals from "@/domains/interview/components/interviewModals";
 import Head from "next/head";
-import { JSX, Suspense, useEffect, useState } from "react";
+import React, { JSX, useEffect, useState } from "react";
 import { useInterviewStatus } from "@/domains/interview/hooks/useInterviewStatus";
 import { GetServerSideProps } from "next";
-import {
-  AIBackgroundImage,
-  Interviewer,
-} from "@/domains/interview/components/interviewer";
 import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
-import { Canvas } from "@react-three/fiber";
-import { Environment, Html } from "@react-three/drei";
+import dynamic from "next/dynamic";
+import InterviewModals from "@/domains/interview/components/interviewModals";
 
+// eslint-disable-next-line @rushstack/typedef-var
+const AiInterviewInterface = dynamic(
+  () => import("@/domains/interview/components/AiInterviewInterface"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="font-bold text-xl text-center w-full h-full flex items-center justify-center">
+        면접장을 정리하는 중...
+      </div>
+    ),
+  }
+);
 interface InterviewProps {
   interviewId: string;
   questionId: string;
@@ -60,30 +67,12 @@ export default function Interview({
               </div>
             </div>
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
-              <div className="bg-gradient-to-b w-full h-full from-blue-50 to-indigo-100 relative rounded-lg">
-                <Canvas
-                  camera={{ position: [0, 0, 2], fov: 40 }}
-                  shadows
-                  dpr={[1, 2]}
-                >
-                  <Suspense
-                    fallback={
-                      <Html fullscreen>
-                        <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-nowrap bg-primary-bg-hover bg-opacity-80">
-                          면접관님을 불러오고 있습니다...
-                        </div>
-                      </Html>
-                    }
-                  >
-                    <AIBackgroundImage />
-                    <Environment preset="lobby" resolution={2048} />
-                    <Interviewer
-                      emotion={interviewerEmotion}
-                      isSpeaking={isSpeaking}
-                      isListening={isListening}
-                    />
-                  </Suspense>
-                </Canvas>
+              <div className="bg-gradient-to-r w-full h-full from-blue-50 to-primary-bg-hover relative rounded-lg">
+                <AiInterviewInterface
+                  emotion={interviewerEmotion}
+                  isListening={isListening}
+                  isSpeaking={isSpeaking}
+                />
               </div>
             </div>
             <InterviewAnswerInput
