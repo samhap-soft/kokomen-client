@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   productionBrowserSourceMaps: false,
+  experimental: {
+    webpackMemoryOptimizations: true,
+    webpackBuildWorker: true,
+    preloadEntriesOnStart: true,
+  },
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
       config.devtool = false;
@@ -27,6 +32,7 @@ const nextConfig: NextConfig = {
         maxInitialRequests: 10,
       };
     }
+
     config.resolve.plugins = config.resolve.plugins || [];
     config.resolve.plugins.push(PnpWebpackPlugin);
 
