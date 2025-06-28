@@ -53,6 +53,7 @@
     "jest-fixed-jsdom": "^0.0.9",
     "jest-pnp-resolver": "^1.2.3",
     "msw": "^2.10.2",
+    "pnp-webpack-plugin": "^1.7.0",
     "tailwindcss": "^4",
     "three": "^0.177.0",
     "ts-node": "^10.9.2",
