@@ -15,7 +15,6 @@ jobs:
 
       - name: Run Docker Compose
         run: |
-          cd kokomen-client
           docker system prune -f
           docker compose -f compose.yaml down || true
           docker compose -f compose.yaml up -d --build
