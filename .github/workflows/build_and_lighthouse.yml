@@ -27,6 +27,7 @@ jobs:
           yarn install
 
       - name: Build Next.js app
+        id: build_nextjs
         run: |
           BUILD_START_TIME=$(date +%s)
           echo "Build started at $(date)"
@@ -39,21 +40,30 @@ jobs:
           NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
           NEXT_PUBLIC_BASE_URL: https://localhost:3000
       - name: Set build Duration
+        if: github.event_name == 'pull_request'
+        id: set_duration
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const buildDuration = process.env.BUILD_DURATION;
-            const buildDurationString = buildDuration ? `#Build Information \n 빌드 시간: ${buildDuration}초` : "";
+            const buildDurationString = buildDuration ? `# Build Information\n🕒 빌드 시간: ${buildDuration}초` : "";
             core.setOutput('buildDuration', buildDurationString);
 
+      - name: Build Duration Comment
+        if: github.event_name == 'pull_request'
+        uses: unsplash/comment-on-pr@v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: ${{ steps.set_duration.outputs.buildDuration }}
       - name: Run Lighthouse CI
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
         run: yarn lhci || echo "Failed to run Lighthouse CI"
       - name: Format lighthouse score
         id: format_lighthouse_score
-        uses: actions/github-script@v7 # 최신 버전 사용
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -108,13 +118,10 @@ jobs:
 
             // 출력 설정
                 core.setOutput('comments', comments);
-
-      - name: Comment PR
+      - name: Lighthouse Score Comment
         if: github.event_name == 'pull_request'
         uses: unsplash/comment-on-pr@v1.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          msg: |
-            ${{ steps.format_lighthouse_score.outputs.comments }}
-            ${{ steps.format_lighthouse_score.outputs.buildDuration }}
+          msg: ${{ steps.format_lighthouse_score.outputs.comments }}
