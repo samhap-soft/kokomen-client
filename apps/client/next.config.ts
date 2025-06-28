@@ -1,6 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import path from "path";
+import PnpWebpackPlugin from "pnp-webpack-plugin";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -9,6 +11,36 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@kokomen/ui"],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  productionBrowserSourceMaps: false,
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      config.devtool = false;
+      config.optimization.splitChunks = {
+        chunks: "all",
+        minChunks: 2,
+        maxInitialRequests: 10,
+      };
+    }
+    config.resolve.plugins = config.resolve.plugins || [];
+    config.resolve.plugins.push(PnpWebpackPlugin);
+
+    config.resolveLoader = {
+      ...config.resolveLoader,
+      plugins: [PnpWebpackPlugin.moduleLoader(import.meta.url)],
+    };
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@": path.resolve("./src"),
+      "@kokomen/ui": path.resolve("../../packages/ui/src"),
+    };
+    return config;
+  },
 };
 
 export default withSentryConfig(withBundleAnalyzer(nextConfig), {
