@@ -1,4 +1,4 @@
-name: Lighthouse CI
+name: Lighthouse & Build Time Checker
 on:
   pull_request:
     branches: [main, development]
@@ -27,10 +27,25 @@ jobs:
           yarn install
 
       - name: Build Next.js app
-        run: yarn build
+        run: |
+          BUILD_START_TIME=$(date +%s)
+          echo "Build started at $(date)"
+          time yarn build
+          BUILD_END_TIME=$(date +%s)
+          BUILD_DURATION=$((BUILD_END_TIME - BUILD_START_TIME))
+          echo "Build finished at $(date)"
+          echo "BUILD_DURATION=$BUILD_DURATION" >> $GITHUB_ENV
         env:
           NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
           NEXT_PUBLIC_BASE_URL: https://localhost:3000
+      - name: Set build Duration
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const buildDuration = process.env.BUILD_DURATION;
+            const buildDurationString = buildDuration ? `#Build Information \n 빌드 시간: ${buildDuration}초` : "";
+            core.setOutput('buildDuration', buildDurationString);
 
       - name: Run Lighthouse CI
         env:
@@ -47,6 +62,7 @@ jobs:
 
             // 파일 경로 수정 (실제 경로로 변경 필요)
             const results = JSON.parse(fs.readFileSync("./apps/client/lhci_reports/manifest.json"));
+
             let comments = "";
 
             results.forEach((result, idx) => {
@@ -99,4 +115,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          msg: ${{ steps.format_lighthouse_score.outputs.comments }}
+          msg: |
+            ${{ steps.format_lighthouse_score.outputs.comments }}
+            ${{ steps.format_lighthouse_score.outputs.buildDuration }}
