@@ -3,10 +3,17 @@ import { InterviewAnswerInput } from "@/domains/interview/components/interviewIn
 import Head from "next/head";
 import React, { JSX, useEffect, useState } from "react";
 import { useInterviewStatus } from "@/domains/interview/hooks/useInterviewStatus";
-import { GetServerSideProps } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsResult,
+  InferGetServerSidePropsType,
+} from "next";
 import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 import dynamic from "next/dynamic";
 import InterviewModals from "@/domains/interview/components/interviewModals";
+import { withCheckInServer } from "@/utils/auth";
+import { getInterview } from "@/domains/interview/api";
+import { Interview as InterviewType } from "@/domains/interview/types";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
@@ -20,20 +27,20 @@ const AiInterviewInterface = dynamic(
     ),
   }
 );
-interface InterviewProps {
-  interviewId: string;
-  questionId: string;
-  root_question: string;
-}
 
 export default function Interview({
+  cur_question,
+  cur_question_id,
+  max_question_count,
+  prev_questions_and_answers,
   interviewId,
-  questionId,
-  root_question,
-}: InterviewProps): JSX.Element {
+}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const { state, dispatch } = useInterviewStatus({
-    questionId: +questionId,
-    rootQuestion: root_question,
+    questionId: cur_question_id,
+    questionsAndAnswers: prev_questions_and_answers.map((item) => ({
+      question: item.question,
+      answer: item.answer,
+    })),
   });
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
@@ -44,7 +51,6 @@ export default function Interview({
       setIsSpeaking(false);
     }, 2000);
   }, [state.message]);
-
   const listeningEmotion = isListening ? "happy" : "encouraging";
   const interviewerEmotion = isSpeaking ? "neutral" : listeningEmotion;
   return (
@@ -80,41 +86,62 @@ export default function Interview({
               dispatch={dispatch}
               interviewId={interviewId}
               setIsListening={setIsListening}
+              answeredQuestions={state.questionsAndAnswers.length}
+              totalQuestions={max_question_count}
             />
           </div>
-          <InterviewSideBar />
+          <InterviewSideBar prevQuestionAndAnswer={state.questionsAndAnswers} />
         </div>
         <InterviewModals
           state={state}
           dispatch={dispatch}
-          rootQuestion={root_question}
+          rootQuestion={cur_question}
         />
       </Layout>
     </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { interviewId, questionId, root_question } = context.query;
+export const getServerSideProps: GetServerSideProps<
+  InterviewType & { interviewId: number }
+> = async (
+  context
+): Promise<
+  GetServerSidePropsResult<InterviewType & { interviewId: number }>
+> => {
+  const { interviewId } = context.query;
 
-  if (
-    !interviewId ||
-    !questionId ||
-    !root_question ||
-    Array.isArray(interviewId) ||
-    Array.isArray(questionId) ||
-    Array.isArray(root_question)
-  ) {
+  if (!interviewId) {
     return {
       notFound: true,
     };
   }
 
-  return {
-    props: {
-      interviewId,
-      questionId,
-      root_question,
+  return withCheckInServer<InterviewType & { interviewId: number }>(
+    async () => {
+      const response = await getInterview(interviewId as string, context.req);
+      if (response.data.interview_state === "FINISHED") {
+        throw new Error("Finished Interview");
+      }
+      return {
+        ...response.data,
+        interviewId: +interviewId,
+      };
     },
-  };
+    {
+      onError: (error) => {
+        if (error instanceof Error && error.message === "Finished Interview") {
+          return {
+            redirect: {
+              destination: `/interviews/${interviewId}/result`,
+              permanent: false,
+            },
+          };
+        }
+        return {
+          notFound: true,
+        };
+      },
+    }
+  );
 };
