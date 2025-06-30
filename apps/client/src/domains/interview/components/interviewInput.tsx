@@ -80,6 +80,16 @@ export function InterviewAnswerInput({
         className={`transition-all block w-full resize-none border-none focus:border-none max-h-[250px]`}
         rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            mutate({
+              interviewId: interviewId,
+              questionId: interviewState.currentQuestionId,
+              answer: interviewInput,
+            });
+          }
+        }}
         value={interviewInput}
         autoAdjust={true}
         disabled={interviewState.status === "standby"}
