@@ -8,13 +8,18 @@ type QuestionAndAnswer = {
 };
 type PrevQuestionAndAnswers = Array<QuestionAndAnswer>;
 
-type PrevInterview = {
-  interview_state: "FINISHED" | "IN_PROGRESS";
-  prev_question_and_answers: PrevQuestionAndAnswers;
+type Interview = {
+  interview_state: "IN_PROGRESS" | "FINISHED";
+  prev_questions_and_answers: PrevQuestionAndAnswers;
   cur_question_id: number;
-  question: string;
   cur_question_count: number;
+  cur_question: string;
   max_question_count: number;
 };
 
-export type { InterviewStatus, PrevQuestionAndAnswers, PrevInterview };
+export type {
+  InterviewStatus,
+  QuestionAndAnswer,
+  PrevQuestionAndAnswers,
+  Interview,
+};
