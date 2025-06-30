@@ -65,16 +65,20 @@ interface ToastViewportProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const ToastViewport = React.forwardRef<
   HTMLDivElement,
   ToastViewportProps
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px]",
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  const { toasts } = useToastContext();
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px] ",
+        toasts.length === 0 && "hidden",
+        className
+      )}
+      {...props}
+    />
+  );
+});
 ToastViewport.displayName = "ToastViewport";
 
 // Toast Variants
