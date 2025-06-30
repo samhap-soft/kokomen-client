@@ -1,5 +1,12 @@
 import { serverInstance } from "@/api";
-import { AxiosPromise } from "axios";
+import { User } from "@/domains/auth/types";
+import axios, { AxiosInstance, AxiosPromise } from "axios";
+import { GetServerSidePropsContext } from "next";
+
+const authServerInstance: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  withCredentials: true,
+});
 
 interface KakaoLoginResponse {
   id: number;
@@ -9,7 +16,6 @@ interface KakaoLoginResponse {
 const postAuthorizationCode = async (
   code: string,
   redirectUri: string
-
 ): AxiosPromise<KakaoLoginResponse> => {
   return serverInstance.post(
     `/auth/kakao-login`,
@@ -21,4 +27,24 @@ const postAuthorizationCode = async (
   );
 };
 
-export { postAuthorizationCode };
+const getUserInfo = async (
+  context: GetServerSidePropsContext
+): AxiosPromise<User> => {
+  return authServerInstance.get(`/members/me/profile`, {
+    headers: {
+      Cookie: context.req.headers.cookie,
+    },
+  });
+};
+
+const logout = async (): AxiosPromise<void> => {
+  return axios.post(
+    `/api/auth/logout`,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+};
+
+export { postAuthorizationCode, getUserInfo, logout };
