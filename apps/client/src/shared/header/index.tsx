@@ -21,6 +21,7 @@ interface HeaderProps {
 const navigation = [
   { href: "/", label: "홈", current: true },
   { href: "/interviews", label: "면접", current: false },
+  { href: "/dashboard", label: "대시보드", current: false },
 ];
 
 // eslint-disable-next-line react/prop-types
@@ -99,25 +100,12 @@ const Header: FC<HeaderProps> = memo(({ user = null }) => {
             <div className="hidden md:block relative" ref={dropdownRef}>
               <Button
                 onClick={handleUserClick}
-                variant="info"
-                size="small"
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200 ${
-                  user
-                    ? "bg-gray-50 hover:bg-gray-100 text-gray-700"
-                    : "bg-blue-50 hover:bg-blue-100 text-blue-600"
-                }`}
+                variant="primary"
+                size="default"
+                round
+                className="w-10 h-10"
               >
-                <UserIcon className="w-4 h-4" />
-                <span className="text-sm font-medium">
-                  {user?.nickname || "로그인"}
-                </span>
-                {user && (
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                )}
+                <UserIcon className="w-4 h-4 text-text-light-solid" />
               </Button>
 
               {/* 드롭다운 메뉴 */}
