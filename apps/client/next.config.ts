@@ -15,6 +15,15 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "d2ftfzru2cd49g.cloudfront.net",
+      },
+    ],
+    minimumCacheTTL: 31536000,
+  },
   productionBrowserSourceMaps: false,
   experimental: {
     webpackMemoryOptimizations: true,
