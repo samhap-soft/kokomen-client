@@ -39,7 +39,6 @@ export async function withCheckInServer<T>(
   } catch (error) {
     if (isAxiosError(error)) {
       const status = error.response?.status;
-      console.log("error!!", error.response?.data);
 
       switch (status) {
         case 401:

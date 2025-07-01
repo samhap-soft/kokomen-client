@@ -1,6 +1,4 @@
-import { Modal } from "@kokomen/ui/components/modal";
 import { Button } from "@kokomen/ui/components/button";
-import { useRouter } from "next/router";
 import {
   IInterviewState,
   InterviewActions,
@@ -33,44 +31,27 @@ function StartNewInterviewModal({
   state: IInterviewState;
   dispatch: InterviewActions;
   rootQuestion: string;
-}): JSX.Element {
-  const [interviewModal, setInterviewModal] = useState<boolean>(true);
-  const router = useRouter();
+}): JSX.Element | null {
+  const [interviewStart, setInterviewStart] = useState<boolean>(false);
 
   const startup = (): void => {
     dispatch({ type: "START_UP" });
-    setInterviewModal(false);
+    setInterviewStart(true);
     setTimeout(() => {
       dispatch({ ...state, type: "QUESTION", message: rootQuestion });
     }, 2000);
   };
+  if (interviewStart) {
+    return null;
+  }
   return (
-    <Modal
-      isOpen={interviewModal}
-      onClose={() => setInterviewModal(false)}
-      title="인터뷰 시작"
-      closeButton={false}
+    <Button
+      className="w-1/2 absolute bottom-40 left-1/4 text-xl font-bold"
+      variant={"primary"}
+      size={"xl"}
+      onClick={() => startup()}
     >
-      <p className="text-lg">인터뷰를 시작합니다. 준비 되셨나요?</p>
-      <div className="mt-8 flex gap-4 w-full">
-        <Button
-          className="w-full"
-          size={"default"}
-          variant={"primary"}
-          danger
-          onClick={() => router.back()}
-        >
-          나가기
-        </Button>
-        <Button
-          className="w-full"
-          variant={"primary"}
-          size={"default"}
-          onClick={() => startup()}
-        >
-          시작하기
-        </Button>
-      </div>
-    </Modal>
+      면접 시작하기
+    </Button>
   );
 }
