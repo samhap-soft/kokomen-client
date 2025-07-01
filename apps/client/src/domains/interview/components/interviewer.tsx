@@ -23,8 +23,8 @@ export const Interviewer: React.FC<InterviewerProps> = memo(
     return (
       <Suspense
         fallback={
-          <Html>
-            <div className="absolute left-1/2 w-full h-full flex items-center justify-center text-2xl font-bold text-nowrap text-bg-base bg-opacity-80">
+          <Html fullscreen>
+            <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-nowrap text-text-light-solid bg-opacity-80">
               면접관님이 허겁지겁 달려오는중..
             </div>
           </Html>

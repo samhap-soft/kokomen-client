@@ -1,9 +1,9 @@
-import { AxiosResponse, AxiosPromise, isAxiosError } from "axios";
+import { AxiosPromise, isAxiosError } from "axios";
 import { GetServerSidePropsResult, GetServerSidePropsContext } from "next";
 
 const LOGIN_PATH: string = "/login";
 export async function withCheckInServer<T>(
-  fetchCall: () => AxiosPromise<T>,
+  fetchCall: () => Promise<AxiosPromise<T>> | AxiosPromise<T> | Promise<T>,
   options?: {
     // 404 대신 다른 처리를 원할 때
     onError?: (
@@ -26,15 +26,15 @@ export async function withCheckInServer<T>(
       );
     }
 
-    const response: AxiosResponse<T> = await fetchCall();
-
-    // 응답 데이터 검증
-    if (typeof response !== "object") {
-      throw new Error("Invalid response format");
+    const response = await fetchCall();
+    if (response && typeof response === "object" && "data" in response) {
+      return {
+        props: response.data,
+      };
     }
 
     return {
-      props: response.data, // response.data를 사용해야 함
+      props: response as T,
     };
   } catch (error) {
     if (isAxiosError(error)) {

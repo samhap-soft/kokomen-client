@@ -6,17 +6,18 @@ jest.mock("next/router", () => ({
   },
 }));
 import "@testing-library/jest-dom";
-import { screen, render } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import Home from "@/pages";
+import { renderWithProviders } from "@/utils/test-utils";
 
 describe("랜딩 페이지 렌더링 테스트", () => {
   it("정상적으로 렌더링 되는지 테스트", () => {
-    render(<Home />);
+    renderWithProviders(<Home />);
     expect(screen.getByText("새로운 기준")).toBeInTheDocument();
   });
 
   it("네비게이션 링크가 올바르게 렌더링 되는지 테스트", () => {
-    render(<Home />);
+    renderWithProviders(<Home />);
     const homeLink = screen.getByText("홈");
     const interviewsLink = screen.getByText("면접");
 
@@ -27,7 +28,7 @@ describe("랜딩 페이지 렌더링 테스트", () => {
 
 describe("랜딩 페이지 링크 테스트", () => {
   it("모든 네비게이션 링크가 올바른 경로를 가지는지 테스트", () => {
-    render(<Home />);
+    renderWithProviders(<Home />);
 
     // 각 링크의 href 속성 확인
     expect(screen.getByRole("link", { name: "홈" })).toHaveAttribute(
@@ -44,7 +45,7 @@ describe("랜딩 페이지 링크 테스트", () => {
   });
 
   it("링크가 접근 가능한 상태인지 테스트", () => {
-    render(<Home />);
+    renderWithProviders(<Home />);
     const link = screen.getByRole("link", { name: "면접 연습 시작하기" });
 
     expect(link).toBeEnabled();

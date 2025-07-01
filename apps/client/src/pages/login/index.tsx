@@ -6,7 +6,7 @@ import { JSX } from "react";
 
 export default function LoginPage(): JSX.Element {
   const { query } = useRouter();
-  const redirectTo = `&state=${process.env.NEXT_PUBLIC_BASE_URL}/${query.redirectTo ? query.redirectTo : ""}`;
+  const redirectTo = `&state=${query.redirectTo ? query.redirectTo : `${process.env.NEXT_PUBLIC_BASE_URL}/`}`;
   const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/callback${redirectTo}`;
   return (
     <>
@@ -96,7 +96,10 @@ export const getServerSideProps: GetServerSideProps = async (
     // 이미 로그인된 상태라면 홈으로 리다이렉트
     return {
       redirect: {
-        destination: "/",
+        destination:
+          context.query.redirectTo
+            ?.toString()
+            .replace("localhost", "kokomen.kr") ?? "/",
         permanent: false,
       },
     };

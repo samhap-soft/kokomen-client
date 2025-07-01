@@ -3,6 +3,9 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/shared/header";
+import { getUserInfo } from "@/domains/auth/api";
+import { isAxiosError } from "axios";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 const features: { title: string; description: string; icon: string }[] = [
   {
@@ -27,7 +30,9 @@ const features: { title: string; description: string; icon: string }[] = [
   },
 ];
 
-export default function Home(): JSX.Element {
+export default function Home({
+  user,
+}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   return (
     <>
       <Head>
@@ -43,7 +48,7 @@ export default function Home(): JSX.Element {
       <main
         className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50`}
       >
-        <Header />
+        <Header user={user} />
         <section className="relative overflow-hidden py-20 sm:py-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
@@ -151,3 +156,28 @@ export default function Home(): JSX.Element {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const { data: user } = await getUserInfo(context);
+    return {
+      props: {
+        user,
+      },
+    };
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 401) {
+      return {
+        props: {
+          user: null,
+        },
+      };
+    }
+    return {
+      redirect: {
+        destination: "/error",
+        permanent: false,
+      },
+    };
+  }
+};

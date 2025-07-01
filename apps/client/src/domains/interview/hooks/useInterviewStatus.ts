@@ -1,4 +1,4 @@
-import { InterviewStatus } from "@/domains/interview/types";
+import { InterviewStatus, QuestionAndAnswer } from "@/domains/interview/types";
 import { Dispatch, useReducer } from "react";
 
 const INTERVIEW_STARTUP: string =
@@ -11,6 +11,7 @@ interface IInterviewState {
   message: string;
   status: InterviewStatus;
   currentQuestionId: number;
+  questionsAndAnswers: Omit<QuestionAndAnswer, "answer_id" | "question_id">[];
 }
 
 type InterviewActions = Dispatch<InterviewAction>;
@@ -32,11 +33,19 @@ interface IQuestionAction {
   message: string;
   currentQuestionId: number;
 }
+
+interface INextQuestionAction {
+  type: "NEXT_QUESTION";
+  message: string;
+  currentQuestionId: number;
+  prevAnswer: string;
+}
 type InterviewAction =
   | IStartupAction
   | IAnswerQuestionAction
   | IInterviewEndAction
   | ISubmitFailedAction
+  | INextQuestionAction
   | IQuestionAction;
 
 function reducer(
@@ -61,11 +70,25 @@ function reducer(
         status: "standby",
         message: INTERVIEW_FINISHED,
       };
-    case "QUESTION":
+    case "NEXT_QUESTION":
       return {
         ...state,
         message: action.message,
         status: "question",
+        currentQuestionId: action.currentQuestionId,
+        questionsAndAnswers: [
+          ...state.questionsAndAnswers,
+          {
+            question: state.message,
+            answer: action.prevAnswer,
+          },
+        ],
+      };
+    case "QUESTION":
+      return {
+        ...state,
+        status: "question",
+        message: action.message,
         currentQuestionId: action.currentQuestionId,
       };
     case "SUBMIT_FAILED":
@@ -81,14 +104,16 @@ function reducer(
 
 const useInterviewStatus = ({
   questionId,
+  questionsAndAnswers,
 }: {
   questionId: number;
-  rootQuestion: string;
+  questionsAndAnswers: Omit<QuestionAndAnswer, "answer_id" | "question_id">[];
 }): { state: IInterviewState; dispatch: InterviewActions } => {
   const [state, dispatch] = useReducer(reducer, {
     message: INTERVIEW_STARTUP,
     status: "standby",
     currentQuestionId: questionId,
+    questionsAndAnswers: questionsAndAnswers,
   });
 
   return { state, dispatch };

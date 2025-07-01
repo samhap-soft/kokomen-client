@@ -4,20 +4,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PROTECTED_PATHS: Array<string> = ["/interviews", "/dashboard"];
 
-const AUTH_PAGES: Array<string> = [];
-
 // 경로 체크 함수들
 function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PATHS.some((path) => pathname.startsWith(path));
 }
 
-function isAuthPage(pathname: string): boolean {
-  return AUTH_PAGES.some((path) => pathname.startsWith(path));
-}
-
 // 로그인 URL 생성
 function getLoginUrl(request: NextRequest): string {
-  const loginUrl = new URL("/login", request.url);
+  const loginUrl = new URL(
+    `/login?redirectTo=${request.nextUrl.pathname}`,
+    process.env.NEXT_PUBLIC_BASE_URL
+  );
 
   return loginUrl.toString();
 }
@@ -42,12 +39,6 @@ export function middleware(request: NextRequest): NextResponse {
     }
 
     return NextResponse.next();
-  }
-  if (isAuthPage(pathname)) {
-    if (sessionId) {
-      const redirectTo = request.nextUrl.searchParams.get("redirect") || "/";
-      return NextResponse.redirect(new URL(redirectTo, request.url));
-    }
   }
   return NextResponse.next();
 }

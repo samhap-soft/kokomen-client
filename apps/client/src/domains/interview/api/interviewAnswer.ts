@@ -16,7 +16,7 @@ export async function submitInterviewAnswer({
   questionId,
   answer,
 }: {
-  interviewId: string;
+  interviewId: number;
   questionId: number;
   answer: string;
 }): Promise<AxiosResponse<InterviewAnswerApiResponse, any>> {
@@ -30,7 +30,7 @@ export async function submitInterviewAnswer({
       answer: answer,
     },
     {
-      timeout: 10000,
+      timeout: 30000,
     }
   );
 }
