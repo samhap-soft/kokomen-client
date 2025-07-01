@@ -1,6 +1,5 @@
 import { User } from "@/domains/auth/types";
 import {
-  ChevronDown,
   LayoutDashboard,
   LogOut,
   Menu,
