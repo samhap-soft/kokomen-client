@@ -21,7 +21,7 @@ export const getInterviewHistory = async ({
     params: {
       page,
       size,
-      sort,
+      sort: sort === "desc" ? "id,desc" : "id,asc",
       state: range === "ALL" ? undefined : range,
     },
   });
