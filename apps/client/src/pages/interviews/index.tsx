@@ -1,4 +1,4 @@
-import { getCategories } from "@/api/category";
+import { Category, getCategories } from "@/api/category";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
@@ -30,44 +30,6 @@ import {
 import { getUserInfo } from "@/domains/auth/api";
 import { User as UserType } from "@/domains/auth/types";
 
-const CATEGORY_META = {
-  ALGORITHM: {
-    title: "알고리즘(Algorithm)",
-    description:
-      "알고리즘(Algorithm)은 특정 문제를 해결하기 위한 단계적 절차 또는 공식을 의미합니다.",
-    image: "/linux.png",
-    alt: "Algorithm",
-  },
-  DATA_STRUCTURE: {
-    title: "자료구조(Data Structures)",
-    description:
-      "자료구조(Data Structures)는 데이터를 저장하고 관리하는 방식으로, 효율적인 데이터 처리를 위해 다양한 형태로 구성됩니다.",
-    image: "/linux.png",
-    alt: "Data Structures",
-  },
-  NETWORK: {
-    title: "네트워크(Network)",
-    description:
-      "네트워크(Network)는 컴퓨터와 장치들이 서로 연결되어 데이터를 주고받을 수 있도록 하는 시스템입니다.",
-    image: "/linux.png",
-    alt: "Network",
-  },
-  OPERATING_SYSTEM: {
-    title: "운영체제(Operating Systems)",
-    description:
-      "운영체제(Operating System, OS)는 컴퓨터의 하드웨어 자원을 관리하고, 사용자 및 응용 프로그램이 컴퓨터와 상호작용할 수 있도록 지원하는 소프트웨어의 집합이라고 정의할 수 있습니다.",
-    image: "/linux.png",
-    alt: "Operating System",
-  },
-  DATABASE: {
-    title: "데이터베이스(Database)",
-    description:
-      "데이터베이스는 구조화된 정보의 체계적인 수집으로, 일반적으로 컴퓨터 시스템에 전자적으로 저장됩니다.",
-    image: "/linux.png",
-    alt: "Database",
-  },
-} as const;
-
 const QUESTION_COUNT_OPTIONS = [5, 10, 15, 20] as const;
 
 type InterviewType = "text" | "voice";
@@ -79,7 +41,7 @@ export default function Home({
   const router = useRouter();
   const { error: errorToast } = useToast();
   const [interviewConfig, setInterviewConfig] = useState<NewInterviewRequest>({
-    category: categories[0] || "",
+    category: categories[0].key || "",
     max_question_count: QUESTION_COUNT_OPTIONS[0],
   });
   const [selectedInterviewType, setSelectedInterviewType] =
@@ -124,19 +86,8 @@ export default function Home({
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
-  const selectedCategoryMeta = useMemo(() => {
-    return (
-      CATEGORY_META[interviewConfig.category as keyof typeof CATEGORY_META] || {
-        title: interviewConfig.category,
-        description: `${CATEGORY_META[interviewConfig.category as keyof typeof CATEGORY_META]?.description || `${interviewConfig.category}에 대한 면접을 시작해보세요.`}`,
-        image: "/linux.png",
-        alt: interviewConfig.category,
-      }
-    );
-  }, [interviewConfig.category]);
-
-  const handleCategoryChange = useCallback((category: string) => {
-    setInterviewConfig((prev) => ({ ...prev, category }));
+  const handleCategoryChange = useCallback((category: Category) => {
+    setInterviewConfig((prev) => ({ ...prev, category: category.key }));
   }, []);
 
   const handleQuestionCountChange = useCallback((event: "plus" | "minus") => {
@@ -157,6 +108,11 @@ export default function Home({
     createInterviewMutation.mutate(interviewConfig);
   }, [interviewConfig, createInterviewMutation]);
 
+  const selectedCategory = useMemo(() => {
+    return categories.find(
+      (c) => c.key === interviewConfig.category
+    ) as Category;
+  }, [categories, interviewConfig.category]);
   return (
     <>
       <Head>
@@ -178,19 +134,19 @@ export default function Home({
                   {categories.map((category) => (
                     <Button
                       type="button"
-                      key={category}
+                      key={category.key}
                       role="tab"
                       className="text-sm font-semibold"
-                      aria-selected={interviewConfig.category === category}
+                      aria-selected={interviewConfig.category === category.key}
                       variant={
-                        interviewConfig.category === category
+                        interviewConfig.category === category.key
                           ? "primary"
                           : "text"
                       }
                       onClick={() => handleCategoryChange(category)}
                       disabled={createInterviewMutation.isPending}
                     >
-                      {category}
+                      {category.title}
                     </Button>
                   ))}
                 </div>
@@ -204,19 +160,19 @@ export default function Home({
                 <div className="text-center mb-12">
                   <div className="relative inline-block mb-6">
                     <Image
-                      src={selectedCategoryMeta.image}
-                      alt={selectedCategoryMeta.alt}
+                      src={selectedCategory.image_url}
+                      alt={selectedCategory.title}
                       width={200}
                       height={200}
                       priority
-                      className="rounded-full w-52 h-auto"
+                      className="w-52 h-auto"
                     />
                   </div>
                   <h1 className="text-4xl lg:text-5xl font-bold text-text-heading mb-4">
-                    {selectedCategoryMeta.title}
+                    {selectedCategory.title}
                   </h1>
                   <p className="text-lg text-text-description leading-relaxed max-w-2xl mx-auto">
-                    {selectedCategoryMeta.description}
+                    {selectedCategory.description}
                   </p>
                 </div>
 
@@ -394,16 +350,22 @@ export default function Home({
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ): Promise<
-  GetServerSidePropsResult<{ categories: string[]; userInfo: UserType | null }>
+  GetServerSidePropsResult<{
+    categories: Category[];
+    userInfo: UserType | null;
+  }>
 > => {
-  return withCheckInServer<{ categories: string[]; userInfo: UserType | null }>(
+  return withCheckInServer<{
+    categories: Category[];
+    userInfo: UserType | null;
+  }>(
     async () => {
       const [categoriesResponse, userInfoResponse] = await Promise.all([
         getCategories(),
         getUserInfo(context),
       ]);
 
-      const categoryData = categoriesResponse.data.categories;
+      const categoryData = categoriesResponse.data;
       const userInfoData = userInfoResponse.data;
 
       return {
