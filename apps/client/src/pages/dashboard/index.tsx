@@ -23,7 +23,7 @@ export default function Dashboard({
 
       <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <Header user={userInfo} />
-        <div className="mb-2 p-4">
+        <div className="mb-2 p-4 max-w-[1280px] mx-auto">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
             <div className="flex items-center justify-between md:flex-row flex-col gap-4">
               <div className="flex items-center space-x-4">
