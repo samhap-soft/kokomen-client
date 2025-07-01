@@ -10,6 +10,9 @@
     "packages/*",
     "apps/*"
   ],
+  "resolutions": {
+    "brace-expansion": "^2.0.2"
+  },
   "devDependencies": {
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.5",

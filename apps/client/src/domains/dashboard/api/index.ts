@@ -1,0 +1,29 @@
+import { InterviewHistory } from "@/domains/dashboard/types";
+import axios, { AxiosInstance } from "axios";
+
+const dashboardServerInstance: AxiosInstance = axios.create({
+  baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
+  withCredentials: true,
+});
+
+export const getInterviewHistory = async ({
+  page = 0,
+  size = 10,
+  sort = "desc",
+  range = "ALL",
+}: {
+  page: number;
+  size: number;
+  sort: "asc" | "desc";
+  range: "IN_PROGRESS" | "FINISHED" | "ALL";
+}): Promise<InterviewHistory[]> => {
+  const { data } = await dashboardServerInstance.get("/interviews/me", {
+    params: {
+      page,
+      size,
+      sort,
+      state: range === "ALL" ? undefined : range,
+    },
+  });
+  return data;
+};

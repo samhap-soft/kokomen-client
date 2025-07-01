@@ -518,3 +518,54 @@
   --color-yellow-9: #f8f448;
   --color-yellow-10: #fafa85;
 }
+
+/* Toast 애니메이션 키프레임 */
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes toast-bounce-in {
+  0% {
+    transform: translateX(100%) scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-10%) scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Toast 애니메이션 클래스 */
+.toast-enter {
+  animation: toast-bounce-in 500ms ease-out forwards;
+}
+
+.toast-exit {
+  animation: toast-slide-out 500ms ease-in forwards;
+}
+
+.toast-slide-in {
+  animation: toast-slide-in 500ms ease-out forwards;
+}

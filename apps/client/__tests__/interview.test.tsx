@@ -19,9 +19,7 @@ describe("면접 페이지 렌더링 테스트", () => {
         prevQuestionAndAnswer={[
           {
             answer: "테스트",
-            answer_id: 1,
             question: "테스트입니다.",
-            question_id: 2,
           },
         ]}
       />

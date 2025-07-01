@@ -17,14 +17,13 @@ function isAuthPage(pathname: string): boolean {
 
 // 로그인 URL 생성
 function getLoginUrl(request: NextRequest): string {
-  const loginUrl = new URL("/login", request.url);
+  const loginUrl = new URL(`/login?redirectTo=${request.url}`, request.url);
 
-  return loginUrl.toString();
+  return loginUrl.toString().replaceAll("localhost", "kokomen.kr");
 }
 
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
-
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||

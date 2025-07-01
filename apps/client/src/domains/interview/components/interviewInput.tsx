@@ -15,11 +15,15 @@ export function InterviewAnswerInput({
   interviewId,
   dispatch,
   setIsListening,
+  answeredQuestions,
+  totalQuestions,
 }: {
   interviewState: IInterviewState;
   dispatch: InterviewActions;
-  interviewId: string;
+  interviewId: number;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
+  answeredQuestions: number;
+  totalQuestions: number;
 }): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const router = useRouter();
@@ -44,10 +48,12 @@ export function InterviewAnswerInput({
         return;
       }
       dispatch({
-        type: "QUESTION",
+        type: "NEXT_QUESTION",
         message: data.next_question,
         currentQuestionId: data.next_question_id,
+        prevAnswer: interviewInput,
       });
+      setInterviewInput("");
     },
     onError: (_, __, context) => {
       dispatch({ type: "SUBMIT_FAILED" });
@@ -62,7 +68,7 @@ export function InterviewAnswerInput({
         }
       }, 2000);
     },
-    retry: 3,
+    retry: false,
   });
 
   return (
@@ -74,6 +80,16 @@ export function InterviewAnswerInput({
         className={`transition-all block w-full resize-none border-none focus:border-none max-h-[250px]`}
         rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            mutate({
+              interviewId: interviewId,
+              questionId: interviewState.currentQuestionId,
+              answer: interviewInput,
+            });
+          }
+        }}
         value={interviewInput}
         autoAdjust={true}
         disabled={interviewState.status === "standby"}
@@ -82,7 +98,11 @@ export function InterviewAnswerInput({
         onBlur={() => setIsListening(false)}
       />
       <div className="flex w-full gap-5">
-        <div className="flex-1"></div>
+        <div className="flex-1 items-center flex">
+          <span className="text-text-tertiary font-bold">
+            {answeredQuestions} / {totalQuestions}
+          </span>
+        </div>
         <Button
           round
           className={`w-[50px] h-[50px] disabled:opacity-50 disabled:pointer-events-none transition-opacity duration-200`}
