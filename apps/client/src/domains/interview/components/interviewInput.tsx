@@ -8,7 +8,7 @@ import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp } from "lucide-react";
 import { useRouter } from "next/router";
-import React, { JSX, useState } from "react";
+import React, { JSX, useRef, useState } from "react";
 
 export function InterviewAnswerInput({
   interviewState,
@@ -26,8 +26,9 @@ export function InterviewAnswerInput({
   totalQuestions: number;
 }): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: submitInterviewAnswer,
     onMutate: () => {
       const previousMessage = {
@@ -45,6 +46,7 @@ export function InterviewAnswerInput({
         setTimeout(() => {
           router.push(`/interviews/${interviewId}/result`);
         }, 2000);
+        // textAreaRef.current?.
         return;
       }
       dispatch({
@@ -74,6 +76,7 @@ export function InterviewAnswerInput({
   return (
     <div className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
       <Textarea
+        ref={textAreaRef}
         variant={"default"}
         name="interview-input"
         border={"none"}
@@ -81,7 +84,7 @@ export function InterviewAnswerInput({
         rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
+          if (e.key === "Enter" && !e.shiftKey && !isPending) {
             e.preventDefault();
             mutate({
               interviewId: interviewId,
@@ -92,7 +95,7 @@ export function InterviewAnswerInput({
         }}
         value={interviewInput}
         autoAdjust={true}
-        disabled={interviewState.status === "standby"}
+        disabled={interviewState.status === "standby" || isPending}
         placeholder={"답변을 입력해주세요..."}
         onFocus={() => setIsListening(true)}
         onBlur={() => setIsListening(false)}
@@ -109,13 +112,15 @@ export function InterviewAnswerInput({
           disabled={
             interviewState.status !== "question" || !interviewInput.length
           }
-          onClick={() =>
-            mutate({
-              interviewId: interviewId,
-              questionId: interviewState.currentQuestionId,
-              answer: interviewInput,
-            })
-          }
+          onClick={() => {
+            if (!isPending) {
+              mutate({
+                interviewId: interviewId,
+                questionId: interviewState.currentQuestionId,
+                answer: interviewInput,
+              });
+            }
+          }}
           variant={"primary"}
         >
           <ArrowBigUp className="text-primary-content" />
