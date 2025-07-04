@@ -17,9 +17,18 @@ type Interview = {
   max_question_count: number;
 };
 
+type InterviewConfig = {
+  category: string;
+  max_question_count: number;
+  interview_type: InterviewType;
+};
+type InterviewType = "text" | "voice";
+
 export type {
   InterviewStatus,
   QuestionAndAnswer,
   PrevQuestionAndAnswers,
   Interview,
+  InterviewConfig,
+  InterviewType,
 };

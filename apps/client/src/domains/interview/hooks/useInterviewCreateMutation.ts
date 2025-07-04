@@ -1,0 +1,46 @@
+import { useRouter } from "next/router";
+import { useToast } from "@kokomen/ui/hooks/useToast";
+import { useMutation } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
+import { startNewInterview } from "../api";
+
+const useInterviewCreateMutation = () => {
+  const router = useRouter();
+  const { error: errorToast } = useToast();
+
+  return useMutation({
+    mutationFn: startNewInterview,
+    onSuccess: (data) => {
+      router.push({
+        pathname: `/interviews/${data.interview_id}`,
+      });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          router.replace("/login");
+        }
+        errorToast({
+          title: "면접 생성 실패",
+          description: error.response?.data.message,
+        });
+      }
+    },
+    retry: (failureCount, error) => {
+      if (isAxiosError(error)) {
+        if (
+          error.response?.status &&
+          error.response.status >= 400 &&
+          error.response.status < 500
+        ) {
+          return false;
+        }
+        return failureCount < 2;
+      }
+      return false;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+};
+
+export default useInterviewCreateMutation;
