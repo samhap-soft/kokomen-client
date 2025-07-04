@@ -1,0 +1,64 @@
+name: Build Checker
+on:
+  pull_request:
+    branches: [main, development]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: |
+          yarn set version berry
+          yarn install
+
+      - name: Build Next.js app
+        id: build_nextjs
+        run: |
+          BUILD_START_TIME=$(date +%s)
+          echo "Build started at $(date)"
+          yarn build 2>&1 | tee build.log
+          BUILD_END_TIME=$(date +%s)
+          BUILD_DURATION=$((BUILD_END_TIME - BUILD_START_TIME))
+          echo "Build finished at $(date)"
+          echo "BUILD_DURATION=$BUILD_DURATION" >> $GITHUB_ENV
+          tail -n 45 build.log > build_summary.log
+        env:
+          NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
+          NEXT_PUBLIC_BASE_URL: https://localhost:3000
+
+      - name: Format build log and set output
+        id: set_log
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "COMMENT<<EOF" >> $GITHUB_ENV
+          echo "## 🛠️ Build Summary" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "🕒 Build duration: $BUILD_DURATION초" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "```" >> $GITHUB_ENV
+          cat build_summary.log >> $GITHUB_ENV
+          echo "```" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Post comment on PR
+        if: github.event_name == 'pull_request'
+        uses: unsplash/comment-on-pr@v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: ${{ env.COMMENT }}
