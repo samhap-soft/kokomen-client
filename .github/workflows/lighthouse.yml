@@ -95,10 +95,11 @@ jobs:
 
             // 출력 설정
                 core.setOutput('comments', comments);
-      - name: Lighthouse Score Comment
+      - name: Create New Lighthouse Comment
         if: github.event_name == 'pull_request'
         uses: unsplash/comment-on-pr@v1.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           msg: ${{ steps.format_lighthouse_score.outputs.comments }}
+          check_for_duplicate_msg: false
