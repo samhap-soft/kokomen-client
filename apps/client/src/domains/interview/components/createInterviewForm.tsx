@@ -1,12 +1,8 @@
 import { Category } from "@/api/category";
-import { startNewInterview } from "@/domains/interview/api";
+import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import { InterviewType } from "@/domains/interview/types";
 import { Button } from "@kokomen/ui/components/button";
-import { useToast } from "@kokomen/ui/hooks/useToast";
-import { useMutation } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
 import { Keyboard, MicVocal } from "lucide-react";
-import { useRouter } from "next/router";
 import { FC, memo, MemoExoticComponent, useCallback, useState } from "react";
 
 type QuestionCountSelectorProps = {
@@ -109,51 +105,12 @@ const DEFAULT_INTERVIEW_CONFIGS: Record<string, string | number> = {
 const CreateInterviewForm: MemoExoticComponent<
   FC<{ selectedCategory: Category }>
 > = memo(({ selectedCategory }: { selectedCategory: Category }) => {
-  const router = useRouter();
-  const { error: errorToast } = useToast();
   const [questionCount, setQuestionCount] = useState<number>(
     DEFAULT_INTERVIEW_CONFIGS.MIN_QUESTION_COUNT as number
   );
   const [selectedInterviewType, setSelectedInterviewType] =
     useState<InterviewType>("text");
-  const createInterviewMutation = useMutation({
-    mutationFn: startNewInterview,
-    onSuccess: (data) => {
-      router.push({
-        pathname: `/interviews/${data.interview_id}`,
-      });
-    },
-
-    onError: (error) => {
-      if (isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          router.replace("/login");
-        }
-        errorToast({
-          title: "면접 생성 실패",
-          description: error.response?.data.message,
-        });
-      }
-    },
-    onSettled: () => {
-      console.log("Interview creation attempt completed");
-    },
-    retry: (failureCount, error) => {
-      if (isAxiosError(error)) {
-        if (
-          error.response?.status &&
-          error.response.status >= 400 &&
-          error.response.status < 500
-        ) {
-          return false;
-        }
-
-        return failureCount < 2;
-      }
-      return false;
-    },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-  });
+  const createInterviewMutation = useInterviewCreateMutation();
 
   const handleQuestionCountChange = useCallback((event: "plus" | "minus") => {
     setQuestionCount((prev) =>
