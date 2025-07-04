@@ -9,14 +9,110 @@ import { Keyboard, MicVocal } from "lucide-react";
 import { useRouter } from "next/router";
 import { FC, memo, MemoExoticComponent, useCallback, useState } from "react";
 
-const DEFAULT_QUESTION_COUNT: number = 3;
+type QuestionCountSelectorProps = {
+  questionCount: number;
+  // eslint-disable-next-line no-unused-vars
+  handleQuestionCountChange: (event: "plus" | "minus") => void;
+};
+const QuestionCountSelector: MemoExoticComponent<
+  FC<QuestionCountSelectorProps>
+> = memo(
+  ({
+    questionCount,
+    handleQuestionCountChange,
+  }: QuestionCountSelectorProps) => {
+    return (
+      <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-text-heading mb-4 flex items-center gap-2">
+          <div className="w-2 h-2 bg-primary rounded-full"></div>
+          면접 문제 개수
+        </h3>
+        <div className="flex items-center justify-center gap-6">
+          <Button
+            onClick={() => handleQuestionCountChange("minus")}
+            className="w-12 h-12 bg-bg-elevated rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold text-text-secondary hover:text-primary hover:scale-110 border border-border"
+            variant="text"
+          >
+            -
+          </Button>
+          <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-xl">
+            <span className="text-3xl font-bold text-text-light-solid">
+              {questionCount}
+            </span>
+          </div>
+          <Button
+            onClick={() => handleQuestionCountChange("plus")}
+            className="w-12 h-12 bg-bg-elevated rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold text-text-secondary hover:text-primary hover:scale-110 border border-border"
+            variant="text"
+          >
+            +
+          </Button>
+        </div>
+      </div>
+    );
+  }
+);
+QuestionCountSelector.displayName = "QuestionCountSelector";
+
+type InterviewTypeSelectorProps = {
+  selectedInterviewType: InterviewType;
+  // eslint-disable-next-line no-unused-vars
+  handleInterviewTypeChange: (type: InterviewType) => void;
+};
+const InterviewTypeSelector: MemoExoticComponent<
+  FC<InterviewTypeSelectorProps>
+> = memo(
+  ({
+    selectedInterviewType,
+    handleInterviewTypeChange,
+  }: InterviewTypeSelectorProps) => {
+    return (
+      <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-text-heading mb-4 flex items-center gap-2">
+          <div className="w-2 h-2 bg-primary rounded-full"></div>
+          면접 방식
+        </h3>
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            onClick={() => handleInterviewTypeChange("text")}
+            className="py-6"
+            variant={selectedInterviewType === "text" ? "primary" : "outline"}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <Keyboard className="w-6 h-6" />
+              <span className="text-sm font-medium">텍스트</span>
+            </div>
+          </Button>
+          <Button
+            onClick={() => handleInterviewTypeChange("voice")}
+            className="py-6"
+            disabled
+            variant={selectedInterviewType === "voice" ? "primary" : "outline"}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <MicVocal className="w-6 h-6" />
+              <span className="text-sm font-medium">음성</span>
+            </div>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+);
+InterviewTypeSelector.displayName = "InterviewTypeSelector";
+
+const DEFAULT_INTERVIEW_CONFIGS: Record<string, string | number> = {
+  MAX_QUESTION_COUNT: 20,
+  MIN_QUESTION_COUNT: 3,
+  INTERVIEW_TYPE: "text",
+};
 const CreateInterviewForm: MemoExoticComponent<
   FC<{ selectedCategory: Category }>
 > = memo(({ selectedCategory }: { selectedCategory: Category }) => {
   const router = useRouter();
   const { error: errorToast } = useToast();
   const [questionCount, setQuestionCount] = useState<number>(
-    DEFAULT_QUESTION_COUNT
+    DEFAULT_INTERVIEW_CONFIGS.MIN_QUESTION_COUNT as number
   );
   const [selectedInterviewType, setSelectedInterviewType] =
     useState<InterviewType>("text");
@@ -80,66 +176,16 @@ const CreateInterviewForm: MemoExoticComponent<
     <>
       <div className="grid md:grid-cols-2 gap-8 mb-12">
         {/* 문제 개수 선택 */}
-        <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
-          <h3 className="text-lg font-semibold text-text-heading mb-4 flex items-center gap-2">
-            <div className="w-2 h-2 bg-primary rounded-full"></div>
-            면접 문제 개수
-          </h3>
-          <div className="flex items-center justify-center gap-6">
-            <Button
-              onClick={() => handleQuestionCountChange("minus")}
-              className="w-12 h-12 bg-bg-elevated rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold text-text-secondary hover:text-primary hover:scale-110 border border-border"
-              variant="text"
-            >
-              -
-            </Button>
-            <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-xl">
-              <span className="text-3xl font-bold text-text-light-solid">
-                {questionCount}
-              </span>
-            </div>
-            <Button
-              onClick={() => handleQuestionCountChange("plus")}
-              className="w-12 h-12 bg-bg-elevated rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold text-text-secondary hover:text-primary hover:scale-110 border border-border"
-              variant="text"
-            >
-              +
-            </Button>
-          </div>
-        </div>
+        <QuestionCountSelector
+          questionCount={questionCount}
+          handleQuestionCountChange={handleQuestionCountChange}
+        />
 
         {/* 면접 타입 선택 */}
-        <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
-          <h3 className="text-lg font-semibold text-text-heading mb-4 flex items-center gap-2">
-            <div className="w-2 h-2 bg-primary rounded-full"></div>
-            면접 방식
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <Button
-              onClick={() => handleInterviewTypeChange("text")}
-              className="py-6"
-              variant={selectedInterviewType === "text" ? "primary" : "outline"}
-            >
-              <div className="flex flex-col items-center gap-2">
-                <Keyboard className="w-6 h-6" />
-                <span className="text-sm font-medium">텍스트</span>
-              </div>
-            </Button>
-            <Button
-              onClick={() => handleInterviewTypeChange("voice")}
-              className="py-6"
-              disabled
-              variant={
-                selectedInterviewType === "voice" ? "primary" : "outline"
-              }
-            >
-              <div className="flex flex-col items-center gap-2">
-                <MicVocal className="w-6 h-6" />
-                <span className="text-sm font-medium">음성</span>
-              </div>
-            </Button>
-          </div>
-        </div>
+        <InterviewTypeSelector
+          selectedInterviewType={selectedInterviewType}
+          handleInterviewTypeChange={handleInterviewTypeChange}
+        />
       </div>
       <div className="text-center flex flex-col items-center">
         <Button
