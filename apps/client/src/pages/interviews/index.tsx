@@ -4,10 +4,9 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType,
 } from "next";
-import { Button } from "@kokomen/ui/components/button";
-import { JSX, useState } from "react";
+import { JSX } from "react";
 import Head from "next/head";
-import Image from "next/image";
+
 import Header from "@/shared/header";
 
 import { withCheckInServer } from "@/utils/auth";
@@ -15,15 +14,13 @@ import { Trophy, Coins, User as UserIcon, Star, Zap } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
 import { User as UserType } from "@/domains/auth/types";
 import CreateInterviewForm from "@/domains/interview/components/createInterviewForm";
+import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 
 export default function InterviewMainPage({
   categories,
   userInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
-  const [selectedCategory, setSelectedCategory] = useState<Category>(
-    categories[0]
-  );
-
+  useRouterPrefetch("/interviews");
   return (
     <>
       <Head>
@@ -37,59 +34,7 @@ export default function InterviewMainPage({
       <div className="min-h-screen bg-bg-layout">
         <Header user={userInfo} />
         <main className="flex flex-col-reverse lg:flex-row lg:items-start mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 gap-8">
-          <section className="w-full lg:flex-1 lg:min-w-0 flex flex-col">
-            {/* 카테고리 탭 */}
-            <nav className="w-full mb-8">
-              <div className="bg-bg-elevated rounded-2xl p-2 shadow-lg border border-border">
-                <div className="flex overflow-x-auto gap-1 p-2">
-                  {categories.map((category) => (
-                    <Button
-                      type="button"
-                      key={category.key}
-                      role="tab"
-                      className="text-sm font-semibold"
-                      aria-selected={selectedCategory.key === category.key}
-                      variant={
-                        selectedCategory.key === category.key
-                          ? "primary"
-                          : "text"
-                      }
-                      onClick={() => setSelectedCategory(category)}
-                    >
-                      {category.title}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </nav>
-
-            {/* 메인 컨텐츠 */}
-            <div className="bg-bg-elevated rounded-3xl border border-border shadow-2xl overflow-hidden">
-              <div className="p-8 lg:p-12">
-                {/* 헤더 섹션 */}
-                <div className="text-center mb-12">
-                  <div className="relative inline-block mb-6">
-                    <Image
-                      src={selectedCategory.image_url}
-                      alt={selectedCategory.title}
-                      width={200}
-                      height={200}
-                      priority
-                      className="w-52 h-auto"
-                    />
-                  </div>
-                  <h1 className="text-4xl lg:text-5xl font-bold text-text-heading mb-4">
-                    {selectedCategory.title}
-                  </h1>
-                  <p className="text-lg text-text-description leading-relaxed max-w-2xl mx-auto">
-                    {selectedCategory.description}
-                  </p>
-                </div>
-
-                <CreateInterviewForm selectedCategory={selectedCategory} />
-              </div>
-            </div>
-          </section>
+          <CreateInterviewForm categories={categories} />
 
           <aside className="w-full lg:w-96">
             <div className="bg-bg-elevated rounded-3xl border border-border shadow-2xl overflow-hidden">
