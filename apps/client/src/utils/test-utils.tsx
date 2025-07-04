@@ -2,6 +2,7 @@
 import React, { JSX } from "react";
 import { render, RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@kokomen/ui/components/toast/toaster";
 
 const createTestQueryClient = (): QueryClient =>
   new QueryClient({
@@ -28,7 +29,9 @@ export function renderWithProviders(
 
   function Wrapper({ children }: { children: React.ReactNode }): JSX.Element {
     return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <Toaster>{children}</Toaster>
+      </QueryClientProvider>
     );
   }
 
