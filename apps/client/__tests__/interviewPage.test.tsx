@@ -5,6 +5,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import InterviewPage from "@/pages/interviews/[interviewId]";
 import { server } from "@/mocks";
 import { delay, http, HttpResponse } from "msw";
+import { mockReplace } from "jest.setup";
 
 describe("면접 페이지 컴포넌트 렌더링 테스트", () => {
   it("면접 답변 사이드바 컴포넌트가 제대로 렌더링 되는지 테스트", () => {
@@ -171,5 +172,37 @@ describe("면접 페이지 테스트", () => {
     await waitFor(() => {
       expect(screen.getByText("제출 완료")).toBeInTheDocument();
     });
+  });
+
+  it("면접 종료 버튼을 누르면 면접이 종료되고 면접 종료 모달이 표시되는지 테스트", async () => {
+    server.use(
+      http.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        async () => {
+          await delay(100);
+          return HttpResponse.json({
+            ...interviewData,
+            interview_state: "FINISHED",
+          });
+        }
+      )
+    );
+    renderWithProviders(<InterviewPage interviewId={1} />);
+
+    await waitFor(() => {
+      expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
+    });
+    const homeButton = screen.getByRole("button", {
+      name: "home-button",
+    });
+    const goToResultButton = screen.getByRole("button", {
+      name: "go-to-result-button",
+    });
+    expect(homeButton).toBeInTheDocument();
+    expect(goToResultButton).toBeInTheDocument();
+    expect(homeButton).toBeEnabled();
+    expect(goToResultButton).toBeEnabled();
+    fireEvent.click(homeButton);
+    expect(mockReplace).toHaveBeenCalledWith("/");
   });
 });
