@@ -1,30 +1,36 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
-import {
-  IInterviewState,
-  InterviewActions,
-} from "@/domains/interview/hooks/useInterviewStatus";
+import { Interview } from "@/domains/interview/types";
 import { Button } from "@kokomen/ui/components/button";
 import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp } from "lucide-react";
 import { useRouter } from "next/router";
-import React, { JSX, useRef, useState } from "react";
+import React, { JSX, MouseEvent, useRef, useState } from "react";
 
-export function InterviewAnswerInput({
-  interviewState,
-  interviewId,
-  dispatch,
-  setIsListening,
-  answeredQuestions,
-  totalQuestions,
-}: {
-  interviewState: IInterviewState;
-  dispatch: InterviewActions;
+type InterviewInputProps = Pick<
+  Interview,
+  "cur_question" | "cur_question_id" | "prev_questions_and_answers"
+> & {
+  isInterviewStarted: boolean;
+  // eslint-disable-next-line no-unused-vars
+  updateInterviewData: (updates: Partial<Interview>) => void;
   interviewId: number;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
-  answeredQuestions: number;
   totalQuestions: number;
-}): JSX.Element {
+};
+const SUBMIT_FAILED_MESSAGE: string =
+  "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
+const FINISHED_MESSAGE: string = "면접이 종료되었습니다. 수고하셨습니다.";
+export function InterviewAnswerInput({
+  isInterviewStarted,
+  cur_question,
+  cur_question_id,
+  prev_questions_and_answers,
+  updateInterviewData,
+  interviewId,
+  setIsListening,
+  totalQuestions,
+}: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
@@ -32,40 +38,50 @@ export function InterviewAnswerInput({
     mutationFn: submitInterviewAnswer,
     onMutate: () => {
       const previousMessage = {
-        prevMessage: interviewState.message,
-        prevQuestionId: interviewState.currentQuestionId,
+        prevMessage: cur_question,
+        prevQuestionId: cur_question_id,
       };
-      dispatch({ type: "ANSWER_QUESTION" });
+      updateInterviewData({
+        prev_questions_and_answers: [
+          ...prev_questions_and_answers,
+          {
+            question: cur_question,
+            answer: interviewInput,
+            question_id: cur_question_id,
+            answer_id: 0,
+          },
+        ],
+      });
       return {
         previousMessage,
       };
     },
     onSuccess: ({ status, data }) => {
       if (status === 204) {
-        dispatch({ type: "INTERVIEW_END" });
+        updateInterviewData({
+          interview_state: "FINISHED",
+          cur_question: FINISHED_MESSAGE,
+        });
         setTimeout(() => {
           router.push(`/interviews/${interviewId}/result`);
         }, 2000);
-        // textAreaRef.current?.
         return;
       }
-      dispatch({
-        type: "NEXT_QUESTION",
-        message: data.next_question,
-        currentQuestionId: data.next_question_id,
-        prevAnswer: interviewInput,
+      updateInterviewData({
+        cur_question: data.next_question,
+        cur_question_id: data.next_question_id,
       });
       setInterviewInput("");
     },
     onError: (_, __, context) => {
-      dispatch({ type: "SUBMIT_FAILED" });
+      updateInterviewData({
+        cur_question: SUBMIT_FAILED_MESSAGE,
+      });
       setTimeout(() => {
         if (context?.previousMessage) {
           // 이전 상태로 복원
-          dispatch({
-            type: "QUESTION",
-            message: context.previousMessage.prevMessage,
-            currentQuestionId: context.previousMessage.prevQuestionId,
+          updateInterviewData({
+            cur_question: context?.previousMessage?.prevMessage ?? "",
           });
         }
       }, 2000);
@@ -73,29 +89,50 @@ export function InterviewAnswerInput({
     retry: false,
   });
 
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
+  ): void => {
+    e.preventDefault();
+    if (!isPending && isInterviewStarted) {
+      mutate({
+        interviewId: interviewId,
+        questionId: cur_question_id,
+        answer: interviewInput,
+      });
+    }
+  };
+
   return (
-    <div className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
+    <form className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
       <Textarea
         ref={textAreaRef}
+        role="textbox"
+        aria-label="interview-answer"
         variant={"default"}
-        name="interview-input"
+        name="interview-answer"
         border={"none"}
         className={`transition-all block w-full resize-none border-none focus:border-none max-h-[250px]`}
         rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey && !isPending) {
+          if (
+            e.key === "Enter" &&
+            !e.shiftKey &&
+            !isPending &&
+            isInterviewStarted
+          ) {
             e.preventDefault();
+            setIsListening(false);
             mutate({
               interviewId: interviewId,
-              questionId: interviewState.currentQuestionId,
+              questionId: cur_question_id,
               answer: interviewInput,
             });
           }
         }}
         value={interviewInput}
         autoAdjust={true}
-        disabled={interviewState.status === "standby" || isPending}
+        disabled={isPending || !isInterviewStarted}
         placeholder={"답변을 입력해주세요..."}
         onFocus={() => setIsListening(true)}
         onBlur={() => setIsListening(false)}
@@ -103,29 +140,23 @@ export function InterviewAnswerInput({
       <div className="flex w-full gap-5">
         <div className="flex-1 items-center flex">
           <span className="text-text-tertiary font-bold">
-            {answeredQuestions} / {totalQuestions}
+            {prev_questions_and_answers.length} / {totalQuestions}
           </span>
         </div>
         <Button
+          type="submit"
+          role="button"
+          aria-label="interview-submit"
+          name="interview-submit"
           round
           className={`w-[50px] h-[50px] disabled:opacity-50 disabled:pointer-events-none transition-opacity duration-200`}
-          disabled={
-            interviewState.status !== "question" || !interviewInput.length
-          }
-          onClick={() => {
-            if (!isPending) {
-              mutate({
-                interviewId: interviewId,
-                questionId: interviewState.currentQuestionId,
-                answer: interviewInput,
-              });
-            }
-          }}
+          disabled={!interviewInput.length || !isInterviewStarted || isPending}
+          onClick={handleSubmit}
           variant={"primary"}
         >
           <ArrowBigUp className="text-primary-content" />
         </Button>
       </div>
-    </div>
+    </form>
   );
 }

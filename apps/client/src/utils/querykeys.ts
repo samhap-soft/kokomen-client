@@ -4,4 +4,11 @@ const interviewHistoryKeys = {
     [...interviewHistoryKeys.all, "infinite", ...filters] as const,
 };
 
-export { interviewHistoryKeys };
+const interviewKeys = {
+  all: ["interview"] as const,
+  byInterviewId: (id: number) => [...interviewKeys.all, id] as const,
+  byInterviewIdAndQuestionId: (id: number, questionId: number) =>
+    [...interviewKeys.byInterviewId(id), questionId] as const,
+};
+
+export { interviewHistoryKeys, interviewKeys };
