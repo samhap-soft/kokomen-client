@@ -1,0 +1,31 @@
+name: "🚀 Feature"
+description: "기능 아이디어를 기록합니다."
+title: "[Feature] "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 뭐 만들건데?
+      description: "아이디어나 추가하고 싶은 기능을 적어둡니다."
+      placeholder: 예) 사용자 프로필 페이지 만들기
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: 대충 어떻게?
+      description: "기능 구현에 대한 방향이나 메모"
+      placeholder: 예) `/profile/:id` 라우트 만들고 firebase에서 유저 정보 가져오기
+    validations:
+      required: false
+
+  - type: input
+    id: timestamp
+    attributes:
+      label: 기록한 날짜
+      description: "오늘 날짜 입력"
+      placeholder: "2025-07-05"
+    validations:
+      required: false

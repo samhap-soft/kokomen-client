@@ -1,0 +1,31 @@
+name: "🧼 Refactor"
+description: "정리하거나 개선할 코드 기록용"
+title: "[Refactor] "
+labels: ["refactor"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 어디가 지저분함?
+      description: "리팩터링할 코드나 구조를 적어둡니다."
+      placeholder: 예) useNodeActions 훅이 너무 비대함
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: 어떻게 정리할까?
+      description: "리팩터링 아이디어나 방향"
+      placeholder: 예) 역할별로 로직 분리하고 context로 이동
+    validations:
+      required: false
+
+  - type: input
+    id: timestamp
+    attributes:
+      label: 기록한 날짜
+      description: "오늘 날짜 입력"
+      placeholder: "2025-07-05"
+    validations:
+      required: false
