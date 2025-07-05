@@ -1,6 +1,5 @@
 import { Interview } from "@/domains/interview/types";
-import axios, { AxiosInstance, AxiosPromise } from "axios";
-import { GetServerSidePropsContext } from "next";
+import axios, { AxiosInstance } from "axios";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -34,14 +33,14 @@ export const startNewInterview = async (
   return responseData;
 };
 
-export const getInterview = async (
-  interviewId: string,
-  req: GetServerSidePropsContext["req"]
-): AxiosPromise<Interview> => {
-  return interviewApiInstance.get(`/interviews/${interviewId}`, {
-    headers: {
-      Cookie: req.headers.cookie || "",
-    },
-  });
+export const getInterview = async (interviewId: string): Promise<Interview> => {
+  const { data } = await interviewApiInstance.get(
+    `/interviews/${interviewId}`,
+    {
+      withCredentials: true,
+    }
+  );
+  return data;
 };
+
 export type { NewInterviewResponse, NewInterviewRequest };
