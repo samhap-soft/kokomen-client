@@ -20,6 +20,7 @@ type InterviewInputProps = Pick<
 };
 const SUBMIT_FAILED_MESSAGE: string =
   "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
+const FINISHED_MESSAGE: string = "면접이 종료되었습니다. 수고하셨습니다.";
 export function InterviewAnswerInput({
   isInterviewStarted,
   cur_question,
@@ -57,6 +58,10 @@ export function InterviewAnswerInput({
     },
     onSuccess: ({ status, data }) => {
       if (status === 204) {
+        updateInterviewData({
+          interview_state: "FINISHED",
+          cur_question: FINISHED_MESSAGE,
+        });
         setTimeout(() => {
           router.push(`/interviews/${interviewId}/result`);
         }, 2000);
@@ -117,6 +122,7 @@ export function InterviewAnswerInput({
             isInterviewStarted
           ) {
             e.preventDefault();
+            setIsListening(false);
             mutate({
               interviewId: interviewId,
               questionId: cur_question_id,

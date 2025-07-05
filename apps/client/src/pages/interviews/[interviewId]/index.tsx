@@ -63,7 +63,7 @@ export default function InterviewPage({
     if (data.interview_state === "FINISHED") {
       router.replace(`/interviews/${interviewId}/result`);
     }
-  }, []);
+  }, [data.interview_state, interviewId, router]);
 
   //기존 면접 정보 업데이트
   const updateInterviewData = (updates: Partial<Interview>) => {
