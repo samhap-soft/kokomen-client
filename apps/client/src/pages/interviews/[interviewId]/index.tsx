@@ -14,7 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { interviewKeys } from "@/utils/querykeys";
 import { Button } from "@kokomen/ui/components/button";
 import { Interview } from "@/domains/interview/types";
-import { useRouter } from "next/router";
+import InterviewFinishModal from "@/domains/interview/components/interviewFinishModal";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
@@ -46,7 +46,6 @@ export default function InterviewPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const router = useRouter();
   const { data, isPending, isError } = useQuery({
     queryKey: interviewKeys.byInterviewId(interviewId),
     queryFn: () => getInterview(interviewId.toString()),
@@ -59,11 +58,6 @@ export default function InterviewPage({
       max_question_count: 0,
     },
   });
-  useEffect(() => {
-    if (data.interview_state === "FINISHED") {
-      router.replace(`/interviews/${interviewId}/result`);
-    }
-  }, [data.interview_state, interviewId, router]);
 
   //기존 면접 정보 업데이트
   const updateInterviewData = (updates: Partial<Interview>) => {
@@ -149,6 +143,10 @@ export default function InterviewPage({
             면접 시작하기
           </Button>
         )}
+        <InterviewFinishModal
+          interviewState={data.interview_state}
+          interviewId={interviewId}
+        />
       </Layout>
     </>
   );
