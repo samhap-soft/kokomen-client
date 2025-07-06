@@ -55,7 +55,7 @@ describe("profile setting 렌더링 테스트", () => {
 describe("profile setting 기능 테스트", () => {
   it("프로필 설정 페이지에서 닉네임 변경 테스트", async () => {
     server.use(
-      http.post(
+      http.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/me/profile`,
         async () => {
           await delay(100);
@@ -83,6 +83,44 @@ describe("profile setting 기능 테스트", () => {
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalled();
     });
+  });
+  it("프로필 설정 페이지에서 닉네임 변경 실패 테스트", async () => {
+    server.use(
+      http.patch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/me/profile`,
+        async () => {
+          await delay(100);
+          return HttpResponse.json(
+            { message: "닉네임 변경에 실패 테스트" },
+            { status: 400 }
+          );
+        }
+      )
+    );
+    renderWithProviders(
+      <LoginProfileSetting
+        redirectTo="/"
+        userInfo={{
+          id: 1,
+          nickname: "오상훈",
+          score: 0,
+          token_count: 10,
+          profile_completed: false,
+        }}
+      />
+    );
+    const nicknameInput = screen.getByRole("textbox", { name: "닉네임" });
+    fireEvent.change(nicknameInput, { target: { value: "오상훈1234567" } });
+    expect(nicknameInput).toHaveValue("오상훈1234567");
+    const saveButton = screen.getByRole("button", { name: "저장하기" });
+    fireEvent.click(saveButton);
+    await waitFor(() => {
+      expect(
+        screen.getByText("닉네임 변경에 실패했습니다.")
+      ).toBeInTheDocument();
+    });
+    //axios error의 메시지도 정상적으로 받아서 렌더링하는지 테스트
+    expect(screen.getByText("닉네임 변경에 실패 테스트")).toBeInTheDocument();
   });
   it("프로필 설정 페이지에서 유효하지 않은 값을 입력했을 때 닉네임  실패 테스트", async () => {
     renderWithProviders(
