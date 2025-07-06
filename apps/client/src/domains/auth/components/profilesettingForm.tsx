@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { errorToast } from "@kokomen/ui/hooks/useToast";
+import { useToast } from "@kokomen/ui/hooks/useToast";
 import { AxiosError } from "axios";
 import { User } from "../types";
 import z from "zod";
@@ -41,6 +41,7 @@ export default function ProfileSettingForm({
     },
   });
   const router = useRouter();
+  const { error: errorToast } = useToast();
   const { mutate: updateUserProfileMutation, isPending } = useMutation({
     mutationFn: updateUserProfile,
     onSuccess: () => {
