@@ -1,9 +1,9 @@
-import { AxiosPromise, isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { GetServerSidePropsResult, GetServerSidePropsContext } from "next";
 
 const LOGIN_PATH: string = "/login";
 export async function withCheckInServer<T>(
-  fetchCall: () => Promise<AxiosPromise<T>> | AxiosPromise<T> | Promise<T>,
+  fetchCall: () => Promise<GetServerSidePropsResult<T> | { data: T }>,
   options?: {
     // 404 대신 다른 처리를 원할 때
     onError?: (
@@ -21,18 +21,28 @@ export async function withCheckInServer<T>(
   try {
     // fetchCall이 함수인지 확인
     if (typeof fetchCall !== "function") {
-      throw new Error(
-        "fetchCall must be a function that returns an AxiosPromise"
-      );
+      throw new Error("fetchCall must be a function that returns a Promise");
     }
 
     const response = await fetchCall();
+
+    // 이미 GetServerSidePropsResult 형태인 경우 (redirect, notFound 등)
+    if (
+      response &&
+      typeof response === "object" &&
+      ("redirect" in response || "notFound" in response)
+    ) {
+      return response as GetServerSidePropsResult<T>;
+    }
+
+    // AxiosResponse 형태인 경우 (data 속성이 있는 경우)
     if (response && typeof response === "object" && "data" in response) {
       return {
-        props: response.data,
+        props: response.data as T,
       };
     }
 
+    // 직접 T 타입인 경우
     return {
       props: response as T,
     };
