@@ -17,6 +17,7 @@
     "lhci:upload": "lhci upload"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
     "@kokomen/ui": "workspace:*",
     "@sentry/nextjs": "^9.31.0",
     "@tanstack/react-query": "^5.80.6",
@@ -25,7 +26,8 @@
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-hook-form": "^7.59.0"
+    "react-hook-form": "^7.59.0",
+    "zod": "^3.25.74"
   },
   "devDependencies": {
     "@babel/core": "^7.27.4",
