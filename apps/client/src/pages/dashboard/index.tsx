@@ -1,14 +1,20 @@
 import { getUserInfo } from "@/domains/auth/api";
 import Header from "@/shared/header";
 import { withCheckInServer } from "@/utils/auth";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+  InferGetServerSidePropsType,
+} from "next";
 import Head from "next/head";
 import { Coins, User, Star } from "lucide-react";
 import InterviewHistory from "@/domains/dashboard/components/interviewHistory";
+import { User as UserType } from "@/domains/auth/types";
+import { JSX } from "react";
 
 export default function Dashboard({
   userInfo,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   return (
     <>
       <Head>
@@ -59,11 +65,13 @@ export default function Dashboard({
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
-) => {
+): Promise<GetServerSidePropsResult<{ userInfo: UserType }>> => {
   return withCheckInServer(async () => {
     const userInfo = await getUserInfo(context);
     return {
-      userInfo: userInfo.data,
+      data: {
+        userInfo: userInfo.data,
+      },
     };
   });
 };
