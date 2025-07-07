@@ -25,7 +25,7 @@ describe("로그인 페이지가 제대로 이동하는지 테스트", () => {
     });
     expect(kakaoLoginButton).toHaveAttribute(
       "href",
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/kakao-login?redirectUri=${process.env.NEXT_PUBLIC_BASE_URL}/login/callback&state=${process.env.NEXT_PUBLIC_BASE_URL}/`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/kakao-login?redirectUri=${process.env.NEXT_PUBLIC_BASE_URL}/login/callback&state=/`
     );
   });
 });
