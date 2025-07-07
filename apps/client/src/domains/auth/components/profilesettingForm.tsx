@@ -42,7 +42,11 @@ export default function ProfileSettingForm({
   });
   const router = useRouter();
   const { error: errorToast } = useToast();
-  const { mutate: updateUserProfileMutation, isPending } = useMutation({
+  const {
+    mutate: updateUserProfileMutation,
+    isPending,
+    isSuccess,
+  } = useMutation({
     mutationFn: updateUserProfile,
     onSuccess: () => {
       router.replace(redirectTo ?? "/");
@@ -85,9 +89,9 @@ export default function ProfileSettingForm({
       <Button
         type="submit"
         variant="primary"
-        className="w-full"
-        disabled={isPending}
-        aria-disabled={isPending}
+        className="w-full text-lg font-bold"
+        disabled={isPending || isSuccess}
+        aria-disabled={isPending || isSuccess}
       >
         저장하기
       </Button>

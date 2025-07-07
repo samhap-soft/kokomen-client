@@ -11,16 +11,18 @@ import { JSX } from "react";
 import { Layout } from "@/components/layout";
 import Header from "@/shared/header";
 import ProfileSettingForm from "@/domains/auth/components/profilesettingForm";
+import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 
 interface LoginProfileSettingProps {
   userInfo: User;
-  redirectTo: string;
+  state: string;
 }
 
 export default function LoginProfileSetting({
   userInfo,
-  redirectTo,
+  state,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
+  useRouterPrefetch(state || "/");
   return (
     <>
       <Head>
@@ -44,7 +46,7 @@ export default function LoginProfileSetting({
                 <p className="text-gray-600 text-sm">닉네임을 설정해주세요</p>
               </div>
 
-              <ProfileSettingForm userInfo={userInfo} redirectTo={redirectTo} />
+              <ProfileSettingForm userInfo={userInfo} redirectTo={state} />
             </div>
           </div>
         </main>
@@ -61,7 +63,7 @@ export const getServerSideProps = async (
     if (userInfo.data.profile_completed) {
       return {
         redirect: {
-          destination: (context.query.redirectTo as string) ?? "/",
+          destination: (context.query.state as string) || "/",
           permanent: false,
         },
       };
@@ -70,7 +72,7 @@ export const getServerSideProps = async (
     return {
       data: {
         userInfo: userInfo.data,
-        redirectTo: (context.query.redirectTo as string) ?? "/",
+        state: (context.query.state as string) || "/",
       },
     };
   });
