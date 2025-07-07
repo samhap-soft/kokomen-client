@@ -6,7 +6,7 @@ import { JSX } from "react";
 
 export default function LoginPage(): JSX.Element {
   const { query } = useRouter();
-  const redirectTo = `&state=${query.redirectTo ? query.redirectTo : `${process.env.NEXT_PUBLIC_BASE_URL}/`}`;
+  const redirectTo = `&state=${query.redirectTo ? query.redirectTo : "/"}`;
   const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/callback${redirectTo}`;
   return (
     <>

@@ -27,15 +27,10 @@ export default function KakaoCallbackPage({
 
     onSuccess: ({ data }) => {
       if (!data.profile_completed) {
-        router.replace("/login/profile", {
-          query: {
-            redirectTo: state || "/",
-          },
-        });
+        router.replace(`/login/profile?state=${state || "/"}`);
         return;
       }
 
-      // 3초 후 리다이렉트
       const redirectTo = state || "/";
       router.replace(redirectTo);
     },
