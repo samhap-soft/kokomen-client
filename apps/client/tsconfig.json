@@ -20,7 +20,7 @@
       "@/*": ["./src/*", "../../packages/ui/src/*"],
       "@kokomen/ui/*": ["../../packages/ui/src/*"]
     },
-    "types": ["jest", "@testing-library/jest-dom"]
+    "types": ["jest", "@testing-library/jest-dom", "dom-speech-recognition"]
   },
   "include": [
     "next-env.d.ts",
