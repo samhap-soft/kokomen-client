@@ -1,11 +1,12 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
 import { Interview } from "@/domains/interview/types";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { Button } from "@kokomen/ui/components/button";
 import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowBigUp } from "lucide-react";
+import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import { useRouter } from "next/router";
-import React, { JSX, MouseEvent, useRef, useState } from "react";
+import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
 
 type InterviewInputProps = Pick<
   Interview,
@@ -33,6 +34,23 @@ export function InterviewAnswerInput({
 }: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const updateInterviewInput = useCallback(
+    (result: string) => {
+      setInterviewInput((prev) => prev + " " + result);
+      if (textAreaRef.current) {
+        textAreaRef.current.style.height = "auto";
+        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight > 400 ? 400 : textAreaRef.current.scrollHeight}px`;
+      }
+    },
+    [setInterviewInput]
+  );
+  const {
+    startListening,
+    isListening: isVoiceListening,
+    stopListening,
+  } = useSpeechRecognition({
+    onSpeechEnd: updateInterviewInput,
+  });
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: submitInterviewAnswer,
@@ -111,7 +129,9 @@ export function InterviewAnswerInput({
         variant={"default"}
         name="interview-answer"
         border={"none"}
-        className={`transition-all block w-full resize-none border-none focus:border-none max-h-[250px]`}
+        className={`transition-all block w-full resize-none border-none focus:border-none max-h-[250px] mb-2 ${
+          isVoiceListening ? "bg-bg-text-hover animate-pulse" : ""
+        }`}
         rows={1}
         onChange={(e) => setInterviewInput(e.target.value)}
         onKeyDown={(e) => {
@@ -132,16 +152,57 @@ export function InterviewAnswerInput({
         }}
         value={interviewInput}
         autoAdjust={true}
-        disabled={isPending || !isInterviewStarted}
+        disabled={isPending || !isInterviewStarted || isVoiceListening}
+        aria-disabled={isPending || !isInterviewStarted || isVoiceListening}
         placeholder={"답변을 입력해주세요..."}
         onFocus={() => setIsListening(true)}
         onBlur={() => setIsListening(false)}
       />
       <div className="flex w-full gap-5">
-        <div className="flex-1 items-center flex">
+        <div className="flex-1 items-center flex gap-5 justify-between">
           <span className="text-text-tertiary font-bold">
             {prev_questions_and_answers.length} / {totalQuestions}
           </span>
+          {isVoiceListening ? (
+            <Button
+              type="button"
+              role="button"
+              aria-label="interview-voice-stop"
+              name="interview-voice-stop"
+              variant={"glass"}
+              className="flex items-center gap-2 text-text-tertiary"
+              onClick={() => {
+                setIsListening(false);
+                stopListening();
+              }}
+              disabled={!isVoiceListening || isPending || !isInterviewStarted}
+            >
+              <CircleStop
+                className={`${isVoiceListening ? "animate-pulse text-volcano-6" : ""}`}
+              />
+              <span className="text-text-tertiary font-bold">중지</span>
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              role="button"
+              aria-label="interview-voice-start"
+              name="interview-voice-start"
+              variant={"glass"}
+              className="flex items-center gap-2 text-text-tertiary"
+              onClick={() => {
+                setIsListening(true);
+                startListening();
+              }}
+              disabled={isVoiceListening || isPending || !isInterviewStarted}
+            >
+              <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />
+
+              <span className="text-text-tertiary font-bold">
+                음성으로 말하기
+              </span>
+            </Button>
+          )}
         </div>
         <Button
           type="submit"
