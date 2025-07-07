@@ -23,11 +23,7 @@ describe("profile setting 페이지 이동 테스트", () => {
     );
     renderWithProviders(<KakaoCallbackPage code="1234567890" state="test" />);
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith("/login/profile", {
-        query: {
-          redirectTo: "test",
-        },
-      });
+      expect(mockReplace).toHaveBeenCalledWith("/login/profile?state=test");
     });
   });
 });
@@ -36,7 +32,7 @@ describe("profile setting 렌더링 테스트", () => {
   it("프로필 설정 페이지에서 제대로 유저 기본 필드값이 렌더링되는지 확인", async () => {
     renderWithProviders(
       <LoginProfileSetting
-        redirectTo="/"
+        state="/"
         userInfo={{
           id: 1,
           nickname: "오상훈",
@@ -65,7 +61,7 @@ describe("profile setting 기능 테스트", () => {
     );
     renderWithProviders(
       <LoginProfileSetting
-        redirectTo="/"
+        state="/"
         userInfo={{
           id: 1,
           nickname: "오상훈",
@@ -99,7 +95,7 @@ describe("profile setting 기능 테스트", () => {
     );
     renderWithProviders(
       <LoginProfileSetting
-        redirectTo="/"
+        state="/"
         userInfo={{
           id: 1,
           nickname: "오상훈",
@@ -125,7 +121,7 @@ describe("profile setting 기능 테스트", () => {
   it("프로필 설정 페이지에서 유효하지 않은 값을 입력했을 때 닉네임  실패 테스트", async () => {
     renderWithProviders(
       <LoginProfileSetting
-        redirectTo="/"
+        state="/"
         userInfo={{
           id: 1,
           nickname: "오상훈",
