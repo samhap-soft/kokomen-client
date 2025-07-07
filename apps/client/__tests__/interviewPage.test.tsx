@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-member-accessibility */
+/* eslint-disable @typescript-eslint/typedef */
 import "@testing-library/jest-dom";
 import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 import { renderWithProviders } from "@/utils/test-utils";
@@ -204,5 +208,217 @@ describe("면접 페이지 테스트", () => {
     expect(goToResultButton).toBeEnabled();
     fireEvent.click(homeButton);
     expect(mockReplace).toHaveBeenCalledWith("/");
+  });
+
+  it("음성 인식 버튼이 처음에 비활성화 되는지 테스트", async () => {
+    server.use(
+      http.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        async () => {
+          await delay(100);
+          return HttpResponse.json(interviewData);
+        }
+      )
+    );
+    renderWithProviders(<InterviewPage interviewId={1} />);
+    expect(
+      screen.getByText(
+        "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요."
+      )
+    ).toBeInTheDocument();
+
+    const voiceButton = screen.getByRole("button", {
+      name: "interview-voice-start",
+    });
+    expect(voiceButton).toBeDisabled();
+  });
+
+  it("음성 인식 버튼을 누르면 음성 인식이 시작되고 버튼이 활성화 되는지 테스트", async () => {
+    // SpeechRecognition 모킹
+    const mockStart = jest.fn();
+    const mockStop = jest.fn();
+    const mockAbort = jest.fn();
+
+    class MockSpeechRecognition {
+      lang = "ko-KR";
+      continuous = true;
+      interimResults = false;
+      maxAlternatives = 1;
+
+      onstart: (() => void) | null = null;
+      onend: (() => void) | null = null;
+      onresult: ((event: any) => void) | null = null;
+      onerror: ((event: any) => void) | null = null;
+      onnomatch: (() => void) | null = null;
+      onsoundstart: (() => void) | null = null;
+      onsoundend: (() => void) | null = null;
+
+      start = mockStart.mockImplementation(() => {
+        // onstart 이벤트 트리거
+        setTimeout(() => {
+          if (this.onstart) this.onstart();
+        }, 0);
+      });
+
+      stop = mockStop.mockImplementation(() => {
+        // onend 이벤트 트리거
+        setTimeout(() => {
+          if (this.onend) this.onend();
+        }, 0);
+      });
+
+      abort = mockAbort;
+    }
+
+    Object.defineProperty(window, "SpeechRecognition", {
+      value: MockSpeechRecognition,
+      writable: true,
+    });
+
+    Object.defineProperty(window, "webkitSpeechRecognition", {
+      value: MockSpeechRecognition,
+      writable: true,
+    });
+
+    server.use(
+      http.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        async () => {
+          await delay(100);
+          return HttpResponse.json(interviewData);
+        }
+      )
+    );
+
+    renderWithProviders(<InterviewPage interviewId={1} />);
+
+    expect(
+      screen.getByText(
+        "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요."
+      )
+    ).toBeInTheDocument();
+
+    const startButton = screen.getByRole("button", {
+      name: "면접 시작하기",
+    });
+    fireEvent.click(startButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("현재 새로운 질문")).toBeInTheDocument();
+    });
+
+    const voiceButton = screen.getByRole("button", {
+      name: "interview-voice-start",
+    });
+
+    fireEvent.click(voiceButton);
+
+    // start 메서드가 호출되었는지 확인
+    expect(mockStart).toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", {
+          name: "interview-voice-stop",
+        })
+      ).toBeInTheDocument();
+    });
+  });
+
+  // 음성 인식 결과 시뮬레이션
+  it("음성 인식 결과가 텍스트 입력에 반영되는지 테스트", async () => {
+    const mockStart = jest.fn();
+    const mockStop = jest.fn();
+
+    class MockSpeechRecognition {
+      lang = "ko-KR";
+      continuous = true;
+      interimResults = false;
+      maxAlternatives = 1;
+
+      onstart: (() => void) | null = null;
+      onend: (() => void) | null = null;
+      onresult: ((event: any) => void) | null = null;
+      onerror: ((event: any) => void) | null = null;
+
+      start = mockStart.mockImplementation(() => {
+        setTimeout(() => {
+          if (this.onstart) this.onstart();
+
+          // 음성 인식 결과 시뮬레이션
+          setTimeout(() => {
+            if (this.onresult) {
+              this.onresult({
+                resultIndex: 0,
+                results: [
+                  [
+                    {
+                      transcript: "테스트 음성 인식 결과",
+                      confidence: 0.9,
+                    },
+                  ],
+                ],
+              });
+            }
+          }, 100);
+        }, 0);
+      });
+
+      stop = mockStop.mockImplementation(() => {
+        setTimeout(() => {
+          if (this.onend) this.onend();
+        }, 0);
+      });
+
+      abort = jest.fn();
+    }
+
+    Object.defineProperty(window, "SpeechRecognition", {
+      value: MockSpeechRecognition,
+      writable: true,
+    });
+
+    Object.defineProperty(window, "webkitSpeechRecognition", {
+      value: MockSpeechRecognition,
+      writable: true,
+    });
+
+    server.use(
+      http.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        async () => {
+          await delay(100);
+          return HttpResponse.json(interviewData);
+        }
+      )
+    );
+
+    renderWithProviders(<InterviewPage interviewId={1} />);
+
+    const startButton = screen.getByRole("button", {
+      name: "면접 시작하기",
+    });
+    fireEvent.click(startButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("현재 새로운 질문")).toBeInTheDocument();
+    });
+
+    const voiceButton = screen.getByRole("button", {
+      name: "interview-voice-start",
+    });
+    fireEvent.click(voiceButton);
+
+    await waitFor(() => {
+      expect(mockStart).toHaveBeenCalled();
+    });
+
+    // 음성 인식 결과가 텍스트 입력에 반영되는지 확인
+    await waitFor(() => {
+      const textarea = screen.getByRole("textbox", {
+        name: "interview-answer",
+      });
+      expect(textarea).toHaveValue(" 테스트 음성 인식 결과");
+    });
   });
 });
