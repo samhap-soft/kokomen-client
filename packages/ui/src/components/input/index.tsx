@@ -4,7 +4,7 @@ import React from "react";
 
 type InputVariantProps = VariantProps<typeof inputVariants>;
 const inputVariants = cva(
-  "flex items-center rounded-md p-2 outline-border-input bg-gray- outline-2 hover:outline-primary-hover transition-all focus:outline-border-input-focus",
+  "flex items-center rounded-md p-2 outline-border-input bg-gray- outline-2 outline-primary-border hover:outline-primary-hover transition-all focus:outline-primary-active",
   {
     variants: {
       variant: {
@@ -35,7 +35,7 @@ interface InputProps
     InputVariantProps {
   ref?: React.Ref<HTMLInputElement>;
   children?: React.ReactNode;
-  name: string;
+  name?: string; // optional로 변경
 }
 export const Input = ({
   variant,
@@ -46,15 +46,12 @@ export const Input = ({
   name,
   ...props
 }: InputProps) => (
-  <label htmlFor={name}>
-    <input
-      dangerouslySetInnerHTML={undefined}
-      ref={ref}
-      type={type}
-      className={cn(inputVariants({ variant, size }), className)}
-      id={name}
-      {...props}
-    />
-    {props.children}
-  </label>
+  <input
+    dangerouslySetInnerHTML={undefined}
+    ref={ref}
+    type={type}
+    className={cn(inputVariants({ variant, size }), className)}
+    id={name}
+    {...props}
+  />
 );

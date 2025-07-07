@@ -11,6 +11,7 @@ const authServerInstance: AxiosInstance = axios.create({
 interface KakaoLoginResponse {
   id: number;
   nickname: string;
+  profile_completed: boolean;
 }
 
 const postAuthorizationCode = async (
@@ -47,4 +48,8 @@ const logout = async (): AxiosPromise<void> => {
   );
 };
 
-export { postAuthorizationCode, getUserInfo, logout };
+const updateUserProfile = async (nickname: string): AxiosPromise<void> => {
+  return authServerInstance.patch(`/members/me/profile`, { nickname });
+};
+
+export { postAuthorizationCode, getUserInfo, logout, updateUserProfile };
