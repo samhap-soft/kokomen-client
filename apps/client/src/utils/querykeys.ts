@@ -1,14 +1,67 @@
-const interviewHistoryKeys = {
+/* eslint-disable no-unused-vars */
+type QueryKey = readonly (string | number)[];
+
+type QueryKeyFactory<T> = {
+  readonly all: QueryKey;
+} & {
+  [K in keyof T]: T[K] extends (...args: any[]) => QueryKey
+    ? (...args: Parameters<T[K]>) => QueryKey
+    : QueryKey;
+};
+
+// 인터뷰 히스토리 관련 도메인
+interface InterviewHistoryParams {
+  sort: "asc" | "desc";
+  range: "IN_PROGRESS" | "FINISHED" | "ALL";
+}
+
+type InterviewHistoryMethods = {
+  infinite: (
+    filters: [InterviewHistoryParams["sort"], InterviewHistoryParams["range"]]
+  ) => QueryKey;
+};
+const interviewHistoryKeys: QueryKeyFactory<InterviewHistoryMethods> = {
   all: ["interviewHistory"] as const,
-  infinite: (filters: string[]) =>
+  infinite: (filters: string[]): QueryKey =>
     [...interviewHistoryKeys.all, "infinite", ...filters] as const,
 };
 
-const interviewKeys = {
+// 인터뷰 관련 도메인
+interface InterviewParams {
+  interviewId: number;
+  questionId?: number;
+}
+
+type InterviewMethods = {
+  byInterviewId: (id: number) => QueryKey;
+  byInterviewIdAndQuestionId: (id: number, questionId: number) => QueryKey;
+};
+const interviewKeys: QueryKeyFactory<InterviewMethods> = {
   all: ["interview"] as const,
-  byInterviewId: (id: number) => [...interviewKeys.all, id] as const,
-  byInterviewIdAndQuestionId: (id: number, questionId: number) =>
-    [...interviewKeys.byInterviewId(id), questionId] as const,
+  byInterviewId: (id: number): QueryKey => [...interviewKeys.all, id] as const,
+  byInterviewIdAndQuestionId: (id: number, questionId: number): QueryKey =>
+    [...interviewKeys.all, id, questionId] as const,
 };
 
-export { interviewHistoryKeys, interviewKeys };
+// 멤버 관련 도메인
+interface MemberRankParams {
+  page: number;
+  size: number;
+}
+type MemberMethods = {
+  rank: (page?: number, size?: number) => QueryKey;
+};
+const memberKeys: QueryKeyFactory<MemberMethods> = {
+  all: ["members"] as const,
+  rank: (page: number = 0, size: number = 10): QueryKey =>
+    [...memberKeys.all, "rank", page, size] as const,
+};
+
+export {
+  interviewHistoryKeys,
+  interviewKeys,
+  memberKeys,
+  type InterviewHistoryParams,
+  type InterviewParams,
+  type MemberRankParams,
+};
