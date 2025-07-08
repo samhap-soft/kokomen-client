@@ -187,8 +187,10 @@ export const getServerSideProps: GetServerSideProps<
       getUserInfo(context),
     ]);
     return {
-      report: report.data,
-      userInfo: userInfo.data,
+      data: {
+        report: report.data,
+        userInfo: userInfo.data,
+      },
     };
   });
 };
