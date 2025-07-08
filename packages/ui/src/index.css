@@ -519,6 +519,14 @@
   --color-yellow-10: #fafa85;
 }
 
+@utility bg-gradient-primary {
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    var(--color-primary-border)
+  );
+}
+
 /* Toast 애니메이션 키프레임 */
 @keyframes toast-slide-in {
   from {
