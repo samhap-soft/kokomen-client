@@ -50,11 +50,22 @@ interface MemberRankParams {
 }
 type MemberMethods = {
   rank: (page?: number, size?: number) => QueryKey;
+  interviewsByIdAndPage: (
+    id: number,
+    sort: "asc" | "desc",
+    page?: number
+  ) => QueryKey;
 };
 const memberKeys: QueryKeyFactory<MemberMethods> = {
   all: ["members"] as const,
-  rank: (page: number = 0, size: number = 10): QueryKey =>
-    [...memberKeys.all, "rank", page, size] as const,
+  rank: (page: number = 0): QueryKey =>
+    [...memberKeys.all, "rank", page] as const,
+  interviewsByIdAndPage: (
+    interviewId: number,
+    sort: "asc" | "desc",
+    page: number = 0
+  ): QueryKey =>
+    [...memberKeys.all, "interviews", interviewId, sort, page] as const,
 };
 
 export {
