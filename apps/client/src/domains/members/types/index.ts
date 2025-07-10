@@ -1,3 +1,14 @@
+type Feedback = {
+  question_id: number;
+  answer_id: number;
+  question: string;
+  answer: string;
+  answer_rank: string;
+  answer_feedback: string;
+  answer_like_count: number;
+  answer_already_liked: boolean;
+};
+
 type Rank = {
   id: number;
   nickname: string;
@@ -53,5 +64,58 @@ class MemberInterview implements TMemberInterview {
   }
 }
 
-export type { Rank, TMemberInterview, TMemberInterviewResponse };
-export { MemberInterview };
+type TMemberInterviewResultResponse = {
+  feedbacks: Feedback[];
+  total_feedback: string;
+  total_score: number;
+  interview_like_count: number;
+  interview_already_liked: boolean;
+};
+
+type TMemberInterviewResult = {
+  feedbacks: {
+    questionId: number;
+    answerId: number;
+    question: string;
+    answer: string;
+    answerRank: string;
+    answerFeedback: string;
+    answerLikeCount: number;
+    answerLiked: boolean;
+  }[];
+  totalFeedback: string;
+  totalScore: number;
+  interviewLikeCount: number;
+  interviewAlreadyLiked: boolean;
+};
+
+const mapToMemberInterviewResult = (
+  response: TMemberInterviewResultResponse
+): TMemberInterviewResult => {
+  return {
+    feedbacks: response.feedbacks.map((feedback) => ({
+      questionId: feedback.question_id,
+      answerId: feedback.answer_id,
+      question: feedback.question,
+      answer: feedback.answer,
+      answerRank: feedback.answer_rank,
+      answerFeedback: feedback.answer_feedback,
+      answerLikeCount: feedback.answer_like_count,
+      answerLiked: feedback.answer_already_liked,
+    })),
+    totalFeedback: response.total_feedback,
+    totalScore: response.total_score,
+    interviewLikeCount: response.interview_like_count,
+    interviewAlreadyLiked: response.interview_already_liked,
+  };
+};
+
+export type {
+  Feedback,
+  Rank,
+  TMemberInterview,
+  TMemberInterviewResponse,
+  TMemberInterviewResult,
+  TMemberInterviewResultResponse,
+};
+export { MemberInterview, mapToMemberInterviewResult };

@@ -1,9 +1,13 @@
 import {
+  mapToMemberInterviewResult,
   MemberInterview,
   Rank,
   TMemberInterviewResponse,
+  TMemberInterviewResult,
+  TMemberInterviewResultResponse,
 } from "@/domains/members/types";
 import axios, { AxiosInstance } from "axios";
+import { GetServerSidePropsContext } from "next";
 
 const memberInstance: AxiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
@@ -30,4 +34,45 @@ const getMemberInterviews = async (
     .then((res) => res.data)
     .then((data) => data.map((interview) => new MemberInterview(interview)));
 
-export { getRankList, getMemberInterviews };
+const getMemberInterviewResult = async (
+  interviewId: number,
+  context: GetServerSidePropsContext
+): Promise<TMemberInterviewResult> =>
+  memberInstance
+    .get<TMemberInterviewResultResponse>(`/interviews/${interviewId}/result`, {
+      headers: {
+        cookie: context.req.headers.cookie,
+      },
+    })
+    .then((res) => res.data)
+    .then((data) => mapToMemberInterviewResult(data));
+
+const toggleMemberInterviewLike = async (
+  liked: boolean,
+  interviewId: number
+): Promise<void> => {
+  if (liked) {
+    return memberInstance.delete(`/interviews/${interviewId}/like`);
+  } else {
+    return memberInstance.post(`/interviews/${interviewId}/like`);
+  }
+};
+
+const toggleMemberInterviewAnswerLike = async (
+  liked: boolean,
+  answerId: number
+): Promise<void> => {
+  if (liked) {
+    return memberInstance.delete(`/answers/${answerId}/like`);
+  } else {
+    return memberInstance.post(`/answers/${answerId}/like`);
+  }
+};
+
+export {
+  getRankList,
+  getMemberInterviews,
+  getMemberInterviewResult,
+  toggleMemberInterviewLike,
+  toggleMemberInterviewAnswerLike,
+};
