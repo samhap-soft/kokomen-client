@@ -1,11 +1,12 @@
 import {
-  mapToMemberInterviewResult,
   MemberInterview,
+  MemberInterviewResult,
   Rank,
-  TMemberInterviewResponse,
-  TMemberInterviewResult,
-  TMemberInterviewResultResponse,
 } from "@/domains/members/types";
+import {
+  CamelCasedProperties,
+  mapToCamelCase,
+} from "@/utils/convertConvention";
 import axios, { AxiosInstance } from "axios";
 import { GetServerSidePropsContext } from "next";
 
@@ -14,7 +15,10 @@ const memberInstance: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-const getRankList = async (page = 0, size = 10): Promise<Rank[]> => {
+const getRankList = async (
+  page = 0,
+  size = 10
+): Promise<CamelCasedProperties<Rank>[]> => {
   const response = await memberInstance.get("/members/ranking", {
     params: { page, size },
   });
@@ -26,26 +30,26 @@ const getMemberInterviews = async (
   page = 0,
   sort = "desc",
   size = 10
-): Promise<MemberInterview[]> =>
+): Promise<CamelCasedProperties<MemberInterview>> =>
   memberInstance
-    .get<TMemberInterviewResponse[]>("/interviews", {
+    .get<MemberInterview>("/interviews", {
       params: { member_id: memberId, page, size, sort: `id,${sort}` },
     })
     .then((res) => res.data)
-    .then((data) => data.map((interview) => new MemberInterview(interview)));
+    .then(mapToCamelCase);
 
 const getMemberInterviewResult = async (
   interviewId: number,
   context: GetServerSidePropsContext
-): Promise<TMemberInterviewResult> =>
+): Promise<CamelCasedProperties<MemberInterviewResult>> =>
   memberInstance
-    .get<TMemberInterviewResultResponse>(`/interviews/${interviewId}/result`, {
+    .get<MemberInterviewResult>(`/interviews/${interviewId}/result`, {
       headers: {
         cookie: context.req.headers.cookie,
       },
     })
     .then((res) => res.data)
-    .then((data) => mapToMemberInterviewResult(data));
+    .then(mapToCamelCase);
 
 const toggleMemberInterviewLike = async (
   liked: boolean,
