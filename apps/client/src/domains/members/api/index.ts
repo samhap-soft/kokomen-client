@@ -46,6 +46,7 @@ const getMemberInterviewResult = async (
     .get<MemberInterviewResult>(`/interviews/${interviewId}/result`, {
       headers: {
         cookie: context.req.headers.cookie,
+        "X-Forwarded-For": context.req.headers["x-real-ip"],
       },
     })
     .then((res) => res.data)
