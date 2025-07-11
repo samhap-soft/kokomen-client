@@ -35,7 +35,7 @@ export const startNewInterview = async (
 
 export const getInterview = async (interviewId: string): Promise<Interview> => {
   const { data } = await interviewApiInstance.get(
-    `/interviews/${interviewId}`,
+    `/interviews/${interviewId}/check`,
     {
       withCredentials: true,
     }
