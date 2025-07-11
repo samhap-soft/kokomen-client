@@ -19,11 +19,13 @@ export default function InterviewHistory({
   interviewSummaries,
   sort,
   page,
+  totalPageCount,
 }: {
   memberId: number;
   interviewSummaries: CamelCasedProperties<MemberInterview>["interviewSummaries"];
   sort: "desc" | "asc";
   page: number;
+  totalPageCount: number;
 }): JSX.Element {
   const router = useRouter();
 
@@ -39,7 +41,7 @@ export default function InterviewHistory({
             { value: "asc", label: "오래된순", disabled: false },
           ]}
           onChange={(value) => {
-            router.push(`/members/${memberId}?sort=${value}&page=${page}`);
+            router.push(`/members/${memberId}?sort=${value}&page=0`);
           }}
         />
       </div>
@@ -106,11 +108,31 @@ export default function InterviewHistory({
               >
                 <ChevronLeft />
               </Button>
+              {Array.from({ length: totalPageCount }).map((_, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  role="button"
+                  name={`${index + 1} page`}
+                  aria-label="page"
+                  variant={page === index ? "primary" : "glass"}
+                  className={`${page === index && "disabled:opacity-100 disabled:bg-primary-bg-hover disabled:text-primary"}`}
+                  onClick={() => {
+                    router.push(
+                      `/members/${memberId}?sort=${sort}&page=${index}`
+                    );
+                  }}
+                  disabled={page === index}
+                >
+                  {index + 1}
+                </Button>
+              ))}
               <Button
                 type="button"
                 role="button"
                 name="next page"
                 aria-label="next page"
+                disabled={page === totalPageCount}
                 onClick={() => {
                   router.push(
                     `/members/${memberId}?sort=${sort}&page=${page + 1}`

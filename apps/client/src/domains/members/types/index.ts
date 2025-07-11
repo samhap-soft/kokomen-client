@@ -21,6 +21,7 @@ type MemberInterview = {
   total_member_count: number;
   interviewee_rank: number;
   interviewee_nickname: string;
+  total_page_count: number;
 };
 
 type Feedback = {
