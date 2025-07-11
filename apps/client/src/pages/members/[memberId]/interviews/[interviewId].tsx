@@ -1,7 +1,7 @@
 import { getUserInfo } from "@/domains/auth/api";
 import { User } from "@/domains/auth/types";
 import { getMemberInterviewResult } from "@/domains/members/api";
-import { TMemberInterviewResult } from "@/domains/members/types";
+import { MemberInterviewResult } from "@/domains/members/types";
 import Header from "@/shared/header";
 import {
   GetServerSidePropsContext,
@@ -14,6 +14,7 @@ import { HelpCircle, Info, Users, Share2, Eye } from "lucide-react";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
 import MemberQuestionFeedback from "@/domains/members/components/memberQuestionFeedback";
 import { Button } from "@kokomen/ui/components/button";
+import { CamelCasedProperties } from "@/utils/convertConvention";
 
 export default function MemberInterviewResultPage({
   result,
@@ -51,7 +52,7 @@ export default function MemberInterviewResultPage({
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold text-white">
-                      면접 결과 리포트
+                      {result.intervieweeNickname}님의 면접 결과
                     </h1>
                     <p className="text-blue-1 text-sm">
                       {/* 멤버 이름 들어갈 곳 */}
@@ -143,7 +144,7 @@ export const getServerSideProps = async (
   }>
 ): Promise<
   GetServerSidePropsResult<{
-    result: TMemberInterviewResult;
+    result: CamelCasedProperties<MemberInterviewResult>;
     user: User | null;
     interviewId: number;
   }>
