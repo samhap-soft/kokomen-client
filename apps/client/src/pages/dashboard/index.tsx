@@ -55,43 +55,48 @@ export default function Dashboard({
                   </h1>
                 </div>
               </div>
-              <div className="text-right flex items-center gap-5">
+              <div className="text-right flex items-center gap-5 flex-col md:flex-row">
                 {/* 랭킹 표시 */}
-                {userInfo && rankDisplay && RankIcon && (
-                  <div
-                    className={`flex items-center gap-2 text-lg font-semibold ${rankDisplay.bgColor} text-gray-700 rounded-xl px-4 py-2`}
-                  >
-                    <RankIcon className={`w-5 h-5 ${rankDisplay.color}`} />
-                    <div>
-                      <div className="text-sm font-medium">랭킹</div>
-                      <div className="text-lg font-bold">{userInfo.rank}위</div>
+                <div className="flex items-center gap-2">
+                  {userInfo && rankDisplay && RankIcon && (
+                    <div
+                      className={`flex items-center gap-2 text-lg font-semibold ${rankDisplay.bgColor} text-gray-700 rounded-xl px-4 py-2`}
+                    >
+                      <RankIcon className={`w-5 h-5 ${rankDisplay.color}`} />
+                      <div>
+                        <div className="text-sm font-medium">랭킹</div>
+                        <div className="text-lg font-bold">
+                          {userInfo.rank}위
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* 상위 백분위 표시 */}
-                {userInfo && (
-                  <div
-                    className={`flex items-center gap-2 text-lg font-semibold ${getPercentileDisplay(percentile).bgColor} ${getPercentileDisplay(percentile).color} rounded-xl px-4 py-2`}
-                  >
-                    <TrendingUp className="w-5 h-5" />
-                    <div>
-                      <div className="text-sm font-medium">상위</div>
-                      <div className="text-lg font-bold">{percentile}%</div>
+                  {/* 상위 백분위 표시 */}
+                  {userInfo && (
+                    <div
+                      className={`flex items-center gap-2 text-lg font-semibold ${getPercentileDisplay(percentile).bgColor} ${getPercentileDisplay(percentile).color} rounded-xl px-4 py-2`}
+                    >
+                      <TrendingUp className="w-5 h-5" />
+                      <div>
+                        <div className="text-sm font-medium">상위</div>
+                        <div className="text-lg font-bold">{percentile}%</div>
+                      </div>
                     </div>
-                  </div>
-                )}
-
-                {/* 점수 표시 */}
-                <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-primary-hover to-primary text-text-light-solid rounded-xl px-4 py-2">
-                  <Star className="w-5 h-5" />
-                  <span>{userInfo?.score || 0}점</span>
+                  )}
                 </div>
+                <div className="flex items-center gap-2 ">
+                  {/* 점수 표시 */}
+                  <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-primary-hover to-primary text-text-light-solid rounded-xl px-4 py-2">
+                    <Star className="w-5 h-5" />
+                    <span>{userInfo?.score || 0}점</span>
+                  </div>
 
-                {/* 토큰 표시 */}
-                <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-gold-4 to-gold-6 text-text-light-solid rounded-xl px-4 py-2">
-                  <Coins className="w-5 h-5" />
-                  <span>{userInfo?.token_count || 0} 토큰</span>
+                  {/* 토큰 표시 */}
+                  <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-gold-4 to-gold-6 text-text-light-solid rounded-xl px-4 py-2">
+                    <Coins className="w-5 h-5" />
+                    <span>{userInfo?.token_count || 0} 토큰</span>
+                  </div>
                 </div>
               </div>
             </div>
