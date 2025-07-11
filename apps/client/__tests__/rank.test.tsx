@@ -51,7 +51,7 @@ describe("랭크 페이지 테스트", () => {
   it("랭크 페이지에서 각 랭커들을 눌렀을 때 랭커들의 페이지로 이동하는지 테스트", async () => {
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/ranking`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/ranking?page=0&size=10`,
         async () => {
           return HttpResponse.json(mockRankList, { status: 200 });
         }
