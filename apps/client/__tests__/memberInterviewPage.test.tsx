@@ -71,7 +71,7 @@ describe("memberInterviewPage", () => {
         user={null}
         interviews={mockMemberInterview}
         sort="desc"
-        page={0}
+        page={1}
       />
     );
     await waitFor(() => {
@@ -82,7 +82,7 @@ describe("memberInterviewPage", () => {
     const nextButton = screen.getByRole("button", { name: "next page" });
     fireEvent.click(nextButton);
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/members/1?sort=desc&page=1");
+      expect(mockPush).toHaveBeenCalledWith("/members/1?sort=desc&page=2");
     });
   });
   it("데이터 페이지네이션 테스트", async () => {
@@ -92,7 +92,7 @@ describe("memberInterviewPage", () => {
         user={null}
         interviews={{
           ...mockMemberInterview,
-          totalPageCount: 1,
+          totalPageCount: 2,
         }}
         sort="desc"
         page={1}
