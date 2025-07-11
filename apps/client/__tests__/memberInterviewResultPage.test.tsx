@@ -1,5 +1,5 @@
 import { renderWithProviders } from "@/utils/test-utils";
-import MemberInterviewResultPage from "@/pages/members/[memberId]/interviews/[interviewId]";
+import MemberInterviewResultPage from "@/pages/members/interviews/[interviewId]";
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { server } from "@/mocks";
 import { http, HttpResponse } from "msw";
