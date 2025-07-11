@@ -3,7 +3,11 @@ import MemberInterviewResultPage from "@/pages/members/[memberId]/interviews/[in
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { server } from "@/mocks";
 import { http, HttpResponse } from "msw";
-import { mapToCamelCase } from "@/utils/convertConvention";
+import {
+  CamelCasedProperties,
+  mapToCamelCase,
+} from "@/utils/convertConvention";
+import { MemberInterviewResult } from "@/domains/members/types";
 
 const memberInterviewResultData = {
   feedbacks: [
@@ -32,7 +36,11 @@ describe("면접 결과 페이지 테스트", () => {
     renderWithProviders(
       <MemberInterviewResultPage
         interviewId={1}
-        result={mapToCamelCase(memberInterviewResultData)}
+        result={
+          mapToCamelCase(
+            memberInterviewResultData
+          ) as CamelCasedProperties<MemberInterviewResult>
+        }
         user={null}
       />
     );
@@ -44,7 +52,11 @@ describe("면접 결과 페이지 테스트", () => {
     renderWithProviders(
       <MemberInterviewResultPage
         interviewId={1}
-        result={mapToCamelCase(memberInterviewResultData)}
+        result={
+          mapToCamelCase(
+            memberInterviewResultData
+          ) as CamelCasedProperties<MemberInterviewResult>
+        }
         user={null}
       />
     );
@@ -92,7 +104,11 @@ describe("면접 결과 페이지 테스트", () => {
     renderWithProviders(
       <MemberInterviewResultPage
         interviewId={1}
-        result={mapToCamelCase(memberInterviewResultData)}
+        result={
+          mapToCamelCase(
+            memberInterviewResultData
+          ) as CamelCasedProperties<MemberInterviewResult>
+        }
         user={null}
       />
     );
