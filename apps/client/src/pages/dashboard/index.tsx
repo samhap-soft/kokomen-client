@@ -134,12 +134,15 @@ export default function Dashboard({
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ userInfo: UserType }>> => {
-  return withCheckInServer(async () => {
-    const userInfo = await getUserInfo(context);
-    return {
-      data: {
-        userInfo: userInfo.data,
-      },
-    };
-  });
+  return withCheckInServer(
+    async () => {
+      const userInfo = await getUserInfo(context);
+      return {
+        data: {
+          userInfo: userInfo.data,
+        },
+      };
+    },
+    { authCheck: true, context }
+  );
 };

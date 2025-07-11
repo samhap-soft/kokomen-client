@@ -14,9 +14,10 @@ export async function withCheckInServer<T>(
     ) => GetServerSidePropsResult<T>;
     // 에러 로깅 비활성화
     context?: GetServerSidePropsContext;
+    authCheck?: boolean;
   }
 ): Promise<GetServerSidePropsResult<T>> {
-  const { onError, context } = options || {};
+  const { onError, context, authCheck = true } = options || {};
 
   try {
     // fetchCall이 함수인지 확인
@@ -53,6 +54,9 @@ export async function withCheckInServer<T>(
       switch (status) {
         case 401:
         case 403:
+          if (authCheck && context) {
+            eraseCookie(context);
+          }
           return {
             redirect: {
               destination: LOGIN_PATH,
@@ -89,37 +93,13 @@ export async function withCheckInServer<T>(
   }
 }
 
-// 사용 예시:
-/*
-// 1. 기본 사용법
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  return withCheckInServer(
-    () => api.getUserProfile(context.params?.userId as string),
-    { context }
-  );
-};
-
-// 2. 커스텀 옵션 사용
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  return withCheckInServer(
-    () => api.getAdminData(),
-    {
-      loginPath: "/admin/login",
-      context,
-      onError: (error) => ({
-        redirect: {
-          destination: "/admin/error",
-          permanent: false,
-        },
-      }),
-    }
-  );
-};
-
-// 3. 헬퍼 함수 사용
-const fetchUserData = createAuthenticatedFetcher(() => api.getUserData());
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  return fetchUserData({ context });
-};
-*/
+export function eraseCookie(context: GetServerSidePropsContext) {
+  const cookies = context.req.cookies;
+  const sessionId = cookies.JSESSIONID;
+  if (sessionId) {
+    context.res.setHeader(
+      "Set-Cookie",
+      `JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+    );
+  }
+}
