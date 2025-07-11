@@ -139,7 +139,7 @@ export const getServerSideProps = async (
 
       return {
         data: { categories: categoryData, userInfo: userInfoData },
-      } as any;
+      };
     },
     {
       onError: () => {
@@ -150,6 +150,8 @@ export const getServerSideProps = async (
           },
         };
       },
+      context,
+      authCheck: true,
     }
   );
 };

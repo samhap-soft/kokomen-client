@@ -3,8 +3,9 @@ import { memberKeys } from "@/utils/querykeys";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { Button } from "@kokomen/ui/components/button";
+import { JSX } from "react";
 
-export default function RankCard() {
+export default function RankCard(): JSX.Element {
   const { data } = useQuery({
     queryKey: memberKeys.rank(),
     queryFn: () => getRankList(),

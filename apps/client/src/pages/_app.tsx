@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { JSX } from "react";
 import { Toaster } from "@kokomen/ui/components/toast/toaster";
 import { ErrorBoundary } from "@sentry/nextjs";
-import Error from "@/pages/_error";
+import ErrorFallback from "@/shared/errorFallback";
 
 const queryClient: QueryClient = new QueryClient();
 
@@ -12,9 +12,7 @@ const queryClient: QueryClient = new QueryClient();
 export default function App({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary
-        fallback={<Error statusCode={500} hasGetInitialProps={false} />}
-      >
+      <ErrorBoundary fallback={<ErrorFallback />}>
         <Toaster>
           <Component {...pageProps} />
         </Toaster>
