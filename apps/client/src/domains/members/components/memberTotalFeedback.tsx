@@ -1,17 +1,18 @@
 import { toggleMemberInterviewLike } from "@/domains/members/api";
-import { TMemberInterviewResult } from "@/domains/members/types";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle, Heart, MessageCircle, Trophy } from "lucide-react";
 import { JSX, useState } from "react";
 import { useToast } from "@kokomen/ui/hooks/useToast";
 import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui/components/button";
+import { MemberInterviewResult } from "@/domains/members/types";
+import { CamelCasedProperties } from "@/utils/convertConvention";
 
 export default function MemberTotalFeedback({
   result,
   interviewId,
 }: {
-  result: TMemberInterviewResult;
+  result: CamelCasedProperties<MemberInterviewResult>;
   interviewId: number;
 }): JSX.Element {
   const [isTotalLikedIncludesMine, setIsTotalLikedIncludesMine] =
