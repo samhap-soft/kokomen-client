@@ -16,6 +16,7 @@ const mockMemberInterview: CamelCasedProperties<MemberInterview> = {
       score: 20,
       interviewLikeCount: 10,
       interviewAlreadyLiked: false,
+      interviewViewCount: 10,
     },
     {
       interviewId: 2,
@@ -26,6 +27,7 @@ const mockMemberInterview: CamelCasedProperties<MemberInterview> = {
       score: 20,
       interviewLikeCount: 10,
       interviewAlreadyLiked: false,
+      interviewViewCount: 10,
     },
   ],
   intervieweeNickname: "test",

@@ -12,6 +12,7 @@ type InterviewSummary = {
   root_question: string;
   max_question_count: number;
   score: 20;
+  interview_view_count: number;
   interview_like_count: number;
   interview_already_liked: boolean;
 };
