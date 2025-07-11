@@ -6,8 +6,43 @@ import { server } from "@/mocks";
 import { delay, http, HttpResponse } from "msw";
 import { mockPush } from "jest.setup";
 
+const mockRankList = [
+  {
+    id: 1,
+    nickname: "test1",
+    score: 100,
+    finished_interview_count: 10,
+  },
+  {
+    id: 2,
+    nickname: "test2",
+    score: 99,
+    finished_interview_count: 10,
+  },
+  {
+    id: 3,
+    nickname: "test3",
+    score: 98,
+    finished_interview_count: 10,
+  },
+  {
+    id: 4,
+    nickname: "test4",
+    score: 97,
+    finished_interview_count: 10,
+  },
+];
+
 describe("면접 메인 페이지 렌더링 테스트", () => {
   it("면접 메인 페이지가 정상적으로 렌더링 되는지 테스트", () => {
+    server.use(
+      http.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/ranking`,
+        async () => {
+          return HttpResponse.json(mockRankList, { status: 200 });
+        }
+      )
+    );
     renderWithProviders(
       <InterviewMainPage
         categories={[
@@ -28,6 +63,14 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
 
 describe("면접 메인 페이지 버튼 테스트", () => {
   it("면접 시작 버튼이 활성화되어 있는지 테스트", () => {
+    server.use(
+      http.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/ranking`,
+        async () => {
+          return HttpResponse.json(mockRankList, { status: 200 });
+        }
+      )
+    );
     renderWithProviders(
       <InterviewMainPage
         categories={[
@@ -87,6 +130,14 @@ describe("면접 메인 페이지 API 테스트", () => {
   beforeEach(() => {
     // 각 테스트 전에 mock 함수들을 초기화
     jest.clearAllMocks();
+    server.use(
+      http.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/ranking`,
+        async () => {
+          return HttpResponse.json(mockRankList, { status: 200 });
+        }
+      )
+    );
   });
 
   it("면접 메인 페이지에서 면접 시작 버튼을 클릭하면 면접 페이지로 이동한다.", async () => {

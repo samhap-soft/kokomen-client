@@ -17,12 +17,18 @@ export default function MemberTotalFeedback({
 }): JSX.Element {
   const [isTotalLikedIncludesMine, setIsTotalLikedIncludesMine] =
     useState<boolean>(result.interviewAlreadyLiked);
+  const [totalLikedCount, setTotalLikedCount] = useState<number>(
+    result.interviewLikeCount
+  );
   const { error: errorToast } = useToast();
   const { mutate: toggleInterviewLikeMutation, isPending } = useMutation({
     mutationFn: (liked: boolean) =>
       toggleMemberInterviewLike(liked, interviewId),
     onMutate: () => {
       setIsTotalLikedIncludesMine(!isTotalLikedIncludesMine);
+      setTotalLikedCount(
+        isTotalLikedIncludesMine ? totalLikedCount - 1 : totalLikedCount + 1
+      );
     },
     onError: (error) => {
       if (isAxiosError(error)) {
@@ -36,6 +42,9 @@ export default function MemberTotalFeedback({
           description: "서버 오류가 발생했습니다.",
         });
         setIsTotalLikedIncludesMine(!isTotalLikedIncludesMine);
+        setTotalLikedCount(
+          isTotalLikedIncludesMine ? totalLikedCount + 1 : totalLikedCount - 1
+        );
       }
     },
   });
@@ -70,9 +79,7 @@ export default function MemberTotalFeedback({
           <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <Heart className="w-8 h-8 text-white" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
-            {result.interviewLikeCount}
-          </p>
+          <p className="text-2xl font-bold text-gray-900">{totalLikedCount}</p>
           <p className="text-sm text-gray-600">좋아요</p>
         </div>
       </div>
@@ -102,11 +109,7 @@ export default function MemberTotalFeedback({
             <Heart
               className={`w-5 h-5 mr-2 ${isTotalLikedIncludesMine ? "fill-current" : ""}`}
             />
-            <span className="text-sm font-medium">
-              {isTotalLikedIncludesMine
-                ? result.interviewLikeCount + 1
-                : result.interviewLikeCount}
-            </span>
+            <span className="text-sm font-medium">{totalLikedCount}</span>
           </Button>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-white/50">
