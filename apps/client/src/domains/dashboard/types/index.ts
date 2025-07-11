@@ -7,6 +7,8 @@ type InterviewHistory = {
   max_question_count: number;
   cur_answer_count: number;
   score: number;
+  interview_view_count: number;
+  interview_like_count: number;
 };
 
 export type { InterviewHistory };
