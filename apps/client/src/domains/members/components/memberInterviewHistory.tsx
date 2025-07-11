@@ -132,7 +132,7 @@ export default function InterviewHistory({
                 role="button"
                 name="next page"
                 aria-label="next page"
-                disabled={page === totalPageCount}
+                disabled={page === totalPageCount - 1}
                 onClick={() => {
                   router.push(
                     `/members/${memberId}?sort=${sort}&page=${page + 1}`
