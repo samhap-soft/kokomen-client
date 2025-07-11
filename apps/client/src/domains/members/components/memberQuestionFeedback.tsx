@@ -1,4 +1,3 @@
-import { TMemberInterviewResult } from "@/domains/members/types";
 import { useMutation } from "@tanstack/react-query";
 import { Heart } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -6,16 +5,20 @@ import { useToast } from "@kokomen/ui/hooks/useToast";
 import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui/components/button";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
+import { CamelCasedProperties } from "@/utils/convertConvention";
+import { MemberInterviewResult } from "@/domains/members/types";
 
 export default function MemberQuestionFeedback({
   questionAndFeedback,
   index,
 }: {
-  questionAndFeedback: TMemberInterviewResult["feedbacks"][number];
+  questionAndFeedback: CamelCasedProperties<
+    MemberInterviewResult["feedbacks"][number]
+  >;
   index: number;
 }) {
   const [answerLiked, setAnswerLiked] = useState<boolean>(
-    questionAndFeedback.answerLiked
+    questionAndFeedback.answerAlreadyLiked
   );
   const { error: errorToast } = useToast();
   const { mutate: toggleInterviewLikeMutation, isPending } = useMutation({
