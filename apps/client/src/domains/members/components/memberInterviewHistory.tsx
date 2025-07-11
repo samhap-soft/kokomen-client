@@ -1,34 +1,31 @@
-import { getMemberInterviews } from "@/domains/members/api";
-import { memberKeys } from "@/utils/querykeys";
 import Select from "@kokomen/ui/components/select";
-import { useQuery } from "@tanstack/react-query";
 import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Frown,
   TrendingUp,
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
-import { JSX, useState } from "react";
+import { JSX } from "react";
 import { Button } from "@kokomen/ui/components/button";
+import { MemberInterview } from "@/domains/members/types";
+import { CamelCasedProperties } from "@/utils/convertConvention";
+import { useRouter } from "next/router";
+import { formatDate } from "@/utils/date";
 
 export default function InterviewHistory({
   memberId,
+  interviewSummaries,
+  sort,
+  page,
 }: {
   memberId: number;
+  interviewSummaries: CamelCasedProperties<MemberInterview>["interviewSummaries"];
+  sort: "desc" | "asc";
+  page: number;
 }): JSX.Element {
-  const [sort, setSort] = useState<"desc" | "asc">("desc");
-  const [page, setPage] = useState(0);
-  const {
-    data: interviews,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: memberKeys.interviewsByIdAndPage(memberId, sort, page),
-    queryFn: () => getMemberInterviews(memberId, page, sort),
-  });
+  const router = useRouter();
 
   return (
     <>
@@ -41,20 +38,18 @@ export default function InterviewHistory({
             { value: "desc", label: "최신순", disabled: false },
             { value: "asc", label: "오래된순", disabled: false },
           ]}
-          onChange={(value) => setSort(value as "desc" | "asc")}
+          onChange={(value) => {
+            router.push(`/members/${memberId}?sort=${value}&page=${page}`);
+          }}
         />
       </div>
 
-      {isLoading && <InterviewHistorySkeleton />}
+      {!interviewSummaries.length && <InterviewHistoryEmpty />}
 
-      {isError && <InterviewHistoryError />}
-
-      {!isLoading && interviews?.length === 0 && <InterviewHistoryEmpty />}
-
-      {(interviews?.length ?? 0) > 0 && (
+      {(interviewSummaries.length ?? 0) > 0 && (
         <div>
           <div className="space-y-4">
-            {interviews?.map((interview) => (
+            {interviewSummaries.map((interview) => (
               <div
                 key={interview.interviewId}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
@@ -74,7 +69,7 @@ export default function InterviewHistory({
                     <div className="flex items-center gap-6 text-sm text-gray-500">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {interview.formattedCreatedDate}
+                        {formatDate(interview.createdAt)}
                       </div>
                       {interview.score && (
                         <div className="flex items-center gap-1">
@@ -102,7 +97,11 @@ export default function InterviewHistory({
                 role="button"
                 name="prev page"
                 aria-label="prev page"
-                onClick={() => setPage(page - 1)}
+                onClick={() => {
+                  router.push(
+                    `/members/${memberId}?sort=${sort}&page=${page === 0 ? 0 : page - 1}`
+                  );
+                }}
                 disabled={page === 0}
               >
                 <ChevronLeft />
@@ -112,7 +111,11 @@ export default function InterviewHistory({
                 role="button"
                 name="next page"
                 aria-label="next page"
-                onClick={() => setPage(page + 1)}
+                onClick={() => {
+                  router.push(
+                    `/members/${memberId}?sort=${sort}&page=${page + 1}`
+                  );
+                }}
               >
                 <ChevronRight />
               </Button>
@@ -124,47 +127,47 @@ export default function InterviewHistory({
   );
 }
 
-function InterviewHistorySkeleton(): JSX.Element {
-  return (
-    <div className="space-y-4">
-      {Array.from({ length: 10 }).map((_, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-pulse"
-        >
-          <div className="flex items-start justify-between md:flex-row md:w-auto w-full flex-col gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-7 bg-gray-200 rounded-md w-32"></div>
-                <div className="h-6 bg-gray-200 rounded-full w-12"></div>
-              </div>
+// function InterviewHistorySkeleton(): JSX.Element {
+//   return (
+//     <div className="space-y-4">
+//       {Array.from({ length: 10 }).map((_, index) => (
+//         <div
+//           key={index}
+//           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 animate-pulse"
+//         >
+//           <div className="flex items-start justify-between md:flex-row md:w-auto w-full flex-col gap-4">
+//             <div className="flex-1">
+//               <div className="flex items-center gap-3 mb-3">
+//                 <div className="h-7 bg-gray-200 rounded-md w-32"></div>
+//                 <div className="h-6 bg-gray-200 rounded-full w-12"></div>
+//               </div>
 
-              <div className="space-y-2 mb-4">
-                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gray-200 rounded w-4/5"></div>
-              </div>
+//               <div className="space-y-2 mb-4">
+//                 <div className="h-4 bg-gray-200 rounded w-full"></div>
+//                 <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+//               </div>
 
-              <div className="flex items-center gap-6 text-sm">
-                <div className="flex items-center gap-1">
-                  <div className="w-4 h-4 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded w-20"></div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-4 h-4 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded w-10"></div>
-                </div>
-              </div>
-            </div>
+//               <div className="flex items-center gap-6 text-sm">
+//                 <div className="flex items-center gap-1">
+//                   <div className="w-4 h-4 bg-gray-200 rounded"></div>
+//                   <div className="h-4 bg-gray-200 rounded w-20"></div>
+//                 </div>
+//                 <div className="flex items-center gap-1">
+//                   <div className="w-4 h-4 bg-gray-200 rounded"></div>
+//                   <div className="h-4 bg-gray-200 rounded w-10"></div>
+//                 </div>
+//               </div>
+//             </div>
 
-            <div className="md:ml-4 md:w-auto w-full">
-              <div className="h-9 bg-gray-200 rounded-md md:w-20 w-full"></div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
+//             <div className="md:ml-4 md:w-auto w-full">
+//               <div className="h-9 bg-gray-200 rounded-md md:w-20 w-full"></div>
+//             </div>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }
 
 function InterviewHistoryEmpty(): JSX.Element {
   return (
@@ -177,11 +180,11 @@ function InterviewHistoryEmpty(): JSX.Element {
   );
 }
 
-function InterviewHistoryError(): JSX.Element {
-  return (
-    <div className="text-center py-12">
-      <Frown className="mx-auto h-12 w-12 text-volcano-5 mb-4" />
-      <p className="text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
-    </div>
-  );
-}
+// function InterviewHistoryError(): JSX.Element {
+//   return (
+//     <div className="text-center py-12">
+//       <Frown className="mx-auto h-12 w-12 text-volcano-5 mb-4" />
+//       <p className="text-red-600">데이터를 불러오는 중 오류가 발생했습니다.</p>
+//     </div>
+//   );
+// }
