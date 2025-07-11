@@ -3,6 +3,8 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Heart,
   TrendingUp,
   Trophy,
 } from "lucide-react";
@@ -13,6 +15,8 @@ import { MemberInterview } from "@/domains/members/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { useRouter } from "next/router";
 import { formatDate } from "@/utils/date";
+import { useScreenSize } from "@/hooks/useScreenSize";
+import { getVisiblePageNumbers } from "@/utils/pagination";
 
 export default function InterviewHistory({
   memberId,
@@ -28,6 +32,14 @@ export default function InterviewHistory({
   totalPageCount: number;
 }): JSX.Element {
   const router = useRouter();
+  const { isMobile } = useScreenSize();
+
+  const maxVisibleButtons = isMobile ? 3 : 5;
+  const visiblePageNumbers = getVisiblePageNumbers(
+    page,
+    totalPageCount,
+    maxVisibleButtons
+  );
 
   return (
     <>
@@ -79,12 +91,24 @@ export default function InterviewHistory({
                           {interview.score}점
                         </div>
                       )}
+                      <div className="flex items-center gap-1">
+                        <Eye className="w-4 h-4" />
+                        {interview.interviewViewCount}
+                      </div>
+                      <div
+                        className={`flex items-center gap-1 ${
+                          interview.interviewAlreadyLiked && "text-volcano-6"
+                        }`}
+                      >
+                        <Heart className="w-4 h-4" />
+                        {interview.interviewLikeCount}
+                      </div>
                     </div>
                   </div>
 
                   <div className="md:ml-4 md:w-auto w-full">
                     <Link
-                      href={`/members/${memberId}/interviews/${interview.interviewId}`}
+                      href={`/members/interviews/${interview.interviewId}`}
                       className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
                     >
                       인터뷰 조회하기
@@ -93,6 +117,7 @@ export default function InterviewHistory({
                 </div>
               </div>
             ))}
+            {/* 모바일: 3개, PC: 5개 버튼 표시 */}
             <div className="flex justify-center gap-2">
               <Button
                 type="button"
@@ -108,25 +133,27 @@ export default function InterviewHistory({
               >
                 <ChevronLeft />
               </Button>
-              {Array.from({ length: totalPageCount }).map((_, index) => (
+
+              {visiblePageNumbers.map((pageNumber) => (
                 <Button
-                  key={index}
+                  key={pageNumber}
                   type="button"
                   role="button"
-                  name={`${index + 1} page`}
+                  name={`${pageNumber + 1} page`}
                   aria-label="page"
-                  variant={page === index ? "primary" : "glass"}
-                  className={`${page === index && "disabled:opacity-100 disabled:bg-primary-bg-hover disabled:text-primary"}`}
+                  variant={page === pageNumber ? "primary" : "glass"}
+                  className={`${page === pageNumber && "disabled:opacity-100 disabled:bg-primary-bg-hover disabled:text-primary"}`}
                   onClick={() => {
                     router.push(
-                      `/members/${memberId}?sort=${sort}&page=${index}`
+                      `/members/${memberId}?sort=${sort}&page=${pageNumber}`
                     );
                   }}
-                  disabled={page === index}
+                  disabled={page === pageNumber}
                 >
-                  {index + 1}
+                  {pageNumber + 1}
                 </Button>
               ))}
+
               <Button
                 type="button"
                 role="button"
