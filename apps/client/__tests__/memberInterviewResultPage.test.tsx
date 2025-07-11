@@ -1,9 +1,9 @@
 import { renderWithProviders } from "@/utils/test-utils";
 import MemberInterviewResultPage from "@/pages/members/[memberId]/interviews/[interviewId]";
-import { mapToMemberInterviewResult } from "@/domains/members/types";
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { server } from "@/mocks";
 import { http, HttpResponse } from "msw";
+import { mapToCamelCase } from "@/utils/convertConvention";
 
 const memberInterviewResultData = {
   feedbacks: [
@@ -32,7 +32,7 @@ describe("면접 결과 페이지 테스트", () => {
     renderWithProviders(
       <MemberInterviewResultPage
         interviewId={1}
-        result={mapToMemberInterviewResult(memberInterviewResultData)}
+        result={mapToCamelCase(memberInterviewResultData)}
         user={null}
       />
     );
@@ -44,7 +44,7 @@ describe("면접 결과 페이지 테스트", () => {
     renderWithProviders(
       <MemberInterviewResultPage
         interviewId={1}
-        result={mapToMemberInterviewResult(memberInterviewResultData)}
+        result={mapToCamelCase(memberInterviewResultData)}
         user={null}
       />
     );
@@ -66,7 +66,6 @@ describe("면접 결과 페이지 테스트", () => {
     const interviewLikeButton = screen.getByRole("button", {
       name: "전체 인터뷰 좋아요",
     });
-    console.log(interviewLikeButton);
     fireEvent.click(interviewLikeButton);
     await waitFor(() => {
       expect(interviewLikeButton).toHaveClass("bg-volcano-3 text-volcano-6");
@@ -82,7 +81,6 @@ describe("면접 결과 페이지 테스트", () => {
         }
       )
     );
-    screen.debug();
     fireEvent.click(interviewLikeButton);
     await waitFor(() => {
       expect(interviewLikeButton).not.toHaveClass(
@@ -94,7 +92,7 @@ describe("면접 결과 페이지 테스트", () => {
     renderWithProviders(
       <MemberInterviewResultPage
         interviewId={1}
-        result={mapToMemberInterviewResult(memberInterviewResultData)}
+        result={mapToCamelCase(memberInterviewResultData)}
         user={null}
       />
     );
