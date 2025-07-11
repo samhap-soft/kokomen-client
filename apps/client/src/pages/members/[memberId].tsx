@@ -39,7 +39,7 @@ export default function MemberInterviewPage({
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
         {/* 멤버 정보 카드 */}
         <div className="bg-bg-elevated rounded-lg border border-border-secondary shadow-sm p-6 mb-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center justify-between flex-wrap gap-4 flex-col md:flex-row">
             <div className="flex items-center gap-4">
               <div
                 className={`w-12 h-12 ${rankDisplay.bgColor} rounded-full flex items-center justify-center`}
