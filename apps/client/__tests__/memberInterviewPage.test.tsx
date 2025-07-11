@@ -31,6 +31,7 @@ const mockMemberInterview: CamelCasedProperties<MemberInterview> = {
   intervieweeNickname: "test",
   totalMemberCount: 0,
   intervieweeRank: 0,
+  totalPageCount: 1,
 };
 
 describe("memberInterviewPage", () => {
@@ -83,6 +84,27 @@ describe("memberInterviewPage", () => {
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/members/1?sort=desc&page=1");
     });
+  });
+  it("데이터 페이지네이션 테스트", async () => {
+    renderWithProviders(
+      <MemberInterviewPage
+        memberId="1"
+        user={null}
+        interviews={{
+          ...mockMemberInterview,
+          totalPageCount: 1,
+        }}
+        sort="desc"
+        page={1}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.getByText("테스트1")).toBeInTheDocument();
+      expect(screen.getByText("테스트2")).toBeInTheDocument();
+    });
+
+    const nextButton = screen.getByRole("button", { name: "next page" });
+    expect(nextButton).toBeDisabled();
   });
 
   it("면접 기록 데이터 없을 때 렌더링 테스트", async () => {
