@@ -12,46 +12,8 @@ import { JSX } from "react";
 import { getMemberInterviews } from "@/domains/members/api";
 import { MemberInterview } from "@/domains/members/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
-import { Trophy, TrendingUp, Crown, Medal, Award } from "lucide-react";
-
-// 랭킹에 따른 아이콘과 색상 결정하는 함수
-const getRankDisplay = (rank: number) => {
-  if (rank === 1) {
-    return { icon: Crown, color: "text-gold-6", bgColor: "bg-gold-1" };
-  } else if (rank <= 3) {
-    return { icon: Medal, color: "text-gold-6", bgColor: "bg-gold-1" };
-  } else if (rank <= 10) {
-    return { icon: Award, color: "text-blue-6", bgColor: "bg-blue-1" };
-  } else {
-    return {
-      icon: Trophy,
-      color: "text-text-tertiary",
-      bgColor: "bg-fill-tertiary",
-    };
-  }
-};
-
-const getPercentileDisplay = (percentile: number) => {
-  if (percentile >= 90) {
-    return { color: "text-volcano-7" };
-  } else if (percentile >= 70) {
-    return { color: "text-volcano-6" };
-  } else if (percentile >= 60) {
-    return { color: "text-volcano-5" };
-  } else if (percentile >= 50) {
-    return { color: "text-volcano-4" };
-  } else if (percentile >= 40) {
-    return { color: "text-green-7" };
-  } else if (percentile >= 30) {
-    return { color: "text-green-6" };
-  } else if (percentile >= 20) {
-    return { color: "text-green-4" };
-  } else if (percentile >= 10) {
-    return { color: "text-primary" };
-  } else {
-    return { color: "text-gold-5" };
-  }
-};
+import { TrendingUp } from "lucide-react";
+import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
 
 export default function MemberInterviewPage({
   memberId,
