@@ -17,12 +17,7 @@ export default function Dashboard({
   userInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const percentile = userInfo
-    ? 100 -
-      Math.round(
-        ((userInfo.total_member_count - userInfo.rank + 1) /
-          userInfo.total_member_count) *
-          100
-      )
+    ? Math.round((userInfo.rank / userInfo.total_member_count) * 100)
     : 0;
 
   const rankDisplay = userInfo ? getRankDisplay(userInfo.rank) : null;

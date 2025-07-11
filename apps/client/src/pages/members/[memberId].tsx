@@ -22,13 +22,9 @@ export default function MemberInterviewPage({
   sort,
   page,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
-  const percentile =
-    100 -
-    Math.round(
-      ((interviews.totalMemberCount - interviews.intervieweeRank + 1) /
-        interviews.totalMemberCount) *
-        100
-    );
+  const percentile = Math.round(
+    (interviews.intervieweeRank / interviews.totalMemberCount) * 100
+  );
 
   const rankDisplay = getRankDisplay(interviews.intervieweeRank);
   const RankIcon = rankDisplay.icon;
