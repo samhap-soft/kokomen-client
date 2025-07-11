@@ -140,7 +140,6 @@ export default function MemberInterviewResultPage({
 export const getServerSideProps = async (
   context: GetServerSidePropsContext<{
     interviewId: string;
-    memberId: string;
   }>
 ): Promise<
   GetServerSidePropsResult<{
@@ -149,12 +148,11 @@ export const getServerSideProps = async (
     interviewId: number;
   }>
 > => {
-  const { interviewId, memberId } = context.params as {
+  const { interviewId } = context.params as {
     interviewId: string;
-    memberId: string;
   };
 
-  if (!interviewId || !memberId || isNaN(Number(interviewId))) {
+  if (!interviewId || isNaN(Number(interviewId))) {
     return { notFound: true };
   }
 
