@@ -73,9 +73,8 @@ describe("면접 페이지 테스트", () => {
   it("면접 페이지로 이동하면 제대로 데이터 페칭이 이루어지는지 확인", async () => {
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
         async () => {
-          await delay(100);
           return HttpResponse.json(interviewData);
         }
       )
@@ -99,7 +98,7 @@ describe("면접 페이지 테스트", () => {
   it("면접 시작 버튼을 누르면 면접이 시작되고 질문이 변경되는지 테스트", async () => {
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
         async () => {
           await delay(100);
           return HttpResponse.json(interviewData);
@@ -128,7 +127,7 @@ describe("면접 페이지 테스트", () => {
   it("면접 질문 답변 입력 후 제출 버튼을 누르면 제출 완료 메시지가 표시되는지 테스트", async () => {
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
         async () => {
           await delay(100);
           return HttpResponse.json(interviewData);
@@ -181,7 +180,7 @@ describe("면접 페이지 테스트", () => {
   it("면접 종료 버튼을 누르면 면접이 종료되고 면접 종료 모달이 표시되는지 테스트", async () => {
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
         async () => {
           await delay(100);
           return HttpResponse.json({
@@ -213,7 +212,7 @@ describe("면접 페이지 테스트", () => {
   it("음성 인식 버튼이 처음에 비활성화 되는지 테스트", async () => {
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
         async () => {
           await delay(100);
           return HttpResponse.json(interviewData);
@@ -282,7 +281,7 @@ describe("면접 페이지 테스트", () => {
 
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
         async () => {
           await delay(100);
           return HttpResponse.json(interviewData);
@@ -385,7 +384,7 @@ describe("면접 페이지 테스트", () => {
 
     server.use(
       http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
         async () => {
           await delay(100);
           return HttpResponse.json(interviewData);
