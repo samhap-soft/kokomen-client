@@ -11,11 +11,14 @@ services:
         NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY}
         NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST}
         SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY}
+      - NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST}
+      - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
     container_name: kokomen-client
     expose:
       - "3000"
-    environment:
-      - NODE_ENV=production
     restart: always
 
   nginx:
