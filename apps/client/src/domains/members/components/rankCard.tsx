@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { Button } from "@kokomen/ui/components/button";
 import { JSX } from "react";
+import { captureButtonEvent } from "@/utils/analytics";
 
 export default function RankCard(): JSX.Element {
   const { data } = useQuery({
@@ -24,7 +25,16 @@ export default function RankCard(): JSX.Element {
           role="button"
           name={`rank-card-${rank.id}-${rank.nickname}`}
           aria-label={`rank-card-${rank.id}-${rank.nickname}`}
-          onClick={() => router.push(`/members/${rank.id}`)}
+          onClick={() => {
+            captureButtonEvent({
+              name: "MemberDashboard",
+              properties: {
+                rank: rank.id,
+                nickname: rank.nickname,
+              },
+            });
+            router.push(`/members/${rank.id}`);
+          }}
         >
           <div className="flex items-center gap-4">
             <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-primary  text-white font-bold text-lg">
