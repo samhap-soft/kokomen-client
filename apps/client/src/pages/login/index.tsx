@@ -1,4 +1,5 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { clearSessionCookieSSR } from "@/utils/auth";
+import { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -87,22 +88,13 @@ export default function LoginPage(): JSX.Element {
 }
 
 // 로그인 상태 확인 후 리다이렉트
-export const getServerSideProps: GetServerSideProps = async (
+export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const session = context.req.cookies.JSESSIONID;
 
   if (session) {
-    // 이미 로그인된 상태라면 홈으로 리다이렉트
-    return {
-      redirect: {
-        destination:
-          context.query.redirectTo
-            ?.toString()
-            .replace("localhost", "kokomen.kr") ?? "/",
-        permanent: false,
-      },
-    };
+    clearSessionCookieSSR(context);
   }
 
   return {

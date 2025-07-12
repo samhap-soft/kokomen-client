@@ -14,10 +14,9 @@ export async function withCheckInServer<T>(
     ) => GetServerSidePropsResult<T>;
     // 에러 로깅 비활성화
     context?: GetServerSidePropsContext;
-    authCheck?: boolean;
   }
 ): Promise<GetServerSidePropsResult<T>> {
-  const { onError, context, authCheck = true } = options || {};
+  const { onError, context } = options || {};
 
   try {
     // fetchCall이 함수인지 확인
@@ -54,12 +53,9 @@ export async function withCheckInServer<T>(
       switch (status) {
         case 401:
         case 403:
-          if (authCheck && context) {
-            eraseCookie(context);
-          }
           return {
             redirect: {
-              destination: LOGIN_PATH,
+              destination: `${LOGIN_PATH}?redirectTo=${context?.resolvedUrl}`,
               permanent: false,
             },
           };
@@ -93,7 +89,7 @@ export async function withCheckInServer<T>(
   }
 }
 
-export function eraseCookie(context: GetServerSidePropsContext) {
+export function eraseAuthCookie(context: GetServerSidePropsContext) {
   const cookies = context.req.cookies;
   const sessionId = cookies.JSESSIONID;
   if (sessionId) {
@@ -102,4 +98,24 @@ export function eraseCookie(context: GetServerSidePropsContext) {
       `JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
     );
   }
+}
+
+/**
+ * 서버 핸들러에서 JSESSIONID 쿠키를 삭제하는 헬퍼 함수
+ */
+export function clearSessionCookie(res: any): void {
+  res.setHeader(
+    "Set-Cookie",
+    "JSESSIONID=; Path=/; Domain=.kokomen.kr; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
+  );
+}
+
+/**
+ * getServerSideProps에서 JSESSIONID 쿠키를 삭제하는 헬퍼 함수
+ */
+export function clearSessionCookieSSR(context: any): void {
+  context.res.setHeader(
+    "Set-Cookie",
+    "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.kokomen.kr;"
+  );
 }
