@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: ./apps/client/Dockerfile
       args:
-        NEXT_PUBLIC_BASE_URL: https://kokomen.kr
-        NEXT_PUBLIC_API_BASE_URL: https://api.kokomen.kr/api/v1
+        NEXT_PUBLIC_BASE_URL: https://dev.kokomen.kr
+        NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
         NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY}
         NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST}
         SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
