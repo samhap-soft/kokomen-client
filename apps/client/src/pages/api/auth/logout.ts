@@ -1,3 +1,4 @@
+import { clearSessionCookie } from "@/utils/auth";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -9,11 +10,7 @@ export default async function handler(
   }
 
   try {
-    res.setHeader(
-      "Set-Cookie",
-      "JSESSIONID=; Path=/; Domain=kokomen.kr; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
-    );
-
+    clearSessionCookie(res);
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Logout error:", error);
