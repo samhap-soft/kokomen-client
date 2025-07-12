@@ -9,6 +9,7 @@ import z from "zod";
 import { updateUserProfile } from "@/domains/auth/api";
 import { Input } from "@kokomen/ui/components/input";
 import { Button } from "@kokomen/ui/components/button";
+import { captureFormSubmitEvent } from "@/utils/analytics";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const ProfileSetting = z.object({
@@ -48,6 +49,14 @@ export default function ProfileSettingForm({
     isSuccess,
   } = useMutation({
     mutationFn: updateUserProfile,
+    onMutate: (nickname) => {
+      captureFormSubmitEvent({
+        name: "changeNickname",
+        properties: {
+          nickname: nickname,
+        },
+      });
+    },
     onSuccess: () => {
       router.replace(redirectTo ?? "/");
     },

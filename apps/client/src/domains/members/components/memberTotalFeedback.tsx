@@ -7,6 +7,7 @@ import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui/components/button";
 import { MemberInterviewResult } from "@/domains/members/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
+import { captureButtonEvent } from "@/utils/analytics";
 
 export default function MemberTotalFeedback({
   result,
@@ -25,6 +26,14 @@ export default function MemberTotalFeedback({
     mutationFn: (liked: boolean) =>
       toggleMemberInterviewLike(liked, interviewId),
     onMutate: () => {
+      captureButtonEvent({
+        name: "MemberInterviewLike",
+        properties: {
+          type: "interview",
+          likedInterviewId: interviewId,
+          liked: !isTotalLikedIncludesMine,
+        },
+      });
       setIsTotalLikedIncludesMine(!isTotalLikedIncludesMine);
       setTotalLikedCount(
         isTotalLikedIncludesMine ? totalLikedCount - 1 : totalLikedCount + 1

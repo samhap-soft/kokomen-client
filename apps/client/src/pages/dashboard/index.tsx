@@ -143,6 +143,6 @@ export const getServerSideProps = async (
         },
       };
     },
-    { authCheck: true, context }
+    { context }
   );
 };

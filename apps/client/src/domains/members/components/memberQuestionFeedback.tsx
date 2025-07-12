@@ -7,6 +7,7 @@ import { Button } from "@kokomen/ui/components/button";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { MemberInterviewResult } from "@/domains/members/types";
+import { captureButtonEvent } from "@/utils/analytics";
 
 export default function MemberQuestionFeedback({
   questionAndFeedback,
@@ -24,7 +25,15 @@ export default function MemberQuestionFeedback({
   const { mutate: toggleInterviewLikeMutation, isPending } = useMutation({
     mutationFn: (liked: boolean) =>
       toggleMemberInterviewAnswerLike(liked, questionAndFeedback.answerId),
-    onMutate: () => {
+    onMutate: (data) => {
+      captureButtonEvent({
+        name: "MemberInterviewLike",
+        properties: {
+          type: "answer",
+          likedAnswerId: questionAndFeedback.answerId,
+          liked: data,
+        },
+      });
       setAnswerLiked(!answerLiked);
     },
     onError: (error) => {

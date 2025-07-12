@@ -3,6 +3,7 @@ import { useToast } from "@kokomen/ui/hooks/useToast";
 import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { startNewInterview } from "../api";
+import { captureFormSubmitEvent } from "@/utils/analytics";
 
 const useInterviewCreateMutation = () => {
   const router = useRouter();
@@ -10,6 +11,15 @@ const useInterviewCreateMutation = () => {
 
   return useMutation({
     mutationFn: startNewInterview,
+    onMutate: (data) => {
+      captureFormSubmitEvent({
+        name: "startNewInterview",
+        properties: {
+          category: data.category,
+          questionCount: data.max_question_count,
+        },
+      });
+    },
     onSuccess: (data) => {
       router.push({
         pathname: `/interviews/${data.interview_id}`,
