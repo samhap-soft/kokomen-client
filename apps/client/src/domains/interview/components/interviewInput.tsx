@@ -1,6 +1,7 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
 import { Interview } from "@/domains/interview/types";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { captureFormSubmitEvent } from "@/utils/analytics";
 import { Button } from "@kokomen/ui/components/button";
 import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { useMutation } from "@tanstack/react-query";
@@ -54,7 +55,15 @@ export function InterviewAnswerInput({
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: submitInterviewAnswer,
-    onMutate: () => {
+    onMutate: (data) => {
+      captureFormSubmitEvent({
+        name: "submitInterviewAnswer",
+        properties: {
+          question: cur_question,
+          answer: data.answer,
+          question_id: data.questionId,
+        },
+      });
       const previousMessage = {
         prevMessage: cur_question,
         prevQuestionId: cur_question_id,
