@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import { formatDate } from "@/utils/date";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { getVisiblePageNumbers } from "@/utils/pagination";
+import { captureButtonEvent } from "@/utils/analytics";
 
 export default function InterviewHistory({
   memberId,
@@ -108,6 +109,16 @@ export default function InterviewHistory({
 
                   <div className="md:ml-4 md:w-auto w-full">
                     <Link
+                      onClick={() => {
+                        captureButtonEvent({
+                          name: "MembersInterveiw",
+                          properties: {
+                            interviewId: interview.interviewId,
+                            category: interview.interviewCategory,
+                            question: interview.rootQuestion,
+                          },
+                        });
+                      }}
                       href={`/members/interviews/${interview.interviewId}`}
                       className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
                     >
