@@ -39,6 +39,8 @@ describe("profile setting 렌더링 테스트", () => {
           score: 0,
           token_count: 10,
           profile_completed: false,
+          total_member_count: 10,
+          rank: 1,
         }}
       />
     );
@@ -68,6 +70,8 @@ describe("profile setting 기능 테스트", () => {
           score: 0,
           token_count: 10,
           profile_completed: false,
+          total_member_count: 10,
+          rank: 1,
         }}
       />
     );
@@ -102,6 +106,8 @@ describe("profile setting 기능 테스트", () => {
           score: 0,
           token_count: 10,
           profile_completed: false,
+          total_member_count: 10,
+          rank: 1,
         }}
       />
     );
@@ -128,6 +134,8 @@ describe("profile setting 기능 테스트", () => {
           score: 0,
           token_count: 10,
           profile_completed: false,
+          total_member_count: 10,
+          rank: 1,
         }}
       />
     );
