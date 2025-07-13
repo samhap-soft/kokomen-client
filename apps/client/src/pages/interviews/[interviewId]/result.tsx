@@ -178,16 +178,21 @@ export const getServerSideProps: GetServerSideProps<
       notFound: true,
     };
   }
-  return withCheckInServer(async () => {
-    const [report, userInfo] = await Promise.all([
-      getInterviewReport(context.req.cookies, interviewId as string),
-      getUserInfo(context),
-    ]);
-    return {
-      data: {
-        report: report.data,
-        userInfo: userInfo.data,
-      },
-    };
-  });
+  return withCheckInServer(
+    async () => {
+      const [report, userInfo] = await Promise.all([
+        getInterviewReport(context.req.cookies, interviewId as string),
+        getUserInfo(context),
+      ]);
+      return {
+        data: {
+          report: report.data,
+          userInfo: userInfo.data,
+        },
+      };
+    },
+    {
+      redirectPathWhenUnauthorized: "/interviews",
+    }
+  );
 };
