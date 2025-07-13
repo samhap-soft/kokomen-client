@@ -1,68 +1,19 @@
 import { Feedback } from "@/domains/interviewReport/types";
 import {
+  getScoreColor,
+  getScoreIcon,
+  getScoreLabel,
+} from "@/utils/rankDisplay";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@kokomen/ui/components/accordion";
-import {
-  MessageSquare,
-  Star,
-  Award,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import { MessageSquare, Star, Award, NotebookPen } from "lucide-react";
+import { Button } from "@kokomen/ui/components/button";
 
 export function FeedbackAccordion({ feedbacks }: { feedbacks: Feedback[] }) {
-  const getScoreColor = (rank: string) => {
-    switch (rank.toUpperCase()) {
-      case "A":
-        return "text-success";
-      case "B":
-        return "text-primary";
-      case "C":
-        return "text-warning";
-      case "D":
-      case "F":
-        return "text-error";
-      default:
-        return "text-text-description";
-    }
-  };
-
-  const getScoreIcon = (rank: string) => {
-    switch (rank.toUpperCase()) {
-      case "A":
-        return <Award className="w-5 h-5" />;
-      case "B":
-        return <Star className="w-5 h-5" />;
-      case "C":
-        return <CheckCircle className="w-5 h-5" />;
-      case "D":
-      case "F":
-        return <AlertCircle className="w-5 h-5" />;
-      default:
-        return <Star className="w-5 h-5" />;
-    }
-  };
-
-  const getScoreLabel = (rank: string) => {
-    switch (rank.toUpperCase()) {
-      case "A":
-        return "우수";
-      case "B":
-        return "양호";
-      case "C":
-        return "보통";
-      case "D":
-        return "미흡";
-      case "F":
-        return "불량";
-      default:
-        return rank;
-    }
-  };
-
   return (
     <Accordion
       allowMultiple
@@ -128,24 +79,29 @@ export function FeedbackAccordion({ feedbacks }: { feedbacks: Feedback[] }) {
               </div>
 
               {/* 점수 요약 */}
-              <div className="flex items-center justify-between pt-4 border-t border-border">
-                <div className="flex items-center gap-2">
-                  <Star className="w-5 h-5 text-warning" />
-                  <span className="text-text-description font-medium">
-                    이 질문의 평가
-                  </span>
+              <div className="flex items-center pt-4 border-t border-border gap-4">
+                <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-warning" />
+                    <span className="text-text-description font-medium">
+                      이 질문의 평가
+                    </span>
+                  </div>
+                  <div
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold ${getScoreColor(
+                      feedback.answer_rank
+                    )}`}
+                  >
+                    {getScoreIcon(feedback.answer_rank)}
+                    <span className="text-lg">
+                      {feedback.answer_rank}등급 (
+                      {getScoreLabel(feedback.answer_rank)})
+                    </span>
+                  </div>
                 </div>
-                <div
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold ${getScoreColor(
-                    feedback.answer_rank
-                  )}`}
-                >
-                  {getScoreIcon(feedback.answer_rank)}
-                  <span className="text-lg">
-                    {feedback.answer_rank}등급 (
-                    {getScoreLabel(feedback.answer_rank)})
-                  </span>
-                </div>
+                <Button variant={"glass"}>
+                  <NotebookPen /> 메모 작성하기
+                </Button>
               </div>
             </div>
           </AccordionContent>
