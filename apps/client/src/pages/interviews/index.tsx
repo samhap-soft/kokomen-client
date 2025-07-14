@@ -5,10 +5,7 @@ import {
   InferGetServerSidePropsType,
 } from "next";
 import { JSX } from "react";
-import Head from "next/head";
-
 import Header from "@/shared/header";
-
 import { withCheckInServer } from "@/utils/auth";
 import { Trophy, Coins, User as UserIcon, Star, Zap } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
@@ -16,6 +13,7 @@ import { User as UserType } from "@/domains/auth/types";
 import CreateInterviewForm from "@/domains/interview/components/createInterviewForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
+import { SEO } from "@/shared/seo";
 
 export default function InterviewMainPage({
   categories,
@@ -24,14 +22,11 @@ export default function InterviewMainPage({
   useRouterPrefetch("/interviews");
   return (
     <>
-      <Head>
-        <title>꼬꼬면 - 면접 연습 플랫폼</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <SEO
+        title="모의 면접 시작하기"
+        description="운영체제, 데이터베이스, 자료구조, 알고리즘 등 개발자에게 필요한 여러 분야에 대해 모의 면접을 보고 연습해보세요!"
+        robots="index, follow"
+      />
       <div className="min-h-screen bg-bg-layout">
         <Header user={userInfo} />
         <main className="flex flex-col-reverse lg:flex-row lg:items-start mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 gap-8">

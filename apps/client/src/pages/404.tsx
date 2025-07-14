@@ -1,19 +1,13 @@
+import { SEO } from "@/shared/seo";
 import { Button } from "@kokomen/ui/components/button";
 import { Home, Search } from "lucide-react";
-import Head from "next/head";
 import Link from "next/link";
 import { JSX } from "react";
 
 export default function Custom404(): JSX.Element {
   return (
     <>
-      <Head>
-        <title>404 - 페이지를 찾을 수 없습니다</title>
-        <meta
-          name="description"
-          content="요청하신 페이지를 찾을 수 없습니다."
-        />
-      </Head>
+      <SEO title="404 Not Found" robots="noindex, nofollow, noarchive" />
 
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center px-6 py-12 max-w-md">

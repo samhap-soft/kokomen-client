@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ErrorProps } from "next/error";
 import { JSX } from "react";
+import { SEO } from "@/shared/seo";
 
 interface CustomErrorProps extends ErrorProps {
   hasGetInitialProps: boolean;
@@ -78,9 +79,7 @@ function Error({ statusCode }: CustomErrorProps): JSX.Element {
   return (
     <>
       <Head>
-        <title>
-          {statusCode} - {errorInfo.title}
-        </title>
+        <SEO title="Error" />
         <meta name="robots" content="noindex" />
       </Head>
 

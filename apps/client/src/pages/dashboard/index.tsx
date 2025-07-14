@@ -6,12 +6,12 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType,
 } from "next";
-import Head from "next/head";
 import { Coins, User, Star, TrendingUp } from "lucide-react";
 import InterviewHistory from "@/domains/dashboard/components/interviewHistory";
 import { User as UserType } from "@/domains/auth/types";
 import { JSX } from "react";
 import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
+import { SEO } from "@/shared/seo";
 
 export default function Dashboard({
   userInfo,
@@ -25,15 +25,7 @@ export default function Dashboard({
 
   return (
     <>
-      <Head>
-        <title>대시보드 - 꼬꼬면</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습을 위한 체계적인 학습 플랫폼"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <SEO title="대시보드" robots="noindex, nofollow, noarchive" />
 
       <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <Header user={userInfo} />
