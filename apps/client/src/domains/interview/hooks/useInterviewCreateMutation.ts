@@ -29,6 +29,7 @@ const useInterviewCreateMutation = () => {
       if (isAxiosError(error)) {
         if (error.response?.status === 401) {
           router.replace("/login");
+          return;
         }
         errorToast({
           title: "면접 생성 실패",

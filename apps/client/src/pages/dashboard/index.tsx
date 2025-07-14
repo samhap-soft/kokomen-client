@@ -37,7 +37,7 @@ export default function Dashboard({
                   <User className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-text-light-solid">
                     {userInfo?.nickname || "사용자"}
                   </h1>
                 </div>
@@ -92,7 +92,7 @@ export default function Dashboard({
             {userInfo && (
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-text-light-solid">
                     전체 멤버 중 위치
                   </span>
                   <span

@@ -14,12 +14,15 @@ import CreateInterviewForm from "@/domains/interview/components/createInterviewF
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
+import { Button } from "@kokomen/ui/components/button";
+import { useRouter } from "next/router";
 
 export default function InterviewMainPage({
   categories,
   userInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   useRouterPrefetch("/interviews");
+  const router = useRouter();
   return (
     <>
       <SEO
@@ -55,6 +58,16 @@ export default function InterviewMainPage({
                           오늘도 화이팅!
                         </p>
                       </div>
+                      {!userInfo && (
+                        <Button
+                          variant="soft"
+                          className="font-bold"
+                          type="button"
+                          onClick={() => router.push("/login")}
+                        >
+                          로그인
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
