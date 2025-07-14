@@ -25,7 +25,7 @@ import { getUserInfo } from "@/domains/auth/api";
 import { User } from "@/domains/auth/types";
 import { SEO } from "@/shared/seo";
 
-export default function Result({
+export default function MyInterviewResultPage({
   report,
   userInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
