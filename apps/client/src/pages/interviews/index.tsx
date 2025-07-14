@@ -5,10 +5,7 @@ import {
   InferGetServerSidePropsType,
 } from "next";
 import { JSX } from "react";
-import Head from "next/head";
-
 import Header from "@/shared/header";
-
 import { withCheckInServer } from "@/utils/auth";
 import { Trophy, Coins, User as UserIcon, Star, Zap } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
@@ -16,22 +13,23 @@ import { User as UserType } from "@/domains/auth/types";
 import CreateInterviewForm from "@/domains/interview/components/createInterviewForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
+import { SEO } from "@/shared/seo";
+import { Button } from "@kokomen/ui/components/button";
+import { useRouter } from "next/router";
 
 export default function InterviewMainPage({
   categories,
   userInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   useRouterPrefetch("/interviews");
+  const router = useRouter();
   return (
     <>
-      <Head>
-        <title>꼬꼬면 - 면접 연습 플랫폼</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <SEO
+        title="모의 면접 시작하기"
+        description="운영체제, 데이터베이스, 자료구조, 알고리즘 등 개발자에게 필요한 여러 분야에 대해 모의 면접을 보고 연습해보세요!"
+        robots="index, follow"
+      />
       <div className="min-h-screen bg-bg-layout">
         <Header user={userInfo} />
         <main className="flex flex-col-reverse lg:flex-row lg:items-start mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 gap-8">
@@ -53,59 +51,71 @@ export default function InterviewMainPage({
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xl font-bold">
-                          {userInfo?.nickname || "사용자"}
+                          {userInfo?.nickname || "로그인 후 이용해주세요."}
                         </h3>
                         <p className="text-primary-bg text-sm flex items-center gap-1">
                           <Zap className="w-3 h-3" />
                           오늘도 화이팅!
                         </p>
                       </div>
+                      {!userInfo && (
+                        <Button
+                          variant="soft"
+                          className="font-bold"
+                          type="button"
+                          onClick={() => router.push("/login")}
+                        >
+                          로그인
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
 
                 {/* 통계 섹션 */}
-                <div className="p-6">
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="group relative bg-gold-1 rounded-xl p-4 border border-gold-3 hover:shadow-md transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gold-6 rounded-lg flex items-center justify-center shadow-sm">
-                          <Trophy className="w-5 h-5 text-text-light-solid" />
+                {userInfo && (
+                  <div className="p-6">
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="group relative bg-gold-1 rounded-xl p-4 border border-gold-3 hover:shadow-md transition-all duration-300">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gold-6 rounded-lg flex items-center justify-center shadow-sm">
+                            <Trophy className="w-5 h-5 text-text-light-solid" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gold-8 mb-1">
+                              총 점수
+                            </p>
+                            <p className="text-xl font-bold text-gold-9">
+                              {userInfo?.score || 0}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-medium text-gold-8 mb-1">
-                            총 점수
-                          </p>
-                          <p className="text-xl font-bold text-gold-9">
-                            {userInfo?.score || 0}
-                          </p>
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Star className="w-4 h-4 text-gold-6" />
                         </div>
                       </div>
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Star className="w-4 h-4 text-gold-6" />
-                      </div>
-                    </div>
 
-                    <div className="group relative bg-green-1 rounded-xl p-4 border border-green-3 hover:shadow-md transition-all duration-300">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-6 rounded-lg flex items-center justify-center shadow-sm">
-                          <Coins className="w-5 h-5 text-text-light-solid" />
+                      <div className="group relative bg-green-1 rounded-xl p-4 border border-green-3 hover:shadow-md transition-all duration-300">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-green-6 rounded-lg flex items-center justify-center shadow-sm">
+                            <Coins className="w-5 h-5 text-text-light-solid" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-green-8 mb-1">
+                              남은 토큰
+                            </p>
+                            <p className="text-xl font-bold text-green-9">
+                              {userInfo?.token_count || 0}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-medium text-green-8 mb-1">
-                            남은 토큰
-                          </p>
-                          <p className="text-xl font-bold text-green-9">
-                            {userInfo?.token_count || 0}
-                          </p>
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="w-4 h-4 bg-green-6 rounded-full"></div>
                         </div>
-                      </div>
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="w-4 h-4 bg-green-6 rounded-full"></div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
             <RankCard />
@@ -129,13 +139,24 @@ export const getServerSideProps = async (
     userInfo: UserType | null;
   }>(
     async () => {
-      const [categoriesResponse, userInfoResponse] = await Promise.all([
+      const [categoriesResponse, userInfoResponse] = await Promise.allSettled([
         getCategories(),
         getUserInfo(context),
       ]);
 
-      const categoryData = categoriesResponse.data;
-      const userInfoData = userInfoResponse.data;
+      if (categoriesResponse.status === "rejected") {
+        return {
+          redirect: {
+            destination: "/error",
+            permanent: false,
+          },
+        };
+      }
+      const categoryData = categoriesResponse.value.data;
+      const userInfoData =
+        userInfoResponse.status === "fulfilled"
+          ? userInfoResponse.value.data
+          : null;
 
       return {
         data: { categories: categoryData, userInfo: userInfoData },

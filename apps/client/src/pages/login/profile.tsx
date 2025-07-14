@@ -6,12 +6,12 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType,
 } from "next";
-import Head from "next/head";
 import { JSX } from "react";
 import { Layout } from "@/components/layout";
 import Header from "@/shared/header";
 import ProfileSettingForm from "@/domains/auth/components/profilesettingForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
+import { SEO } from "@/shared/seo";
 
 interface LoginProfileSettingProps {
   userInfo: User;
@@ -25,15 +25,11 @@ export default function LoginProfileSetting({
   useRouterPrefetch(state || "/");
   return (
     <>
-      <Head>
-        <title>꼬꼬면 면접</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
-        />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="preload" as="image" href="/interviewBg.jpg" />
-      </Head>
+      <SEO
+        title="프로필 설정"
+        description="닉네임을 설정해주세요"
+        robots="noindex, nofollow, noarchive"
+      />
       <Layout>
         <Header user={userInfo} />
         <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">

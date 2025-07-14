@@ -174,24 +174,46 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
 
           <div className="px-4 py-3 border-t border-gray-100 mt-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <UserIcon className="w-4 h-4 text-blue-600" />
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <UserIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.nickname || "로그인"}
+                    </p>
+                    {user && (
+                      <p className="text-xs text-gray-500">환영합니다!</p>
+                    )}
+                  </div>
                 </div>
-                <div>
+              ) : (
+                <Button
+                  type="button"
+                  name="login"
+                  onClick={() => router.push("/login")}
+                  className="flex items-center gap-3 w-full justify-start"
+                  variant={"outline"}
+                >
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <UserIcon className="w-4 h-4 text-blue-600" />
+                  </div>
                   <p className="text-sm font-medium text-gray-900">
-                    {user?.nickname || "로그인"}
+                    로그인 후 이용해주세요.
                   </p>
-                  {user && <p className="text-xs text-gray-500">환영합니다!</p>}
-                </div>
-              </div>
+                </Button>
+              )}
               {user && (
-                <button
+                <Button
+                  type="button"
                   onClick={logout}
-                  className="p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                  name="logout"
+                  variant={"glass"}
+                  className="[&_svg]:size-4"
                 >
                   <LogOut className="w-4 h-4 text-gray-600" />
-                </button>
+                </Button>
               )}
             </div>
           </div>

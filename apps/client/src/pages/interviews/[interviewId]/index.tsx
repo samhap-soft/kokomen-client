@@ -1,6 +1,5 @@
 import { Layout } from "@kokomen/ui/components/layout";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
-import Head from "next/head";
 import React, { JSX, useEffect, useState } from "react";
 import {
   GetServerSideProps,
@@ -15,6 +14,7 @@ import { interviewKeys } from "@/utils/querykeys";
 import { Button } from "@kokomen/ui/components/button";
 import { Interview } from "@/domains/interview/types";
 import InterviewFinishModal from "@/domains/interview/components/interviewFinishModal";
+import { SEO } from "@/shared/seo";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
@@ -91,15 +91,14 @@ export default function InterviewPage({
 
   return (
     <>
-      <Head>
-        <title>꼬꼬면 면접</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
-        />
-        <link rel="icon" href="/favicon.ico" />
+      <SEO
+        title="모의 면접"
+        description="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
+        robots="noindex, nofollow, noarchive"
+      >
         <link rel="preload" as="image" href="/interviewBg.jpg" />
-      </Head>
+      </SEO>
+
       <Layout>
         <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
           <div className="flex flex-col flex-1 relative min-w-0">
