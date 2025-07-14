@@ -2,7 +2,7 @@ import { NextConfig } from "next";
 
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED_PATHS: Array<string> = ["/interviews", "/dashboard"];
+const PROTECTED_PATHS: Array<string> = ["/interviews/", "/dashboard"];
 
 // 경로 체크 함수들
 function isProtectedPath(pathname: string): boolean {
