@@ -17,6 +17,7 @@ import { Radio, RadioGroup } from "@kokomen/ui/components/radio";
 import z from "zod";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useModal } from "@/hooks/useModal";
+import { captureFormSubmitEvent } from "@/utils/analytics";
 
 export default function AnswerMemoComponent({
   answerId,
@@ -152,6 +153,12 @@ function AnswerMemoDeleteModal({
   const { mutate: deleteAnswerMemoMutate } = useMutation({
     mutationFn: () => deleteAnswerMemo(answerId),
     onMutate: () => {
+      captureFormSubmitEvent({
+        name: "deleteMemo",
+        properties: {
+          answerId: answerId,
+        },
+      });
       toggleModal();
       setAnswerMemo({
         content: "",
@@ -245,6 +252,14 @@ function AnswerMemoEdit({
       }
     },
     onMutate: (answerMemo) => {
+      captureFormSubmitEvent({
+        name: !answerMemo.content ? "createMemo" : "editMemo",
+        properties: {
+          answerId: answerId,
+          content: answerMemo.content,
+          visibility: answerMemo.visibility,
+        },
+      });
       setAnswerMemo(answerMemo);
       setIsMemoEditOpen(false);
     },
