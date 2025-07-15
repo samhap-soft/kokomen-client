@@ -20,7 +20,10 @@ const updateAnswerMemo = async (
   answerId: number,
   memo: AnswerMemo
 ): Promise<AxiosResponse> => {
-  return answerMemoApiInstance.put(`/${answerId}/memo`, { memo });
+  return answerMemoApiInstance.patch(`/${answerId}/memo`, {
+    content: memo.content,
+    visibility: memo.visibility,
+  });
 };
 
 const deleteAnswerMemo = async (answerId: number): Promise<AxiosResponse> => {
