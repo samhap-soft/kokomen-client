@@ -8,6 +8,7 @@ import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { MemberInterviewResult } from "@/domains/members/types";
 import { captureButtonEvent } from "@/utils/analytics";
+import { useRouter } from "next/router";
 
 export default function MemberQuestionFeedback({
   questionAndFeedback,
@@ -21,6 +22,7 @@ export default function MemberQuestionFeedback({
   const [answerLiked, setAnswerLiked] = useState<boolean>(
     questionAndFeedback.answerAlreadyLiked
   );
+  const router = useRouter();
   const { error: errorToast } = useToast();
   const { mutate: toggleInterviewLikeMutation, isPending } = useMutation({
     mutationFn: (liked: boolean) =>
@@ -38,6 +40,10 @@ export default function MemberQuestionFeedback({
     },
     onError: (error) => {
       if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          router.push("/login");
+          return;
+        }
         errorToast({
           title: "좋아요 실패",
           description: error.response?.data.message,
