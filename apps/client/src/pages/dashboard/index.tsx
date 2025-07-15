@@ -135,6 +135,6 @@ export const getServerSideProps = async (
         },
       };
     },
-    { context }
+    { context, redirectPathWhenUnauthorized: "/dashboard" }
   );
 };

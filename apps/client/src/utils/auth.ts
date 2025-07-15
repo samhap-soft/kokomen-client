@@ -57,14 +57,14 @@ export async function withCheckInServer<T>(
           if (options?.redirectPathWhenUnauthorized) {
             return {
               redirect: {
-                destination: `${LOGIN_PATH}?redirectTo=${context?.resolvedUrl}`,
+                destination: `${LOGIN_PATH}?redirectTo=${options?.redirectPathWhenUnauthorized}`,
                 permanent: false,
               },
             };
           } else {
             return {
               redirect: {
-                destination: options?.redirectPathWhenUnauthorized as string,
+                destination: LOGIN_PATH,
                 permanent: false,
               },
             };
