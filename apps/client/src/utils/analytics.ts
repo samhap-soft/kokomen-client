@@ -27,7 +27,10 @@ type FormSubmitEvent =
   | "logout"
   | "startNewInterview"
   | "submitInterviewAnswer"
-  | "changeNickname";
+  | "changeNickname"
+  | "createMemo"
+  | "editMemo"
+  | "deleteMemo";
 function captureFormSubmitEvent({
   name,
   properties,
