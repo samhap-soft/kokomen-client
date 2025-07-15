@@ -41,7 +41,7 @@ export default function MemberQuestionFeedback({
     onError: (error) => {
       if (isAxiosError(error)) {
         if (error.response?.status === 401) {
-          router.push("/login");
+          router.push(`/login?redirectTo=${router.asPath}`);
           return;
         }
         errorToast({
