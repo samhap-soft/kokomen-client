@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import {
   createNewAnswerMemo,
   deleteAnswerMemo,
+  updateAnswerMemo,
 } from "@/domains/interviewReport/api/answerMemo";
 import { AnswerMemo } from "@/domains/interviewReport/types/memo";
 import { useToast } from "@kokomen/ui/hooks/useToast";
@@ -35,7 +36,10 @@ export default function AnswerMemoComponent({
     toggleModal: toggleMemoDeleteModal,
   } = useModal();
   const [isTempMemoModalOpen, setIsTempMemoModalOpen] = useState(false);
-  const [answerMemo, setAnswerMemo] = useState<string>(answerMemoProp);
+  const [answerMemo, setAnswerMemo] = useState<AnswerMemo>({
+    content: answerMemoProp,
+    visibility: visibility,
+  });
 
   const handleMemoEditButtonClick = (): void => {
     if (tempMemo) {
@@ -56,7 +60,7 @@ export default function AnswerMemoComponent({
     );
   return (
     <>
-      {answerMemo ? (
+      {answerMemo.content ? (
         <div className="flex flex-col gap-4">
           <div className="flex gap-2">
             <Button variant={"glass"} onClick={handleMemoEditButtonClick}>
@@ -69,7 +73,7 @@ export default function AnswerMemoComponent({
             </Button>
           </div>
           <p className="border border-border-secondary p-4 rounded-lg">
-            {answerMemo}
+            {answerMemo.content}
           </p>
         </div>
       ) : (
@@ -116,7 +120,10 @@ export default function AnswerMemoComponent({
                 type="button"
                 variant={"success"}
                 onClick={() => {
-                  setAnswerMemo(tempMemo);
+                  setAnswerMemo((prev) => ({
+                    content: tempMemo,
+                    visibility: prev.visibility,
+                  }));
                   setIsMemoEditOpen(true);
                 }}
               >
@@ -137,7 +144,7 @@ function AnswerMemoDeleteModal({
   toggleModal,
 }: {
   answerId: number;
-  setAnswerMemo: Dispatch<SetStateAction<string>>;
+  setAnswerMemo: Dispatch<SetStateAction<AnswerMemo>>;
   isMemoDeleteModalOpen: boolean;
   toggleModal: () => void;
 }): JSX.Element {
@@ -146,7 +153,10 @@ function AnswerMemoDeleteModal({
     mutationFn: () => deleteAnswerMemo(answerId),
     onMutate: () => {
       toggleModal();
-      setAnswerMemo("");
+      setAnswerMemo({
+        content: "",
+        visibility: "PUBLIC",
+      });
     },
     onError: (error) => {
       if (isAxiosError(error)) {
@@ -203,14 +213,13 @@ const answerMemoSchema = z.object({
 function AnswerMemoEdit({
   answerId,
   answerMemo,
-  visibility,
   setAnswerMemo,
   setIsMemoEditOpen,
 }: {
   answerId: number;
-  answerMemo: string;
+  answerMemo: AnswerMemo;
   visibility: AnswerMemo["visibility"];
-  setAnswerMemo: Dispatch<SetStateAction<string>>;
+  setAnswerMemo: Dispatch<SetStateAction<AnswerMemo>>;
   setIsMemoEditOpen: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
   const { error: errorToast } = useToast();
@@ -221,17 +230,22 @@ function AnswerMemoEdit({
     watch,
   } = useForm<z.infer<typeof answerMemoSchema>>({
     defaultValues: {
-      content: answerMemo,
-      visibility: (visibility ?? "PUBLIC") as "PUBLIC" | "PRIVATE",
+      content: answerMemo.content,
+      visibility: answerMemo.visibility as "PUBLIC" | "PRIVATE",
     },
     resolver: standardSchemaResolver(answerMemoSchema),
   });
 
   const { mutate: createNewAnswerMemoMutate } = useMutation({
-    mutationFn: (answerMemo: AnswerMemo) =>
-      createNewAnswerMemo(answerId, answerMemo),
+    mutationFn: (memo: AnswerMemo) => {
+      if (!answerMemo.content) {
+        return createNewAnswerMemo(answerId, memo);
+      } else {
+        return updateAnswerMemo(answerId, memo);
+      }
+    },
     onMutate: (answerMemo) => {
-      setAnswerMemo(answerMemo.content);
+      setAnswerMemo(answerMemo);
       setIsMemoEditOpen(false);
     },
     onError: (error) => {
