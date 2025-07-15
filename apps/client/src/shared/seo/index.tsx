@@ -36,12 +36,15 @@ export const SEO = ({
         name="description"
         content={description ?? "개발자를 위한 AI 모의면접 서비스"}
       />
-      <meta name="og:title" content={title ? `꼬꼬면 | ${title}` : "꼬꼬면"} />
       <meta
-        name="og:description"
+        property="og:title"
+        content={title ? `꼬꼬면 | ${title}` : "꼬꼬면"}
+      />
+      <meta
+        property="og:description"
         content={description ?? "개발자를 위한 AI 모의면접 서비스"}
       />
-      <meta name="og:image" content={image ?? "/og-main.png"} />
+      <meta property="og:image" content={image ?? "/og-main.png"} />
       <meta
         name="og:url"
         content={`${process.env.NEXT_PUBLIC_BASE_URL}${pathname}`}
