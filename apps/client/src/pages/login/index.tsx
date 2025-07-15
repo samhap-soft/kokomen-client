@@ -1,21 +1,21 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import Head from "next/head";
+import { SEO } from "@/shared/seo";
+import { clearSessionCookieSSR } from "@/utils/auth";
+import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 
 export default function LoginPage(): JSX.Element {
   const { query } = useRouter();
-  const redirectTo = `&state=${query.redirectTo ? query.redirectTo : `${process.env.NEXT_PUBLIC_BASE_URL}/`}`;
+  const redirectTo = `&state=${query.redirectTo ? query.redirectTo : "/"}`;
   const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/callback${redirectTo}`;
   return (
     <>
-      <Head>
-        <title>로그인 - 꼬꼬면</title>
-        <meta name="description" content="꼬꼬면 면접 연습 플랫폼 로그인" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <SEO
+        title="로그인"
+        description="꼬꼬면 로그인"
+        robots="index, nofollow"
+      />
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
@@ -87,22 +87,13 @@ export default function LoginPage(): JSX.Element {
 }
 
 // 로그인 상태 확인 후 리다이렉트
-export const getServerSideProps: GetServerSideProps = async (
+export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const session = context.req.cookies.JSESSIONID;
 
   if (session) {
-    // 이미 로그인된 상태라면 홈으로 리다이렉트
-    return {
-      redirect: {
-        destination:
-          context.query.redirectTo
-            ?.toString()
-            .replace("localhost", "kokomen.kr") ?? "/",
-        permanent: false,
-      },
-    };
+    clearSessionCookieSSR(context);
   }
 
   return {

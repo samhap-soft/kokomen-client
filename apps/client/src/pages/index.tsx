@@ -1,11 +1,11 @@
 import { JSX } from "react";
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/shared/header";
 import { getUserInfo } from "@/domains/auth/api";
 import { isAxiosError } from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { SEO } from "@/shared/seo";
 
 const features: { title: string; description: string; icon: string }[] = [
   {
@@ -35,15 +35,7 @@ export default function Home({
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   return (
     <>
-      <Head>
-        <title>꼬꼬면 - 면접 연습 플랫폼</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습을 위한 체계적인 학습 플랫폼"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <SEO />
 
       <main
         className={`min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50`}

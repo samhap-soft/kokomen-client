@@ -7,6 +7,11 @@ type InterviewHistory = {
   max_question_count: number;
   cur_answer_count: number;
   score: number;
+  interview_view_count: number;
+  interview_like_count: number;
+  interview_already_liked: boolean;
+  submitted_answer_memo_count: number;
+  has_temp_answer_memo: boolean;
 };
 
 export type { InterviewHistory };

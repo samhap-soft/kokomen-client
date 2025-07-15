@@ -58,6 +58,10 @@ const buttonVariants = cva(
         true: "",
         false: "",
       },
+      optimistic: {
+        true: "",
+        false: "",
+      },
     },
     defaultVariants: {
       variant: "primary",
@@ -110,6 +114,12 @@ const buttonVariants = cva(
         className:
           "bg-gradient-to-r from-error to-error-hover hover:from-error-hover hover:to-error-active",
       },
+      {
+        variant: "glass",
+        optimistic: true,
+        className:
+          "disabled:!bg-volcano-3 disabled:!text-volcano-6 disabled:!opacity-100",
+      },
     ],
   }
 );
@@ -128,6 +138,7 @@ export const Button = ({
   size,
   round = false,
   danger = false,
+  optimistic = false,
   ...props
 }: IButtonProps): JSX.Element => (
   <button
@@ -138,6 +149,7 @@ export const Button = ({
         size,
         round,
         danger,
+        optimistic,
       }),
       className
     )}

@@ -11,7 +11,7 @@ function getInterviewReport(
   interview_id: string
 ) {
   return interviewApiInstance.get<InterviewReport>(
-    `/interviews/${interview_id}/result`,
+    `/interviews/${interview_id}/my-result`,
     {
       headers: {
         Cookie: Object.entries(cookies)

@@ -5,7 +5,7 @@ import { Button } from "#components/button/index.tsx";
 
 type ModalVariants = VariantProps<typeof modalVariants>;
 const modalVariants = cva(
-  "relative bg-white rounded-lg shadow-xl w-full mx-4 transform transition-all",
+  "relative bg-white rounded-lg shadow-xl w-full mx-4 transform transition-all animate-modal-pop-in",
   {
     variants: {
       size: {

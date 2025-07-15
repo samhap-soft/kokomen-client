@@ -2,7 +2,7 @@ import { postAuthorizationCode } from "@/domains/auth/api";
 import { useMutation } from "@tanstack/react-query";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { useRouter } from "next/router";
-import { JSX, useEffect, useState } from "react";
+import { JSX, useEffect } from "react";
 import Link from "next/link";
 
 type KakaoCallbackPageProps = {
@@ -15,7 +15,6 @@ export default function KakaoCallbackPage({
   state,
 }: KakaoCallbackPageProps): JSX.Element | null {
   const router = useRouter();
-  const [redirectCountdown, setRedirectCountdown] = useState(3);
 
   const authMutation = useMutation({
     mutationFn: ({
@@ -26,20 +25,14 @@ export default function KakaoCallbackPage({
       redirectUri: string;
     }) => postAuthorizationCode(code, redirectUri),
 
-    onSuccess: () => {
-      // 3초 후 리다이렉트
-      const redirectTo = state || "/";
+    onSuccess: ({ data }) => {
+      if (!data.profile_completed) {
+        router.replace(`/login/profile?state=${state || "/"}`);
+        return;
+      }
 
-      const countdown = setInterval(() => {
-        setRedirectCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdown);
-            router.replace(redirectTo);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      const redirectTo = state || "/";
+      router.replace(redirectTo);
     },
 
     onError: (error) => {
@@ -133,11 +126,7 @@ export default function KakaoCallbackPage({
             </p>
             <div className="space-y-4">
               <div className="text-sm text-gray-500">
-                {redirectCountdown > 0 ? (
-                  <span>{redirectCountdown}초 후 자동으로 이동합니다...</span>
-                ) : (
-                  <span>페이지를 이동 중입니다...</span>
-                )}
+                <span>페이지가 곧 이동됩니다...</span>
               </div>
               <Link
                 href={state || "/"}

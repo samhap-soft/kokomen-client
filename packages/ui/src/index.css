@@ -201,6 +201,17 @@
   --color-success-text: var(--color-green-9);
   --color-success-text-active: var(--color-green-10);
 
+  --color-warning-bg: var(--color-volcano-1);
+  --color-warning-bg-hover: var(--color-volcano-2);
+  --color-warning-border: var(--color-volcano-3);
+  --color-warning-border-hover: var(--color-volcano-4);
+  --color-warning-hover: var(--color-volcano-4);
+  --color-warning: var(--color-volcano-6);
+  --color-warning-active: var(--color-volcano-7);
+  --color-warning-text-hover: var(--color-volcano-8);
+  --color-warning-text: var(--color-volcano-9);
+  --color-warning-text-active: var(--color-volcano-10);
+
   /* Error Color Tokens - 기존 red 팔레트 활용 */
   --color-error-bg: var(--color-red-1); /* #fff1f0 */
   --color-error-bg-hover: var(--color-red-2); /* #ffccc7 */
@@ -519,6 +530,14 @@
   --color-yellow-10: #fafa85;
 }
 
+@utility bg-gradient-primary {
+  background: linear-gradient(
+    to right,
+    var(--color-primary),
+    var(--color-primary-border)
+  );
+}
+
 /* Toast 애니메이션 키프레임 */
 @keyframes toast-slide-in {
   from {
@@ -554,6 +573,18 @@
   100% {
     transform: translateX(0) scale(1);
     opacity: 1;
+  }
+}
+
+@theme {
+  --animate-modal-pop-in: modal-pop-in 0.3s ease-out forwards;
+  @keyframes modal-pop-in {
+    from {
+      transform: scale(0.9);
+    }
+    to {
+      transform: scale(1);
+    }
   }
 }
 

@@ -1,8 +1,6 @@
 import { Layout } from "@kokomen/ui/components/layout";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
-import Head from "next/head";
 import React, { JSX, useEffect, useState } from "react";
-import { useInterviewStatus } from "@/domains/interview/hooks/useInterviewStatus";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
@@ -10,10 +8,13 @@ import {
 } from "next";
 import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 import dynamic from "next/dynamic";
-import InterviewModals from "@/domains/interview/components/interviewModals";
-import { withCheckInServer } from "@/utils/auth";
 import { getInterview } from "@/domains/interview/api";
-import { Interview as InterviewType } from "@/domains/interview/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { interviewKeys } from "@/utils/querykeys";
+import { Button } from "@kokomen/ui/components/button";
+import { Interview } from "@/domains/interview/types";
+import InterviewFinishModal from "@/domains/interview/components/interviewFinishModal";
+import { SEO } from "@/shared/seo";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
@@ -28,48 +29,82 @@ const AiInterviewInterface = dynamic(
   }
 );
 
-export default function Interview({
-  cur_question,
-  cur_question_id,
-  max_question_count,
-  prev_questions_and_answers,
+const InterviewLoading = (): JSX.Element => {
+  return (
+    <div className="bg-gradient-to-r w-screen h-screen from-blue-50 to-primary-bg-hover relative rounded-lg">
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    </div>
+  );
+};
+
+const START_UP_QUESTION: string =
+  "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요.";
+export default function InterviewPage({
   interviewId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
-  const { state, dispatch } = useInterviewStatus({
-    questionId: cur_question_id,
-    questionsAndAnswers: prev_questions_and_answers.map((item) => ({
-      question: item.question,
-      answer: item.answer,
-    })),
+  const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const { data, isPending, isError } = useQuery({
+    queryKey: interviewKeys.byInterviewId(interviewId),
+    queryFn: () => getInterview(interviewId.toString()),
+    initialData: {
+      interview_state: "IN_PROGRESS",
+      prev_questions_and_answers: [],
+      cur_question_id: 0,
+      cur_question: "",
+      cur_question_count: 0,
+      max_question_count: 0,
+    },
   });
+
+  //기존 면접 정보 업데이트
+  const updateInterviewData = (updates: Partial<Interview>) => {
+    const queryKey = interviewKeys.byInterviewId(interviewId);
+
+    queryClient.setQueryData(queryKey, (oldData: Interview) => {
+      if (!oldData) return oldData;
+
+      return {
+        ...oldData,
+        ...updates,
+      };
+    });
+  };
+
+  // 면접관 캐릭터 끄덕거리게 하거나 대화하는 것처럼 보이게 하기
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const listeningEmotion = isListening ? "happy" : "encouraging";
+  const interviewerEmotion = isSpeaking ? "neutral" : listeningEmotion;
 
   useEffect(() => {
     setIsSpeaking(true);
     setTimeout(() => {
       setIsSpeaking(false);
-    }, 2000);
-  }, [state.message]);
-  const listeningEmotion = isListening ? "happy" : "encouraging";
-  const interviewerEmotion = isSpeaking ? "neutral" : listeningEmotion;
+    }, 4000);
+  }, [data.cur_question]);
+
+  if (isPending) return <InterviewLoading />;
+  if (isError) throw new Error("인터뷰 정보를 불러오는데 실패했습니다.");
+
   return (
     <>
-      <Head>
-        <title>꼬꼬면 면접</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
-        />
-        <link rel="icon" href="/favicon.ico" />
+      <SEO
+        title="모의 면접"
+        description="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
+        robots="noindex, nofollow, noarchive"
+      >
         <link rel="preload" as="image" href="/interviewBg.jpg" />
-      </Head>
+      </SEO>
+
       <Layout>
         <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
           <div className="flex flex-col flex-1 relative min-w-0">
             <div className="p-4 absolute top-20 left-[10%] w-[80%] h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
               <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
-                {state.message}
+                {isInterviewStarted ? data.cur_question : START_UP_QUESTION}
               </div>
             </div>
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
@@ -82,33 +117,45 @@ export default function Interview({
               </div>
             </div>
             <InterviewAnswerInput
-              interviewState={state}
-              dispatch={dispatch}
+              isInterviewStarted={isInterviewStarted}
+              cur_question={data.cur_question}
+              cur_question_id={data.cur_question_id}
+              prev_questions_and_answers={data.prev_questions_and_answers}
+              updateInterviewData={updateInterviewData}
               interviewId={interviewId}
               setIsListening={setIsListening}
-              answeredQuestions={state.questionsAndAnswers.length}
-              totalQuestions={max_question_count}
+              totalQuestions={data.max_question_count}
             />
           </div>
-          <InterviewSideBar prevQuestionAndAnswer={state.questionsAndAnswers} />
+          <InterviewSideBar
+            prevQuestionAndAnswer={data.prev_questions_and_answers}
+          />
         </div>
-        <InterviewModals
-          state={state}
-          dispatch={dispatch}
-          rootQuestion={cur_question}
+        {!isInterviewStarted && (
+          <Button
+            className="w-1/2 absolute bottom-40 left-1/4 text-xl font-bold"
+            variant={"primary"}
+            size={"xl"}
+            disabled={isPending}
+            onClick={() => setIsInterviewStarted(true)}
+          >
+            면접 시작하기
+          </Button>
+        )}
+        <InterviewFinishModal
+          interviewState={data.interview_state}
+          interviewId={interviewId}
         />
       </Layout>
     </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
-  InterviewType & { interviewId: number }
-> = async (
+export const getServerSideProps: GetServerSideProps<{
+  interviewId: number;
+}> = async (
   context
-): Promise<
-  GetServerSidePropsResult<InterviewType & { interviewId: number }>
-> => {
+): Promise<GetServerSidePropsResult<{ interviewId: number }>> => {
   const { interviewId } = context.query;
 
   if (!interviewId) {
@@ -117,31 +164,9 @@ export const getServerSideProps: GetServerSideProps<
     };
   }
 
-  return withCheckInServer<InterviewType & { interviewId: number }>(
-    async () => {
-      const response = await getInterview(interviewId as string, context.req);
-      if (response.data.interview_state === "FINISHED") {
-        throw new Error("Finished Interview");
-      }
-      return {
-        ...response.data,
-        interviewId: +interviewId,
-      };
+  return {
+    props: {
+      interviewId: +interviewId,
     },
-    {
-      onError: (error) => {
-        if (error instanceof Error && error.message === "Finished Interview") {
-          return {
-            redirect: {
-              destination: `/interviews/${interviewId}/result`,
-              permanent: false,
-            },
-          };
-        }
-        return {
-          notFound: true,
-        };
-      },
-    }
-  );
+  };
 };

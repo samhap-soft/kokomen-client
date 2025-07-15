@@ -21,3 +21,25 @@ export const useSidebar = (
     toggleSidebar,
   };
 };
+
+export const useModal = (
+  initialOpen = false
+): {
+  isOpen: boolean;
+  openModal: () => void;
+  closeModal: () => void;
+  toggleModal: () => void;
+} => {
+  const [isOpen, setIsOpen] = useState(initialOpen);
+
+  const openModal = (): void => setIsOpen(true);
+  const closeModal = (): void => setIsOpen(false);
+  const toggleModal = (): void => setIsOpen(!isOpen);
+
+  return {
+    isOpen,
+    openModal,
+    closeModal,
+    toggleModal,
+  };
+};

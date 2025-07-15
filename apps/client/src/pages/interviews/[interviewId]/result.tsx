@@ -10,7 +10,6 @@ import { ParsedUrlQuery } from "querystring";
 import { Layout } from "@kokomen/ui/components/layout";
 import { Button } from "@kokomen/ui/components/button";
 import { useRouter } from "next/router";
-import Head from "next/head";
 import { JSX } from "react";
 import Header from "@/shared/header";
 import {
@@ -24,8 +23,9 @@ import {
 import { withCheckInServer } from "@/utils/auth";
 import { getUserInfo } from "@/domains/auth/api";
 import { User } from "@/domains/auth/types";
+import { SEO } from "@/shared/seo";
 
-export default function Result({
+export default function MyInterviewResultPage({
   report,
   userInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
@@ -39,14 +39,11 @@ export default function Result({
 
   return (
     <>
-      <Head>
-        <title>꼬꼬면 면접 결과</title>
-        <meta
-          name="description"
-          content="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <SEO
+        title="모의 면접 결과"
+        description="모의 면접을 완료하셨습니다! 성과를 확인하고 다음 단계로 나아가세요."
+        robots="noindex, nofollow, noarchive"
+      />
       <Layout>
         <Header user={userInfo} />
 
@@ -181,14 +178,21 @@ export const getServerSideProps: GetServerSideProps<
       notFound: true,
     };
   }
-  return withCheckInServer(async () => {
-    const [report, userInfo] = await Promise.all([
-      getInterviewReport(context.req.cookies, interviewId as string),
-      getUserInfo(context),
-    ]);
-    return {
-      report: report.data,
-      userInfo: userInfo.data,
-    };
-  });
+  return withCheckInServer(
+    async () => {
+      const [report, userInfo] = await Promise.all([
+        getInterviewReport(context.req.cookies, interviewId as string),
+        getUserInfo(context),
+      ]);
+      return {
+        data: {
+          report: report.data,
+          userInfo: userInfo.data,
+        },
+      };
+    },
+    {
+      redirectPathWhenUnauthorized: "/interviews",
+    }
+  );
 };

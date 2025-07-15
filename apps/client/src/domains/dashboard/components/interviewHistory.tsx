@@ -3,7 +3,15 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { interviewHistoryKeys } from "@/utils/querykeys";
 import Select from "@kokomen/ui/components/select";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Calendar, Clock, TrendingUp, Trophy } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Eye,
+  Heart,
+  NotebookPen,
+  TrendingUp,
+  Trophy,
+} from "lucide-react";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 
@@ -164,16 +172,50 @@ export default function InterviewHistory() {
                       {interview.cur_answer_count}/
                       {interview.max_question_count}문제
                     </div>
-                    {interview.score && (
-                      <div className="flex items-center gap-1">
+                    {interview.interview_state === "FINISHED" && (
+                      <div
+                        className={`flex items-center gap-1 ${
+                          interview.score > 0
+                            ? "text-green-6"
+                            : "text-volcano-6"
+                        }`}
+                      >
                         <TrendingUp className="w-4 h-4" />
                         {interview.score}점
                       </div>
                     )}
+                    {interview.interview_state === "FINISHED" && (
+                      <>
+                        <div className="flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          {interview.interview_view_count}
+                        </div>
+                        <div
+                          className={`flex items-center gap-1 ${
+                            interview.interview_already_liked
+                              ? "text-volcano-6"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          <Heart className="w-4 h-4" />
+                          {interview.interview_like_count}
+                        </div>
+                        <div
+                          className={`flex items-center gap-1 ${
+                            interview.submitted_answer_memo_count > 0
+                              ? "text-gold-6"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          <NotebookPen className="w-4 h-4" />
+                          {interview.submitted_answer_memo_count}
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                <div className="md:ml-4 md:w-auto w-full">
+                <div className="md:ml-4 md:w-auto w-full flex flex-col gap-2">
                   <Link
                     href={
                       interview.interview_state === "FINISHED"
@@ -183,9 +225,17 @@ export default function InterviewHistory() {
                     className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
                   >
                     {interview.interview_state === "FINISHED"
-                      ? "결과 보기"
+                      ? "보고서 보기"
                       : "이어하기"}
                   </Link>
+                  {interview.interview_state === "FINISHED" && (
+                    <Link
+                      href={`/members/interviews/${interview.interview_id}`}
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-text-light-solid bg-gradient-primary hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
+                    >
+                      공개된 결과 보기
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

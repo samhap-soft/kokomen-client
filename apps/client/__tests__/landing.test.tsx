@@ -18,11 +18,11 @@ describe("랜딩 페이지 렌더링 테스트", () => {
 
   it("네비게이션 링크가 올바르게 렌더링 되는지 테스트", () => {
     renderWithProviders(<Home />);
-    const homeLink = screen.getByText("홈");
-    const interviewsLink = screen.getByText("면접");
+    const homeLink = screen.getAllByText("홈");
+    const interviewsLink = screen.getAllByText("면접");
 
-    expect(homeLink).toBeInTheDocument();
-    expect(interviewsLink).toBeInTheDocument();
+    expect(homeLink[0]).toBeInTheDocument();
+    expect(interviewsLink[0]).toBeInTheDocument();
   });
 });
 
@@ -31,11 +31,20 @@ describe("랜딩 페이지 링크 테스트", () => {
     renderWithProviders(<Home />);
 
     // 각 링크의 href 속성 확인
-    expect(screen.getByRole("link", { name: "홈" })).toHaveAttribute(
+    expect(screen.getAllByRole("link", { name: "홈" })[0]).toHaveAttribute(
       "href",
       "/"
     );
-    expect(screen.getByRole("link", { name: "면접" })).toHaveAttribute(
+
+    expect(screen.getAllByRole("link", { name: "홈" })[1]).toHaveAttribute(
+      "href",
+      "/"
+    );
+    expect(screen.getAllByRole("link", { name: "면접" })[0]).toHaveAttribute(
+      "href",
+      "/interviews"
+    );
+    expect(screen.getAllByRole("link", { name: "면접" })[1]).toHaveAttribute(
       "href",
       "/interviews"
     );

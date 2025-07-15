@@ -1,9 +1,9 @@
-import { AxiosPromise, isAxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { GetServerSidePropsResult, GetServerSidePropsContext } from "next";
 
 const LOGIN_PATH: string = "/login";
 export async function withCheckInServer<T>(
-  fetchCall: () => Promise<AxiosPromise<T>> | AxiosPromise<T> | Promise<T>,
+  fetchCall: () => Promise<GetServerSidePropsResult<T> | { data: T }>,
   options?: {
     // 404 대신 다른 처리를 원할 때
     onError?: (
@@ -14,6 +14,7 @@ export async function withCheckInServer<T>(
     ) => GetServerSidePropsResult<T>;
     // 에러 로깅 비활성화
     context?: GetServerSidePropsContext;
+    redirectPathWhenUnauthorized?: string;
   }
 ): Promise<GetServerSidePropsResult<T>> {
   const { onError, context } = options || {};
@@ -21,18 +22,28 @@ export async function withCheckInServer<T>(
   try {
     // fetchCall이 함수인지 확인
     if (typeof fetchCall !== "function") {
-      throw new Error(
-        "fetchCall must be a function that returns an AxiosPromise"
-      );
+      throw new Error("fetchCall must be a function that returns a Promise");
     }
 
     const response = await fetchCall();
+
+    // 이미 GetServerSidePropsResult 형태인 경우 (redirect, notFound 등)
+    if (
+      response &&
+      typeof response === "object" &&
+      ("redirect" in response || "notFound" in response)
+    ) {
+      return response as GetServerSidePropsResult<T>;
+    }
+
+    // AxiosResponse 형태인 경우 (data 속성이 있는 경우)
     if (response && typeof response === "object" && "data" in response) {
       return {
-        props: response.data,
+        props: response.data as T,
       };
     }
 
+    // 직접 T 타입인 경우
     return {
       props: response as T,
     };
@@ -43,12 +54,21 @@ export async function withCheckInServer<T>(
       switch (status) {
         case 401:
         case 403:
-          return {
-            redirect: {
-              destination: LOGIN_PATH,
-              permanent: false,
-            },
-          };
+          if (options?.redirectPathWhenUnauthorized) {
+            return {
+              redirect: {
+                destination: `${LOGIN_PATH}?redirectTo=${context?.resolvedUrl}`,
+                permanent: false,
+              },
+            };
+          } else {
+            return {
+              redirect: {
+                destination: options?.redirectPathWhenUnauthorized as string,
+                permanent: false,
+              },
+            };
+          }
         case 404:
           return {
             notFound: true,
@@ -79,37 +99,33 @@ export async function withCheckInServer<T>(
   }
 }
 
-// 사용 예시:
-/*
-// 1. 기본 사용법
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  return withCheckInServer(
-    () => api.getUserProfile(context.params?.userId as string),
-    { context }
+export function eraseAuthCookie(context: GetServerSidePropsContext) {
+  const cookies = context.req.cookies;
+  const sessionId = cookies.JSESSIONID;
+  if (sessionId) {
+    context.res.setHeader(
+      "Set-Cookie",
+      `JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+    );
+  }
+}
+
+/**
+ * 서버 핸들러에서 JSESSIONID 쿠키를 삭제하는 헬퍼 함수
+ */
+export function clearSessionCookie(res: any): void {
+  res.setHeader(
+    "Set-Cookie",
+    "JSESSIONID=; Path=/; Domain=.kokomen.kr; Expires=Thu, 01 Jan 1970 00:00:00 GMT"
   );
-};
+}
 
-// 2. 커스텀 옵션 사용
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  return withCheckInServer(
-    () => api.getAdminData(),
-    {
-      loginPath: "/admin/login",
-      context,
-      onError: (error) => ({
-        redirect: {
-          destination: "/admin/error",
-          permanent: false,
-        },
-      }),
-    }
+/**
+ * getServerSideProps에서 JSESSIONID 쿠키를 삭제하는 헬퍼 함수
+ */
+export function clearSessionCookieSSR(context: any): void {
+  context.res.setHeader(
+    "Set-Cookie",
+    "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.kokomen.kr;"
   );
-};
-
-// 3. 헬퍼 함수 사용
-const fetchUserData = createAuthenticatedFetcher(() => api.getUserData());
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  return fetchUserData({ context });
-};
-*/
+}
