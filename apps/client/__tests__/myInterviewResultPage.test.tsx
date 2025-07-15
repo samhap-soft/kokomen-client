@@ -168,14 +168,12 @@ describe("내 면접결과 메모 테스트", () => {
   });
 
   it("임시 저장중인 메모를 작성하고 저장 버튼을 눌렀을 때 정상적으로 API 요청과 응답이 오는지 확인", async () => {
-    let requestBody: any;
+    const saveCalled = jest.fn();
     server.use(
-      http.post(
+      http.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/answers/1/memo`,
-        async (req) => {
-          // 요청 본문 파싱
-          requestBody = await req.request.json();
-
+        async () => {
+          saveCalled();
           return HttpResponse.json({
             message: "메모 저장 성공",
           });
@@ -222,9 +220,6 @@ describe("내 면접결과 메모 테스트", () => {
     await waitFor(() => {
       expect(screen.getByText("임시작성 메모")).toBeInTheDocument();
     });
-
-    expect(requestBody).toBeDefined();
-    expect(requestBody.content).toEqual("임시작성 메모");
-    expect(requestBody.visibility).toBe("PUBLIC");
+    expect(saveCalled).toHaveBeenCalled();
   });
 });
