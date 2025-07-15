@@ -34,12 +34,14 @@ type Feedback = {
   answer_feedback: string;
   answer_like_count: number;
   answer_already_liked: boolean;
+  submitted_answer_memo_content: string;
 };
 
 type MemberInterviewResult = {
   feedbacks: Feedback[];
   total_feedback: string;
   total_score: number;
+  interview_view_count: number;
   interview_like_count: number;
   interview_already_liked: boolean;
   interviewee_rank: number;
