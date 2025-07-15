@@ -8,6 +8,7 @@ import { Button } from "@kokomen/ui/components/button";
 import { MemberInterviewResult } from "@/domains/members/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { captureButtonEvent } from "@/utils/analytics";
+import { useRouter } from "next/router";
 
 export default function MemberTotalFeedback({
   result,
@@ -21,6 +22,7 @@ export default function MemberTotalFeedback({
   const [totalLikedCount, setTotalLikedCount] = useState<number>(
     result.interviewLikeCount
   );
+  const router = useRouter();
   const { error: errorToast } = useToast();
   const { mutate: toggleInterviewLikeMutation, isPending } = useMutation({
     mutationFn: (liked: boolean) =>
@@ -41,6 +43,10 @@ export default function MemberTotalFeedback({
     },
     onError: (error) => {
       if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          router.push(`/login?redirectTo=${router.asPath}`);
+          return;
+        }
         errorToast({
           title: "좋아요 실패",
           description: error.response?.data.message,
@@ -50,11 +56,11 @@ export default function MemberTotalFeedback({
           title: "좋아요 실패",
           description: "서버 오류가 발생했습니다.",
         });
-        setIsTotalLikedIncludesMine(!isTotalLikedIncludesMine);
-        setTotalLikedCount(
-          isTotalLikedIncludesMine ? totalLikedCount + 1 : totalLikedCount - 1
-        );
       }
+      setIsTotalLikedIncludesMine(!isTotalLikedIncludesMine);
+      setTotalLikedCount(
+        isTotalLikedIncludesMine ? totalLikedCount + 1 : totalLikedCount - 1
+      );
     },
   });
 
