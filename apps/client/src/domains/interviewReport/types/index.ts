@@ -5,6 +5,9 @@ interface Feedback {
   answer: string;
   answer_rank: string;
   answer_feedback: string;
+  temp_answer_memo_content: string;
+  submitted_answer_memo_content: string;
+  answer_memo_visibility: "PUBLIC" | "PRIVATE" | "FRIENDS";
 }
 interface InterviewReport {
   feedbacks: Feedback[];

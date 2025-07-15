@@ -14,6 +14,7 @@ export async function withCheckInServer<T>(
     ) => GetServerSidePropsResult<T>;
     // 에러 로깅 비활성화
     context?: GetServerSidePropsContext;
+    redirectPathWhenUnauthorized?: string;
   }
 ): Promise<GetServerSidePropsResult<T>> {
   const { onError, context } = options || {};
@@ -53,12 +54,21 @@ export async function withCheckInServer<T>(
       switch (status) {
         case 401:
         case 403:
-          return {
-            redirect: {
-              destination: `${LOGIN_PATH}?redirectTo=${context?.resolvedUrl}`,
-              permanent: false,
-            },
-          };
+          if (options?.redirectPathWhenUnauthorized) {
+            return {
+              redirect: {
+                destination: `${LOGIN_PATH}?redirectTo=${context?.resolvedUrl}`,
+                permanent: false,
+              },
+            };
+          } else {
+            return {
+              redirect: {
+                destination: options?.redirectPathWhenUnauthorized as string,
+                permanent: false,
+              },
+            };
+          }
         case 404:
           return {
             notFound: true,

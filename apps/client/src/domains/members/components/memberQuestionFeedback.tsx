@@ -129,7 +129,7 @@ export default function MemberQuestionFeedback({
           </div>
         </div>
 
-        {/* 피드백 섹션 */}
+        {/* AI 피드백 섹션 */}
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-gradient-to-r from-cyan-4 to-cyan-5 rounded-full"></div>
@@ -141,6 +141,23 @@ export default function MemberQuestionFeedback({
             </p>
           </div>
         </div>
+
+        {/* 사용자 메모 섹션 */}
+        {questionAndFeedback.submittedAnswerMemoContent && (
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 bg-gradient-to-r from-green-4 to-green-5 rounded-full"></div>
+              <h4 className="text-sm font-semibold text-gray-700">
+                사용자 메모
+              </h4>
+            </div>
+            <div className="bg-gradient-to-r from-green-1 to-green-2 rounded-xl p-4 border border-green-3">
+              <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+                {questionAndFeedback.submittedAnswerMemoContent}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

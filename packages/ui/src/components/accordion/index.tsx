@@ -239,13 +239,37 @@ export function AccordionContent({
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelHeight, setPanelHeight] = useState<string>("0px");
 
-  useEffect(() => {
+  const handleResize = () => {
     if (isOpen && panelRef.current) {
       setPanelHeight(`${panelRef.current.scrollHeight}px`);
     } else {
       setPanelHeight("0px");
     }
+  };
+
+  useEffect(() => {
+    handleResize();
   }, [isOpen, children]);
+
+  useEffect(() => {
+    let observer: MutationObserver | null = null;
+
+    if (panelRef.current) {
+      observer = new MutationObserver(handleResize);
+      observer.observe(panelRef.current, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        characterData: true,
+      });
+    }
+
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+  }, [isOpen]);
 
   return (
     <div

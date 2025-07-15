@@ -1,4 +1,13 @@
-import { Award, Crown, Medal, Trophy } from "lucide-react";
+import {
+  AlertCircle,
+  Award,
+  CheckCircle,
+  Crown,
+  Medal,
+  Star,
+  Trophy,
+} from "lucide-react";
+import React from "react";
 
 // 랭킹에 따른 아이콘과 색상 결정하는 함수
 const getRankDisplay = (rank: number) => {
@@ -39,4 +48,59 @@ const getPercentileDisplay = (percentile: number) => {
   }
 };
 
-export { getRankDisplay, getPercentileDisplay };
+const getScoreColor = (rank: string): string => {
+  switch (rank.toUpperCase()) {
+    case "A":
+      return "text-success";
+    case "B":
+      return "text-primary";
+    case "C":
+      return "text-warning";
+    case "D":
+    case "F":
+      return "text-error";
+    default:
+      return "text-text-description";
+  }
+};
+
+const getScoreIcon = (rank: string): React.ReactNode => {
+  switch (rank.toUpperCase()) {
+    case "A":
+      return <Award className="w-5 h-5" />;
+    case "B":
+      return <Star className="w-5 h-5" />;
+    case "C":
+      return <CheckCircle className="w-5 h-5" />;
+    case "D":
+    case "F":
+      return <AlertCircle className="w-5 h-5" />;
+    default:
+      return <Star className="w-5 h-5" />;
+  }
+};
+
+const getScoreLabel = (rank: string): string => {
+  switch (rank.toUpperCase()) {
+    case "A":
+      return "우수";
+    case "B":
+      return "양호";
+    case "C":
+      return "보통";
+    case "D":
+      return "미흡";
+    case "F":
+      return "불량";
+    default:
+      return rank;
+  }
+};
+
+export {
+  getRankDisplay,
+  getPercentileDisplay,
+  getScoreColor,
+  getScoreIcon,
+  getScoreLabel,
+};

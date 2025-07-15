@@ -13,8 +13,8 @@ import { getMemberInterviews } from "@/domains/members/api";
 import { MemberInterview } from "@/domains/members/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { TrendingUp } from "lucide-react";
-import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
+import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
 
 export default function MemberInterviewPage({
   memberId,

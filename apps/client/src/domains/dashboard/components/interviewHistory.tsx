@@ -3,7 +3,15 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { interviewHistoryKeys } from "@/utils/querykeys";
 import Select from "@kokomen/ui/components/select";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Calendar, Clock, Eye, Heart, TrendingUp, Trophy } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Eye,
+  Heart,
+  NotebookPen,
+  TrendingUp,
+  Trophy,
+} from "lucide-react";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 
@@ -164,8 +172,14 @@ export default function InterviewHistory() {
                       {interview.cur_answer_count}/
                       {interview.max_question_count}문제
                     </div>
-                    {interview.score && (
-                      <div className="flex items-center gap-1">
+                    {interview.interview_state === "FINISHED" && (
+                      <div
+                        className={`flex items-center gap-1 ${
+                          interview.score > 0
+                            ? "text-green-6"
+                            : "text-volcano-6"
+                        }`}
+                      >
                         <TrendingUp className="w-4 h-4" />
                         {interview.score}점
                       </div>
@@ -176,9 +190,25 @@ export default function InterviewHistory() {
                           <Eye className="w-4 h-4" />
                           {interview.interview_view_count}
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div
+                          className={`flex items-center gap-1 ${
+                            interview.interview_already_liked
+                              ? "text-volcano-6"
+                              : "text-gray-400"
+                          }`}
+                        >
                           <Heart className="w-4 h-4" />
                           {interview.interview_like_count}
+                        </div>
+                        <div
+                          className={`flex items-center gap-1 ${
+                            interview.submitted_answer_memo_count > 0
+                              ? "text-gold-6"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          <NotebookPen className="w-4 h-4" />
+                          {interview.submitted_answer_memo_count}
                         </div>
                       </>
                     )}
