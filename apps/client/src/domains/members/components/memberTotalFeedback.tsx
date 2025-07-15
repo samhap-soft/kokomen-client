@@ -1,6 +1,6 @@
 import { toggleMemberInterviewLike } from "@/domains/members/api";
 import { useMutation } from "@tanstack/react-query";
-import { CheckCircle, Heart, MessageCircle, Trophy } from "lucide-react";
+import { CheckCircle, Eye, Heart, MessageCircle, Trophy } from "lucide-react";
 import { JSX, useState } from "react";
 import { useToast } from "@kokomen/ui/hooks/useToast";
 import { isAxiosError } from "axios";
@@ -60,7 +60,7 @@ export default function MemberTotalFeedback({
 
   return (
     <div className="p-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {/* 총점 */}
         <div className="text-center">
           <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
@@ -90,6 +90,16 @@ export default function MemberTotalFeedback({
           </div>
           <p className="text-2xl font-bold text-gray-900">{totalLikedCount}</p>
           <p className="text-sm text-gray-600">좋아요</p>
+        </div>
+
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-purple-3 to-purple-6 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Eye className="w-8 h-8 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-gray-900">
+            {result.interviewViewCount}
+          </p>
+          <p className="text-sm text-gray-600">조회수</p>
         </div>
       </div>
 
