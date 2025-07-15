@@ -5,6 +5,7 @@ import { JSX } from "react";
 import { Toaster } from "@kokomen/ui/components/toast/toaster";
 import { ErrorBoundary } from "@sentry/nextjs";
 import ErrorFallback from "@/shared/errorFallback";
+import FeedbackButton from "@/shared/feedbackButton";
 
 const queryClient: QueryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
       <ErrorBoundary fallback={<ErrorFallback />}>
         <Toaster>
           <Component {...pageProps} />
+          <FeedbackButton />
         </Toaster>
       </ErrorBoundary>
     </QueryClientProvider>
