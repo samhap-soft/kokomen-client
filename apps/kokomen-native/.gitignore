@@ -36,3 +36,14 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+
+# iOS
+ios/build/
+ios/Pods/
+ios/*.xcworkspace/xcuserdata/
+
+# Android  
+android/build/
+android/app/build/
+android/.gradle/
