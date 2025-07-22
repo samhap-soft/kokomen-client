@@ -1,15 +1,5 @@
-import { WebView } from "react-native-webview";
-import { StyleSheet, Text, View } from "react-native";
+import AppNavigator from "@/router";
 
 export default function App() {
-  return <WebView source={{ uri: "https://kokomen.kr" }} />;
+  return <AppNavigator />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
