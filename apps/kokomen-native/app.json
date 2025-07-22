@@ -13,14 +13,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "deploymentTarget": "17.0",
+      "supportsTablet": true,
+      "bundleIdentifier": "kr.kokomen"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "kr.kokomen"
     },
     "web": {
       "favicon": "./assets/favicon.png"
