@@ -3,6 +3,8 @@
     "**/.yarn": true,
     "**/.pnp.*": true
   },
+  "typescript.suggest.enabled": true,
+  "typescript.autoClosingTags": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
   },
