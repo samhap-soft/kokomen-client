@@ -2813,6 +2813,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@kokomen/prettier-config@workspace:packages/prettier-config":
+  version: 0.0.0-use.local
+  resolution: "@kokomen/prettier-config@workspace:packages/prettier-config"
+  peerDependencies:
+    prettier: ^3.5.3
+  languageName: unknown
+  linkType: soft
+
 "@kokomen/react-hooks@workspace:packages/react-hooks":
   version: 0.0.0-use.local
   resolution: "@kokomen/react-hooks@workspace:packages/react-hooks"
