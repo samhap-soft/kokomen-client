@@ -2813,25 +2813,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kokomen/react-hooks@workspace:packages/react-hooks":
-  version: 0.0.0-use.local
-  resolution: "@kokomen/react-hooks@workspace:packages/react-hooks"
-  dependencies:
-    "@kokomen/eslint-config": "workspace:*"
-    "@types/react": "npm:^19.0.0"
-    "@types/react-dom": "npm:^19.0.0"
-    eslint: "npm:^8.57.1"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    react: ^19.0.0
-    react-dom: ^19.0.0
-    tailwindcss: ^4
-    typescript: ^5.8.3
-  languageName: unknown
-  linkType: soft
-
 "@kokomen/ui@workspace:*, @kokomen/ui@workspace:packages/ui":
   version: 0.0.0-use.local
   resolution: "@kokomen/ui@workspace:packages/ui"
@@ -2873,12 +2854,33 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@kokomen/utils@workspace:*, @kokomen/utils@workspace:packages/kokomen-utils":
+  version: 0.0.0-use.local
+  resolution: "@kokomen/utils@workspace:packages/kokomen-utils"
+  dependencies:
+    "@kokomen/eslint-config": "workspace:*"
+    "@types/react": "npm:^19.1.8"
+    "@types/react-dom": "npm:^19.0.0"
+    eslint: "npm:^8.57.1"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    react: ^19.0.0
+    react-dom: ^19.0.0
+    tailwindcss: ^4
+    typescript: ^5.8.3
+  languageName: unknown
+  linkType: soft
+
 "@kokomen/webview@workspace:apps/kokomen-webview":
   version: 0.0.0-use.local
   resolution: "@kokomen/webview@workspace:apps/kokomen-webview"
   dependencies:
     "@eslint/js": "npm:^9.31.0"
     "@kokomen/eslint-config": "workspace:*"
+    "@kokomen/ui": "workspace:*"
+    "@kokomen/utils": "workspace:*"
     "@tailwindcss/vite": "npm:^4.1.11"
     "@tanstack/react-query": "npm:^5.80.6"
     "@tanstack/react-router": "npm:^1.129.3"
@@ -5771,7 +5773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19, @types/react@npm:^19.0.0, @types/react@npm:^19.1.8":
+"@types/react@npm:^19, @types/react@npm:^19.1.8":
   version: 19.1.8
   resolution: "@types/react@npm:19.1.8"
   dependencies:

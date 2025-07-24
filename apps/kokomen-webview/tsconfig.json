@@ -1,27 +1,10 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "incremental": true,
-    "isolatedModules": true,
-    "rootDir": ".",
-    "jsx": "preserve",
-    "baseUrl": ".",
-    "module": "NodeNext",
-    "allowImportingTsExtensions": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "types": ["@tanstack/react-router"]
+    "composite": true,
+    "types": ["@tanstack/react-router"],
+    "jsx": "react-jsx"
   },
-
   "exclude": [
     "node_modules",
     "dist",
@@ -32,5 +15,5 @@
     "**/*.spec.ts",
     "**/*.test.ts"
   ],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["src/**/*"]
 }
