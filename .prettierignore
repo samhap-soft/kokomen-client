@@ -1,7 +1,10 @@
 # .prettierignore
 
+.next
+node_modules
+.yarn
+
 dist
 build
 
 **/*.md
-
