@@ -13,6 +13,7 @@
   "eslint.nodePath": ".yarn/sdks",
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
   "tailwindCSS.includeLanguages": {
     "javascript": "javascript",
     "typescript": "typescript",
