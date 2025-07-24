@@ -19,6 +19,8 @@
   "devDependencies": {
     "@eslint/js": "^9.31.0",
     "@kokomen/eslint-config": "workspace:*",
+    "@kokomen/ui": "workspace:*",
+    "@kokomen/utils": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/router-plugin": "^1.129.3",
     "@types/react": "^19.1.8",
