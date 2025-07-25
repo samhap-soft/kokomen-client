@@ -1,3 +1,5 @@
+import { Dispatch } from "react";
+
 type InterviewStatus = "standby" | "thinking" | "question" | "finished";
 
 type QuestionAndAnswer = {
@@ -23,6 +25,46 @@ type InterviewConfig = {
   interview_type: InterviewType;
 };
 type InterviewType = "text" | "voice";
+interface InterviewState {
+  message: string;
+  status: InterviewStatus;
+  currentQuestionId: number;
+  questionsAndAnswers: Omit<QuestionAndAnswer, "answer_id" | "question_id">[];
+}
+
+type InterviewActions = Dispatch<InterviewAction>;
+
+interface StartupAction {
+  type: "START_UP";
+}
+interface AnswerQuestionAction {
+  type: "ANSWER_QUESTION";
+}
+interface InterviewEndAction {
+  type: "INTERVIEW_END";
+}
+interface SubmitFailedAction {
+  type: "SUBMIT_FAILED";
+}
+interface QuestionAction {
+  type: "QUESTION";
+  message: string;
+  currentQuestionId: number;
+}
+
+interface NextQuestionAction {
+  type: "NEXT_QUESTION";
+  message: string;
+  currentQuestionId: number;
+  prevAnswer: string;
+}
+type InterviewAction =
+  | StartupAction
+  | AnswerQuestionAction
+  | InterviewEndAction
+  | SubmitFailedAction
+  | NextQuestionAction
+  | QuestionAction;
 
 export type {
   InterviewStatus,
@@ -31,4 +73,6 @@ export type {
   Interview,
   InterviewConfig,
   InterviewType,
+  InterviewState,
+  InterviewActions
 };

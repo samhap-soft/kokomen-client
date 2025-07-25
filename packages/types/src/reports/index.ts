@@ -1,4 +1,4 @@
-interface Feedback {
+interface PrivateFeedback {
   question_id: number;
   answer_id: number;
   question: string;
@@ -10,7 +10,7 @@ interface Feedback {
   answer_memo_visibility: "PUBLIC" | "PRIVATE" | "FRIENDS";
 }
 interface InterviewReport {
-  feedbacks: Feedback[];
+  feedbacks: PrivateFeedback[];
   total_feedback: string;
   total_score: number;
   user_cur_score: number;
@@ -24,4 +24,4 @@ type AnswerMemo = {
   content: string;
 };
 
-export type { Feedback, InterviewReport, AnswerMemo };
+export type { PrivateFeedback, InterviewReport, AnswerMemo };
