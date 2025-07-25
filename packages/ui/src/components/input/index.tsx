@@ -10,20 +10,20 @@ const inputVariants = cva(
       variant: {
         default: "border-gray-300",
         outline: "border-borderinput",
-        red: "border-red-600",
+        red: "border-red-600"
       },
       size: {
         default: "text-base",
         sm: "text-sm",
         lg: "text-lg",
         xl: "text-xl",
-        "2xl": "text-2xl",
-      },
+        "2xl": "text-2xl"
+      }
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
-    },
+      size: "default"
+    }
   }
 );
 

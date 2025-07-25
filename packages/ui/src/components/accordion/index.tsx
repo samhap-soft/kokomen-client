@@ -7,7 +7,7 @@ import React, {
   useEffect,
   ReactNode,
   ButtonHTMLAttributes,
-  HTMLAttributes,
+  HTMLAttributes
 } from "react";
 
 interface AccordionContextType {
@@ -112,7 +112,7 @@ export function Accordion({
     activeKeys,
     toggleItem,
     allowMultiple,
-    getItemState,
+    getItemState
   };
 
   return (
@@ -166,7 +166,7 @@ export function AccordionItem({
     disabled: isDisabled,
     headerId,
     panelId,
-    toggleOpen,
+    toggleOpen
   };
 
   return (
@@ -260,7 +260,7 @@ export function AccordionContent({
         childList: true,
         subtree: true,
         attributes: true,
-        characterData: true,
+        characterData: true
       });
     }
 
