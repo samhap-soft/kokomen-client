@@ -2,7 +2,18 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "outDir": "../dist"
+    "jsx": "react-jsx",
+    "outDir": "../dist",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "paths": {
+      "@assets/*": ["./assets/*"],
+      "@components/*": ["./src/components/*"]
+    },
+    "types": ["@kokomen/types"]
   },
   "include": ["./**/*"],
   "exclude": ["**/*.test.*", "**/*.spec.*"]
