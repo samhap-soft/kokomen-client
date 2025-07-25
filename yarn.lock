@@ -2813,9 +2813,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kokomen/types@workspace:packages/types":
+"@kokomen/types@workspace:*, @kokomen/types@workspace:packages/types":
   version: 0.0.0-use.local
   resolution: "@kokomen/types@workspace:packages/types"
+  dependencies:
+    "@types/react": "npm:^19"
   languageName: unknown
   linkType: soft
 
@@ -2824,6 +2826,7 @@ __metadata:
   resolution: "@kokomen/ui@workspace:packages/ui"
   dependencies:
     "@kokomen/eslint-config": "workspace:*"
+    "@kokomen/types": "workspace:*"
     "@react-three/drei": "npm:^10.3.0"
     "@react-three/fiber": "npm:^9.1.2"
     "@storybook/addon-essentials": "npm:^8.6.12"
@@ -2872,6 +2875,7 @@ __metadata:
   resolution: "@kokomen/utils@workspace:packages/kokomen-utils"
   dependencies:
     "@kokomen/eslint-config": "workspace:*"
+    "@types/dom-speech-recognition": "npm:^0.0.6"
     "@types/react": "npm:^19.1.8"
     "@types/react-dom": "npm:^19.0.0"
     eslint: "npm:^8.57.1"
@@ -2892,6 +2896,7 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.31.0"
     "@kokomen/eslint-config": "workspace:*"
+    "@kokomen/types": "workspace:*"
     "@kokomen/ui": "workspace:*"
     "@kokomen/utils": "workspace:*"
     "@tailwindcss/vite": "npm:^4.1.11"
@@ -2905,6 +2910,7 @@ __metadata:
     axios: "npm:^1.9.0"
     eslint: "npm:8.57.1"
     globals: "npm:^16.3.0"
+    lucide-react: "npm:^0.511.0"
     react: "npm:^19.1.0"
     react-dom: "npm:^19.1.0"
     react-hook-form: "npm:^7.59.0"
