@@ -2,8 +2,20 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "types": ["@tanstack/react-router"],
-    "jsx": "react-jsx"
+    "types": [
+      "@tanstack/react-router",
+      "@kokomen/types",
+      "vite/client",
+      "./index.d.ts",
+      "node"
+    ],
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@kokomen/ui/*": ["../../packages/ui/src/*"],
+      "@kokomen/utils/*": ["../../packages/kokomen-utils/src/*"]
+    }
   },
   "exclude": [
     "node_modules",
@@ -15,5 +27,9 @@
     "**/*.spec.ts",
     "**/*.test.ts"
   ],
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*",
+    "../../packages/kokomen-utils/src/**/*",
+    "../../packages/ui/src/**/*"
+  ]
 }
