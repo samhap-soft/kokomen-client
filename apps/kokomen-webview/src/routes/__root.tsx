@@ -8,9 +8,11 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Button } from "@kokomen/ui/components/button";
 import { ChevronLeft } from "lucide-react";
+import { Toaster } from "@kokomen/ui/components/toast/toaster";
 
 export const Route: RootRoute = createRootRoute({
-  component: RootComponent
+  component: RootComponent,
+  errorComponent: () => <div>Error</div>
 });
 
 function RootComponent() {
@@ -19,8 +21,8 @@ function RootComponent() {
 
   return (
     <>
-      <div className="p-2 flex gap-2 bg-primary ">
-        {!canGoBack && (
+      <header className="p-2 flex gap-2 bg-primary ">
+        {canGoBack && (
           <Button
             variant={"text"}
             onClick={() => router.history.back()}
@@ -29,8 +31,12 @@ function RootComponent() {
             <ChevronLeft />
           </Button>
         )}
-      </div>
-      <Outlet />
+      </header>
+      <Toaster>
+        <main className="p-4">
+          <Outlet />
+        </main>
+      </Toaster>
       <TanStackRouterDevtools />
     </>
   );
