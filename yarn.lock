@@ -2836,7 +2836,6 @@ __metadata:
     "@storybook/react": "npm:^8.6.12"
     "@storybook/react-vite": "npm:^8.6.12"
     "@storybook/test": "npm:^8.6.12"
-    "@tailwindcss/postcss": "npm:^4.1.7"
     "@tailwindcss/vite": "npm:^4.1.7"
     "@types/prop-types": "npm:^15"
     "@types/react": "npm:^19"
@@ -2904,6 +2903,7 @@ __metadata:
     "@tanstack/react-router": "npm:^1.129.3"
     "@tanstack/react-router-devtools": "npm:^1.129.3"
     "@tanstack/router-plugin": "npm:^1.129.3"
+    "@types/node": "npm:^20"
     "@types/react": "npm:^19.1.8"
     "@types/react-dom": "npm:^19.1.6"
     "@vitejs/plugin-react": "npm:^4.6.0"
@@ -5181,7 +5181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/postcss@npm:^4, @tailwindcss/postcss@npm:^4.1.7":
+"@tailwindcss/postcss@npm:^4":
   version: 4.1.11
   resolution: "@tailwindcss/postcss@npm:4.1.11"
   dependencies:

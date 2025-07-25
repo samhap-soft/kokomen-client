@@ -20,6 +20,8 @@
     "javascriptreact": "javascript",
     "typescriptreact": "typescript"
   },
+  "tailwindCSS.suggestions": true,
+  "tailwindCSS.experimental.configFile": "./packages/ui/src/index.css",
   "editor.quickSuggestions": {
     "strings": "on"
   },
@@ -27,8 +29,17 @@
     "*.css": "tailwindcss"
   },
   "tailwindCSS.emmetCompletions": true,
+  "editor.inlineSuggest.enabled": true,
+
   // cva(...)
   "tailwindCSS.classFunctions": ["tw", "clsx", "tw\\.[a-z-]+"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list"
+  ],
+
   "tailwindCSS.experimental.classRegex": [
     // cva(...)
     [
