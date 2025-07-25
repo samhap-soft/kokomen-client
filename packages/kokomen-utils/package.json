@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@kokomen/eslint-config": "workspace:*",
+    "@types/dom-speech-recognition": "^0.0.6",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.0.0",
     "eslint": "^8.57.1",
