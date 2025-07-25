@@ -5,6 +5,8 @@
 !.yarn/releases
 !.yarn/versions
 
+dist/
+
 *storybook.log
 *.env
 node_modules/
