@@ -34,6 +34,7 @@
     "@vitejs/plugin-react": "^4.6.0",
     "eslint": "8.57.1",
     "globals": "^16.3.0",
+    "path": "^0.12.7",
     "tailwindcss": "^4.1.7",
     "three": "^0.177.0",
     "typescript": "^5.8.3",
