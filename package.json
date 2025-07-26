@@ -24,11 +24,13 @@
   },
   "scripts": {
     "client:dev": "yarn workspace @kokomen/client dev",
+    "webview:dev": "yarn workspace @kokomen/webview dev",
     "ui:dev": "yarn workspace @kokomen/ui storybook",
     "docker-dev-up": "docker-compose -f compose.dev.yaml up -d",
     "client:prod": "yarn workspace @kokomen/client start",
     "docker-prod-up": "docker-compose -f compose.yaml up -d",
     "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint",
+    "types:build": "yarn workspace @kokomen/types build",
     "test": "yarn workspace @kokomen/client test",
     "lhci": "yarn workspace @kokomen/client lhci",
     "build": "yarn workspace @kokomen/client build"

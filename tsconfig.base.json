@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "esnext",
     "allowJs": true,
     "strict": true,
     "noEmit": true,
     "rootDir": ".",
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -12,11 +13,18 @@
     "isolatedModules": true,
     "incremental": true,
     "baseUrl": ".",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
     "allowImportingTsExtensions": true,
     "paths": {
-      "@kokomen/ui/*": ["./packages/ui/src/*"]
+      "@kokomen/ui/*": ["./packages/ui/src/*"],
+      "@kokomen/utils/*": ["./packages/kokomen-utils/src/*"]
     }
   },
-  "references": [{ "path": "./packages/ui/src" }],
+  "references": [
+    { "path": "./packages/ui/src" },
+    { "path": "./packages/kokomen-utils/src" }
+  ],
   "include": ["**/*.ts", "**/*.tsx"]
 }

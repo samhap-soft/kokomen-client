@@ -5,7 +5,13 @@
 !.yarn/releases
 !.yarn/versions
 
+dist/
+
 *storybook.log
 *.env
 node_modules/
 .DS_Store
+
+.tsbuildinfo
+.tanstack
+*.pem

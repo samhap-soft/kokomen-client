@@ -13,12 +13,15 @@
   "eslint.nodePath": ".yarn/sdks",
   "eslint.workingDirectories": [{ "mode": "auto" }],
   "prettier.prettierPath": ".yarn/sdks/prettier/index.cjs",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
   "tailwindCSS.includeLanguages": {
     "javascript": "javascript",
     "typescript": "typescript",
     "javascriptreact": "javascript",
     "typescriptreact": "typescript"
   },
+  "tailwindCSS.suggestions": true,
+  "tailwindCSS.experimental.configFile": "./packages/ui/src/index.css",
   "editor.quickSuggestions": {
     "strings": "on"
   },
@@ -26,8 +29,17 @@
     "*.css": "tailwindcss"
   },
   "tailwindCSS.emmetCompletions": true,
+  "editor.inlineSuggest.enabled": true,
+
   // cva(...)
   "tailwindCSS.classFunctions": ["tw", "clsx", "tw\\.[a-z-]+"],
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "ngClass",
+    "class:list"
+  ],
+
   "tailwindCSS.experimental.classRegex": [
     // cva(...)
     [

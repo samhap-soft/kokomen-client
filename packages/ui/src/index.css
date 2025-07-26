@@ -600,3 +600,14 @@
 .toast-slide-in {
   animation: toast-slide-in 500ms ease-out forwards;
 }
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* IE and Edge */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+}

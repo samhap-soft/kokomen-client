@@ -1,25 +1,16 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "incremental": true,
-    "isolatedModules": true,
-    "rootDir": ".",
-    "jsx": "preserve",
+    "composite": true,
+    "jsx": "react-jsx",
     "baseUrl": ".",
-    "module": "NodeNext",
     "allowImportingTsExtensions": true,
     "paths": {
-      "#/*": ["./src/*"]
-    }
+      "@assets/*": ["./assets/*"],
+      "@components/*": ["./src/components/*"]
+    },
+    "types": ["@kokomen/types"]
   },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "include": ["./**/*"],
+  "exclude": ["**/*.test.*", "**/*.spec.*"]
 }

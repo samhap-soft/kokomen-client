@@ -2813,12 +2813,69 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kokomen/react-hooks@workspace:packages/react-hooks":
+"@kokomen/types@workspace:*, @kokomen/types@workspace:packages/types":
   version: 0.0.0-use.local
-  resolution: "@kokomen/react-hooks@workspace:packages/react-hooks"
+  resolution: "@kokomen/types@workspace:packages/types"
+  dependencies:
+    "@types/react": "npm:^19"
+  languageName: unknown
+  linkType: soft
+
+"@kokomen/ui@workspace:*, @kokomen/ui@workspace:packages/ui":
+  version: 0.0.0-use.local
+  resolution: "@kokomen/ui@workspace:packages/ui"
   dependencies:
     "@kokomen/eslint-config": "workspace:*"
-    "@types/react": "npm:^19.0.0"
+    "@kokomen/types": "workspace:*"
+    "@react-three/drei": "npm:^10.3.0"
+    "@react-three/fiber": "npm:^9.1.2"
+    "@storybook/addon-essentials": "npm:^8.6.12"
+    "@storybook/addon-interactions": "npm:^8.6.12"
+    "@storybook/addon-onboarding": "npm:^8.6.12"
+    "@storybook/blocks": "npm:^8.6.12"
+    "@storybook/react": "npm:^8.6.12"
+    "@storybook/react-vite": "npm:^8.6.12"
+    "@storybook/test": "npm:^8.6.12"
+    "@tailwindcss/vite": "npm:^4.1.7"
+    "@types/prop-types": "npm:^15"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@types/three": "npm:^0"
+    "@vitejs/plugin-react": "npm:^4.5.0"
+    class-variance-authority: "npm:^0.7.1"
+    clsx: "npm:^2.1.1"
+    eslint: "npm:^8.57.1"
+    lucide-react: "npm:^0.511.0"
+    prop-types: "npm:^15.8.1"
+    react: "npm:^19.1.0"
+    react-docgen-typescript: "npm:^2.2.2"
+    react-dom: "npm:^19.1.0"
+    storybook: "npm:^8.6.12"
+    tailwind-merge: "npm:^3.3.0"
+    tailwindcss: "npm:^4.1.7"
+    three: "npm:^0.177.0"
+    typescript: "npm:^5.8.3"
+    vite: "npm:^6.3.5"
+    vite-tsconfig-paths: "npm:^5.1.4"
+  peerDependencies:
+    "@react-three/drei": ^10.3.0
+    "@react-three/fiber": ^9.1.2
+    "@tailwindcss/postcss": ^4
+    react: ^19.0.0
+    react-dom: ^19.0.0
+    tailwindcss: ^4
+    three: ^0.177.0
+    typescript: ^5.8.3
+  languageName: unknown
+  linkType: soft
+
+"@kokomen/utils@workspace:*, @kokomen/utils@workspace:packages/kokomen-utils":
+  version: 0.0.0-use.local
+  resolution: "@kokomen/utils@workspace:packages/kokomen-utils"
+  dependencies:
+    "@kokomen/eslint-config": "workspace:*"
+    "@types/dom-speech-recognition": "npm:^0.0.6"
+    "@types/react": "npm:^19.1.8"
     "@types/react-dom": "npm:^19.0.0"
     eslint: "npm:^8.57.1"
     react: "npm:^19.0.0"
@@ -2832,69 +2889,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@kokomen/ui@workspace:*, @kokomen/ui@workspace:packages/ui":
-  version: 0.0.0-use.local
-  resolution: "@kokomen/ui@workspace:packages/ui"
-  dependencies:
-    "@kokomen/eslint-config": "workspace:*"
-    "@storybook/addon-essentials": "npm:^8.6.12"
-    "@storybook/addon-interactions": "npm:^8.6.12"
-    "@storybook/addon-onboarding": "npm:^8.6.12"
-    "@storybook/blocks": "npm:^8.6.12"
-    "@storybook/react": "npm:^8.6.12"
-    "@storybook/react-vite": "npm:^8.6.12"
-    "@storybook/test": "npm:^8.6.12"
-    "@tailwindcss/postcss": "npm:^4.1.7"
-    "@tailwindcss/vite": "npm:^4.1.7"
-    "@types/prop-types": "npm:^15"
-    "@types/react": "npm:^19"
-    "@types/react-dom": "npm:^19"
-    "@vitejs/plugin-react": "npm:^4.5.0"
-    class-variance-authority: "npm:^0.7.1"
-    clsx: "npm:^2.1.1"
-    eslint: "npm:^8.57.1"
-    lucide-react: "npm:^0.511.0"
-    prop-types: "npm:^15.8.1"
-    react: "npm:^19.1.0"
-    react-docgen-typescript: "npm:^2.2.2"
-    react-dom: "npm:^19.1.0"
-    storybook: "npm:^8.6.12"
-    tailwind-merge: "npm:^3.3.0"
-    tailwindcss: "npm:^4.1.7"
-    typescript: "npm:^5.8.3"
-    vite: "npm:^6.3.5"
-    vite-tsconfig-paths: "npm:^5.1.4"
-  peerDependencies:
-    "@tailwindcss/postcss": ^4
-    react: ^19.0.0
-    react-dom: ^19.0.0
-    tailwindcss: ^4
-    typescript: ^5.8.3
-  languageName: unknown
-  linkType: soft
-
 "@kokomen/webview@workspace:apps/kokomen-webview":
   version: 0.0.0-use.local
   resolution: "@kokomen/webview@workspace:apps/kokomen-webview"
   dependencies:
     "@eslint/js": "npm:^9.31.0"
     "@kokomen/eslint-config": "workspace:*"
+    "@kokomen/types": "workspace:*"
+    "@kokomen/ui": "workspace:*"
+    "@kokomen/utils": "workspace:*"
     "@tailwindcss/vite": "npm:^4.1.11"
     "@tanstack/react-query": "npm:^5.80.6"
     "@tanstack/react-router": "npm:^1.129.3"
     "@tanstack/react-router-devtools": "npm:^1.129.3"
     "@tanstack/router-plugin": "npm:^1.129.3"
+    "@types/node": "npm:^20"
     "@types/react": "npm:^19.1.8"
     "@types/react-dom": "npm:^19.1.6"
     "@vitejs/plugin-react": "npm:^4.6.0"
+    axios: "npm:^1.9.0"
     eslint: "npm:8.57.1"
     globals: "npm:^16.3.0"
+    lucide-react: "npm:^0.511.0"
+    path: "npm:^0.12.7"
     react: "npm:^19.1.0"
     react-dom: "npm:^19.1.0"
+    react-hook-form: "npm:^7.59.0"
     tailwindcss: "npm:^4.1.7"
+    three: "npm:^0.177.0"
     typescript: "npm:^5.8.3"
     vite: "npm:^7.0.4"
     vite-tsconfig-paths: "npm:^5.1.4"
+    zod: "npm:^3.25.74"
   languageName: unknown
   linkType: soft
 
@@ -5156,7 +5182,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/postcss@npm:^4, @tailwindcss/postcss@npm:^4.1.7":
+"@tailwindcss/postcss@npm:^4":
   version: 4.1.11
   resolution: "@tailwindcss/postcss@npm:4.1.11"
   dependencies:
@@ -5771,7 +5797,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19, @types/react@npm:^19.0.0, @types/react@npm:^19.1.8":
+"@types/react@npm:^19, @types/react@npm:^19.1.8":
   version: 19.1.8
   resolution: "@types/react@npm:19.1.8"
   dependencies:
@@ -9924,6 +9950,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"inherits@npm:2.0.3":
+  version: 2.0.3
+  resolution: "inherits@npm:2.0.3"
+  checksum: 10c0/6e56402373149ea076a434072671f9982f5fad030c7662be0332122fe6c0fa490acb3cc1010d90b6eff8d640b1167d77674add52dfd1bb85d545cf29e80e73e7
+  languageName: node
+  linkType: hard
+
 "inquirer@npm:^6.3.1":
   version: 6.5.2
   resolution: "inquirer@npm:6.5.2"
@@ -12579,6 +12612,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path@npm:^0.12.7":
+  version: 0.12.7
+  resolution: "path@npm:0.12.7"
+  dependencies:
+    process: "npm:^0.11.1"
+    util: "npm:^0.10.3"
+  checksum: 10c0/f795ce5438a988a590c7b6dfd450ec9baa1c391a8be4c2dea48baa6e0f5b199e56cd83b8c9ebf3991b81bea58236d2c32bdafe2c17a2e70c3a2e4c69891ade59
+  languageName: node
+  linkType: hard
+
 "pathval@npm:^2.0.0":
   version: 2.0.1
   resolution: "pathval@npm:2.0.1"
@@ -12813,7 +12856,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"process@npm:^0.11.10":
+"process@npm:^0.11.1, process@npm:^0.11.10":
   version: 0.11.10
   resolution: "process@npm:0.11.10"
   checksum: 10c0/40c3ce4b7e6d4b8c3355479df77aeed46f81b279818ccdc500124e6a5ab882c0cc81ff7ea16384873a95a74c4570b01b120f287abbdd4c877931460eca6084b3
@@ -15396,6 +15439,15 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   checksum: 10c0/1b8663515c0be34fa653feb724fdcce3984037c78dd4a18f68b2c8be55cc1a1084c578d5b75f158d41b5ddffc2bf5600766d1af3c19c8e329bb20af2ec6f52f4
+  languageName: node
+  linkType: hard
+
+"util@npm:^0.10.3":
+  version: 0.10.4
+  resolution: "util@npm:0.10.4"
+  dependencies:
+    inherits: "npm:2.0.3"
+  checksum: 10c0/d29f6893e406b63b088ce9924da03201df89b31490d4d011f1c07a386ea4b3dbe907464c274023c237da470258e1805d806c7e4009a5974cd6b1d474b675852a
   languageName: node
   linkType: hard
 

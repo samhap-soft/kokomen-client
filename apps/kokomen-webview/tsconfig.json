@@ -1,27 +1,22 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "incremental": true,
-    "isolatedModules": true,
-    "rootDir": ".",
-    "jsx": "preserve",
+    "composite": true,
+    "types": [
+      "@tanstack/react-router",
+      "@kokomen/types",
+      "vite/client",
+      "./index.d.ts",
+      "node"
+    ],
+    "jsx": "react-jsx",
     "baseUrl": ".",
-    "module": "NodeNext",
-    "allowImportingTsExtensions": true,
     "paths": {
-      "@/*": ["./src/*"]
-    },
-    "types": ["@tanstack/react-router"]
+      "@/*": ["./src/*"],
+      "@kokomen/ui/*": ["../../packages/ui/src/*"],
+      "@kokomen/utils/*": ["../../packages/kokomen-utils/src/*"]
+    }
   },
-
   "exclude": [
     "node_modules",
     "dist",
@@ -32,5 +27,9 @@
     "**/*.spec.ts",
     "**/*.test.ts"
   ],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "src/**/*",
+    "../../packages/kokomen-utils/src/**/*",
+    "../../packages/ui/src/**/*"
+  ]
 }

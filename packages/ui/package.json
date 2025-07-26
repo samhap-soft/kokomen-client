@@ -14,6 +14,9 @@
   },
   "devDependencies": {
     "@kokomen/eslint-config": "workspace:*",
+    "@kokomen/types": "workspace:*",
+    "@react-three/drei": "^10.3.0",
+    "@react-three/fiber": "^9.1.2",
     "@storybook/addon-essentials": "^8.6.12",
     "@storybook/addon-interactions": "^8.6.12",
     "@storybook/addon-onboarding": "^8.6.12",
@@ -21,11 +24,11 @@
     "@storybook/react": "^8.6.12",
     "@storybook/react-vite": "^8.6.12",
     "@storybook/test": "^8.6.12",
-    "@tailwindcss/postcss": "^4.1.7",
     "@tailwindcss/vite": "^4.1.7",
     "@types/prop-types": "^15",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0",
     "@vitejs/plugin-react": "^4.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -37,15 +40,19 @@
     "storybook": "^8.6.12",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
+    "three": "^0.177.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "peerDependencies": {
+    "@react-three/drei": "^10.3.0",
+    "@react-three/fiber": "^9.1.2",
     "@tailwindcss/postcss": "^4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4",
+    "three": "^0.177.0",
     "typescript": "^5.8.3"
   },
   "scripts": {
