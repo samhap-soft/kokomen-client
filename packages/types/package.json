@@ -13,7 +13,8 @@
     "./dashboard": "./dist/dashboard/index.d.ts",
     "./reports": "./dist/reports/index.d.ts",
     "./interviews": "./dist/interviews/index.d.ts",
-    "./members": "./dist/members/index.d.ts"
+    "./members": "./dist/members/index.d.ts",
+    "./utils": "./dist/utils/index.d.ts"
   },
   "scripts": {
     "build": "tsc",
