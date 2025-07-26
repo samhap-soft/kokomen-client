@@ -3,7 +3,9 @@ import type { InterviewerProps } from "./avatarMesh";
 import { Html } from "@react-three/drei";
 
 // eslint-disable-next-line @rushstack/typedef-var
-const AvatarMesh = lazy(() => import("./avatarMesh"));
+const AvatarMesh = lazy(
+  () => import("@components/domains/interviews/avatarMesh")
+);
 
 export const Interviewer: React.FC<InterviewerProps> = memo(
   ({

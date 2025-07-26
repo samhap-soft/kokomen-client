@@ -3,12 +3,8 @@
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
-    "outDir": "../dist",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
     "baseUrl": ".",
     "allowImportingTsExtensions": true,
-    "noEmit": true,
     "paths": {
       "@assets/*": ["./assets/*"],
       "@components/*": ["./src/components/*"]
