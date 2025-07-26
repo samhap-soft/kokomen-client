@@ -11,6 +11,7 @@ type QuestionAndAnswer = {
 type PrevQuestionAndAnswers = Array<QuestionAndAnswer>;
 
 type Interview = {
+  interview_id: number;
   interview_state: "IN_PROGRESS" | "FINISHED";
   prev_questions_and_answers: PrevQuestionAndAnswers;
   cur_question_id: number;

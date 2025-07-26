@@ -20,7 +20,7 @@ export const Route = createFileRoute("/interviews/")({
 function RouteComponent(): React.ReactNode {
   const categories = useLoaderData({ from: "/interviews/" });
   return (
-    <div>
+    <div className="p-2">
       <Suspense fallback={<RankCardSkeleton />}>
         <RankCard />
       </Suspense>

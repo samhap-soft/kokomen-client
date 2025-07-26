@@ -9,6 +9,7 @@ import { QuestionAndAnswer } from "@kokomen/types/interviews";
 import { SidebarIcon } from "lucide-react";
 import { JSX } from "react";
 import { Button } from "@components/button";
+import { CamelCasedProperties } from "@kokomen/types/utils";
 
 export default function InterviewSideBar({
   prevQuestionAndAnswer = [],
@@ -17,8 +18,8 @@ export default function InterviewSideBar({
   closeSidebar
 }: {
   prevQuestionAndAnswer?: Omit<
-    QuestionAndAnswer,
-    "answer_id" | "question_id"
+    CamelCasedProperties<QuestionAndAnswer>,
+    "answerId" | "questionId"
   >[];
   open: boolean;
   openSidebar: () => void;
@@ -29,7 +30,7 @@ export default function InterviewSideBar({
       <Button
         variant={"text"}
         onClick={openSidebar}
-        className="fixed top-4 right-4"
+        className="fixed top-3 right-3"
         role="button"
         aria-label="사이드바 열기"
         title="사이드바 열기"

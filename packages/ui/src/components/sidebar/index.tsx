@@ -13,64 +13,64 @@ const sidebarVariants = cva(
         left: "left-0 top-0",
         right: "right-0 top-0",
         top: "top-0 left-0 ",
-        bottom: "bottom-0 left-0",
+        bottom: "bottom-0 left-0"
       },
       size: {
         default: "text-sm",
-        large: "text-base",
+        large: "text-base"
       },
       state: {
         open: "",
-        closed: "",
-      },
+        closed: ""
+      }
     },
     compoundVariants: [
       {
         placement: "left",
         state: "open",
-        className: "translate-x-0",
+        className: "translate-x-0"
       },
       {
         placement: "left",
         state: "closed",
-        className: "-translate-x-full",
+        className: "-translate-x-full"
       },
       {
         placement: "right",
         state: "open",
-        className: "translate-x-0",
+        className: "translate-x-0"
       },
       {
         placement: "right",
         state: "closed",
-        className: "translate-x-full",
+        className: "translate-x-full"
       },
       {
         placement: "top",
         state: "open",
-        className: "translate-y-0",
+        className: "translate-y-0"
       },
       {
         placement: "top",
         state: "closed",
-        className: "-translate-y-full",
+        className: "-translate-y-full"
       },
       {
         placement: "bottom",
         state: "open",
-        className: "translate-y-0",
+        className: "translate-y-0"
       },
       {
         placement: "bottom",
         state: "closed",
-        className: "translate-y-full",
-      },
+        className: "translate-y-full"
+      }
     ],
     defaultVariants: {
       placement: "right",
       size: "default",
-      state: "closed",
-    },
+      state: "closed"
+    }
   }
 );
 
@@ -89,7 +89,7 @@ interface SidebarProps extends VariantProps<typeof sidebarVariants> {
 const zIndexMap = {
   default: "z-30",
   high: "z-40",
-  higher: "z-50",
+  higher: "z-50"
 };
 
 const defaultProps: Partial<SidebarProps> = {
@@ -98,7 +98,7 @@ const defaultProps: Partial<SidebarProps> = {
   closable: true,
   zIndex: "default",
   size: "default",
-  destroyOnClose: false,
+  destroyOnClose: false
 };
 
 export const Sidebar: React.FC<SidebarProps> = (props) => {
@@ -112,7 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
     bodyClassName,
     size,
     destroyOnClose,
-    zIndex,
+    zIndex
   } = { ...defaultProps, ...props };
 
   if (destroyOnClose && !open) {
@@ -144,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
             placement,
             size,
             state: open ? "open" : "closed",
-            className,
+            className
           }),
           "transition-transform duration-300",
           "md:w-[500px]"

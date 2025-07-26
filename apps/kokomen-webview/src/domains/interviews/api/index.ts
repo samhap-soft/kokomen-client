@@ -1,5 +1,7 @@
 import { Interview } from "@kokomen/types/interviews";
 import axios, { AxiosInstance } from "axios";
+import type { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
+import { mapToCamelCase } from "@kokomen/utils/general/convertConvention";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -30,14 +32,13 @@ export const startNewInterview = async (
   return responseData;
 };
 
-export const getInterview = async (interviewId: string): Promise<Interview> => {
-  const { data } = await interviewApiInstance.get(
-    `/interviews/${interviewId}/check`,
-    {
-      withCredentials: true
-    }
-  );
-  return data;
+export const getInterview = async (
+  interviewId: string
+): Promise<CamelCasedProperties<Interview>> => {
+  return interviewApiInstance
+    .get(`/interviews/${interviewId}/check`)
+    .then((res) => ({ interviewId: Number(interviewId), ...res.data }))
+    .then(mapToCamelCase);
 };
 
 export type { NewInterviewResponse, NewInterviewRequest };
