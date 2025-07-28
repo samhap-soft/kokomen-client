@@ -10,9 +10,10 @@ import { ChevronLeft } from "lucide-react";
 import { Toaster } from "@kokomen/ui/components/toast/toaster";
 import React from "react";
 import ErrorComponent from "@/common/components/ErrorComponent";
+import { RouterContext } from "@/main";
 
 // eslint-disable-next-line @rushstack/typedef-var
-export const Route = createRootRouteWithContext()({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
   errorComponent: () => {
     return (
