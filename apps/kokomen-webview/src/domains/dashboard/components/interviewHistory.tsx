@@ -1,6 +1,6 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { interviewHistoryKeys } from "@/utils/querykeys";
+import { useIntersectionObserver } from "@kokomen/utils/react/useIntersectionObserver";
+import { interviewHistoryKeys } from "@kokomen/utils/general/querykeys";
 import Select from "@kokomen/ui/components/select";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
@@ -134,7 +134,7 @@ export default function InterviewHistory() {
           </h3>
           <p className="text-gray-600 mb-6">첫 번째 면접을 시작해보세요!</p>
           <Link
-            href="/interviews"
+            to="/interviews"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
           >
             면접 시작하기
@@ -162,80 +162,92 @@ export default function InterviewHistory() {
                     {interview.root_question}
                   </p>
 
-                  <div className="flex items-center gap-6 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {formatDate(interview.created_at)}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {interview.cur_answer_count}/
-                      {interview.max_question_count}문제
-                    </div>
-                    {interview.interview_state === "FINISHED" && (
-                      <div
-                        className={`flex items-center gap-1 ${
-                          interview.score > 0
-                            ? "text-green-6"
-                            : "text-volcano-6"
-                        }`}
-                      >
-                        <TrendingUp className="w-4 h-4" />
-                        {interview.score}점
+                  <div className="flex flex-col gap-3 text-sm text-gray-500">
+                    <div className="flex gap-6">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {formatDate(interview.created_at)}
                       </div>
-                    )}
-                    {interview.interview_state === "FINISHED" && (
-                      <>
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-4 h-4" />
-                          {interview.interview_view_count}
-                        </div>
-                        <div
-                          className={`flex items-center gap-1 ${
-                            interview.interview_already_liked
-                              ? "text-volcano-6"
-                              : "text-gray-400"
-                          }`}
-                        >
-                          <Heart className="w-4 h-4" />
-                          {interview.interview_like_count}
-                        </div>
-                        <div
-                          className={`flex items-center gap-1 ${
-                            interview.submitted_answer_memo_count > 0
-                              ? "text-gold-6"
-                              : "text-gray-400"
-                          }`}
-                        >
-                          <NotebookPen className="w-4 h-4" />
-                          {interview.submitted_answer_memo_count}
-                        </div>
-                      </>
-                    )}
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {interview.cur_answer_count}/
+                        {interview.max_question_count}문제
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {interview.interview_state === "FINISHED" && (
+                        <>
+                          <div
+                            className={`flex items-center gap-1 ${
+                              interview.score > 0
+                                ? "text-green-6"
+                                : "text-volcano-6"
+                            }`}
+                          >
+                            <TrendingUp className="w-4 h-4" />
+                            {interview.score}점
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Eye className="w-4 h-4" />
+                            {interview.interview_view_count}
+                          </div>
+                          <div
+                            className={`flex items-center gap-1 ${
+                              interview.interview_already_liked
+                                ? "text-volcano-6"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            <Heart className="w-4 h-4" />
+                            {interview.interview_like_count}
+                          </div>
+                          <div
+                            className={`flex items-center gap-1 ${
+                              interview.submitted_answer_memo_count > 0
+                                ? "text-gold-6"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            <NotebookPen className="w-4 h-4" />
+                            {interview.submitted_answer_memo_count}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 <div className="md:ml-4 md:w-auto w-full flex flex-col gap-2">
-                  <Link
-                    href={
-                      interview.interview_state === "FINISHED"
-                        ? `/interviews/${interview.interview_id}/result`
-                        : `/interviews/${interview.interview_id}`
-                    }
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
-                  >
-                    {interview.interview_state === "FINISHED"
-                      ? "보고서 보기"
-                      : "이어하기"}
-                  </Link>
-                  {interview.interview_state === "FINISHED" && (
+                  {interview.interview_state === "FINISHED" ? (
                     <Link
-                      href={`/members/interviews/${interview.interview_id}`}
+                      to={`/interviews/$interviewId/result`}
+                      params={{
+                        interviewId: interview.interview_id.toString()
+                      }}
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
+                    >
+                      보고서 보기
+                    </Link>
+                  ) : (
+                    <Link
+                      to={`/interviews/$interviewId`}
+                      params={{
+                        interviewId: interview.interview_id.toString()
+                      }}
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
+                    >
+                      이어하기
+                    </Link>
+                  )}
+                  {/* TODO: 면접이 완료된 경우에만 공개된 결과 보기 버튼을 보여주기 */}
+                  {/* {interview.interview_state === "FINISHED" && (
+                    <Link
+                      to={`/members/interviews/`}
                       className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-text-light-solid bg-gradient-primary hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
                     >
                       공개된 결과 보기
                     </Link>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
