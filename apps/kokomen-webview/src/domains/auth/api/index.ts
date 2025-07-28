@@ -1,4 +1,4 @@
-import { User } from "@kokomen/types/auth";
+import { User, UserInfo } from "@kokomen/types/auth";
 import axios, { AxiosInstance, AxiosPromise } from "axios";
 
 const authServerInstance: AxiosInstance = axios.create({
@@ -6,23 +6,17 @@ const authServerInstance: AxiosInstance = axios.create({
   withCredentials: true
 });
 
-interface KakaoLoginResponse {
-  id: number;
-  nickname: string;
-  profile_completed: boolean;
-}
-
 const postAuthorizationCode = async (
   code: string,
   redirectUri: string
-): AxiosPromise<KakaoLoginResponse> => {
+): AxiosPromise<User> => {
   return authServerInstance.post(`/auth/kakao-login`, {
     code,
     redirect_uri: redirectUri
   });
 };
 
-const getUserInfo = async (): AxiosPromise<User> => {
+const getUserInfo = async (): AxiosPromise<UserInfo> => {
   return authServerInstance.get(`/members/me/profile`);
 };
 

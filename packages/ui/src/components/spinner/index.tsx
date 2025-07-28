@@ -1,3 +1,6 @@
+import { cn } from "#utils/index.ts";
+import { HTMLAttributes } from "react";
+
 function RoundSpinner() {
   return (
     <div role="status">
@@ -30,9 +33,15 @@ function LoadingCircles() {
   );
 }
 
-function LoadingFullScreen() {
+function LoadingFullScreen({
+  className,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="flex items-center justify-center h-full">
+    <div
+      className={cn(`flex items-center justify-center h-full`, className)}
+      {...props}
+    >
       <LoadingCircles />
     </div>
   );

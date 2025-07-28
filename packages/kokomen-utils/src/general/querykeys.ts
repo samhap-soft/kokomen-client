@@ -71,11 +71,23 @@ const memberKeys: QueryKeyFactory<MemberMethods> = {
     [...memberKeys.all, "interviews", interviewId, sort, page] as const
 };
 
+interface MeMethods {
+  me: () => QueryKey;
+  detailedInfo: () => QueryKey;
+}
+const meKeys: QueryKeyFactory<MeMethods> = {
+  all: ["me"] as const,
+  me: (): QueryKey => [...meKeys.all] as const,
+  detailedInfo: (): QueryKey => [...meKeys.all, "detailedInfo"] as const
+};
+
 export {
   interviewHistoryKeys,
   interviewKeys,
   memberKeys,
+  meKeys,
   type InterviewHistoryParams,
   type InterviewParams,
-  type MemberRankParams
+  type MemberRankParams,
+  type MeMethods
 };

@@ -35,14 +35,16 @@ export const Rank: React.FC<{ rank: number }> = ({ rank }) => {
       className={`${color} ${bgColor} inline-flex items-center rounded px-2 py-1`}
     >
       <Icon className="w-5 h-5 mr-1" />
-      {rank}
+      {rank}위
     </span>
   );
 };
 
-export const Percentile: React.FC<{ percentile: number }> = ({
-  percentile
-}) => {
+export const Percentile: React.FC<{
+  rank: number;
+  totalMemberCount: number;
+}> = ({ rank, totalMemberCount }) => {
+  const percentile = Math.round((rank / totalMemberCount) * 100);
   let color: string, bgColor: string;
   if (percentile >= 90) {
     color = "text-volcano-7";
@@ -76,7 +78,7 @@ export const Percentile: React.FC<{ percentile: number }> = ({
     <span
       className={`${color} ${bgColor} inline-flex items-center rounded px-2 py-1`}
     >
-      {percentile}%
+      상위 {percentile}%
     </span>
   );
 };
