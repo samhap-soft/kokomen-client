@@ -1,6 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority";
 import React, { ButtonHTMLAttributes, JSX, RefObject } from "react";
 import { cn } from "../../utils/index.ts";
+import { RoundSpinner } from "#components/spinner/index.tsx";
 
 type ButtonVariantsProps = VariantProps<typeof buttonVariants>;
 
@@ -42,85 +43,85 @@ const buttonVariants = cva(
           "bg-warning-bg text-warning hover:bg-warning-bg-hover active:bg-warning-border shadow-sm hover:shadow-md",
         glass:
           "bg-white/20 backdrop-blur-md border border-white/30 text-text-primary hover:bg-white/30 hover:border-white/50 shadow-lg hover:shadow-xl",
-        neon: "bg-primary text-text-light-solid shadow-[0_0_20px_rgba(22,104,220,0.5)] hover:shadow-[0_0_30px_rgba(22,104,220,0.7)] transform hover:scale-105",
+        neon: "bg-primary text-text-light-solid shadow-[0_0_20px_rgba(22,104,220,0.5)] hover:shadow-[0_0_30px_rgba(22,104,220,0.7)] transform hover:scale-105"
       },
       size: {
         default: "px-4 py-2 text-sm",
         small: "px-3 py-1.5 text-xs",
         large: "px-6 py-3 text-lg",
-        xl: "px-8 py-4 text-xl",
+        xl: "px-8 py-4 text-xl"
       },
       round: {
         true: "rounded-full",
-        false: "rounded-xl",
+        false: "rounded-xl"
       },
       danger: {
         true: "",
-        false: "",
+        false: ""
       },
       optimistic: {
         true: "",
-        false: "",
-      },
+        false: ""
+      }
     },
     defaultVariants: {
       variant: "primary",
-      size: "default",
+      size: "default"
     },
     compoundVariants: [
       {
         variant: "primary",
         danger: true,
-        className: "bg-error hover:bg-error-hover active:bg-error-active",
+        className: "bg-error hover:bg-error-hover active:bg-error-active"
       },
       {
         variant: "default",
         danger: true,
         className:
-          "outline-error text-error hover:outline-error-hover hover:text-error-hover active:outline-error-active active:text-error-active",
+          "outline-error text-error hover:outline-error-hover hover:text-error-hover active:outline-error-active active:text-error-active"
       },
       {
         variant: "dashed",
         danger: true,
         className:
-          "outline-error text-error hover:outline-error-hover hover:text-error-hover active:outline-error-active active:text-error-active",
+          "outline-error text-error hover:outline-error-hover hover:text-error-hover active:outline-error-active active:text-error-active"
       },
       {
         variant: "text",
         danger: true,
         className:
-          "text-error hover:bg-error-bg active:text-error-active active:bg-error-bg",
+          "text-error hover:bg-error-bg active:text-error-active active:bg-error-bg"
       },
       {
         variant: "link",
         danger: true,
-        className: "text-error active:text-error-active",
+        className: "text-error active:text-error-active"
       },
       {
         variant: "outline",
         danger: true,
         className:
-          "text-error border-error hover:bg-error hover:text-text-light-solid active:bg-error-active",
+          "text-error border-error hover:bg-error hover:text-text-light-solid active:bg-error-active"
       },
       {
         variant: "soft",
         danger: true,
         className:
-          "bg-error-bg text-error hover:bg-error-bg-hover active:bg-error-border",
+          "bg-error-bg text-error hover:bg-error-bg-hover active:bg-error-border"
       },
       {
         variant: "gradient",
         danger: true,
         className:
-          "bg-gradient-to-r from-error to-error-hover hover:from-error-hover hover:to-error-active",
+          "bg-gradient-to-r from-error to-error-hover hover:from-error-hover hover:to-error-active"
       },
       {
         variant: "glass",
         optimistic: true,
         className:
-          "disabled:!bg-volcano-3 disabled:!text-volcano-6 disabled:!opacity-100",
-      },
-    ],
+          "disabled:!bg-volcano-3 disabled:!text-volcano-6 disabled:!opacity-100"
+      }
+    ]
   }
 );
 
@@ -130,6 +131,8 @@ export interface IButtonProps
   children?: React.ReactNode;
   ref?: RefObject<HTMLButtonElement>;
   icon?: React.ReactNode | SVGElement;
+  pendingText?: string;
+  pendingSpinner?: boolean;
 }
 export const Button = ({
   ref,
@@ -139,6 +142,7 @@ export const Button = ({
   round = false,
   danger = false,
   optimistic = false,
+  pendingSpinner = false,
   ...props
 }: IButtonProps): JSX.Element => (
   <button
@@ -149,10 +153,21 @@ export const Button = ({
         size,
         round,
         danger,
-        optimistic,
+        optimistic
       }),
       className
     )}
     {...props}
-  />
+  >
+    {props.disabled && pendingSpinner ? (
+      <>
+        <RoundSpinner />
+        <span className="text-text-secondary">
+          {props.pendingText ?? "제출중.."}
+        </span>
+      </>
+    ) : (
+      props.children
+    )}
+  </button>
 );

@@ -2,7 +2,7 @@ import { AnswerMemo } from "@kokomen/types/reports";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 const answerMemoApiInstance: AxiosInstance = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}/answers`,
+  baseURL: `${import.meta.env.VITE_API_BASE_URL}/answers`,
   withCredentials: true
 });
 

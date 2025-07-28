@@ -87,6 +87,7 @@
     "typescript",
     "typescriptreact"
   ],
+
   "jest.jestCommandLine": "yarn test",
   "prettier.requireConfig": true,
   "prettier.documentSelectors": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.json"],

@@ -15,15 +15,15 @@ interface InterviewHistoryParams {
   range: "IN_PROGRESS" | "FINISHED" | "ALL";
 }
 
-type InterviewHistoryMethods = {
+interface InterviewHistoryMethods {
   infinite: (
     filters: [InterviewHistoryParams["sort"], InterviewHistoryParams["range"]]
   ) => QueryKey;
-};
+}
 const interviewHistoryKeys: QueryKeyFactory<InterviewHistoryMethods> = {
   all: ["interviewHistory"] as const,
   infinite: (filters: string[]): QueryKey =>
-    [...interviewHistoryKeys.all, "infinite", ...filters] as const,
+    [...interviewHistoryKeys.all, "infinite", ...filters] as const
 };
 
 // 인터뷰 관련 도메인
@@ -32,15 +32,18 @@ interface InterviewParams {
   questionId?: number;
 }
 
-type InterviewMethods = {
+interface InterviewMethods {
   byInterviewId: (id: number) => QueryKey;
   byInterviewIdAndQuestionId: (id: number, questionId: number) => QueryKey;
-};
+  resultByInterviewId: (id: number) => QueryKey;
+}
 const interviewKeys: QueryKeyFactory<InterviewMethods> = {
   all: ["interview"] as const,
   byInterviewId: (id: number): QueryKey => [...interviewKeys.all, id] as const,
   byInterviewIdAndQuestionId: (id: number, questionId: number): QueryKey =>
     [...interviewKeys.all, id, questionId] as const,
+  resultByInterviewId: (id: number): QueryKey =>
+    [...interviewKeys.all, "result", id] as const
 };
 
 // 멤버 관련 도메인
@@ -48,14 +51,14 @@ interface MemberRankParams {
   page: number;
   size: number;
 }
-type MemberMethods = {
+interface MemberMethods {
   rank: (page?: number, size?: number) => QueryKey;
   interviewsByIdAndPage: (
     id: number,
     sort: "asc" | "desc",
     page?: number
   ) => QueryKey;
-};
+}
 const memberKeys: QueryKeyFactory<MemberMethods> = {
   all: ["members"] as const,
   rank: (page: number = 0): QueryKey =>
@@ -65,7 +68,7 @@ const memberKeys: QueryKeyFactory<MemberMethods> = {
     sort: "asc" | "desc",
     page: number = 0
   ): QueryKey =>
-    [...memberKeys.all, "interviews", interviewId, sort, page] as const,
+    [...memberKeys.all, "interviews", interviewId, sort, page] as const
 };
 
 export {
@@ -74,5 +77,5 @@ export {
   memberKeys,
   type InterviewHistoryParams,
   type InterviewParams,
-  type MemberRankParams,
+  type MemberRankParams
 };

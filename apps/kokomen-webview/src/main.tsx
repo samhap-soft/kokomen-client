@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
@@ -11,22 +12,24 @@ declare module "@tanstack/react-router" {
 
 const queryClient = new QueryClient();
 
-const routerContext = {
-  queryClient
-};
+export interface RouterContext {
+  queryClient: QueryClient;
+}
 
 // eslint-disable-next-line @rushstack/typedef-var
 const router = createRouter({
   routeTree,
-  context: routerContext
+  context: undefined as unknown as RouterContext
 });
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} context={{ queryClient }} />
+      </QueryClientProvider>
+    </StrictMode>
   );
 }
