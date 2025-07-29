@@ -11,26 +11,26 @@ const mockRankList = [
     id: 1,
     nickname: "test1",
     score: 100,
-    finished_interview_count: 10,
+    finished_interview_count: 10
   },
   {
     id: 2,
     nickname: "test2",
     score: 99,
-    finished_interview_count: 10,
+    finished_interview_count: 10
   },
   {
     id: 3,
     nickname: "test3",
     score: 98,
-    finished_interview_count: 10,
+    finished_interview_count: 10
   },
   {
     id: 4,
     nickname: "test4",
     score: 97,
-    finished_interview_count: 10,
-  },
+    finished_interview_count: 10
+  }
 ];
 
 describe("면접 메인 페이지 렌더링 테스트", () => {
@@ -50,8 +50,8 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
             key: "test",
             title: "test",
             description: "test",
-            image_url: "https://test.com/test.png",
-          },
+            image_url: "https://test.com/test.png"
+          }
         ]}
         userInfo={null}
       />
@@ -78,8 +78,8 @@ describe("면접 메인 페이지 버튼 테스트", () => {
             key: "test",
             title: "test",
             description: "test",
-            image_url: "https://test.com/test.png",
-          },
+            image_url: "https://test.com/test.png"
+          }
         ]}
         userInfo={null}
       />
@@ -149,7 +149,7 @@ describe("면접 메인 페이지 API 테스트", () => {
           return HttpResponse.json({
             interview_id: 1,
             question_id: 1,
-            root_question: "test",
+            root_question: "test"
           });
         }
       )
@@ -162,15 +162,15 @@ describe("면접 메인 페이지 API 테스트", () => {
             key: "test",
             title: "test",
             description: "test",
-            image_url: "https://test.com/test.png",
-          },
+            image_url: "https://test.com/test.png"
+          }
         ]}
         userInfo={null}
       />
     );
 
     const startButton = screen.getByRole("button", {
-      name: "test 면접 시작하기",
+      name: "test 면접 시작하기"
     });
 
     expect(startButton).toBeEnabled();
@@ -185,7 +185,7 @@ describe("면접 메인 페이지 API 테스트", () => {
     await waitFor(
       () => {
         expect(mockPush).toHaveBeenCalledWith({
-          pathname: "/interviews/1",
+          pathname: "/interviews/1"
         });
       },
       { timeout: 3000 }
@@ -209,15 +209,15 @@ describe("면접 메인 페이지 API 테스트", () => {
             key: "test",
             title: "test",
             description: "test",
-            image_url: "https://test.com/test.png",
-          },
+            image_url: "https://test.com/test.png"
+          }
         ]}
         userInfo={null}
       />
     );
 
     const startButton = screen.getByRole("button", {
-      name: "test 면접 시작하기",
+      name: "test 면접 시작하기"
     });
 
     fireEvent.click(startButton);
