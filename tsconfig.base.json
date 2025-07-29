@@ -26,5 +26,5 @@
     { "path": "./packages/ui/src" },
     { "path": "./packages/kokomen-utils/src" }
   ],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "jest.setup.ts"]
 }

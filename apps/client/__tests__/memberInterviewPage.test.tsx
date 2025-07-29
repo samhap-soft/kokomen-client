@@ -16,7 +16,7 @@ const mockMemberInterview: CamelCasedProperties<MemberInterview> = {
       score: 20,
       interviewLikeCount: 10,
       interviewAlreadyLiked: false,
-      interviewViewCount: 10,
+      interviewViewCount: 10
     },
     {
       interviewId: 2,
@@ -27,13 +27,13 @@ const mockMemberInterview: CamelCasedProperties<MemberInterview> = {
       score: 20,
       interviewLikeCount: 10,
       interviewAlreadyLiked: false,
-      interviewViewCount: 10,
-    },
+      interviewViewCount: 10
+    }
   ],
   intervieweeNickname: "test",
   totalMemberCount: 0,
   intervieweeRank: 0,
-  totalPageCount: 1,
+  totalPageCount: 1
 };
 
 describe("memberInterviewPage", () => {
@@ -94,7 +94,7 @@ describe("memberInterviewPage", () => {
         user={null}
         interviews={{
           ...mockMemberInterview,
-          totalPageCount: 2,
+          totalPageCount: 2
         }}
         sort="desc"
         page={1}

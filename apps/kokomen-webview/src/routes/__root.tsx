@@ -15,13 +15,7 @@ import { RouterContext } from "@/main";
 // eslint-disable-next-line @rushstack/typedef-var
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
-  errorComponent: () => {
-    return (
-      <div className="h-screen">
-        <ErrorComponent />
-      </div>
-    );
-  }
+  errorComponent: ErrorComponent
 });
 
 function RootComponent(): React.ReactNode {

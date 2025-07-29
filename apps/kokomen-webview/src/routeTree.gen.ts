@@ -13,9 +13,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as InterviewsIndexRouteImport } from './routes/interviews/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as MembersMemberIdRouteImport } from './routes/members/$memberId'
 import { Route as LoginProfileRouteImport } from './routes/login/profile'
 import { Route as LoginCallbackRouteImport } from './routes/login/callback'
 import { Route as InterviewsInterviewIdIndexRouteImport } from './routes/interviews/$interviewId/index'
+import { Route as MembersInterviewsInterviewIdRouteImport } from './routes/members/interviews.$interviewId'
 import { Route as InterviewsInterviewIdResultRouteImport } from './routes/interviews/$interviewId/result'
 
 const IndexRoute = IndexRouteImport.update({
@@ -38,6 +40,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MembersMemberIdRoute = MembersMemberIdRouteImport.update({
+  id: '/members/$memberId',
+  path: '/members/$memberId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginProfileRoute = LoginProfileRouteImport.update({
   id: '/login/profile',
   path: '/login/profile',
@@ -54,6 +61,12 @@ const InterviewsInterviewIdIndexRoute =
     path: '/interviews/$interviewId/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const MembersInterviewsInterviewIdRoute =
+  MembersInterviewsInterviewIdRouteImport.update({
+    id: '/members/interviews/$interviewId',
+    path: '/members/interviews/$interviewId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const InterviewsInterviewIdResultRoute =
   InterviewsInterviewIdResultRouteImport.update({
     id: '/interviews/$interviewId/result',
@@ -65,20 +78,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login/callback': typeof LoginCallbackRoute
   '/login/profile': typeof LoginProfileRoute
+  '/members/$memberId': typeof MembersMemberIdRoute
   '/dashboard': typeof DashboardIndexRoute
   '/interviews': typeof InterviewsIndexRoute
   '/login': typeof LoginIndexRoute
   '/interviews/$interviewId/result': typeof InterviewsInterviewIdResultRoute
+  '/members/interviews/$interviewId': typeof MembersInterviewsInterviewIdRoute
   '/interviews/$interviewId': typeof InterviewsInterviewIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login/callback': typeof LoginCallbackRoute
   '/login/profile': typeof LoginProfileRoute
+  '/members/$memberId': typeof MembersMemberIdRoute
   '/dashboard': typeof DashboardIndexRoute
   '/interviews': typeof InterviewsIndexRoute
   '/login': typeof LoginIndexRoute
   '/interviews/$interviewId/result': typeof InterviewsInterviewIdResultRoute
+  '/members/interviews/$interviewId': typeof MembersInterviewsInterviewIdRoute
   '/interviews/$interviewId': typeof InterviewsInterviewIdIndexRoute
 }
 export interface FileRoutesById {
@@ -86,10 +103,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login/callback': typeof LoginCallbackRoute
   '/login/profile': typeof LoginProfileRoute
+  '/members/$memberId': typeof MembersMemberIdRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/interviews/': typeof InterviewsIndexRoute
   '/login/': typeof LoginIndexRoute
   '/interviews/$interviewId/result': typeof InterviewsInterviewIdResultRoute
+  '/members/interviews/$interviewId': typeof MembersInterviewsInterviewIdRoute
   '/interviews/$interviewId/': typeof InterviewsInterviewIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -98,30 +117,36 @@ export interface FileRouteTypes {
     | '/'
     | '/login/callback'
     | '/login/profile'
+    | '/members/$memberId'
     | '/dashboard'
     | '/interviews'
     | '/login'
     | '/interviews/$interviewId/result'
+    | '/members/interviews/$interviewId'
     | '/interviews/$interviewId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login/callback'
     | '/login/profile'
+    | '/members/$memberId'
     | '/dashboard'
     | '/interviews'
     | '/login'
     | '/interviews/$interviewId/result'
+    | '/members/interviews/$interviewId'
     | '/interviews/$interviewId'
   id:
     | '__root__'
     | '/'
     | '/login/callback'
     | '/login/profile'
+    | '/members/$memberId'
     | '/dashboard/'
     | '/interviews/'
     | '/login/'
     | '/interviews/$interviewId/result'
+    | '/members/interviews/$interviewId'
     | '/interviews/$interviewId/'
   fileRoutesById: FileRoutesById
 }
@@ -129,10 +154,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginCallbackRoute: typeof LoginCallbackRoute
   LoginProfileRoute: typeof LoginProfileRoute
+  MembersMemberIdRoute: typeof MembersMemberIdRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   InterviewsIndexRoute: typeof InterviewsIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   InterviewsInterviewIdResultRoute: typeof InterviewsInterviewIdResultRoute
+  MembersInterviewsInterviewIdRoute: typeof MembersInterviewsInterviewIdRoute
   InterviewsInterviewIdIndexRoute: typeof InterviewsInterviewIdIndexRoute
 }
 
@@ -166,6 +193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/members/$memberId': {
+      id: '/members/$memberId'
+      path: '/members/$memberId'
+      fullPath: '/members/$memberId'
+      preLoaderRoute: typeof MembersMemberIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login/profile': {
       id: '/login/profile'
       path: '/login/profile'
@@ -187,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InterviewsInterviewIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/members/interviews/$interviewId': {
+      id: '/members/interviews/$interviewId'
+      path: '/members/interviews/$interviewId'
+      fullPath: '/members/interviews/$interviewId'
+      preLoaderRoute: typeof MembersInterviewsInterviewIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interviews/$interviewId/result': {
       id: '/interviews/$interviewId/result'
       path: '/interviews/$interviewId/result'
@@ -201,10 +242,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginCallbackRoute: LoginCallbackRoute,
   LoginProfileRoute: LoginProfileRoute,
+  MembersMemberIdRoute: MembersMemberIdRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   InterviewsIndexRoute: InterviewsIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   InterviewsInterviewIdResultRoute: InterviewsInterviewIdResultRoute,
+  MembersInterviewsInterviewIdRoute: MembersInterviewsInterviewIdRoute,
   InterviewsInterviewIdIndexRoute: InterviewsInterviewIdIndexRoute,
 }
 export const routeTree = rootRouteImport

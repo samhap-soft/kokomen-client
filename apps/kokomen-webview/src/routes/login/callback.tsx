@@ -1,4 +1,5 @@
 import { postAuthorizationCode } from "@/domains/auth/api";
+import { useAuthStore } from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -30,6 +31,7 @@ function RouteComponent(): React.ReactNode {
     }) => postAuthorizationCode(code, redirectUri),
 
     onSuccess: ({ data }) => {
+      useAuthStore.getState().setAuth(data);
       if (!data.profile_completed) {
         router.navigate({ to: `/login/profile?state=${state || ROOT_URI}` });
         return;

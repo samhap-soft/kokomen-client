@@ -39,7 +39,10 @@ const QuestionCountSelector: MemoExoticComponent<
             -
           </Button>
           <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-xl">
-            <span className="text-3xl font-bold text-text-light-solid">
+            <span
+              aria-label="interviewQuestionCount"
+              className="text-3xl font-bold text-text-light-solid"
+            >
               {questionCount}
             </span>
           </div>
