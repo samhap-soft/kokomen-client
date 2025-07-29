@@ -16,7 +16,7 @@ const postAuthorizationCode = async (
   });
 };
 
-const getUserInfo = async (): AxiosPromise<UserInfo> => {
+const getUserInfo = async (): AxiosPromise<UserInfo & User> => {
   return authServerInstance.get(`/members/me/profile`);
 };
 
