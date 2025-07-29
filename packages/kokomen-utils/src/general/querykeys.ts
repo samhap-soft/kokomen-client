@@ -58,6 +58,7 @@ interface MemberMethods {
     sort: "asc" | "desc",
     page?: number
   ) => QueryKey;
+  infiniteInterviewHistory: (filters: ["asc" | "desc", number]) => QueryKey;
 }
 const memberKeys: QueryKeyFactory<MemberMethods> = {
   all: ["members"] as const,
@@ -68,7 +69,9 @@ const memberKeys: QueryKeyFactory<MemberMethods> = {
     sort: "asc" | "desc",
     page: number = 0
   ): QueryKey =>
-    [...memberKeys.all, "interviews", interviewId, sort, page] as const
+    [...memberKeys.all, "interviews", interviewId, sort, page] as const,
+  infiniteInterviewHistory: (filters: ["asc" | "desc", number]) =>
+    [...memberKeys.all, "interviewHistory", "infinite", ...filters] as const
 };
 
 interface MeMethods {
