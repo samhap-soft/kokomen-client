@@ -239,15 +239,17 @@ export default function InterviewHistory() {
                       이어하기
                     </Link>
                   )}
-                  {/* TODO: 면접이 완료된 경우에만 공개된 결과 보기 버튼을 보여주기 */}
-                  {/* {interview.interview_state === "FINISHED" && (
+                  {interview.interview_state === "FINISHED" && (
                     <Link
-                      to={`/members/interviews/`}
+                      to={`/members/interviews/$interviewId`}
+                      params={{
+                        interviewId: interview.interview_id.toString()
+                      }}
                       className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-text-light-solid bg-gradient-primary hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
                     >
                       공개된 결과 보기
                     </Link>
-                  )} */}
+                  )}
                 </div>
               </div>
             </div>
