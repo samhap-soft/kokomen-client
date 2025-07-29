@@ -5,7 +5,7 @@ import {
   useParams
 } from "@tanstack/react-router";
 import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
-import { Eye, HelpCircle, Info, Share2, Users } from "lucide-react";
+import { Eye, HelpCircle, Info, Share2 } from "lucide-react";
 import { Button } from "@kokomen/ui/components/button";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
 import MemberQuestionFeedback from "@/domains/members/components/memberQuestionFeedback";
@@ -45,11 +45,8 @@ function RouteComponent() {
         {/* 커뮤니티 스타일 헤더 */}
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden mb-8">
           <div className="bg-gradient-to-r from-blue-6 to-blue-7 px-8 py-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-col gap-4">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <Users className="w-6 h-6 text-white" />
-                </div>
                 <div>
                   <h1 className="text-2xl font-bold text-white">
                     {interview.intervieweeNickname}님의 면접 결과
@@ -58,19 +55,6 @@ function RouteComponent() {
                     {/* 멤버 이름 들어갈 곳 */}
                   </p>
                 </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="glass"
-                  round
-                  onClick={handleShare}
-                  aria-label="공유하기"
-                >
-                  <Share2 className="w-4 h-4 text-white mr-2" />
-                  <span className="text-sm font-medium text-white">
-                    공유하기
-                  </span>
-                </Button>
               </div>
             </div>
           </div>
@@ -108,6 +92,22 @@ function RouteComponent() {
               index={index}
             />
           ))}
+        </div>
+        <div className="mt-12">
+          <div className="p-6 bg-purple-4 rounded-2xl text-text-light-solid text-center">
+            <p>모범스러운 면접이라고 생각하시나요?</p>
+            <p>면접 결과를 다른 사람들과 공유해보세요!</p>
+            <Button
+              variant="glass"
+              round
+              onClick={handleShare}
+              aria-label="공유하기"
+              className="mt-4 w-full"
+            >
+              <Share2 className="w-4 h-4 text-white mr-2" />
+              <span className="text-sm font-medium text-white">공유하기</span>
+            </Button>
+          </div>
         </div>
 
         {/* 커뮤니티 안내 메시지 */}

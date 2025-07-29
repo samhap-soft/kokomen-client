@@ -70,80 +70,86 @@ export default function MemberTotalFeedback({
   });
 
   return (
-    <div className="p-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div className="p-4 sm:p-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
         {/* 총점 */}
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-            <Trophy className="w-8 h-8 text-white" />
+        <div className="text-center p-3 bg-fill-tertiary rounded-lg">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-2">
+            <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-text-light-solid" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-lg sm:text-xl font-semibold text-text-primary">
             {result.totalScore}
           </p>
-          <p className="text-sm text-gray-600">총점</p>
+          <p className="text-xs text-text-description">총점</p>
         </div>
 
         {/* 질문 수 */}
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="w-8 h-8 text-white" />
+        <div className="text-center p-3 bg-fill-tertiary rounded-lg">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-success rounded-lg flex items-center justify-center mx-auto mb-2">
+            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-text-light-solid" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-lg sm:text-xl font-semibold text-text-primary">
             {result.feedbacks.length}
           </p>
-          <p className="text-sm text-gray-600">질문 수</p>
+          <p className="text-xs text-text-description">질문 수</p>
         </div>
 
         {/* 전체 좋아요 수 */}
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-8 h-8 text-white" />
+        <div className="text-center p-3 bg-fill-tertiary rounded-lg">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-error rounded-lg flex items-center justify-center mx-auto mb-2">
+            <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-text-light-solid" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">{totalLikedCount}</p>
-          <p className="text-sm text-gray-600">좋아요</p>
+          <p className="text-lg sm:text-xl font-semibold text-text-primary">
+            {totalLikedCount}
+          </p>
+          <p className="text-xs text-text-description">좋아요</p>
         </div>
 
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-3 to-purple-6 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Eye className="w-8 h-8 text-white" />
+        <div className="text-center p-3 bg-fill-tertiary rounded-lg">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-6 rounded-lg flex items-center justify-center mx-auto mb-2">
+            <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-text-light-solid" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-lg sm:text-xl font-semibold text-text-primary">
             {result.interviewViewCount}
           </p>
-          <p className="text-sm text-gray-600">조회수</p>
+          <p className="text-xs text-text-description">조회수</p>
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-2xl p-6 border border-blue-3">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-5 to-blue-6 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-white" />
+      <div className="bg-bg-elevated border border-border rounded-lg p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3 justify-between w-full">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <CheckCircle className="w-4 h-4 text-text-light-solid" />
+              </div>
+              <h2 className="text-lg font-semibold text-text-primary">
+                종합 평가
+              </h2>
             </div>
-            <h2 className="text-xl font-bold text-gray-900">종합 평가</h2>
+            <Button
+              optimistic
+              disabled={isPending}
+              aria-busy={isPending}
+              onClick={() =>
+                toggleInterviewLikeMutation(isTotalLikedIncludesMine)
+              }
+              name={`interview-like-button-${interviewId}`}
+              role="button"
+              type="button"
+              variant="glass"
+              className={`self-start sm:self-auto px-3 py-2 text-sm ${isTotalLikedIncludesMine ? "bg-error-bg text-error" : "bg-fill-secondary text-text-description"}`}
+              aria-label="전체 인터뷰 좋아요"
+            >
+              <Heart
+                className={`w-4 h-4 mr-1 ${isTotalLikedIncludesMine ? "fill-current" : ""}`}
+              />
+              <span className="font-medium">{totalLikedCount}</span>
+            </Button>
           </div>
-          <Button
-            optimistic
-            disabled={isPending}
-            aria-busy={isPending}
-            onClick={() =>
-              toggleInterviewLikeMutation(isTotalLikedIncludesMine)
-            }
-            name={`interview-like-button-${interviewId}`}
-            role="button"
-            type="button"
-            variant="glass"
-            className={`${isTotalLikedIncludesMine && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
-            aria-label="전체 인터뷰 좋아요"
-          >
-            <Heart
-              className={`w-5 h-5 mr-2 ${isTotalLikedIncludesMine ? "fill-current" : ""}`}
-            />
-            <span className="text-sm font-medium">{totalLikedCount}</span>
-          </Button>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-white/50">
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+        <div className="bg-fill-tertiary rounded-lg p-4">
+          <p className="text-sm text-text-primary leading-relaxed whitespace-pre-wrap">
             {result.totalFeedback}
           </p>
         </div>

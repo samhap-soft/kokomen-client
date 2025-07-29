@@ -65,38 +65,38 @@ export default function MemberQuestionFeedback({
   const badgeColor = useMemo(() => {
     switch (questionAndFeedback.answerRank.toLowerCase()) {
       case "A":
-        return "bg-purple-100 text-purple-800 border-purple-300";
+        return "bg-purple-1/80 text-purple-9 border-purple-3/60 backdrop-blur-sm";
       case "B":
-        return "bg-blue-100 text-blue-800 border-blue-300";
+        return "bg-blue-1/80 text-blue-9 border-blue-3/60 backdrop-blur-sm";
       case "C":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+        return "bg-yellow-1/80 text-yellow-9 border-yellow-3/60 backdrop-blur-sm";
       case "D":
-        return "bg-red-100 text-red-800 border-red-300";
+        return "bg-red-1/80 text-red-9 border-red-3/60 backdrop-blur-sm";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
+        return "bg-gray-1/80 text-gray-9 border-gray-3/60 backdrop-blur-sm";
     }
   }, [questionAndFeedback.answerRank]);
 
   return (
     <div
       key={questionAndFeedback.answerId}
-      className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+      className="bg-bg-elevated/80 backdrop-blur-xl rounded-3xl shadow-box-shadow overflow-hidden border border-border/30 hover:shadow-box-shadow-secondary hover:border-border/50 transition-all duration-500 ease-out"
     >
       {/* 질문 헤더 */}
-      <div className="bg-gradient-to-r from-blue-1 to-blue-2 p-6 border-b border-gray-100">
+      <div className="bg-primary-bg backdrop-blur-md p-8 border-b border-border/20">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center space-x-3 mb-3">
-              <span className="bg-gradient-to-r from-blue-5 to-blue-6 text-white px-3 py-1 rounded-full text-sm font-medium">
+            <div className="flex items-center space-x-4 mb-4">
+              <span className="bg-gradient-to-r from-primary/30 to-primary-hover/30 backdrop-blur-sm text-text-light-solid px-4 py-2 rounded-2xl text-sm font-semibold border border-primary-border/40 shadow-lg">
                 Q{index + 1}
               </span>
               <span
-                className={`px-3 py-1 rounded-full text-sm font-medium border ${badgeColor}`}
+                className={`px-4 py-2 rounded-2xl text-sm font-semibold border backdrop-blur-sm shadow-lg ${badgeColor}`}
               >
                 {questionAndFeedback.answerRank}
               </span>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-bold text-text-heading mb-3 leading-relaxed">
               {questionAndFeedback.question}
             </h3>
           </div>
@@ -109,13 +109,13 @@ export default function MemberQuestionFeedback({
             role="button"
             variant="glass"
             optimistic={true}
-            className={`${answerLiked && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
+            className={`${answerLiked && "bg-warning-bg/60 text-warning-text border-warning-border/50"} backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300`}
             aria-label={`답변 ${index + 1} 좋아요`}
           >
             <Heart
-              className={`w-4 h-4 mr-2 ${answerLiked ? "fill-current" : ""}`}
+              className={`w-5 h-5 mr-2 ${answerLiked ? "fill-current" : ""}`}
             />
-            <span className="text-sm font-medium">
+            <span className="text-sm font-semibold">
               {answerLiked
                 ? questionAndFeedback.answerLikeCount + 1
                 : questionAndFeedback.answerLikeCount}
@@ -125,28 +125,28 @@ export default function MemberQuestionFeedback({
       </div>
 
       {/* 답변 및 피드백 내용 */}
-      <div className="p-6 space-y-6">
+      <div className="p-8 space-y-8">
         {/* 답변 섹션 */}
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gradient-to-r from-blue-4 to-blue-5 rounded-full"></div>
-            <h4 className="text-sm font-semibold text-gray-700">응답 내용</h4>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-4 h-4 bg-primary-hover rounded-full shadow-lg"></div>
+            <h4 className="text-base font-bold text-text-heading">응답 내용</h4>
           </div>
-          <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-xl p-4 border border-blue-3">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+          <div className="bg-primary-bg backdrop-blur-md rounded-2xl p-6 border border-primary-border/30 shadow-lg">
+            <p className="text-text-primary leading-relaxed whitespace-pre-wrap text-base">
               {questionAndFeedback.answer}
             </p>
           </div>
         </div>
 
         {/* AI 피드백 섹션 */}
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gradient-to-r from-cyan-4 to-cyan-5 rounded-full"></div>
-            <h4 className="text-sm font-semibold text-gray-700">AI 피드백</h4>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-4 h-4 bg-purple-6 rounded-full shadow-lg"></div>
+            <h4 className="text-base font-bold text-text-heading">AI 피드백</h4>
           </div>
-          <div className="bg-gradient-to-r from-cyan-1 to-cyan-2 rounded-xl p-4 border border-cyan-3">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+          <div className="bg-purple-2 backdrop-blur-md rounded-2xl p-6 border border-purple-3/30 shadow-lg">
+            <p className="text-text-primary leading-relaxed whitespace-pre-wrap text-base">
               {questionAndFeedback.answerFeedback}
             </p>
           </div>
@@ -154,15 +154,15 @@ export default function MemberQuestionFeedback({
 
         {/* 사용자 메모 섹션 */}
         {questionAndFeedback.submittedAnswerMemoContent && (
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-gradient-to-r from-green-4 to-green-5 rounded-full"></div>
-              <h4 className="text-sm font-semibold text-gray-700">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-4 h-4 bg-gradient-to-r from-success to-success-hover rounded-full shadow-lg"></div>
+              <h4 className="text-base font-bold text-text-heading">
                 사용자 메모
               </h4>
             </div>
-            <div className="bg-gradient-to-r from-green-1 to-green-2 rounded-xl p-4 border border-green-3">
-              <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+            <div className="bg-gradient-to-r from-success-bg/40 to-success-bg-hover/40 backdrop-blur-md rounded-2xl p-6 border border-success-border/30 shadow-lg">
+              <p className="text-text-primary leading-relaxed whitespace-pre-wrap text-base">
                 {questionAndFeedback.submittedAnswerMemoContent}
               </p>
             </div>
