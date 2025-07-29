@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test": "vitest run",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,6 +24,10 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
     "@eslint/js": "^9.31.0",
     "@kokomen/eslint-config": "workspace:*",
     "@kokomen/types": "workspace:*",
@@ -30,17 +35,30 @@
     "@kokomen/utils": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/router-plugin": "^1.129.3",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@types/babel__core": "^7",
+    "@types/babel__preset-env": "^7",
     "@types/node": "^20",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@types/react-test-renderer": "^19",
     "@vitejs/plugin-react": "^4.6.0",
+    "babel-jest": "^30.0.5",
     "eslint": "8.57.1",
     "globals": "^16.3.0",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.2",
+    "jsdom": "^26.1.0",
+    "msw": "^2.10.2",
     "path": "^0.12.7",
+    "react-test-renderer": "^19.1.0",
     "tailwindcss": "^4.1.7",
     "three": "^0.177.0",
     "typescript": "^5.8.3",
     "vite": "^7.0.4",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }

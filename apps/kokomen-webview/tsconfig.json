@@ -28,8 +28,11 @@
     "**/*.test.ts"
   ],
   "include": [
-    "src/**/*",
     "../../packages/kokomen-utils/src/**/*",
-    "../../packages/ui/src/**/*"
+    "../../packages/ui/src/**/*",
+    "__tests__/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js"
   ]
 }
