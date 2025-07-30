@@ -56,7 +56,7 @@ export async function openPageSetup(path: string) {
     </QueryClientProvider>
   );
 
-  await act(() => {
+  act(() => {
     router.navigate({ to: path });
   });
   return app;
