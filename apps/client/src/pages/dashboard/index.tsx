@@ -4,40 +4,38 @@ import { withCheckInServer } from "@/utils/auth";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
-import { Coins, User, Star, TrendingUp } from "lucide-react";
+import { Coins, User, Star } from "lucide-react";
 import InterviewHistory from "@/domains/dashboard/components/interviewHistory";
 import { User as UserType } from "@/domains/auth/types";
 import { JSX } from "react";
-import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
+import { getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
+import { Rank, Percentile } from "@kokomen/ui/components/rank";
 
 export default function Dashboard({
-  userInfo,
+  userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const percentile = userInfo
     ? Math.round((userInfo.rank / userInfo.total_member_count) * 100)
     : 0;
 
-  const rankDisplay = userInfo ? getRankDisplay(userInfo.rank) : null;
-  const RankIcon = rankDisplay?.icon;
-
   return (
     <>
       <SEO title="대시보드" robots="noindex, nofollow, noarchive" />
 
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <main className="min-h-screen bg-bg-elevated">
         <Header user={userInfo} />
         <div className="mb-2 p-4 max-w-[1280px] mx-auto">
-          <div className="rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 bg-gradient-primary">
+          <div className="rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 bg-bg-elevated">
             <div className="flex items-center justify-between md:flex-row flex-col gap-4">
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary-hover to-primary rounded-full flex items-center justify-center">
                   <User className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-text-light-solid">
+                  <h1 className="text-2xl font-bold ">
                     {userInfo?.nickname || "사용자"}
                   </h1>
                 </div>
@@ -45,32 +43,11 @@ export default function Dashboard({
               <div className="text-right flex items-center gap-5 flex-col md:flex-row">
                 {/* 랭킹 표시 */}
                 <div className="flex items-center gap-2">
-                  {userInfo && rankDisplay && RankIcon && (
-                    <div
-                      className={`flex items-center gap-2 text-lg font-semibold ${rankDisplay.bgColor} text-gray-700 rounded-xl px-4 py-2`}
-                    >
-                      <RankIcon className={`w-5 h-5 ${rankDisplay.color}`} />
-                      <div>
-                        <div className="text-sm font-medium">랭킹</div>
-                        <div className="text-lg font-bold">
-                          {userInfo.rank}위
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 상위 백분위 표시 */}
-                  {userInfo && (
-                    <div
-                      className={`flex items-center gap-2 text-lg font-semibold ${getPercentileDisplay(percentile).bgColor} ${getPercentileDisplay(percentile).color} rounded-xl px-4 py-2`}
-                    >
-                      <TrendingUp className="w-5 h-5" />
-                      <div>
-                        <div className="text-sm font-medium">상위</div>
-                        <div className="text-lg font-bold">{percentile}%</div>
-                      </div>
-                    </div>
-                  )}
+                  <Rank rank={userInfo?.rank} />
+                  <Percentile
+                    rank={userInfo?.rank}
+                    totalMemberCount={userInfo?.total_member_count}
+                  />
                 </div>
                 <div className="flex items-center gap-2 ">
                   {/* 점수 표시 */}
@@ -92,9 +69,7 @@ export default function Dashboard({
             {userInfo && (
               <div className="mt-6 pt-4 border-t border-gray-200">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-text-light-solid">
-                    전체 멤버 중 위치
-                  </span>
+                  <span className="text-sm">전체 멤버 중 위치</span>
                   <span
                     className={`text-sm font-medium ${
                       getPercentileDisplay(percentile).color
@@ -131,8 +106,8 @@ export const getServerSideProps = async (
       const userInfo = await getUserInfo(context);
       return {
         data: {
-          userInfo: userInfo.data,
-        },
+          userInfo: userInfo.data
+        }
       };
     },
     { context, redirectPathWhenUnauthorized: "/dashboard" }

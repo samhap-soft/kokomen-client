@@ -1,16 +1,18 @@
+import { Category } from "@kokomen/types";
+import { Rank } from "@kokomen/types/members";
 import { server } from "mocks";
 import { memberInterviews } from "mocks/api/members";
 import { http, HttpResponse } from "msw";
 
 export const mockApi = {
-  categories: (categories: any[]) => {
+  categories: (categories: Category[]) => {
     server.use(
       http.get(`${import.meta.env.VITE_API_BASE_URL}/categories`, () => {
         return HttpResponse.json(categories);
       })
     );
   },
-  ranking: (ranking: any[]) => {
+  ranking: (ranking: Rank[]) => {
     server.use(
       http.get(`${import.meta.env.VITE_API_BASE_URL}/members/ranking`, () => {
         return HttpResponse.json(ranking);

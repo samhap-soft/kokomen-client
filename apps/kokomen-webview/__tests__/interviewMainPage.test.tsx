@@ -1,9 +1,11 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { screen, waitFor, act } from "@testing-library/react";
 import { openPageSetup } from "@/utils/test-utils";
 import { mockApi } from "mocks/api";
+import { Category } from "@kokomen/types";
+import { Rank } from "@kokomen/types/members";
 
-const mockCategories = [
+const mockCategories: Category[] = [
   {
     key: "test",
     title: "테스트 면접",
@@ -12,7 +14,7 @@ const mockCategories = [
   }
 ];
 
-const mockRankList = [
+const mockRankList: Rank[] = [
   {
     id: 1,
     nickname: "test1",
@@ -40,14 +42,11 @@ const mockRankList = [
 ];
 
 describe("면접 메인 페이지 렌더링 테스트", () => {
-  beforeEach(() => {
-    mockApi.categories(mockCategories);
-    mockApi.ranking(mockRankList);
-  });
-
   it("면접 메인 페이지가 정상적으로 렌더링 되는지 테스트", async () => {
+    mockApi.ranking(mockRankList);
+    mockApi.categories(mockCategories);
     await openPageSetup("/interviews");
-
+    console.log(screen.debug());
     await waitFor(() => {
       expect(screen.getByText("테스트 면접 면접 시작하기")).toBeInTheDocument();
     });
@@ -62,12 +61,10 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
 });
 
 describe("면접 메인 페이지 버튼 테스트", () => {
-  beforeEach(() => {
-    mockApi.categories(mockCategories);
-    mockApi.ranking(mockRankList);
-  });
-
   it("면접 시작 버튼이 활성화되어 있고 문제 개수 조절이 정상 동작하는지 테스트", async () => {
+    mockApi.ranking(mockRankList);
+    mockApi.categories(mockCategories);
+
     await openPageSetup("/interviews");
 
     await waitFor(() => {
@@ -163,12 +160,10 @@ describe("면접 메인 페이지 버튼 테스트", () => {
 });
 
 describe("면접 메인 페이지 API 테스트", () => {
-  beforeEach(() => {
-    mockApi.categories(mockCategories);
-    mockApi.ranking(mockRankList);
-  });
-
   it("면접 메인 페이지에서 면접 시작 버튼을 클릭하면 면접 페이지로 이동한다", async () => {
+    mockApi.ranking(mockRankList);
+    mockApi.categories(mockCategories);
+
     const mockInterviewResponse = {
       interview_id: 1,
       question_id: 1,
@@ -208,6 +203,9 @@ describe("면접 메인 페이지 API 테스트", () => {
   });
 
   it("면접 생성 실패 시 에러 처리가 올바르게 동작한다", async () => {
+    mockApi.ranking(mockRankList);
+    mockApi.categories(mockCategories);
+
     mockApi.createInterviewError(400, "면접 생성에 실패했습니다.");
 
     await openPageSetup("/interviews");
@@ -274,6 +272,8 @@ describe("면접 메인 페이지 API 테스트", () => {
   });
 
   it("랭킹 카드 클릭 시 멤버 페이지로 이동하는지 테스트", async () => {
+    mockApi.ranking(mockRankList);
+    mockApi.categories(mockCategories);
     await openPageSetup("/interviews");
 
     await waitFor(() => {
