@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { openPageSetup } from "@/utils/test-utils";
-import { mockApi } from "mocks/api";
 import { server } from "mocks";
 import { http, HttpResponse } from "msw";
 import { mockMemberInterviewData } from "mocks/api/members";
+import { mockApi } from "mocks/api";
 
 describe("다른 사용자들 면접 기록 페이지 테스트", () => {
   it("면접 기록 페이지가 올바르게 렌더링되는지 테스트", async () => {

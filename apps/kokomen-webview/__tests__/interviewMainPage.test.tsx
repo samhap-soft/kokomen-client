@@ -1,9 +1,11 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { screen, waitFor, act } from "@testing-library/react";
 import { openPageSetup } from "@/utils/test-utils";
 import { mockApi } from "mocks/api";
+import { Category } from "@kokomen/types";
+import { Rank } from "@kokomen/types/members";
 
-const mockCategories = [
+const mockCategories: Category[] = [
   {
     key: "test",
     title: "테스트 면접",
@@ -12,7 +14,7 @@ const mockCategories = [
   }
 ];
 
-const mockRankList = [
+const mockRankList: Rank[] = [
   {
     id: 1,
     nickname: "test1",
@@ -44,7 +46,7 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
     mockApi.ranking(mockRankList);
     mockApi.categories(mockCategories);
     await openPageSetup("/interviews");
-
+    console.log(screen.debug());
     await waitFor(() => {
       expect(screen.getByText("테스트 면접 면접 시작하기")).toBeInTheDocument();
     });
