@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import {
   createNewAnswerMemo,
   deleteAnswerMemo,
-  updateAnswerMemo,
+  updateAnswerMemo
 } from "@/domains/interviewReport/api/answerMemo";
 import { AnswerMemo } from "@/domains/interviewReport/types/memo";
 import { useToast } from "@kokomen/ui/hooks/useToast";
@@ -23,7 +23,7 @@ export default function AnswerMemoComponent({
   answerId,
   tempMemo,
   visibility,
-  answerMemoProp,
+  answerMemoProp
 }: {
   answerId: number;
   tempMemo: string;
@@ -34,12 +34,12 @@ export default function AnswerMemoComponent({
   const {
     isOpen: isMemoDeleteModalOpen,
     openModal: openMemoDeleteModal,
-    toggleModal: toggleMemoDeleteModal,
+    toggleModal: toggleMemoDeleteModal
   } = useModal();
   const [isTempMemoModalOpen, setIsTempMemoModalOpen] = useState(false);
   const [answerMemo, setAnswerMemo] = useState<AnswerMemo>({
     content: answerMemoProp,
-    visibility: visibility,
+    visibility: visibility
   });
 
   const handleMemoEditButtonClick = (): void => {
@@ -123,7 +123,7 @@ export default function AnswerMemoComponent({
                 onClick={() => {
                   setAnswerMemo((prev) => ({
                     content: tempMemo,
-                    visibility: prev.visibility,
+                    visibility: prev.visibility
                   }));
                   setIsMemoEditOpen(true);
                 }}
@@ -142,7 +142,7 @@ function AnswerMemoDeleteModal({
   answerId,
   setAnswerMemo,
   isMemoDeleteModalOpen,
-  toggleModal,
+  toggleModal
 }: {
   answerId: number;
   setAnswerMemo: Dispatch<SetStateAction<AnswerMemo>>;
@@ -156,13 +156,13 @@ function AnswerMemoDeleteModal({
       captureFormSubmitEvent({
         name: "deleteMemo",
         properties: {
-          answerId: answerId,
-        },
+          answerId: answerId
+        }
       });
       toggleModal();
       setAnswerMemo({
         content: "",
-        visibility: "PUBLIC",
+        visibility: "PUBLIC"
       });
     },
     onError: (error) => {
@@ -170,16 +170,16 @@ function AnswerMemoDeleteModal({
         errorToast({
           title: "메모 삭제 실패",
           description:
-            error.response?.data.message || "메모 삭제에 실패했습니다.",
+            error.response?.data.message || "메모 삭제에 실패했습니다."
         });
       } else {
         errorToast({
           title: "메모 삭제 실패",
           description:
-            "서버 오류가 발생하여 메모 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+            "서버 오류가 발생하여 메모 삭제에 실패했습니다. 잠시 후 다시 시도해 주세요."
         });
       }
-    },
+    }
   });
   return (
     <Modal
@@ -214,14 +214,14 @@ function AnswerMemoDeleteModal({
 
 const answerMemoSchema = z.object({
   content: z.string({ message: "메모를 입력해주세요." }),
-  visibility: z.enum(["PUBLIC", "PRIVATE"]),
+  visibility: z.enum(["PUBLIC", "PRIVATE"])
 });
 
 function AnswerMemoEdit({
   answerId,
   answerMemo,
   setAnswerMemo,
-  setIsMemoEditOpen,
+  setIsMemoEditOpen
 }: {
   answerId: number;
   answerMemo: AnswerMemo;
@@ -234,16 +234,16 @@ function AnswerMemoEdit({
     handleSubmit,
     setValue,
     formState: { errors: answerMemoFormErrors },
-    watch,
+    watch
   } = useForm<z.infer<typeof answerMemoSchema>>({
     defaultValues: {
       content: answerMemo.content,
-      visibility: answerMemo.visibility as "PUBLIC" | "PRIVATE",
+      visibility: answerMemo.visibility as "PUBLIC" | "PRIVATE"
     },
-    resolver: standardSchemaResolver(answerMemoSchema),
+    resolver: standardSchemaResolver(answerMemoSchema)
   });
 
-  const { mutate: createNewAnswerMemoMutate } = useMutation({
+  const { mutate: createNewAnswerMemoMutate, isPending } = useMutation({
     mutationFn: (memo: AnswerMemo) => {
       if (!answerMemo.content) {
         return createNewAnswerMemo(answerId, memo);
@@ -257,27 +257,29 @@ function AnswerMemoEdit({
         properties: {
           answerId: answerId,
           content: answerMemo.content,
-          visibility: answerMemo.visibility,
-        },
+          visibility: answerMemo.visibility
+        }
       });
-      setAnswerMemo(answerMemo);
-      setIsMemoEditOpen(false);
     },
     onError: (error) => {
       if (isAxiosError(error)) {
         errorToast({
           title: "메모 작성 실패",
           description:
-            error.response?.data.message || "메모 작성에 실패했습니다.",
+            error.response?.data.message || "메모 작성에 실패했습니다."
         });
       } else {
         errorToast({
           title: "메모 작성 실패",
           description:
-            "서버 오류가 발생하여 메모 저장이 실패했습니다. 잠시 후 다시 시도해 주세요.",
+            "서버 오류가 발생하여 메모 저장이 실패했습니다. 잠시 후 다시 시도해 주세요."
         });
       }
     },
+    onSuccess: (_, answerMemo) => {
+      setAnswerMemo(answerMemo);
+      setIsMemoEditOpen(false);
+    }
   });
 
   const handleEditSubmitButtonClick = (data: AnswerMemo): void => {
@@ -321,7 +323,13 @@ function AnswerMemoEdit({
         >
           취소
         </Button>
-        <Button variant={"success"} type="submit">
+        <Button
+          variant={"success"}
+          type="submit"
+          disabled={isPending}
+          pendingSpinner
+          pendingText="저장중..."
+        >
           저장
         </Button>
       </div>
