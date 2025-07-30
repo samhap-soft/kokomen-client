@@ -26,15 +26,13 @@ export default function InterviewMainScreen() {
         >
           <WebView
             ref={webviewRef as any}
+            pullToRefreshEnabled={true}
             source={{ uri: `${process.env.EXPO_PUBLIC_CLIENT_URL}/interviews` }}
             javaScriptEnabled={true}
             originWhitelist={["*"]}
             injectedJavaScriptBeforeContentLoaded={runFirst}
             webviewDebuggingEnabled
             style={{ flex: 1 }}
-            onMessage={(event) => {
-              alert(event.nativeEvent.data);
-            }}
             setBuiltInZoomControls={false}
             domStorageEnabled={true}
             setDisplayZoomControls={false}
