@@ -6,11 +6,11 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Coins, User, Star, TrendingUp } from "lucide-react";
+import { Coins, User, Star } from "lucide-react";
 import InterviewHistory from "@/domains/dashboard/components/interviewHistory";
 import { User as UserType } from "@/domains/auth/types";
 import { JSX } from "react";
-import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
+import { getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
 import { Rank, Percentile } from "@kokomen/ui/components/rank";
 
@@ -20,9 +20,6 @@ export default function Dashboard({
   const percentile = userInfo
     ? Math.round((userInfo.rank / userInfo.total_member_count) * 100)
     : 0;
-
-  const rankDisplay = userInfo ? getRankDisplay(userInfo.rank) : null;
-  const RankIcon = rankDisplay?.icon;
 
   return (
     <>
