@@ -36,7 +36,10 @@ export default function MyTabBar({
 
         const handlePressNavigate = () => {
           if (isFocused) {
-            navigation?.dispatch(TabActions.jumpTo(route.name, route.params));
+            navigation?.reset({
+              index: 0,
+              routes: [{ name: route.name, params: route.params }],
+            });
           } else {
             navigation?.navigate(route.name, route.params);
           }
