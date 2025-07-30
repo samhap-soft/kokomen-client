@@ -4,7 +4,7 @@ import MemberInterviewHistory from "@/domains/members/components/memberInterview
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
 import { Layout } from "@kokomen/ui/components/layout";
 import Header from "@/shared/header";
@@ -21,7 +21,7 @@ export default function MemberInterviewPage({
   user,
   interviews,
   sort,
-  page,
+  page
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const percentile = Math.round(
     (interviews.intervieweeRank / interviews.totalMemberCount) * 100
@@ -161,14 +161,14 @@ export const getServerSideProps: GetServerSideProps<{
   const { sort, page } = context.query as { sort: string; page: string };
   if (!memberId) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
   const sortOption = sort === "asc" ? "asc" : "desc";
   const pageOption = isNaN(Number(page)) ? 0 : Number(page);
   const [user, interviews] = await Promise.allSettled([
     getUserInfo(context),
-    getMemberInterviews(Number(memberId), pageOption, sortOption),
+    getMemberInterviews(Number(memberId), pageOption, sortOption)
   ]);
 
   if (interviews.status === "fulfilled") {
@@ -179,8 +179,8 @@ export const getServerSideProps: GetServerSideProps<{
           user: null,
           interviews: interviews.value,
           sort: sortOption,
-          page: pageOption,
-        },
+          page: pageOption
+        }
       };
     }
     return {
@@ -189,12 +189,12 @@ export const getServerSideProps: GetServerSideProps<{
         user: user.value.data,
         interviews: interviews.value,
         sort: sortOption,
-        page: pageOption,
-      },
+        page: pageOption
+      }
     };
   }
 
   return {
-    notFound: true,
+    notFound: true
   };
 };

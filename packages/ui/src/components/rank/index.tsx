@@ -14,12 +14,12 @@ export const Rank: React.FC<{ rank: number }> = ({ rank }) => {
   let icon: React.ElementType, color: string, bgColor: string;
   if (rank === 1) {
     icon = Crown;
-    color = "text-gold-6";
-    bgColor = "bg-gold-1";
+    color = "text-gold-2";
+    bgColor = "bg-orange-6";
   } else if (rank <= 3) {
     icon = Medal;
-    color = "text-gold-6";
-    bgColor = "bg-gold-1";
+    color = "text-gold-2";
+    bgColor = "bg-orange-6";
   } else if (rank <= 10) {
     icon = Award;
     color = "text-blue-6";
@@ -32,7 +32,7 @@ export const Rank: React.FC<{ rank: number }> = ({ rank }) => {
   const Icon = icon;
   return (
     <span
-      className={`${color} ${bgColor} inline-flex items-center rounded px-2 py-1`}
+      className={`${color} ${bgColor} inline-flex items-center rounded-xl px-4 py-2 font-bold`}
     >
       <Icon className="w-5 h-5 mr-1" />
       {rank}위
@@ -69,14 +69,14 @@ export const Percentile: React.FC<{
     bgColor = "bg-green-1";
   } else if (percentile >= 10) {
     color = "text-primary";
-    bgColor = "bg-primary-1";
+    bgColor = "bg-primary-hover";
   } else {
-    color = "text-gold-5";
-    bgColor = "bg-gold-1";
+    color = "text-gold-2";
+    bgColor = "bg-orange-6";
   }
   return (
     <span
-      className={`${color} ${bgColor} inline-flex items-center rounded px-2 py-1`}
+      className={`${color} ${bgColor} inline-flex items-center rounded-xl px-4 py-2 font-bold `}
     >
       상위 {percentile}%
     </span>
