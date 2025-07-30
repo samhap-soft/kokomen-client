@@ -31,7 +31,7 @@ export function InterviewAnswerInput({
   updateInterviewData,
   interviewId,
   setIsListening,
-  totalQuestions,
+  totalQuestions
 }: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -48,9 +48,9 @@ export function InterviewAnswerInput({
   const {
     startListening,
     isListening: isVoiceListening,
-    stopListening,
+    stopListening
   } = useSpeechRecognition({
-    onSpeechEnd: updateInterviewInput,
+    onSpeechEnd: updateInterviewInput
   });
   const router = useRouter();
   const { mutate, isPending } = useMutation({
@@ -61,12 +61,12 @@ export function InterviewAnswerInput({
         properties: {
           question: cur_question,
           answer: data.answer,
-          question_id: data.questionId,
-        },
+          question_id: data.questionId
+        }
       });
       const previousMessage = {
         prevMessage: cur_question,
-        prevQuestionId: cur_question_id,
+        prevQuestionId: cur_question_id
       };
       updateInterviewData({
         prev_questions_and_answers: [
@@ -75,19 +75,19 @@ export function InterviewAnswerInput({
             question: cur_question,
             answer: interviewInput,
             question_id: cur_question_id,
-            answer_id: 0,
-          },
-        ],
+            answer_id: 0
+          }
+        ]
       });
       return {
-        previousMessage,
+        previousMessage
       };
     },
     onSuccess: ({ status, data }) => {
       if (status === 204) {
         updateInterviewData({
           interview_state: "FINISHED",
-          cur_question: FINISHED_MESSAGE,
+          cur_question: FINISHED_MESSAGE
         });
         setTimeout(() => {
           router.push(`/interviews/${interviewId}/result`);
@@ -96,24 +96,30 @@ export function InterviewAnswerInput({
       }
       updateInterviewData({
         cur_question: data.next_question,
-        cur_question_id: data.next_question_id,
+        cur_question_id: data.next_question_id
       });
       setInterviewInput("");
     },
     onError: (_, __, context) => {
       updateInterviewData({
         cur_question: SUBMIT_FAILED_MESSAGE,
+        prev_questions_and_answers: [
+          ...prev_questions_and_answers.filter(
+            (question) => question.question_id !== cur_question_id
+          )
+        ]
       });
+
       setTimeout(() => {
         if (context?.previousMessage) {
           // 이전 상태로 복원
           updateInterviewData({
-            cur_question: context?.previousMessage?.prevMessage ?? "",
+            cur_question: context?.previousMessage?.prevMessage ?? ""
           });
         }
       }, 2000);
     },
-    retry: false,
+    retry: false
   });
 
   const handleSubmit = (
@@ -124,7 +130,7 @@ export function InterviewAnswerInput({
       mutate({
         interviewId: interviewId,
         questionId: cur_question_id,
-        answer: interviewInput,
+        answer: interviewInput
       });
     }
   };
@@ -155,7 +161,7 @@ export function InterviewAnswerInput({
             mutate({
               interviewId: interviewId,
               questionId: cur_question_id,
-              answer: interviewInput,
+              answer: interviewInput
             });
           }
         }}
