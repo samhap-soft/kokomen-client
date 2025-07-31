@@ -35,6 +35,9 @@ export default defineConfig({
       ]
     }
   },
+  build: {
+    target: "es2015"
+  },
   resolve: {
     alias: {
       "@components": path.resolve(
