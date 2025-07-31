@@ -50,7 +50,8 @@ export function InterviewAnswerInput({
   const {
     startListening,
     isListening: isVoiceListening,
-    stopListening
+    stopListening,
+    isSupported
   } = useSpeechRecognition({
     onSpeechEnd: updateInterviewInput
   });
@@ -214,7 +215,12 @@ export function InterviewAnswerInput({
                 setIsListening(true);
                 startListening();
               }}
-              disabled={isVoiceListening || isPending || !isInterviewStarted}
+              disabled={
+                isVoiceListening ||
+                isPending ||
+                !isInterviewStarted ||
+                !isSupported
+              }
             >
               <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />
 
