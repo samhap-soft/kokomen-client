@@ -20,15 +20,15 @@ export default defineConfig({
     react()
   ],
 
-  server: {
-    port: 3000,
-    host: "127.0.0.1",
-    allowedHosts: ["local.kokomen.kr"],
-    https: {
-      key: readFileSync("./local.kokomen.kr+2-key.pem"),
-      cert: readFileSync("./local.kokomen.kr+2.pem")
-    }
-  },
+  // server: {
+  //   port: 3000,
+  //   host: "127.0.0.1",
+  //   allowedHosts: ["local.kokomen.kr"],
+  //   https: {
+  //     key: readFileSync("./local.kokomen.kr+2-key.pem"),
+  //     cert: readFileSync("./local.kokomen.kr+2.pem")
+  //   }
+  // },
   assetsInclude: ["**/*.glb"],
   resolve: {
     alias: {
