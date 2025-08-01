@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "nodenext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "declaration": true,
     "declarationMap": true,
     "composite": true,
     "outDir": "dist",
     "rootDir": "src",
     "esModuleInterop": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
+
     "strict": true,
     "tsBuildInfoFile": ".tsbuildinfo",
     "types": ["@types/react"]
