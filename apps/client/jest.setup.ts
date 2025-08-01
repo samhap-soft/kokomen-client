@@ -84,15 +84,14 @@ class MockIntersectionObserver {
 
 global.IntersectionObserver =
   MockIntersectionObserver as unknown as typeof IntersectionObserver;
-process.on("SIGABRT", () => {
-  console.warn("SIGABRT received, creating heap dump...");
-  require("v8").writeHeapSnapshot(`./heap-${Date.now()}.heapsnapshot`);
-});
 
 beforeAll(() => server.listen());
 afterEach(() => {
   server.resetHandlers();
 });
-afterAll(() => server.close());
+afterAll(async () => {
+  server.close();
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+});
 
 export { mockBack, mockPrefetch, mockPush, mockReload, mockReplace };

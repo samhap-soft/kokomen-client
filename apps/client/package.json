@@ -10,7 +10,7 @@
     "start": "next start",
     "analyze": "ANALYZE=true next build",
     "lint": "next lint",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:watch": "jest --watchAll",
     "lhci": "lhci autorun",
     "lhci:collect": "lhci collect",
