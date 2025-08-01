@@ -25,6 +25,9 @@ jobs:
         run: |
           yarn set version berry
           yarn install
+      - name: Type build
+        run: |
+          yarn types:build
 
       - name: Build Next.js app
         id: build_nextjs
