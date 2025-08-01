@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
+    "module": "ESNext",
     "baseUrl": ".",
     "composite": true,
     "declaration": true,
+    "moduleResolution": "bundler",
     "declarationMap": true,
     "rootDir": "./src",
     "skipLibCheck": true,

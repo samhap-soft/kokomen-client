@@ -1,5 +1,5 @@
 import { interviewApiInstance } from "@/domains/interview/api";
-import { InterviewReport } from "@/domains/interviewReport/types";
+import { InterviewReport } from "@kokomen/types";
 import { GetServerSidePropsContext, PreviewData } from "next";
 import { ParsedUrlQuery } from "querystring";
 
@@ -16,8 +16,8 @@ function getInterviewReport(
       headers: {
         Cookie: Object.entries(cookies)
           .map(([key, value]) => `${key}=${value}`)
-          .join("; "),
-      },
+          .join("; ")
+      }
     }
   );
 }

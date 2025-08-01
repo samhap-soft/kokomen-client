@@ -4,7 +4,7 @@ import {
   LogOut,
   Menu,
   User as UserIcon,
-  X,
+  X
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import React, { JSX, useEffect, useRef, useState } from "react";
 import { Button } from "@kokomen/ui/components/button";
 import { useLogout } from "@/hooks/useLogout";
+import NotificationPanelIcon from "@/domains/notifications/components/notificationPanel";
 
 interface HeaderProps {
   user: User | null;
@@ -21,7 +22,7 @@ type HeaderNavigation = { href: string; label: string; current: boolean };
 const navigation: HeaderNavigation[] = [
   { href: "/", label: "홈", current: true },
   { href: "/interviews", label: "면접", current: false },
-  { href: "/dashboard", label: "대시보드", current: false },
+  { href: "/dashboard", label: "대시보드", current: false }
 ];
 
 const DesktopProfileDropdown = ({ user }: HeaderProps) => {
@@ -81,7 +82,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
           className={`${isOpen ? "border" : "border-0"} absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border-gray-100 transition-all duration-200 overflow-hidden`}
           ref={desktopDropdownRef}
           style={{
-            height: isOpen ? `${desktopDropdownHeight}px` : "0px",
+            height: isOpen ? `${desktopDropdownHeight}px` : "0px"
           }}
         >
           <div className="px-4 py-3 border-b border-gray-100">
@@ -150,7 +151,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
         ref={mobileMenuRef}
         className={`md:hidden absolute top-16 left-0 w-full border-t border-gray-100 transition-all duration-300 ease-in-out bg-bg-base overflow-hidden`}
         style={{
-          height: isMobileMenuOpen ? `${menuHeight}px` : "0px",
+          height: isMobileMenuOpen ? `${menuHeight}px` : "0px"
         }}
       >
         <nav className="flex flex-col space-y-2">
@@ -267,8 +268,11 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
               );
             })}
           </nav>
-          <DesktopProfileDropdown user={user} />
-          <MobileProfileDropdown user={user} />
+          <div className="flex items-center space-x-2">
+            <NotificationPanelIcon user={user} />
+            <DesktopProfileDropdown user={user} />
+            <MobileProfileDropdown user={user} />
+          </div>
         </div>
       </div>
     </header>

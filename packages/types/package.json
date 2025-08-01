@@ -2,19 +2,17 @@
   "name": "@kokomen/types",
   "version": "0.0.1",
   "description": "Kokomen 프로젝트 타입 정의 패키지",
-  "main": "src/index.ts",
+  "main": "src/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "exports": {
-    ".": "./dist/index.d.ts",
-    "./auth": "./dist/auth/index.d.ts",
-    "./dashboard": "./dist/dashboard/index.d.ts",
-    "./reports": "./dist/reports/index.d.ts",
-    "./interviews": "./dist/interviews/index.d.ts",
-    "./members": "./dist/members/index.d.ts",
-    "./utils": "./dist/utils/index.d.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
   },
   "scripts": {
     "build": "tsc",

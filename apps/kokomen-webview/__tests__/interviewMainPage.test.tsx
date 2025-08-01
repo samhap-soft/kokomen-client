@@ -3,7 +3,7 @@ import { screen, waitFor, act } from "@testing-library/react";
 import { openPageSetup } from "@/utils/test-utils";
 import { mockApi } from "mocks/api";
 import { Category } from "@kokomen/types";
-import { Rank } from "@kokomen/types/members";
+import { Rank } from "@kokomen/types";
 
 const mockCategories: Category[] = [
   {

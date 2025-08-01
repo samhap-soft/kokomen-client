@@ -1,4 +1,4 @@
-import { User } from "@kokomen/types/auth";
+import { User } from "@kokomen/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

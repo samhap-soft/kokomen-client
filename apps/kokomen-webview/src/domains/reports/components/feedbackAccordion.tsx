@@ -7,9 +7,9 @@ import {
 import { Score } from "@kokomen/ui/components/rank";
 import { MessageSquare, Star, Award } from "lucide-react";
 import { JSX } from "react";
-import { PrivateFeedback } from "@kokomen/types/reports";
+import { PrivateFeedback } from "@kokomen/types";
 import AnswerMemoComponent from "@/domains/reports/components/answerMemo";
-import { CamelCasedProperties } from "@kokomen/types/utils";
+import { CamelCasedProperties } from "@kokomen/types";
 
 export function FeedbackAccordion({
   feedbacks

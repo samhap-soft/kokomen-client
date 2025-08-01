@@ -84,13 +84,27 @@ const meKeys: QueryKeyFactory<MeMethods> = {
   detailedInfo: (): QueryKey => [...meKeys.all, "detailedInfo"] as const
 };
 
+interface NotificationMethods {
+  infiniteReadNotifications: () => QueryKey;
+  infiniteUnreadNotifications: () => QueryKey;
+}
+const notificationKeys: QueryKeyFactory<NotificationMethods> = {
+  all: ["notifications"] as const,
+  infiniteReadNotifications: (): QueryKey =>
+    [...notificationKeys.all, "read", "infinite"] as const,
+  infiniteUnreadNotifications: (): QueryKey =>
+    [...notificationKeys.all, "unread", "infinite"] as const
+};
+
 export {
   interviewHistoryKeys,
   interviewKeys,
   memberKeys,
   meKeys,
+  notificationKeys,
   type InterviewHistoryParams,
   type InterviewParams,
   type MemberRankParams,
-  type MeMethods
+  type MeMethods,
+  type NotificationMethods
 };

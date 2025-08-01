@@ -1,7 +1,7 @@
 import { FC, JSX, memo, MemoExoticComponent } from "react";
 import { Modal } from "@kokomen/ui/components/modal";
 import { Button } from "@kokomen/ui/components/button";
-import { Interview } from "@kokomen/types/interviews";
+import { Interview } from "@kokomen/types";
 import { useRouter } from "@tanstack/react-router";
 
 type InterviewFinishModalProps = {

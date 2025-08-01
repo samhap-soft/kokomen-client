@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
 import type { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
-import { Interview } from "@kokomen/types/interviews";
+import { Interview } from "@kokomen/types";
 import { useSpeechRecognition } from "@kokomen/utils/react/useSpeechRecognition";
 import { useRouter } from "@tanstack/react-router";
 import { submitInterviewAnswer } from "@/domains/interviews/api/interviewAnswer";

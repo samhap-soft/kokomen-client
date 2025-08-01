@@ -3,7 +3,7 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import React, { lazy, useEffect, useState } from "react";
 import { interviewKeys } from "@kokomen/utils/general/querykeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Interview } from "@kokomen/types/interviews";
+import { Interview } from "@kokomen/types";
 import { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
 import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
 import ErrorComponent from "@/common/components/ErrorComponent";

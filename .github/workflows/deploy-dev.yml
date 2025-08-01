@@ -30,6 +30,7 @@ jobs:
             export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
             cd kokomen
+            yarn types:build
             docker system prune -f
             docker compose -f compose.dev.yaml down || true
             docker compose -f compose.dev.yaml up -d --build

@@ -4,7 +4,7 @@ import { Dispatch, JSX, SetStateAction } from "react";
 import { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
 import { formatDate } from "@kokomen/utils/general/date";
 // import { captureButtonEvent } from "@/utils/analytics";
-import { MemberInterview } from "@kokomen/types/members";
+import { MemberInterview } from "@kokomen/types";
 import { Link } from "@tanstack/react-router";
 
 export default function MemberInterviewHistory({

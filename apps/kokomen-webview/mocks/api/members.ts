@@ -1,4 +1,4 @@
-import { MemberInterview } from "@kokomen/types/members";
+import { MemberInterview } from "@kokomen/types";
 import { server } from "mocks";
 import { http, HttpResponse } from "msw";
 

@@ -9,7 +9,7 @@ import { isAxiosError } from "axios";
 import { Modal } from "@kokomen/ui/components/modal";
 import { useForm } from "react-hook-form";
 import { Radio, RadioGroup } from "@kokomen/ui/components/radio";
-import { AnswerMemo } from "@kokomen/types/reports";
+import { AnswerMemo } from "@kokomen/types";
 import {
   createNewAnswerMemo,
   deleteAnswerMemo,

@@ -1,4 +1,4 @@
-import { Interview } from "@kokomen/types/interviews";
+import { Interview } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 import type { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
 import { mapToCamelCase } from "@kokomen/utils/general/convertConvention";

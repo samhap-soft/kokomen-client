@@ -1,5 +1,5 @@
 import { Category } from "@kokomen/types";
-import { Rank } from "@kokomen/types/members";
+import { Rank } from "@kokomen/types";
 import { server } from "mocks";
 import { memberInterviews } from "mocks/api/members";
 import { http, HttpResponse } from "msw";

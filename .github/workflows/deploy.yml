@@ -20,6 +20,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
         run: |
+          yarn types:build
           docker system prune -f
           docker compose -f compose.yaml down || true
           docker compose -f compose.yaml up -d --build
