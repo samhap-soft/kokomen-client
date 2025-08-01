@@ -10,7 +10,7 @@ import {
   getInfiniteReadNotifications,
   getInfiniteUnreadNotifications
 } from "@/domains/notifications/api";
-import { BaseNotification, NotificationFactory, User } from "@kokomen/types";
+import { BaseNotification, User } from "@kokomen/types";
 import { KeyboardEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
@@ -136,24 +136,6 @@ const NotificationPanel = ({
     </div>
   );
 };
-
-const notificationMock = [
-  NotificationFactory.create("ANSWER_LIKE", new Date().toISOString(), {
-    answer_id: 1,
-    interview_id: 1,
-    liker_member_id: 1,
-    like_count: 1
-  }),
-  NotificationFactory.create("INTERVIEW_VIEW_COUNT", new Date().toISOString(), {
-    interview_id: 1,
-    view_count: 1
-  }),
-  NotificationFactory.create("INTERVIEW_LIKE", new Date().toISOString(), {
-    interview_id: 1,
-    liker_member_id: 1,
-    like_count: 1
-  })
-];
 
 const NotificationPanelIcon = ({ user }: { user: User | null }) => {
   const {
