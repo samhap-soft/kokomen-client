@@ -11,7 +11,7 @@ import {
   getInfiniteUnreadNotifications
 } from "@/domains/notifications/api";
 import { BaseNotification, NotificationFactory, User } from "@kokomen/types";
-import { useRef, useState } from "react";
+import { KeyboardEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 const NotificationPanel = ({
@@ -55,7 +55,10 @@ const NotificationPanel = ({
     : isFetchingNextPageUnread;
 
   return (
-    <div className="absolute top-10 right-0 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+    <div
+      role="dialog"
+      className="absolute top-10 right-0 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+    >
       {/* 탭 버튼 */}
       <div className="flex border-b border-gray-200">
         <Button
@@ -176,7 +179,7 @@ const NotificationPanelIcon = ({ user }: { user: User | null }) => {
       pages: [
         {
           hasNext: false,
-          notifications: [...notificationMock]
+          notifications: []
         }
       ],
       pageParams: [0]
@@ -200,7 +203,7 @@ const NotificationPanelIcon = ({ user }: { user: User | null }) => {
       pages: [
         {
           hasNext: false,
-          notifications: [...notificationMock]
+          notifications: []
         }
       ],
       pageParams: [0]
@@ -228,12 +231,25 @@ const NotificationPanelIcon = ({ user }: { user: User | null }) => {
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleToggleNotificationPanel();
+    }
+  };
+
   return (
     <div className="relative" ref={notificationPanelRef}>
       <Button
+        role="button"
         variant={"text"}
         size="small"
         onClick={handleToggleNotificationPanel}
+        onKeyDown={handleKeyDown}
+        aria-label="알림 패널 열기"
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        tabIndex={0}
       >
         <Bell />
       </Button>
