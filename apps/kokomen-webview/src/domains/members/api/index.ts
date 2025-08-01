@@ -1,8 +1,4 @@
-import {
-  MemberInterview,
-  MemberInterviewResult,
-  Rank
-} from "@kokomen/types/members";
+import { MemberInterview, MemberInterviewResult, Rank } from "@kokomen/types";
 import {
   CamelCasedProperties,
   mapToCamelCase

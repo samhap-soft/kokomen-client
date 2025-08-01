@@ -5,7 +5,7 @@ import { JSX, useState } from "react";
 import { useToast } from "@kokomen/ui/hooks/useToast";
 import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui/components/button";
-import { MemberInterviewResult } from "@kokomen/types/members";
+import { MemberInterviewResult } from "@kokomen/types";
 import { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
 // import { captureButtonEvent } from "@kokomen/utils/general/analytics";
 import { useRouter } from "@tanstack/react-router";

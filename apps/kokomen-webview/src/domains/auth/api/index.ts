@@ -1,4 +1,4 @@
-import { User, UserInfo } from "@kokomen/types/auth";
+import { User, UserInfo } from "@kokomen/types";
 import axios, { AxiosInstance, AxiosPromise } from "axios";
 
 const authServerInstance: AxiosInstance = axios.create({

@@ -1,4 +1,4 @@
-import { InterviewHistory } from "@kokomen/types/dashboard";
+import { InterviewHistory } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 
 const dashboardServerInstance: AxiosInstance = axios.create({

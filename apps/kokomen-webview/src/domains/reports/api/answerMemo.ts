@@ -1,4 +1,4 @@
-import { AnswerMemo } from "@kokomen/types/reports";
+import { AnswerMemo } from "@kokomen/types";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 const answerMemoApiInstance: AxiosInstance = axios.create({
