@@ -22,6 +22,9 @@ ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
 RUN yarn install
 
 WORKDIR /app/apps/client
+
+RUN yarn types:build
+
 RUN yarn build
 
 WORKDIR /app
