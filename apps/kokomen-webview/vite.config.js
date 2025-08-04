@@ -19,23 +19,22 @@ export default defineConfig({
     }),
     react()
   ],
-
-  // server: {
-  //   port: 3000,
-  //   host: "127.0.0.1",
-  //   allowedHosts: ["local.kokomen.kr"],
-  //   https: {
-  //     key: readFileSync("./local.kokomen.kr+2-key.pem"),
-  //     cert: readFileSync("./local.kokomen.kr+2.pem")
-  //   }
-  // },
+  optimizeDeps: {
+    include: ["@kokomen/ui"]
+  },
+  base: "./",
+  server: {
+    port: 3000,
+    host: "127.0.0.1",
+    allowedHosts: ["local.kokomen.kr"],
+    https: {
+      key: readFileSync("./local.kokomen.kr+2-key.pem"),
+      cert: readFileSync("./local.kokomen.kr+2.pem")
+    }
+  },
   assetsInclude: ["**/*.glb"],
   resolve: {
     alias: {
-      "@components": path.resolve(
-        __dirname,
-        "../../packages/ui/src/components"
-      ),
       "@assets": path.resolve(__dirname, "../../packages/ui/src/assets")
     }
   }

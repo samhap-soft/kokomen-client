@@ -40,10 +40,6 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@components": path.resolve(
-        __dirname,
-        "../../packages/ui/src/components"
-      ),
       "@assets": path.resolve(__dirname, "../../packages/ui/src/assets")
     }
   }
