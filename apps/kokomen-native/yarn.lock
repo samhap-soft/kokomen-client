@@ -3869,6 +3869,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-speech-recognition@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "expo-speech-recognition@npm:2.1.1"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/9eb7e23801ca1e5f29711cb8b6f3e6087e0f38855a95dd79182f770a4afa64dc4fa12f7fec401cc282faeeaa0ba9b2399ba0d698457f4618d91729005dcbf1c3
+  languageName: node
+  linkType: hard
+
 "expo-status-bar@npm:~2.2.3":
   version: 2.2.3
   resolution: "expo-status-bar@npm:2.2.3"
@@ -4912,6 +4923,7 @@ __metadata:
     "@react-navigation/stack": "npm:^7.4.2"
     "@types/react": "npm:~19.0.10"
     expo: "npm:~53.0.17"
+    expo-speech-recognition: "npm:^2.1.1"
     expo-status-bar: "npm:~2.2.3"
     lucide-react-native: "npm:^0.525.0"
     prettier: "npm:^3.5.3"

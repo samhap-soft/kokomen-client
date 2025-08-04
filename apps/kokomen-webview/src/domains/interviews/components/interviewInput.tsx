@@ -5,9 +5,9 @@ import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
 import type { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
 import { Interview } from "@kokomen/types";
-import { useSpeechRecognition } from "@kokomen/utils/react/useSpeechRecognition";
 import { useRouter } from "@tanstack/react-router";
 import { submitInterviewAnswer } from "@/domains/interviews/api/interviewAnswer";
+import useSpeechRecognition from "@/domains/interviews/hooks/useSpeechRecognition";
 
 type InterviewInputProps = Pick<
   CamelCasedProperties<Interview>,
@@ -52,8 +52,8 @@ export function InterviewAnswerInput({
     isListening: isVoiceListening,
     stopListening,
     isSupported
-  } = useSpeechRecognition({
-    onSpeechEnd: updateInterviewInput
+  } = useSpeechRecognition((result) => {
+    updateInterviewInput(result);
   });
   const router = useRouter();
   const { mutate, isPending } = useMutation({
