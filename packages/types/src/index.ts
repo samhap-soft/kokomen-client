@@ -6,3 +6,4 @@ export * from "./dashboard";
 export * from "./utils";
 export * from "./notifications";
 export * from "./category";
+export * from "./webview";
