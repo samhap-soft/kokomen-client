@@ -27,6 +27,7 @@
     "client:test": "yarn workspace @kokomen/client test",
     "webview:dev": "yarn workspace @kokomen/webview dev",
     "webview:build": "yarn workspace @kokomen/webview build",
+    "webview:test": "yarn workspace @kokomen/webview test",
     "ui:dev": "yarn workspace @kokomen/ui storybook",
     "docker-dev-up": "docker-compose -f compose.dev.yaml up -d",
     "client:prod": "yarn workspace @kokomen/client start",
