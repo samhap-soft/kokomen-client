@@ -14,7 +14,7 @@ const ToastContext = React.createContext<ToastContextType | undefined>(
   undefined
 );
 
-export function ToastProvider({ children }: { children: React.ReactNode }) {
+function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastProps[]>([]);
 
   const removeToast = React.useCallback((id: string) => {
@@ -42,7 +42,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     () => ({
       addToast,
       removeToast,
-      toasts,
+      toasts
     }),
     [addToast, removeToast, toasts]
   );
@@ -52,7 +52,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useToastContext() {
+function useToastContext() {
   const context = React.useContext(ToastContext);
   if (!context) {
     throw new Error("useToastContext must be used within ToastProvider");
@@ -62,23 +62,22 @@ export function useToastContext() {
 
 interface ToastViewportProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const ToastViewport = React.forwardRef<
-  HTMLDivElement,
-  ToastViewportProps
->(({ className, ...props }, ref) => {
-  const { toasts } = useToastContext();
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px] ",
-        toasts.length === 0 && "hidden",
-        className
-      )}
-      {...props}
-    />
-  );
-});
+const ToastViewport = React.forwardRef<HTMLDivElement, ToastViewportProps>(
+  ({ className, ...props }, ref) => {
+    const { toasts } = useToastContext();
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px] ",
+          toasts.length === 0 && "hidden",
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
 ToastViewport.displayName = "ToastViewport";
 
 // Toast Variants
@@ -95,12 +94,12 @@ const toastVariants = cva(
           "border-error-border bg-error-bg text-error-text shadow-box-shadow",
         warning:
           "border-warning-border bg-warning-bg text-warning-text shadow-box-shadow",
-        info: "border-info-border bg-info-bg text-info-text shadow-box-shadow",
-      },
+        info: "border-info-border bg-info-bg text-info-text shadow-box-shadow"
+      }
     },
     defaultVariants: {
-      variant: "default",
-    },
+      variant: "default"
+    }
   }
 );
 
@@ -116,7 +115,7 @@ interface ToastProps extends VariantProps<typeof toastVariants> {
   className?: string;
 }
 
-export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
+const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   (
     {
       className,
@@ -180,7 +179,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
           transform: isEntering
             ? "translateX(100%) scale(0.95)"
             : "translateX(0) scale(1)",
-          opacity: isEntering || isExiting ? 0 : 1,
+          opacity: isEntering || isExiting ? 0 : 1
         }}
         {...props}
       >
@@ -212,26 +211,25 @@ Toast.displayName = "Toast";
 interface ToastActionProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export const ToastAction = React.forwardRef<
-  HTMLButtonElement,
-  ToastActionProps
->(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-      className
-    )}
-    {...props}
-  />
-));
+const ToastAction = React.forwardRef<HTMLButtonElement, ToastActionProps>(
+  ({ className, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={cn(
+        "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  )
+);
 ToastAction.displayName = "ToastAction";
 
 // Toast Close 컴포넌트
 interface ToastCloseProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export const ToastClose = React.forwardRef<HTMLButtonElement, ToastCloseProps>(
+const ToastClose = React.forwardRef<HTMLButtonElement, ToastCloseProps>(
   ({ className, ...props }, ref) => (
     <button
       ref={ref}
@@ -250,7 +248,7 @@ ToastClose.displayName = "ToastClose";
 // Toast Title 컴포넌트
 interface ToastTitleProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const ToastTitle = React.forwardRef<HTMLDivElement, ToastTitleProps>(
+const ToastTitle = React.forwardRef<HTMLDivElement, ToastTitleProps>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
@@ -264,13 +262,111 @@ ToastTitle.displayName = "ToastTitle";
 // Toast Description 컴포넌트
 interface ToastDescriptionProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const ToastDescription = React.forwardRef<
+const ToastDescription = React.forwardRef<
   HTMLDivElement,
   ToastDescriptionProps
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn("text-sm opacity-90", className)} {...props} />
 ));
 ToastDescription.displayName = "ToastDescription";
+
+// Toast 컨테이너 컴포넌트
+const ToastContainer = () => {
+  const { toasts, removeToast } = useToastContext();
+
+  return (
+    <ToastViewport>
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          {...toast}
+          onClose={() => removeToast(toast.id!)}
+        />
+      ))}
+    </ToastViewport>
+  );
+};
+interface ToasterProps {
+  children: React.ReactNode;
+}
+const Toaster = ({ children }: ToasterProps) => {
+  return (
+    <ToastProvider>
+      {children}
+      <ToastContainer />
+    </ToastProvider>
+  );
+};
+
+type ToastActionElement = React.ReactElement<typeof ToastAction>;
+
+interface ToastOptions {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  action?: React.ReactNode;
+  duration?: number;
+  variant?: "default" | "success" | "error" | "warning" | "info";
+}
+
+function useToast() {
+  const { addToast, removeToast, toasts } = useToastContext();
+
+  const toast = React.useCallback(
+    (options: ToastOptions) => {
+      const id = Math.random().toString(36).substring(2, 15);
+
+      addToast({
+        ...options,
+        id,
+        onClose: () => removeToast(id)
+      });
+
+      return {
+        id,
+        dismiss: () => removeToast(id)
+      };
+    },
+    [addToast, removeToast]
+  );
+
+  const success = React.useCallback(
+    (options: Omit<ToastOptions, "variant">) => {
+      return toast({ ...options, variant: "success" });
+    },
+    [toast]
+  );
+
+  const error = React.useCallback(
+    (options: Omit<ToastOptions, "variant">) => {
+      return toast({ ...options, variant: "error" });
+    },
+    [toast]
+  );
+
+  const warning = React.useCallback(
+    (options: Omit<ToastOptions, "variant">) => {
+      return toast({ ...options, variant: "warning" });
+    },
+    [toast]
+  );
+
+  const info = React.useCallback(
+    (options: Omit<ToastOptions, "variant">) => {
+      return toast({ ...options, variant: "info" });
+    },
+    [toast]
+  );
+
+  return {
+    toast,
+    success,
+    error,
+    warning,
+    info,
+    dismiss: removeToast,
+    toasts
+  };
+}
 
 // 타입 내보내기
 export type {
@@ -279,5 +375,17 @@ export type {
   ToastCloseProps,
   ToastTitleProps,
   ToastDescriptionProps,
+  ToastActionElement
 };
-export type ToastActionElement = React.ReactElement<typeof ToastAction>;
+export {
+  Toaster,
+  useToastContext,
+  ToastProvider,
+  useToast,
+  ToastViewport,
+  Toast,
+  ToastAction,
+  ToastClose,
+  ToastTitle,
+  ToastDescription
+};

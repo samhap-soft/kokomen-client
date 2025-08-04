@@ -8,7 +8,7 @@
   },
   "exports": {
     ".": "./src/components/index.ts",
-    "./hooks": "./src/hooks/index.ts"
+    "./domains": "./src/components/domains/index.ts"
   },
   "dependencies": {
     "lucide-react": "^0.511.0"
