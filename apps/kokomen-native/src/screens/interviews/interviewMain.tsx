@@ -25,13 +25,17 @@ export default function InterviewMainScreen() {
     },
   });
   const handleMessage = (event: WebViewMessageEvent) => {
-    const data = JSON.parse(event.nativeEvent.data);
-    if (data.type === "startListening") {
-      console.log("startListening");
-      handleStart();
-    } else if (data.type === "stopListening") {
-      console.log("stopListening");
-      handleStop();
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data.type === "startListening") {
+        console.log("startListening");
+        handleStart();
+      } else if (data.type === "stopListening") {
+        console.log("stopListening");
+        handleStop();
+      }
+    } catch (error) {
+      console.error("error while parsing message", error);
     }
   };
 
