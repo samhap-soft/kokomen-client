@@ -2,7 +2,7 @@ import { toggleMemberInterviewLike } from "@/domains/members/api";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle, Eye, Heart, MessageCircle, Trophy } from "lucide-react";
 import { JSX, useState } from "react";
-import { useToast } from "@kokomen/ui/hooks";
+import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui";
 import { MemberInterviewResult } from "@/domains/members/types";

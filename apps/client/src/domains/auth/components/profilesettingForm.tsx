@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useToast } from "@kokomen/ui/hooks";
+import { useToast } from "@kokomen/ui";
 import { AxiosError } from "axios";
 import { User } from "../types";
 import z from "zod";

@@ -1,6 +1,6 @@
 import useInterviewCreateMutation from "@/domains/interviews/hooks/useInterviewCreateMutation";
 import { Category } from "@kokomen/types";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { Keyboard, MicVocal } from "lucide-react";
 import {
   FC,

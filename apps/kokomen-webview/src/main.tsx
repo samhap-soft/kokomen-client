@@ -1,5 +1,6 @@
-import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { StrictMode } from "react";
+import { LoadingFullScreen } from "@kokomen/ui";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import {
@@ -10,7 +11,6 @@ import {
 import { meKeys } from "@kokomen/utils/general/querykeys";
 import { getUserInfo } from "@/domains/auth/api";
 import { useAuthStore } from "@/store";
-import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
 
 declare module "@tanstack/react-router" {
   interface Register {

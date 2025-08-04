@@ -5,12 +5,12 @@ import { interviewKeys } from "@kokomen/utils/general/querykeys";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Interview } from "@kokomen/types";
 import { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
-import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
+import { LoadingFullScreen } from "@kokomen/ui";
 import ErrorComponent from "@/common/components/ErrorComponent";
 import { InterviewAnswerInput } from "@/domains/interviews/components/interviewInput";
-import InterviewSideBar from "@kokomen/ui/components/domains/interviews/interviewSideBar";
+import { InterviewSideBar } from "@kokomen/ui/domains";
 import { useSidebar } from "@kokomen/utils/react/useModal";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import InterviewFinishModal from "@/domains/interviews/components/interviewFinishModal";
 
 // eslint-disable-next-line @rushstack/typedef-var

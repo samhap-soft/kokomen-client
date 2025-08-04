@@ -10,4 +10,3 @@ export * from "./sidebar";
 export * from "./spinner";
 export * from "./textarea/textarea";
 export * from "./toast";
-export * from "./toast/toaster";

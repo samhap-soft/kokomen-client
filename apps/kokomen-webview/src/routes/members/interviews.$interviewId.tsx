@@ -4,9 +4,9 @@ import {
   useLoaderData,
   useParams
 } from "@tanstack/react-router";
-import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
+import { LoadingFullScreen } from "@kokomen/ui";
 import { Eye, HelpCircle, Info, Share2 } from "lucide-react";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
 import MemberQuestionFeedback from "@/domains/members/components/memberQuestionFeedback";
 

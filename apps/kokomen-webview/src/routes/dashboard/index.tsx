@@ -5,10 +5,10 @@ import {
   redirect,
   useLoaderData
 } from "@tanstack/react-router";
-import { Percentile, Rank } from "@kokomen/ui/components/rank";
+import { Percentile, Rank } from "@kokomen/ui";
 import { Coins, Star, User } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
-import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
+import { LoadingFullScreen } from "@kokomen/ui";
 
 export const Route = createFileRoute("/dashboard/")({
   component: RouteComponent,

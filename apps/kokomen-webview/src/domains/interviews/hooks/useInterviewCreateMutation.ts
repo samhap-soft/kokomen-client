@@ -1,11 +1,12 @@
-import { useToast } from "@kokomen/ui/hooks/useToast";
 import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { startNewInterview } from "../api";
 import { useNavigate } from "@tanstack/react-router";
+import { useToast } from "@kokomen/ui";
 
 const useInterviewCreateMutation = () => {
   const navigate = useNavigate();
+  // const { addToast, removeToast, toasts } = useToastContext();
   const { error: errorToast } = useToast();
 
   return useMutation({

@@ -1,15 +1,8 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
-} from "@components/accordion";
-import { Sidebar } from "@components/sidebar/";
-import { QuestionAndAnswer } from "@kokomen/types/interviews";
+import { Accordion, Sidebar, Button } from "#components/index.ts";
+import { QuestionAndAnswer } from "@kokomen/types";
 import { SidebarIcon } from "lucide-react";
 import { JSX } from "react";
-import { Button } from "@components/button";
-import { CamelCasedProperties } from "@kokomen/types/utils";
+import { CamelCasedProperties } from "@kokomen/types";
 
 export default function InterviewSideBar({
   prevQuestionAndAnswer = [],
@@ -41,17 +34,17 @@ export default function InterviewSideBar({
         <div className="text-2xl font-bold text-primary p-4">
           내 질문과 답변
         </div>
-        <Accordion
+        <Accordion.Accordion
           allowMultiple
           defaultActiveKey={["feedback-1"]}
           className="w-full"
         >
           {prevQuestionAndAnswer.map((feedback, idx) => (
-            <AccordionItem key={idx} itemKey={`question-${idx}`}>
-              <AccordionTrigger className="text-lg font-bold text-primary">
+            <Accordion.AccordionItem key={idx} itemKey={`question-${idx}`}>
+              <Accordion.AccordionTrigger className="text-lg font-bold text-primary">
                 {feedback.question}
-              </AccordionTrigger>
-              <AccordionContent>
+              </Accordion.AccordionTrigger>
+              <Accordion.AccordionContent>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2 mb-2">
                     <span
@@ -71,10 +64,10 @@ export default function InterviewSideBar({
                     </p>
                   </div>
                 </div>
-              </AccordionContent>
-            </AccordionItem>
+              </Accordion.AccordionContent>
+            </Accordion.AccordionItem>
           ))}
-        </Accordion>
+        </Accordion.Accordion>
       </Sidebar>
     </>
   );

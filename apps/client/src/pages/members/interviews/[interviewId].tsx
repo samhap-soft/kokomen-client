@@ -8,12 +8,11 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Layout } from "@kokomen/ui";
+import { Layout, Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { HelpCircle, Info, Users, Share2, Eye } from "lucide-react";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
 import MemberQuestionFeedback from "@/domains/members/components/memberQuestionFeedback";
-import { Button } from "@kokomen/ui";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { SEO } from "@/shared/seo";
 

@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { Heart } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useToast } from "@kokomen/ui/hooks";
+import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";

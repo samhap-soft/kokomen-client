@@ -5,7 +5,7 @@ import {
   RankCardSkeleton
 } from "@/domains/members/components/rankCard";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
+import { LoadingFullScreen } from "@kokomen/ui";
 import React, { Suspense } from "react";
 
 // eslint-disable-next-line @rushstack/typedef-var

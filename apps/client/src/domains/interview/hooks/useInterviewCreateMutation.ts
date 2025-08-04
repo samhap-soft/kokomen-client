@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useToast } from "@kokomen/ui/hooks";
+import { useToast } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { startNewInterview } from "../api";

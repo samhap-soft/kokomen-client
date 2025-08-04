@@ -1,14 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { memberKeys } from "@kokomen/utils/general/querykeys";
 import { getMemberInterviews } from "@/domains/members/api";
-import {
-  LoadingFullScreen,
-  RoundSpinner
-} from "@kokomen/ui/components/spinner";
+import { LoadingFullScreen, RoundSpinner } from "@kokomen/ui";
 import { useIntersectionObserver } from "@kokomen/utils/react/useIntersectionObserver";
 import { useState, useRef } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Rank, Percentile } from "@kokomen/ui/components/rank";
+import { Rank, Percentile } from "@kokomen/ui";
 import { useParams } from "@tanstack/react-router";
 import MemberInterviewHistory from "@/domains/members/components/memberInterviewHistory";
 import ErrorComponent from "@/common/components/ErrorComponent";

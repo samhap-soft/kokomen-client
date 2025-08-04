@@ -1,7 +1,7 @@
 import { createFileRoute, useParams, useRouter } from "@tanstack/react-router";
 import { interviewKeys } from "@kokomen/utils/general/querykeys";
 import { getInterviewReport } from "@/domains/reports/api/report";
-import { LoadingFullScreen } from "@kokomen/ui/components/spinner";
+import { LoadingFullScreen } from "@kokomen/ui";
 import { useQuery } from "@tanstack/react-query";
 import ErrorComponent from "@/common/components/ErrorComponent";
 import {
@@ -13,7 +13,7 @@ import {
   Trophy
 } from "lucide-react";
 import { FeedbackAccordion } from "@/domains/reports/components/feedbackAccordion";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 
 export const Route = createFileRoute("/interviews/$interviewId/result")({
   component: RouteComponent,

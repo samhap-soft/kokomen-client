@@ -5,9 +5,8 @@ import {
   useRouter
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { Button } from "@kokomen/ui/components/button";
+import { Button, Toaster } from "@kokomen/ui";
 import { ChevronLeft } from "lucide-react";
-import { Toaster } from "@kokomen/ui/components/toast/toaster";
 import React from "react";
 import ErrorComponent from "@/common/components/ErrorComponent";
 import { RouterContext } from "@/main";
@@ -45,6 +44,7 @@ function getRouteKey(pathname: string): keyof typeof headerTitle {
 function RootComponent(): React.ReactNode {
   const canGoBack = useCanGoBack();
   const router = useRouter();
+  console.log(Toaster);
   return (
     <div className="flex flex-col h-screen">
       <header className="p-2 flex gap-2 flex-shrink-0 items-center">
