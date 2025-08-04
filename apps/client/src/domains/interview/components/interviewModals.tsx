@@ -1,14 +1,14 @@
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import {
   IInterviewState,
-  InterviewActions,
+  InterviewActions
 } from "@/domains/interview/hooks/useInterviewStatus";
 import { JSX, useState } from "react";
 
 export default function InterviewModals({
   state,
   dispatch,
-  rootQuestion,
+  rootQuestion
 }: {
   state: IInterviewState;
   dispatch: InterviewActions;
@@ -26,7 +26,7 @@ export default function InterviewModals({
 function StartNewInterviewModal({
   state,
   dispatch,
-  rootQuestion,
+  rootQuestion
 }: {
   state: IInterviewState;
   dispatch: InterviewActions;

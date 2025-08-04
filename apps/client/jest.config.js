@@ -6,20 +6,19 @@
 const nextJest = require("next/jest");
 
 const createJestConfig = nextJest({
-  dir: "./",
+  dir: "./"
 });
 
 const config = {
   coverageProvider: "v8",
   moduleNameMapper: {
-    "^@/src/(.*)$": "<rootDir>/src/$1",
-    "^@kokomen/ui/(.*)$": "<rootDir>/../../ui/src/$1",
+    "^@/src/(.*)$": "<rootDir>/src/$1"
   },
   resolver: require.resolve("jest-pnp-resolver"),
   moduleDirectories: [
     "node_modules",
     "<rootDir>/node_modules",
-    "<rootDir>/../../node_modules",
+    "<rootDir>/../../node_modules"
   ],
   rootDir: ".",
   collectCoverage: true,
@@ -30,7 +29,7 @@ const config = {
     "!<rootDir>/out/**",
     "!<rootDir>/.next/**",
     "!<rootDir>/*.config.js",
-    "!<rootDir>/coverage/**",
+    "!<rootDir>/coverage/**"
   ],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],
@@ -42,15 +41,12 @@ const config = {
         presets: [
           ["@babel/preset-env", { targets: { node: "current" } }],
           ["@babel/preset-react", { runtime: "automatic" }],
-          "@babel/preset-typescript",
-        ],
-      },
-    ],
+          "@babel/preset-typescript"
+        ]
+      }
+    ]
   },
-  transformIgnorePatterns: [
-    "/node_modules/",
-    "^.+\\.module\\.(css|sass|scss)$",
-  ],
+  transformIgnorePatterns: ["/node_modules/", "^.+\\.module\\.(css|sass|scss)$"]
 };
 
 module.exports = createJestConfig(config);

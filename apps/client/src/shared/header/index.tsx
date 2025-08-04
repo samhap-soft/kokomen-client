@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { JSX, useEffect, useRef, useState } from "react";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { useLogout } from "@/hooks/useLogout";
 import NotificationPanelIcon from "@/domains/notifications/components/notificationPanel";
 

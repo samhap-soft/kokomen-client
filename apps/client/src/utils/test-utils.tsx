@@ -2,7 +2,7 @@
 import React, { JSX } from "react";
 import { render, RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@kokomen/ui/components/toast/toaster";
+import { Toaster } from "@kokomen/ui";
 import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 

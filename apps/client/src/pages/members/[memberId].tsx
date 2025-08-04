@@ -6,7 +6,7 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Layout } from "@kokomen/ui/components/layout";
+import { Layout } from "@kokomen/ui";
 import Header from "@/shared/header";
 import { JSX } from "react";
 import { getMemberInterviews } from "@/domains/members/api";

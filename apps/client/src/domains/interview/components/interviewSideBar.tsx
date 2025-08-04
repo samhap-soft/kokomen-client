@@ -2,17 +2,17 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
+  AccordionTrigger
 } from "@/components/accordion";
 import { useSidebar } from "@/hooks/useModal";
-import { Sidebar } from "@kokomen/ui/components/sidebar/";
-import { Button } from "@kokomen/ui/components/button";
+import { Sidebar } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { SidebarIcon } from "lucide-react";
 import { QuestionAndAnswer } from "@/domains/interview/types";
 import { JSX } from "react";
 
 export default function InterviewSideBar({
-  prevQuestionAndAnswer = [],
+  prevQuestionAndAnswer = []
 }: {
   prevQuestionAndAnswer?: Omit<
     QuestionAndAnswer,

@@ -1,7 +1,7 @@
 import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import { InterviewType } from "@/domains/interview/types";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { Keyboard, MicVocal } from "lucide-react";
 import Image from "next/image";
 import {
@@ -10,7 +10,7 @@ import {
   memo,
   MemoExoticComponent,
   useCallback,
-  useState,
+  useState
 } from "react";
 
 type QuestionCountSelectorProps = {
@@ -23,7 +23,7 @@ const QuestionCountSelector: MemoExoticComponent<
 > = memo(
   ({
     questionCount,
-    handleQuestionCountChange,
+    handleQuestionCountChange
   }: QuestionCountSelectorProps) => {
     return (
       <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
@@ -70,7 +70,7 @@ const InterviewTypeSelector: MemoExoticComponent<
 > = memo(
   ({
     selectedInterviewType,
-    handleInterviewTypeChange,
+    handleInterviewTypeChange
   }: InterviewTypeSelectorProps) => {
     return (
       <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
@@ -114,10 +114,10 @@ InterviewTypeSelector.displayName = "InterviewTypeSelector";
 const DEFAULT_INTERVIEW_CONFIGS: Record<string, string | number> = {
   MAX_QUESTION_COUNT: 20,
   MIN_QUESTION_COUNT: 3,
-  INTERVIEW_TYPE: "text",
+  INTERVIEW_TYPE: "text"
 };
 const CreateInterviewForm = ({
-  categories,
+  categories
 }: {
   categories: Category[];
 }): JSX.Element => {
@@ -144,7 +144,7 @@ const CreateInterviewForm = ({
   const handleNewInterview = useCallback(() => {
     createInterviewMutation.mutate({
       category: selectedCategory.key,
-      max_question_count: questionCount,
+      max_question_count: questionCount
     });
   }, [selectedCategory, questionCount, createInterviewMutation]);
   return (

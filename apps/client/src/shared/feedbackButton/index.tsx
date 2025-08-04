@@ -1,4 +1,4 @@
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { MessageCircleHeart } from "lucide-react";
 import { useRouter } from "next/router";
 

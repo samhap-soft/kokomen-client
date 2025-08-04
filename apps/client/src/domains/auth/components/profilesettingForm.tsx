@@ -2,13 +2,13 @@ import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useToast } from "@kokomen/ui/hooks/useToast";
+import { useToast } from "@kokomen/ui/hooks";
 import { AxiosError } from "axios";
 import { User } from "../types";
 import z from "zod";
 import { updateUserProfile } from "@/domains/auth/api";
-import { Input } from "@kokomen/ui/components/input";
-import { Button } from "@kokomen/ui/components/button";
+import { Input } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { captureFormSubmitEvent } from "@/utils/analytics";
 
 // eslint-disable-next-line @rushstack/typedef-var
@@ -18,14 +18,14 @@ const ProfileSetting = z.object({
     .min(3, { message: "닉네임은 3자 이상이어야 합니다." })
     .max(20, { message: "닉네임은 20자 이하이어야 합니다." })
     .regex(/^[가-힣a-zA-Z0-9]+$/, {
-      message: "닉네임은 한글 조합, 영문, 숫자만 사용할 수 있습니다.",
-    }),
+      message: "닉네임은 한글 조합, 영문, 숫자만 사용할 수 있습니다."
+    })
 });
 type ProfileSettingType = z.infer<typeof ProfileSetting>;
 
 export default function ProfileSettingForm({
   userInfo,
-  redirectTo,
+  redirectTo
 }: {
   userInfo: User;
   redirectTo: string;
@@ -34,27 +34,27 @@ export default function ProfileSettingForm({
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
+    setValue
   } = useForm<ProfileSettingType>({
     resolver: standardSchemaResolver(ProfileSetting),
     defaultValues: {
-      nickname: userInfo.nickname,
-    },
+      nickname: userInfo.nickname
+    }
   });
   const router = useRouter();
   const { error: errorToast } = useToast();
   const {
     mutate: updateUserProfileMutation,
     isPending,
-    isSuccess,
+    isSuccess
   } = useMutation({
     mutationFn: updateUserProfile,
     onMutate: (nickname) => {
       captureFormSubmitEvent({
         name: "changeNickname",
         properties: {
-          nickname: nickname,
-        },
+          nickname: nickname
+        }
       });
     },
     onSuccess: () => {
@@ -65,9 +65,9 @@ export default function ProfileSettingForm({
         title: "닉네임 변경에 실패했습니다.",
         description:
           (error.response?.data as { message: string }).message ??
-          "서버 오류가 발생했습니다.",
+          "서버 오류가 발생했습니다."
       });
-    },
+    }
   });
 
   const onSubmit = (data: ProfileSettingType) => {
