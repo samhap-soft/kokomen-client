@@ -17,12 +17,11 @@ export default function InterviewMainScreen() {
 
   const { handleStart, handleStop } = useSpeechRecognition({
     onResult: (transcript) => {
-      webviewRef.current?.postMessage(
-        JSON.stringify({
-          type: "speechRecognitionResult",
-          data: transcript,
-        }),
-      );
+      const speechRecognitionResult = JSON.stringify({
+        type: "speechRecognitionResult",
+        result: transcript,
+      });
+      webviewRef.current?.postMessage(speechRecognitionResult);
     },
   });
   const handleMessage = (event: WebViewMessageEvent) => {
