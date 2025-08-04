@@ -68,7 +68,7 @@ export default function useSpeechRecognition({
     });
   };
 
-  const handleStop = async () => {
+  const handleStop = () => {
     setIsListening(false);
     ExpoSpeechRecognitionModule.stop();
   };
