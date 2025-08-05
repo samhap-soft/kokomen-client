@@ -44,7 +44,6 @@ function getRouteKey(pathname: string): keyof typeof headerTitle {
 function RootComponent(): React.ReactNode {
   const canGoBack = useCanGoBack();
   const router = useRouter();
-  console.log(Toaster);
   return (
     <div className="flex flex-col h-screen">
       <header className="p-2 flex gap-2 flex-shrink-0 items-center">
