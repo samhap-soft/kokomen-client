@@ -1,5 +1,5 @@
 import { SEO } from "@/shared/seo";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { Home, Search } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react";

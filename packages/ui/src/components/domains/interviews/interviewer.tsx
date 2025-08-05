@@ -3,11 +3,9 @@ import type { InterviewerProps } from "./avatarMesh";
 import { Html } from "@react-three/drei";
 
 // eslint-disable-next-line @rushstack/typedef-var
-const AvatarMesh = lazy(
-  () => import("@components/domains/interviews/avatarMesh")
-);
+const AvatarMesh = lazy(() => import("./avatarMesh"));
 
-export const Interviewer: React.FC<InterviewerProps> = memo(
+const Interviewer: React.FC<InterviewerProps> = memo(
   ({
     isSpeaking = false,
     isListening = false,
@@ -35,3 +33,5 @@ export const Interviewer: React.FC<InterviewerProps> = memo(
   }
 );
 Interviewer.displayName = "Interviewer";
+
+export default Interviewer;

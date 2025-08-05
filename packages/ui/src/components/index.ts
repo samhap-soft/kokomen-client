@@ -1,8 +1,8 @@
+export * as Accordion from "./accordion";
+export * from "./modal";
 export * from "./button";
-export * from "./accordion";
 export * from "./input";
 export * from "./layout";
-export * from "./modal";
 export * from "./radio";
 export * from "./rank";
 export * from "./select";
@@ -10,4 +10,3 @@ export * from "./sidebar";
 export * from "./spinner";
 export * from "./textarea/textarea";
 export * from "./toast";
-export * from "./toast/toaster";

@@ -1,17 +1,17 @@
-import { Layout } from "@kokomen/ui/components/layout";
+import { Layout } from "@kokomen/ui";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
 import React, { JSX, useEffect, useState } from "react";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
 import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 import dynamic from "next/dynamic";
 import { getInterview } from "@/domains/interview/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { interviewKeys } from "@/utils/querykeys";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { Interview } from "@/domains/interview/types";
 import InterviewFinishModal from "@/domains/interview/components/interviewFinishModal";
 import { SEO } from "@/shared/seo";
@@ -25,7 +25,7 @@ const AiInterviewInterface = dynamic(
       <div className="font-bold text-xl text-center w-full h-full flex items-center justify-center">
         면접장을 정리하는 중...
       </div>
-    ),
+    )
   }
 );
 
@@ -42,7 +42,7 @@ const InterviewLoading = (): JSX.Element => {
 const START_UP_QUESTION: string =
   "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요.";
 export default function InterviewPage({
-  interviewId,
+  interviewId
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
   const queryClient = useQueryClient();
@@ -55,8 +55,8 @@ export default function InterviewPage({
       cur_question_id: 0,
       cur_question: "",
       cur_question_count: 0,
-      max_question_count: 0,
-    },
+      max_question_count: 0
+    }
   });
 
   //기존 면접 정보 업데이트
@@ -68,7 +68,7 @@ export default function InterviewPage({
 
       return {
         ...oldData,
-        ...updates,
+        ...updates
       };
     });
   };
@@ -160,13 +160,13 @@ export const getServerSideProps: GetServerSideProps<{
 
   if (!interviewId) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
 
   return {
     props: {
-      interviewId: +interviewId,
-    },
+      interviewId: +interviewId
+    }
   };
 };

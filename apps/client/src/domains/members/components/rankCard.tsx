@@ -2,7 +2,7 @@ import { getRankList } from "@/domains/members/api";
 import { memberKeys } from "@/utils/querykeys";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { captureButtonEvent } from "@/utils/analytics";
 
@@ -34,7 +34,7 @@ const RankCardSkeleton = (): JSX.Element => {
 export default function RankCard(): JSX.Element {
   const { data, isLoading } = useQuery({
     queryKey: memberKeys.rank(),
-    queryFn: () => getRankList(),
+    queryFn: () => getRankList()
   });
   const router = useRouter();
 
@@ -60,8 +60,8 @@ export default function RankCard(): JSX.Element {
               name: "MemberDashboard",
               properties: {
                 rank: rank.id,
-                nickname: rank.nickname,
-              },
+                nickname: rank.nickname
+              }
             });
             router.push(`/members/${rank.id}`);
           }}

@@ -1,8 +1,7 @@
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { JSX } from "react";
 
 export default function Custom500(): JSX.Element {
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="text-center">

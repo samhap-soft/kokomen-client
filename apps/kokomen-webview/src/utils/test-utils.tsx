@@ -1,7 +1,7 @@
 import React, { act, JSX } from "react";
 import { render, RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@kokomen/ui/components/toast/toaster";
+import { Toaster } from "@kokomen/ui";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "@/routeTree.gen";
 

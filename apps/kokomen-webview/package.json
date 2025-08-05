@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
+    "@kokomen/ui": "workspace:*",
     "@tanstack/react-query": "^5.80.6",
     "@tanstack/react-router": "^1.129.3",
     "@tanstack/react-router-devtools": "^1.129.3",
@@ -31,7 +32,6 @@
     "@eslint/js": "^9.31.0",
     "@kokomen/eslint-config": "workspace:*",
     "@kokomen/types": "workspace:*",
-    "@kokomen/ui": "workspace:*",
     "@kokomen/utils": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/router-plugin": "^1.129.3",

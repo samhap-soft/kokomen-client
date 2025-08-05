@@ -17,8 +17,7 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*", "../../packages/ui/src/*"],
-      "@kokomen/ui/*": ["../../packages/ui/src/*"]
+      "@/*": ["./src/*", "../../packages/ui/src/*"]
     },
     "types": ["jest", "@testing-library/jest-dom", "dom-speech-recognition"]
   },

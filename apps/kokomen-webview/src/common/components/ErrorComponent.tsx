@@ -1,6 +1,6 @@
 import React from "react";
 import errorImage from "@/assets/error.png";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { useCanGoBack, useRouter } from "@tanstack/react-router";
 
 export default function ErrorComponent({

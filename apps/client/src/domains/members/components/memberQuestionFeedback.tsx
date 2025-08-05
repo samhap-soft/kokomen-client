@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { Heart } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useToast } from "@kokomen/ui/hooks/useToast";
+import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { MemberInterviewResult } from "@/domains/members/types";
@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 
 export default function MemberQuestionFeedback({
   questionAndFeedback,
-  index,
+  index
 }: {
   questionAndFeedback: CamelCasedProperties<
     MemberInterviewResult["feedbacks"][number]
@@ -33,8 +33,8 @@ export default function MemberQuestionFeedback({
         properties: {
           type: "answer",
           likedAnswerId: questionAndFeedback.answerId,
-          liked: data,
-        },
+          liked: data
+        }
       });
       setAnswerLiked(!answerLiked);
     },
@@ -46,16 +46,16 @@ export default function MemberQuestionFeedback({
         }
         errorToast({
           title: "좋아요 실패",
-          description: error.response?.data.message,
+          description: error.response?.data.message
         });
       } else {
         errorToast({
           title: "좋아요 실패",
-          description: "서버 오류가 발생했습니다.",
+          description: "서버 오류가 발생했습니다."
         });
       }
       setAnswerLiked(!answerLiked);
-    },
+    }
   });
 
   const badgeColor = useMemo(() => {

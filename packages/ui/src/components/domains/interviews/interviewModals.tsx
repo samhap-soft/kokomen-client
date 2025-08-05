@@ -1,5 +1,5 @@
-import { Button } from "@components/button";
-import { InterviewActions, InterviewState } from "@kokomen/types/interviews";
+import { Button } from "#components/index.ts";
+import { InterviewActions, InterviewState } from "@kokomen/types";
 import { JSX, useState } from "react";
 
 export default function InterviewModals({

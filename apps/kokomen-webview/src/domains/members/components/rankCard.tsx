@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { memberKeys } from "@kokomen/utils/general/querykeys";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Crown } from "lucide-react";
@@ -15,18 +15,16 @@ export const RankCardSkeleton = (): JSX.Element => {
         <span>현재 면접 등수</span>
       </h3>
       {Array.from({ length: 5 }).map((_, index) => (
-        <>
-          <div
-            key={index}
-            className="flex items-center justify-between p-4 w-full animate-pulse"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-gray-200" />
-              <div className="h-4 bg-gray-200 rounded w-20 mb-1" />
-            </div>
-            <div className="h-5 bg-gray-200 rounded w-12" />
+        <div
+          key={index}
+          className="flex items-center justify-between p-4 w-full animate-pulse"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gray-200" />
+            <div className="h-4 bg-gray-200 rounded w-20 mb-1" />
           </div>
-        </>
+          <div className="h-5 bg-gray-200 rounded w-12" />
+        </div>
       ))}
     </div>
   );

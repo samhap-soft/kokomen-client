@@ -1,4 +1,4 @@
-import Select from "@kokomen/ui/components/select";
+import { Select } from "@kokomen/ui";
 import { Calendar, Eye, Heart, TrendingUp, Trophy } from "lucide-react";
 import { Dispatch, JSX, SetStateAction } from "react";
 import { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";

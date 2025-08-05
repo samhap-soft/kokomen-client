@@ -1,5 +1,5 @@
-import { InterviewerProps } from "@components/domains/interviews/avatarMesh";
-import { Interviewer } from "@components/domains/interviews/interviewer";
+import { InterviewerProps } from "#components/domains/interviews/avatarMesh.tsx";
+import Interviewer from "#components/domains/interviews/interviewer.tsx";
 import { Environment, Html } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { JSX, lazy, Suspense } from "react";

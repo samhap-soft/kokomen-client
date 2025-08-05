@@ -1,5 +1,5 @@
-import { Button } from "@kokomen/ui/components/button";
-import { Textarea } from "@kokomen/ui/components/textarea/textarea";
+import { Button } from "@kokomen/ui";
+import { Textarea } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";

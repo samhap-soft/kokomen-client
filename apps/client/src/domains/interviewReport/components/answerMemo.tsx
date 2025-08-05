@@ -1,7 +1,13 @@
-import { Button } from "@kokomen/ui/components/button";
+import {
+  Button,
+  useToast,
+  Radio,
+  RadioGroup,
+  Modal,
+  Textarea
+} from "@kokomen/ui";
 import { NotebookPen, Trash } from "lucide-react";
 import { Dispatch, JSX, SetStateAction, useState } from "react";
-import { Textarea } from "@kokomen/ui/components/textarea/textarea";
 import { useMutation } from "@tanstack/react-query";
 import {
   createNewAnswerMemo,
@@ -9,11 +15,8 @@ import {
   updateAnswerMemo
 } from "@/domains/interviewReport/api/answerMemo";
 import { AnswerMemo } from "@/domains/interviewReport/types/memo";
-import { useToast } from "@kokomen/ui/hooks/useToast";
 import { isAxiosError } from "axios";
-import { Modal } from "@kokomen/ui/components/modal";
 import { useForm } from "react-hook-form";
-import { Radio, RadioGroup } from "@kokomen/ui/components/radio";
 import z from "zod";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useModal } from "@/hooks/useModal";

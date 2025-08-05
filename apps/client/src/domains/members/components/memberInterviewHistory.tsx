@@ -1,4 +1,4 @@
-import Select from "@kokomen/ui/components/select";
+import { Select } from "@kokomen/ui";
 import {
   Calendar,
   ChevronLeft,
@@ -6,11 +6,11 @@ import {
   Eye,
   Heart,
   TrendingUp,
-  Trophy,
+  Trophy
 } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { MemberInterview } from "@/domains/members/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { useRouter } from "next/router";
@@ -24,7 +24,7 @@ export default function InterviewHistory({
   interviewSummaries,
   sort,
   page,
-  totalPageCount,
+  totalPageCount
 }: {
   memberId: number;
   interviewSummaries: CamelCasedProperties<MemberInterview>["interviewSummaries"];
@@ -51,7 +51,7 @@ export default function InterviewHistory({
           value={sort}
           options={[
             { value: "desc", label: "최신순", disabled: false },
-            { value: "asc", label: "오래된순", disabled: false },
+            { value: "asc", label: "오래된순", disabled: false }
           ]}
           onChange={(value) => {
             router.push(`/members/${memberId}?sort=${value}&page=0`);
@@ -115,8 +115,8 @@ export default function InterviewHistory({
                           properties: {
                             interviewId: interview.interviewId,
                             category: interview.interviewCategory,
-                            question: interview.rootQuestion,
-                          },
+                            question: interview.rootQuestion
+                          }
                         });
                       }}
                       href={`/members/interviews/${interview.interviewId}`}

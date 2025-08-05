@@ -1,12 +1,12 @@
 import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@kokomen/ui/hooks/useToast";
+import { useToast } from "@kokomen/ui";
 import { AxiosError } from "axios";
 import z from "zod";
 import { updateUserProfile } from "@/domains/auth/api";
-import { Input } from "@kokomen/ui/components/input";
-import { Button } from "@kokomen/ui/components/button";
+import { Input } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { User } from "@kokomen/types";
 import { useRouter } from "@tanstack/react-router";
 

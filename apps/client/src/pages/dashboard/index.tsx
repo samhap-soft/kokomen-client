@@ -12,7 +12,7 @@ import { User as UserType } from "@/domains/auth/types";
 import { JSX } from "react";
 import { getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
-import { Rank, Percentile } from "@kokomen/ui/components/rank";
+import { Rank, Percentile } from "@kokomen/ui";
 
 export default function Dashboard({
   userInfo

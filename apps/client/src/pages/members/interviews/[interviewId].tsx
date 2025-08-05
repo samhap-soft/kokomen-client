@@ -6,21 +6,20 @@ import Header from "@/shared/header";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
-import { Layout } from "@kokomen/ui/components/layout";
+import { Layout, Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { HelpCircle, Info, Users, Share2, Eye } from "lucide-react";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
 import MemberQuestionFeedback from "@/domains/members/components/memberQuestionFeedback";
-import { Button } from "@kokomen/ui/components/button";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { SEO } from "@/shared/seo";
 
 export default function MemberInterviewResultPage({
   result,
   user,
-  interviewId,
+  interviewId
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const handleShare = async () => {
     if (navigator.share) {
@@ -28,7 +27,7 @@ export default function MemberInterviewResultPage({
         await navigator.share({
           title: "면접 결과 공유",
           text: `${result.intervieweeNickname}님은 ${result.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`,
-          url: window.location.href,
+          url: window.location.href
         });
       } catch (err) {
         console.log("공유 실패:", err);
@@ -169,7 +168,7 @@ export const getServerSideProps = async (
   const interviewIdNumber = Number(interviewId);
   const [userResult, interviewResult] = await Promise.allSettled([
     getUserInfo(context),
-    getMemberInterviewResult(interviewIdNumber, context),
+    getMemberInterviewResult(interviewIdNumber, context)
   ]);
 
   if (interviewResult.status === "rejected") {
@@ -183,7 +182,7 @@ export const getServerSideProps = async (
     props: {
       result,
       user,
-      interviewId: interviewIdNumber,
-    },
+      interviewId: interviewIdNumber
+    }
   };
 };

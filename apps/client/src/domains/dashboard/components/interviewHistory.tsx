@@ -1,7 +1,7 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { interviewHistoryKeys } from "@/utils/querykeys";
-import Select from "@kokomen/ui/components/select";
+import { Select } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Calendar,
@@ -10,7 +10,7 @@ import {
   Heart,
   NotebookPen,
   TrendingUp,
-  Trophy,
+  Trophy
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
@@ -24,7 +24,7 @@ export default function InterviewHistory() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    isError,
+    isError
   } = useInfiniteQuery({
     queryKey: interviewHistoryKeys.infinite([sort, range]),
     queryFn: ({ pageParam = 0 }) =>
@@ -32,7 +32,7 @@ export default function InterviewHistory() {
         page: pageParam,
         size: 10,
         sort: sort,
-        range: range,
+        range: range
       }),
     getNextPageParam: (lastPage, allPages) => {
       // 마지막 페이지가 10개 미만이면 더 이상 페이지가 없음
@@ -42,7 +42,7 @@ export default function InterviewHistory() {
       // 다음 페이지 번호 반환 (0부터 시작)
       return allPages.length;
     },
-    initialPageParam: 0,
+    initialPageParam: 0
   });
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -62,7 +62,7 @@ export default function InterviewHistory() {
     return new Date(dateString).toLocaleDateString("ko-KR", {
       year: "numeric",
       month: "long",
-      day: "numeric",
+      day: "numeric"
     });
   };
 
@@ -95,7 +95,7 @@ export default function InterviewHistory() {
           options={[
             { value: "ALL", label: "전체" },
             { value: "FINISHED", label: "완료" },
-            { value: "IN_PROGRESS", label: "진행중" },
+            { value: "IN_PROGRESS", label: "진행중" }
           ]}
           onChange={(value) => {
             setRange(value as "IN_PROGRESS" | "FINISHED" | "ALL");
@@ -107,7 +107,7 @@ export default function InterviewHistory() {
           value={sort}
           options={[
             { value: "desc", label: "최신순", disabled: false },
-            { value: "asc", label: "오래된순", disabled: false },
+            { value: "asc", label: "오래된순", disabled: false }
           ]}
           onChange={(value) => setSort(value as "desc" | "asc")}
         />

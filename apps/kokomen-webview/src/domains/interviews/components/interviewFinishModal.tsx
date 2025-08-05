@@ -1,6 +1,6 @@
 import { FC, JSX, memo, MemoExoticComponent } from "react";
-import { Modal } from "@kokomen/ui/components/modal";
-import { Button } from "@kokomen/ui/components/button";
+import { Modal } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { Interview } from "@kokomen/types";
 import { useRouter } from "@tanstack/react-router";
 
