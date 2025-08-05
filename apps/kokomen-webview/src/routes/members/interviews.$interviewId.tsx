@@ -32,7 +32,7 @@ function RouteComponent() {
           url: window.location.href
         });
       } catch (err) {
-        console.log("공유 실패:", err);
+        console.error("공유 실패:", err);
       }
     } else {
       await navigator.clipboard.writeText(window.location.href);

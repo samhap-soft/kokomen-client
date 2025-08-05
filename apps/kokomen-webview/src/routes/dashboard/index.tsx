@@ -13,7 +13,6 @@ import { LoadingFullScreen } from "@kokomen/ui";
 export const Route = createFileRoute("/dashboard/")({
   component: RouteComponent,
   beforeLoad: async () => {
-    console.log(useAuthStore.getState().isAuthenticated);
     if (!useAuthStore.getState().isAuthenticated) {
       throw redirect({
         to: "/login",

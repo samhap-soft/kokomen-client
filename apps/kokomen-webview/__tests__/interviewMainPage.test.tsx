@@ -46,7 +46,6 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
     mockApi.ranking(mockRankList);
     mockApi.categories(mockCategories);
     await openPageSetup("/interviews");
-    console.log(screen.debug());
     await waitFor(() => {
       expect(screen.getByText("테스트 면접 면접 시작하기")).toBeInTheDocument();
     });
