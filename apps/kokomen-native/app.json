@@ -11,8 +11,8 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to use the microphone.",
-          "speechRecognitionPermission": "Allow $(PRODUCT_NAME) to use speech recognition.",
+          "microphonePermission": "면접에서 음성을 인식하기 위해 마이크 권한이 필요합니다.",
+          "speechRecognitionPermission": "면접에서 음성을 인식하기 위해 음성 인식 권한이 필요합니다.",
           "androidSpeechServicePackages": [
             "com.google.android.googlequicksearchbox"
           ]
