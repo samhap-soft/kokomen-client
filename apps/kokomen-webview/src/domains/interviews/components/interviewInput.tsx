@@ -39,7 +39,7 @@ export function InterviewAnswerInput({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const updateInterviewInput = useCallback(
     (result: string) => {
-      setInterviewInput((prev) => prev + " " + result);
+      setInterviewInput(result);
       if (textAreaRef.current) {
         textAreaRef.current.style.height = "auto";
         textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight > 400 ? 400 : textAreaRef.current.scrollHeight}px`;

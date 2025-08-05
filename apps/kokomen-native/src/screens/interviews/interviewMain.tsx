@@ -28,10 +28,8 @@ export default function InterviewMainScreen() {
     try {
       const data = JSON.parse(event.nativeEvent.data);
       if (data.type === "startListening") {
-        console.log("startListening");
         handleStart();
       } else if (data.type === "stopListening") {
-        console.log("stopListening");
         handleStop();
       }
     } catch (error) {

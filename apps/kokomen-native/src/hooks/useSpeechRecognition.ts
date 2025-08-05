@@ -2,7 +2,7 @@ import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
 } from "expo-speech-recognition";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Platform } from "react-native";
 
 export default function useSpeechRecognition({
@@ -19,6 +19,8 @@ export default function useSpeechRecognition({
   abortOnError?: boolean;
 }) {
   const [isListening, setIsListening] = useState(false);
+  const results = useRef<string[]>([]);
+  const resultPointer = useRef<number>(0);
 
   useSpeechRecognitionEvent("start", () => {
     setIsListening(true);
@@ -30,7 +32,15 @@ export default function useSpeechRecognition({
   });
 
   useSpeechRecognitionEvent("result", (event) => {
-    onResult?.(event.results[0]?.transcript);
+    if (event.isFinal) {
+      results.current[resultPointer.current] =
+        event.results[0]?.transcript || "";
+      resultPointer.current++;
+    } else {
+      results.current[resultPointer.current] =
+        event.results[0]?.transcript || "";
+    }
+    onResult?.(results.current.join(" "));
   });
   useSpeechRecognitionEvent("error", (event) => {
     onError?.(event.error);
