@@ -6,7 +6,7 @@ interface InterviewAnswerApiRequest {
 }
 
 interface InterviewAnswerApiResponse {
-  cur_answer_rank: string;
+  cur_answer_rank: "A" | "B" | "C" | "D" | "F";
   next_question_id: number;
   next_question: string;
 }
@@ -14,7 +14,7 @@ interface InterviewAnswerApiResponse {
 export async function submitInterviewAnswer({
   interviewId,
   questionId,
-  answer,
+  answer
 }: {
   interviewId: number;
   questionId: number;
@@ -27,10 +27,10 @@ export async function submitInterviewAnswer({
   >(
     `/interviews/${interviewId}/questions/${questionId}/answers`,
     {
-      answer: answer,
+      answer: answer
     },
     {
-      timeout: 30000,
+      timeout: 30000
     }
   );
 }

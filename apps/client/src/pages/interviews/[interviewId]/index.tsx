@@ -1,12 +1,13 @@
-import { Layout } from "@kokomen/ui";
+import { Layout, LoadingFullScreen } from "@kokomen/ui";
 import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
+import { InterviewSideBar } from "@kokomen/ui/domains";
+import { useModal } from "@kokomen/utils";
 import React, { JSX, useEffect, useState } from "react";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 import dynamic from "next/dynamic";
 import { getInterview } from "@/domains/interview/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,7 +19,10 @@ import { SEO } from "@/shared/seo";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
-  () => import("@/domains/interview/components/AiInterviewInterface"),
+  () =>
+    import("@kokomen/ui/domains").then(
+      (component) => component.AiInterviewInterface
+    ),
   {
     ssr: false,
     loading: () => (
@@ -29,15 +33,7 @@ const AiInterviewInterface = dynamic(
   }
 );
 
-const InterviewLoading = (): JSX.Element => {
-  return (
-    <div className="bg-gradient-to-r w-screen h-screen from-blue-50 to-primary-bg-hover relative rounded-lg">
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    </div>
-  );
-};
+export type InterviewerEmotion = "happy" | "encouraging" | "angry" | "neutral";
 
 const START_UP_QUESTION: string =
   "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요.";
@@ -45,6 +41,11 @@ export default function InterviewPage({
   interviewId
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
+  const {
+    isOpen: isInterviewSidebarOpen,
+    openModal: openInterviewSidebar,
+    closeModal: closeInterviewSidebar
+  } = useModal();
   const queryClient = useQueryClient();
   const { data, isPending, isError } = useQuery({
     queryKey: interviewKeys.byInterviewId(interviewId),
@@ -76,8 +77,8 @@ export default function InterviewPage({
   // 면접관 캐릭터 끄덕거리게 하거나 대화하는 것처럼 보이게 하기
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
-  const listeningEmotion = isListening ? "happy" : "encouraging";
-  const interviewerEmotion = isSpeaking ? "neutral" : listeningEmotion;
+  const [interviewerEmotion, setInterviewerEmotion] =
+    useState<InterviewerEmotion>("happy");
 
   useEffect(() => {
     setIsSpeaking(true);
@@ -86,7 +87,7 @@ export default function InterviewPage({
     }, 4000);
   }, [data.cur_question]);
 
-  if (isPending) return <InterviewLoading />;
+  if (isPending) return <LoadingFullScreen />;
   if (isError) throw new Error("인터뷰 정보를 불러오는데 실패했습니다.");
 
   return (
@@ -117,6 +118,7 @@ export default function InterviewPage({
               </div>
             </div>
             <InterviewAnswerInput
+              setInterviewerEmotion={setInterviewerEmotion}
               isInterviewStarted={isInterviewStarted}
               cur_question={data.cur_question}
               cur_question_id={data.cur_question_id}
@@ -128,6 +130,9 @@ export default function InterviewPage({
             />
           </div>
           <InterviewSideBar
+            open={isInterviewSidebarOpen}
+            openSidebar={openInterviewSidebar}
+            closeSidebar={closeInterviewSidebar}
             prevQuestionAndAnswer={data.prev_questions_and_answers}
           />
         </div>

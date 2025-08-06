@@ -14,7 +14,8 @@ export {
   memberKeys,
   meKeys,
   notificationKeys,
-  mapToCamelCase
+  mapToCamelCase,
+  getEmotion
 } from "./general";
 export {
   useCombinedRefs,

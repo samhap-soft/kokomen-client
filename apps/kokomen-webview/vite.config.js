@@ -1,12 +1,13 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { readFileSync } from "fs";
+import browserslistToEsbuild from 'browserslist-to-esbuild'
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigpaths from "vite-tsconfig-paths";
-import { readFileSync } from "fs";
 import path from "path";
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command }) => {
   const isDev = command === "serve";
 
   return {
@@ -24,7 +25,6 @@ export default defineConfig(({ command, mode }) => {
     optimizeDeps: {
       include: ["@kokomen/ui"]
     },
-    base: "./",
     ...(isDev && {
       server: {
         port: 3000,
@@ -36,6 +36,9 @@ export default defineConfig(({ command, mode }) => {
         }
       }
     }),
+    build: {
+      target: browserslistToEsbuild()
+    },
     assetsInclude: ["**/*.glb"],
     resolve: {
       alias: {

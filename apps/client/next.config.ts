@@ -8,7 +8,8 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@kokomen/ui", "@kokomen/types"],
+  transpilePackages: ["@kokomen/ui", "@kokomen/types", "@kokomen/utils"],
+  allowedDevOrigins: ["*.kokomen.kr"],
   eslint: {
     ignoreDuringBuilds: true
   },
