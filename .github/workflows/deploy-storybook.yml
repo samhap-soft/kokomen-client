@@ -1,0 +1,27 @@
+name: Deployment (Storybook)
+
+on:
+  push:
+    branches: [development]
+
+jobs:
+  deploy:
+    name: Deploy to Chromatic
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Project setup
+        run: |
+          run corepack enable
+          yarn set version berry
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: Deploy to Chromatic
+        run: |
+          npx chromatic --project-token ${{ secrets.CHROMATIC_PROJECT_TOKEN }}

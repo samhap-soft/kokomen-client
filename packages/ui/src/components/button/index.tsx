@@ -1,7 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority";
 import React, { ButtonHTMLAttributes, JSX, RefObject } from "react";
 import { cn } from "../../utils/index.ts";
-import { RoundSpinner } from "#components/spinner/index.tsx";
+import { RoundSpinner } from "../spinner";
 
 type ButtonVariantsProps = VariantProps<typeof buttonVariants>;
 
