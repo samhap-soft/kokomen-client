@@ -8,5 +8,5 @@ export * from "./rank";
 export * from "./select";
 export * from "./sidebar";
 export * from "./spinner";
-export * from "./textarea/textarea";
+export * from "./textarea";
 export * from "./toast";
