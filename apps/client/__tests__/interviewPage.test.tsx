@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 /* eslint-disable @typescript-eslint/typedef */
 import "@testing-library/jest-dom";
-import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
+import { InterviewSideBar } from "@kokomen/ui/domains";
 import { renderWithProviders } from "@/utils/test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import InterviewPage from "@/pages/interviews/[interviewId]";
@@ -13,7 +13,14 @@ import { mockReplace } from "jest.setup";
 
 describe("면접 페이지 컴포넌트 렌더링 테스트", () => {
   it("면접 답변 사이드바 컴포넌트가 제대로 렌더링 되는지 테스트", () => {
-    renderWithProviders(<InterviewSideBar />);
+    renderWithProviders(
+      <InterviewSideBar
+        prevQuestionAndAnswer={[]}
+        open={false}
+        openSidebar={() => {}}
+        closeSidebar={() => {}}
+      />
+    );
 
     const openButton = screen.getByRole("button", { name: "사이드바 열기" });
     expect(openButton).toBeInTheDocument();
@@ -27,9 +34,12 @@ describe("면접 페이지 컴포넌트 렌더링 테스트", () => {
         prevQuestionAndAnswer={[
           {
             answer: "테스트",
-            question: "테스트입니다.",
-          },
+            question: "테스트입니다."
+          }
         ]}
+        open={false}
+        openSidebar={() => {}}
+        closeSidebar={() => {}}
       />
     );
 
@@ -55,18 +65,18 @@ const interviewData = {
       question_id: 1,
       question: "프로세스와 스레드 차이 설명해주세요.",
       answer_id: 1,
-      answer: "프로세스는 무겁고 스레드는 경량입니다.",
-    },
+      answer: "프로세스는 무겁고 스레드는 경량입니다."
+    }
   ],
   cur_question_id: 2,
   cur_question: "현재 새로운 질문",
   cur_question_count: 2,
-  max_question_count: 3,
+  max_question_count: 3
 };
 const interviewAnswerData = {
   cur_answer_rank: "A",
   next_question_id: 3,
-  next_question: "제출 완료",
+  next_question: "제출 완료"
 };
 describe("면접 페이지 테스트", () => {
   window.ResizeObserver = ResizeObserver;
@@ -90,7 +100,7 @@ describe("면접 페이지 테스트", () => {
     });
 
     const startButton = screen.getByRole("button", {
-      name: "면접 시작하기",
+      name: "면접 시작하기"
     });
 
     expect(startButton).toBeEnabled();
@@ -113,7 +123,7 @@ describe("면접 페이지 테스트", () => {
     ).toBeInTheDocument();
 
     const startButton = screen.getByRole("button", {
-      name: "면접 시작하기",
+      name: "면접 시작하기"
     });
 
     await waitFor(() => {
@@ -153,7 +163,7 @@ describe("면접 페이지 테스트", () => {
     });
 
     const startButton = screen.getByRole("button", {
-      name: "면접 시작하기",
+      name: "면접 시작하기"
     });
 
     expect(startButton).toBeEnabled();
@@ -163,12 +173,12 @@ describe("면접 페이지 테스트", () => {
     });
 
     const answerInput = screen.getByRole("textbox", {
-      name: "interview-answer",
+      name: "interview-answer"
     });
     fireEvent.change(answerInput, { target: { value: "테스트 답변" } });
 
     const submitButton = screen.getByRole("button", {
-      name: "interview-submit",
+      name: "interview-submit"
     });
 
     fireEvent.click(submitButton);
@@ -185,7 +195,7 @@ describe("면접 페이지 테스트", () => {
           await delay(100);
           return HttpResponse.json({
             ...interviewData,
-            interview_state: "FINISHED",
+            interview_state: "FINISHED"
           });
         }
       )
@@ -196,10 +206,10 @@ describe("면접 페이지 테스트", () => {
       expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
     });
     const homeButton = screen.getByRole("button", {
-      name: "home-button",
+      name: "home-button"
     });
     const goToResultButton = screen.getByRole("button", {
-      name: "go-to-result-button",
+      name: "go-to-result-button"
     });
     expect(homeButton).toBeInTheDocument();
     expect(goToResultButton).toBeInTheDocument();
@@ -227,7 +237,7 @@ describe("면접 페이지 테스트", () => {
     ).toBeInTheDocument();
 
     const voiceButton = screen.getByRole("button", {
-      name: "interview-voice-start",
+      name: "interview-voice-start"
     });
     expect(voiceButton).toBeDisabled();
   });
@@ -271,12 +281,12 @@ describe("면접 페이지 테스트", () => {
 
     Object.defineProperty(window, "SpeechRecognition", {
       value: MockSpeechRecognition,
-      writable: true,
+      writable: true
     });
 
     Object.defineProperty(window, "webkitSpeechRecognition", {
       value: MockSpeechRecognition,
-      writable: true,
+      writable: true
     });
 
     server.use(
@@ -298,7 +308,7 @@ describe("면접 페이지 테스트", () => {
     ).toBeInTheDocument();
 
     const startButton = screen.getByRole("button", {
-      name: "면접 시작하기",
+      name: "면접 시작하기"
     });
     fireEvent.click(startButton);
 
@@ -307,7 +317,7 @@ describe("면접 페이지 테스트", () => {
     });
 
     const voiceButton = screen.getByRole("button", {
-      name: "interview-voice-start",
+      name: "interview-voice-start"
     });
 
     fireEvent.click(voiceButton);
@@ -318,7 +328,7 @@ describe("면접 페이지 테스트", () => {
     await waitFor(() => {
       expect(
         screen.getByRole("button", {
-          name: "interview-voice-stop",
+          name: "interview-voice-stop"
         })
       ).toBeInTheDocument();
     });
@@ -353,10 +363,10 @@ describe("면접 페이지 테스트", () => {
                   [
                     {
                       transcript: "테스트 음성 인식 결과",
-                      confidence: 0.9,
-                    },
-                  ],
-                ],
+                      confidence: 0.9
+                    }
+                  ]
+                ]
               });
             }
           }, 100);
@@ -374,12 +384,12 @@ describe("면접 페이지 테스트", () => {
 
     Object.defineProperty(window, "SpeechRecognition", {
       value: MockSpeechRecognition,
-      writable: true,
+      writable: true
     });
 
     Object.defineProperty(window, "webkitSpeechRecognition", {
       value: MockSpeechRecognition,
-      writable: true,
+      writable: true
     });
 
     server.use(
@@ -395,7 +405,7 @@ describe("면접 페이지 테스트", () => {
     renderWithProviders(<InterviewPage interviewId={1} />);
 
     const startButton = screen.getByRole("button", {
-      name: "면접 시작하기",
+      name: "면접 시작하기"
     });
     fireEvent.click(startButton);
 
@@ -404,7 +414,7 @@ describe("면접 페이지 테스트", () => {
     });
 
     const voiceButton = screen.getByRole("button", {
-      name: "interview-voice-start",
+      name: "interview-voice-start"
     });
     fireEvent.click(voiceButton);
 
@@ -415,7 +425,7 @@ describe("면접 페이지 테스트", () => {
     // 음성 인식 결과가 텍스트 입력에 반영되는지 확인
     await waitFor(() => {
       const textarea = screen.getByRole("textbox", {
-        name: "interview-answer",
+        name: "interview-answer"
       });
       expect(textarea).toHaveValue(" 테스트 음성 인식 결과");
     });
