@@ -1,8 +1,10 @@
-import { Accordion, Sidebar, Button } from "#components/index.ts";
+import { Sidebar } from "../../sidebar";
+import { Button } from "../../button";
 import { QuestionAndAnswer } from "@kokomen/types";
 import { SidebarIcon } from "lucide-react";
 import { JSX } from "react";
 import { CamelCasedProperties } from "@kokomen/types";
+import { Accordion } from "#components/index.ts";
 
 export default function InterviewSideBar({
   prevQuestionAndAnswer = [],

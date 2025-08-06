@@ -1,4 +1,4 @@
-import { Button } from "#components/index.ts";
+import { Button } from "../../button";
 import { InterviewActions, InterviewState } from "@kokomen/types";
 import { JSX, useState } from "react";
 
