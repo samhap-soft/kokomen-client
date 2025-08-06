@@ -1,9 +1,10 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
 import { Interview } from "@/domains/interview/types";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { captureFormSubmitEvent } from "@/utils/analytics";
-import { Button } from "@kokomen/ui";
-import { Textarea } from "@kokomen/ui";
+import { Button, Textarea } from "@kokomen/ui";
+import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import { useRouter } from "next/router";
@@ -19,6 +20,7 @@ type InterviewInputProps = Pick<
   interviewId: number;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
   totalQuestions: number;
+  setInterviewerEmotion: React.Dispatch<React.SetStateAction<InterviewerEmotion>>;
 };
 const SUBMIT_FAILED_MESSAGE: string =
   "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
@@ -31,7 +33,8 @@ export function InterviewAnswerInput({
   updateInterviewData,
   interviewId,
   setIsListening,
-  totalQuestions
+  totalQuestions,
+  setInterviewerEmotion
 }: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -94,6 +97,7 @@ export function InterviewAnswerInput({
         }, 2000);
         return;
       }
+      setInterviewerEmotion(getEmotion(data.cur_answer_rank));
       updateInterviewData({
         cur_question: data.next_question,
         cur_question_id: data.next_question_id
