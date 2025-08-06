@@ -19,6 +19,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@kokomen/ui": "workspace:*",
+    "@kokomen/utils": "workspace:*",
     "@sentry/nextjs": "^9.31.0",
     "@tanstack/react-query": "^5.80.6",
     "axios": "^1.9.0",
@@ -36,7 +37,6 @@
     "@babel/preset-typescript": "^7.27.1",
     "@kokomen/eslint-config": "workspace:*",
     "@kokomen/types": "workspace:*",
-    "@kokomen/utils": "workspace:*",
     "@lhci/cli": "^0.15.0",
     "@next/bundle-analyzer": "^15.3.4",
     "@react-three/drei": "^10.3.0",
