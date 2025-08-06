@@ -1,7 +1,7 @@
 import { Interview } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
-import type { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
-import { mapToCamelCase } from "@kokomen/utils/general/convertConvention";
+import type { CamelCasedProperties } from "@kokomen/utils";
+import { mapToCamelCase } from "@kokomen/utils";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,

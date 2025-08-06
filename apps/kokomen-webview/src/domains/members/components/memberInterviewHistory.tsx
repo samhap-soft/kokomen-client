@@ -1,8 +1,7 @@
 import { Select } from "@kokomen/ui";
 import { Calendar, Eye, Heart, TrendingUp, Trophy } from "lucide-react";
 import { Dispatch, JSX, SetStateAction } from "react";
-import { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
-import { formatDate } from "@kokomen/utils/general/date";
+import { CamelCasedProperties, formatDate } from "@kokomen/utils";
 // import { captureButtonEvent } from "@/utils/analytics";
 import { MemberInterview } from "@kokomen/types";
 import { Link } from "@tanstack/react-router";

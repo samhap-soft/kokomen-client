@@ -1,6 +1,5 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
-import { useIntersectionObserver } from "@kokomen/utils/react/useIntersectionObserver";
-import { interviewHistoryKeys } from "@kokomen/utils/general/querykeys";
+import { useIntersectionObserver, interviewHistoryKeys } from "@kokomen/utils";
 import { Select } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
