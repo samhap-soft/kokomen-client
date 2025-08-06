@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { JSX, useEffect, useRef } from "react";
 import { Bone, Group, SkinnedMesh } from "three";
 
-type Emotion = "neutral" | "happy" | "encouraging";
+type Emotion = "neutral" | "happy" | "encouraging" | "angry";
 export interface InterviewerProps {
   isSpeaking?: boolean;
   isListening?: boolean;
@@ -70,6 +70,12 @@ export function AvatarMesh({
         }
         break;
 
+      case "angry":
+        if (dict.mouthSmile !== undefined) {
+          influences[dict.mouthSmile] = -0.6;
+        }
+        break;
+
       case "neutral":
       default:
         if (dict.mouthSmile !== undefined) {
@@ -85,11 +91,8 @@ export function AvatarMesh({
     // 아바타 전체의 움직임
     if (avatarRef.current) {
       avatarRef.current.position.y = isListening
-        ? Math.sin(time * 2) * 0.01
+        ? Math.sin(time * 2) * 0.005
         : Math.sin(time * 1.2) * 0.005;
-      avatarRef.current.rotation.z = isListening
-        ? Math.sin(time * 1.5) * 0.005
-        : 0;
     }
 
     // 아바타 고개끄덕거리기
@@ -97,11 +100,11 @@ export function AvatarMesh({
       const baseHeadUp = -0.3; // 기본적으로 고개를 들게 하는 값
 
       headRef.current.rotation.x = isListening
-        ? baseHeadUp + Math.sin(time * 5) * 0.2
+        ? baseHeadUp + Math.sin(time * 5) * 0.07
         : baseHeadUp + Math.sin(time * 3) * 0.05;
 
       headRef.current.rotation.y = isListening
-        ? Math.sin(time * 2.5) * 0.05
+        ? Math.sin(time * 3) * 0.05
         : Math.sin(time * 0.6) * 0.05;
     }
 
