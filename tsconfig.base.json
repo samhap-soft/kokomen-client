@@ -16,11 +16,7 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "allowImportingTsExtensions": true,
-    "paths": {
-      "@kokomen/ui/*": ["./packages/ui/src/*"],
-      "@kokomen/utils/*": ["./packages/kokomen-utils/src/*"]
-    }
+    "allowImportingTsExtensions": true
   },
   "references": [
     { "path": "./packages/ui/src" },

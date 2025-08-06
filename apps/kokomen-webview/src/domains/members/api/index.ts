@@ -1,8 +1,5 @@
 import { MemberInterview, MemberInterviewResult, Rank } from "@kokomen/types";
-import {
-  CamelCasedProperties,
-  mapToCamelCase
-} from "@kokomen/utils/general/convertConvention";
+import { CamelCasedProperties, mapToCamelCase } from "@kokomen/utils";
 import axios, { AxiosInstance } from "axios";
 
 const memberInstance: AxiosInstance = axios.create({

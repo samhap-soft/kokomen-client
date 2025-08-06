@@ -1,6 +1,6 @@
 import { InterviewReport } from "@kokomen/types";
-import type { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
-import { mapToCamelCase } from "@kokomen/utils/general/convertConvention";
+import type { CamelCasedProperties } from "@kokomen/utils";
+import { mapToCamelCase } from "@kokomen/utils";
 import axios, { AxiosInstance } from "axios";
 
 const interviewApiInstance: AxiosInstance = axios.create({

@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { memberKeys } from "@kokomen/utils/general/querykeys";
+import { memberKeys } from "@kokomen/utils";
 import { Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { useNavigate } from "@tanstack/react-router";

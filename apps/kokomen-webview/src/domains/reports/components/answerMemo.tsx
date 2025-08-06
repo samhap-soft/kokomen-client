@@ -9,7 +9,7 @@ import {
 import { NotebookPen, Trash } from "lucide-react";
 import { Dispatch, JSX, SetStateAction, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useModal } from "@kokomen/utils/react/useModal";
+import { useModal } from "@kokomen/utils";
 import { isAxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { AnswerMemo } from "@kokomen/types";

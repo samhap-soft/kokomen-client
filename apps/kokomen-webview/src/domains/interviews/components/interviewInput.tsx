@@ -3,7 +3,7 @@ import { Textarea } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
-import type { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
+import type { CamelCasedProperties } from "@kokomen/utils";
 import { Interview } from "@kokomen/types";
 import { useRouter } from "@tanstack/react-router";
 import { submitInterviewAnswer } from "@/domains/interviews/api/interviewAnswer";

@@ -1,5 +1,5 @@
 import { createFileRoute, useParams, useRouter } from "@tanstack/react-router";
-import { interviewKeys } from "@kokomen/utils/general/querykeys";
+import { interviewKeys } from "@kokomen/utils";
 import { getInterviewReport } from "@/domains/reports/api/report";
 import { LoadingFullScreen } from "@kokomen/ui";
 import { useQuery } from "@tanstack/react-query";

@@ -8,7 +8,7 @@ import {
   QueryClientProvider,
   useQuery
 } from "@tanstack/react-query";
-import { meKeys } from "@kokomen/utils/general/querykeys";
+import { meKeys } from "@kokomen/utils";
 import { getUserInfo } from "@/domains/auth/api";
 import { useAuthStore } from "@/store";
 

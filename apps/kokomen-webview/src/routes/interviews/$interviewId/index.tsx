@@ -1,15 +1,17 @@
 import { getInterview } from "@/domains/interviews/api";
 import { createFileRoute, useParams } from "@tanstack/react-router";
-import React, { lazy, useEffect, useState } from "react";
-import { interviewKeys } from "@kokomen/utils/general/querykeys";
+import { lazy, ReactNode, useEffect, useState } from "react";
+import {
+  interviewKeys,
+  useSidebar,
+  CamelCasedProperties
+} from "@kokomen/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Interview } from "@kokomen/types";
-import { CamelCasedProperties } from "@kokomen/utils/general/convertConvention";
 import { LoadingFullScreen } from "@kokomen/ui";
 import ErrorComponent from "@/common/components/ErrorComponent";
 import { InterviewAnswerInput } from "@/domains/interviews/components/interviewInput";
 import { InterviewSideBar } from "@kokomen/ui/domains";
-import { useSidebar } from "@kokomen/utils/react/useModal";
 import { Button } from "@kokomen/ui";
 import InterviewFinishModal from "@/domains/interviews/components/interviewFinishModal";
 
@@ -29,14 +31,16 @@ export const Route = createFileRoute("/interviews/$interviewId/")({
   pendingComponent: LoadingFullScreen
 });
 
-const AiInterviewInterface = lazy(
-  () => import("@kokomen/ui/components/domains/interviews/AiInterviewInterface")
+const AiInterviewInterface = lazy(() =>
+  import("@kokomen/ui/domains").then((component) => ({
+    default: component.AiInterviewInterface
+  }))
 );
 
 const START_UP_QUESTION: string =
   "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요.";
 
-function RouteComponent(): React.ReactNode {
+function RouteComponent(): ReactNode {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { interviewId } = useParams({ from: "/interviews/$interviewId/" });
