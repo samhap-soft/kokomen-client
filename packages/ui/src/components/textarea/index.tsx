@@ -1,4 +1,4 @@
-import { cn } from "#utils/index.ts";
+import { cn } from "../../utils/index.ts";
 import { cva, VariantProps } from "class-variance-authority";
 import React, { JSX, RefObject, useCallback } from "react";
 
@@ -8,24 +8,24 @@ const textareaVariants = cva("flex items-center rounded-xl p-2 s resize-none", {
   variants: {
     variant: {
       default: "border-border-input",
-      red: "border-red-600",
+      red: "border-red-600"
     },
     border: {
       default:
         "border hover:border-primary-hover transition-all focus:border-primary",
-      none: "border-none focus:outline-none",
+      none: "border-none focus:outline-none"
     },
     size: {
       default: "text-base",
       sm: "text-sm",
       lg: "text-lg",
-      xl: "text-xl",
-    },
+      xl: "text-xl"
+    }
   },
   defaultVariants: {
     variant: "default",
-    size: "default",
-  },
+    size: "default"
+  }
 });
 
 interface TextareaProps
