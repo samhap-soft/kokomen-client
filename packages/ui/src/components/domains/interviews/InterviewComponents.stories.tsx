@@ -3,7 +3,7 @@ import { useState } from "react";
 import InterviewModals from "./interviewModals";
 import InterviewSideBar from "./interviewSideBar";
 import AiInterviewInterface from "./AiInterviewInterface";
-import { InterviewState } from "@kokomen/types";
+import { InterviewState, PrevQuestionAndAnswers } from "@kokomen/types";
 
 // Mock InterviewState and InterviewActions for stories
 const mockInterviewState: InterviewState = {
@@ -130,19 +130,25 @@ export const InterviewSideBarDefault: Story = {
   render: () => {
     const [open, setOpen] = useState(false);
 
-    const mockQuestionAndAnswer = [
+    const mockQuestionAndAnswer: PrevQuestionAndAnswers = [
       {
         question: "자기소개를 해주세요.",
+        question_id: 1,
+        answer_id: 1,
         answer:
           "안녕하세요. 저는 홍길동입니다. 웹 개발자로 3년간 일해왔고, React와 TypeScript에 전문성을 가지고 있습니다."
       },
       {
         question: "가장 어려웠던 프로젝트는 무엇인가요?",
+        question_id: 2,
+        answer_id: 2,
         answer:
           "대규모 전자상거래 플랫폼을 개발할 때였습니다. 성능 최적화와 사용자 경험 개선에 많은 시간을 투자했습니다."
       },
       {
         question: "팀워크에 대해 어떻게 생각하시나요?",
+        question_id: 3,
+        answer_id: 3,
         answer:
           "팀워크는 프로젝트 성공의 핵심이라고 생각합니다. 서로의 의견을 존중하고 협력하는 것이 중요합니다."
       }
@@ -197,34 +203,46 @@ export const InterviewSideBarManyQuestions: Story = {
   render: () => {
     const [open, setOpen] = useState(false);
 
-    const mockQuestionAndAnswer = [
+    const mockQuestionAndAnswer: PrevQuestionAndAnswers = [
       {
         question: "자기소개를 해주세요.",
+        question_id: 1,
+        answer_id: 1,
         answer:
           "안녕하세요. 저는 홍길동입니다. 웹 개발자로 3년간 일해왔고, React와 TypeScript에 전문성을 가지고 있습니다."
       },
       {
         question: "가장 어려웠던 프로젝트는 무엇인가요?",
+        question_id: 2,
+        answer_id: 2,
         answer:
           "대규모 전자상거래 플랫폼을 개발할 때였습니다. 성능 최적화와 사용자 경험 개선에 많은 시간을 투자했습니다."
       },
       {
         question: "팀워크에 대해 어떻게 생각하시나요?",
+        question_id: 3,
+        answer_id: 3,
         answer:
           "팀워크는 프로젝트 성공의 핵심이라고 생각합니다. 서로의 의견을 존중하고 협력하는 것이 중요합니다."
       },
       {
         question: "새로운 기술을 배우는 방법은?",
+        question_id: 4,
+        answer_id: 4,
         answer:
           "공식 문서를 먼저 읽고, 작은 프로젝트로 실습해보며, 커뮤니티에 참여하여 다른 개발자들과 소통합니다."
       },
       {
         question: "코드 리뷰의 중요성에 대해 어떻게 생각하시나요?",
+        question_id: 5,
+        answer_id: 5,
         answer:
           "코드 리뷰는 코드 품질 향상과 지식 공유에 매우 중요합니다. 서로의 코드를 검토하며 더 나은 솔루션을 찾을 수 있습니다."
       },
       {
         question: "성장하는 개발자가 되기 위한 방법은?",
+        question_id: 6,
+        answer_id: 6,
         answer:
           "지속적인 학습과 실습, 그리고 다른 개발자들과의 소통이 중요합니다. 새로운 기술을 두려워하지 않고 도전하는 자세가 필요합니다."
       }

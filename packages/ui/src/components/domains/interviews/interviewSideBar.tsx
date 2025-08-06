@@ -4,7 +4,7 @@ import { QuestionAndAnswer } from "@kokomen/types";
 import { SidebarIcon } from "lucide-react";
 import { JSX } from "react";
 import { CamelCasedProperties } from "@kokomen/types";
-import { Accordion } from "#components/index.ts";
+import * as Accordion from "../../accordion";
 
 export default function InterviewSideBar({
   prevQuestionAndAnswer = [],
@@ -41,34 +41,35 @@ export default function InterviewSideBar({
           defaultActiveKey={["feedback-1"]}
           className="w-full"
         >
-          {prevQuestionAndAnswer.map((feedback, idx) => (
-            <Accordion.AccordionItem key={idx} itemKey={`question-${idx}`}>
-              <Accordion.AccordionTrigger className="text-lg font-bold text-primary">
-                {feedback.question}
-              </Accordion.AccordionTrigger>
-              <Accordion.AccordionContent>
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className="inline-block w-2 h-6 bg-primary rounded-sm"
-                      aria-hidden="true"
-                    ></span>
-                    <p
-                      className="text-lg font-semibold text-primary"
-                      aria-label="내 답변"
-                    >
-                      내 답변
-                    </p>
+          {prevQuestionAndAnswer.length > 0 &&
+            prevQuestionAndAnswer.map((feedback, idx) => (
+              <Accordion.AccordionItem key={idx} itemKey={`question-${idx}`}>
+                <Accordion.AccordionTrigger className="text-lg font-bold text-primary">
+                  {feedback.question}
+                </Accordion.AccordionTrigger>
+                <Accordion.AccordionContent>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className="inline-block w-2 h-6 bg-primary rounded-sm"
+                        aria-hidden="true"
+                      ></span>
+                      <p
+                        className="text-lg font-semibold text-primary"
+                        aria-label="내 답변"
+                      >
+                        내 답변
+                      </p>
+                    </div>
+                    <div className="bg-white border border-border-input rounded-xl shadow-md p-5 transition-all duration-200 hover:shadow-lg">
+                      <p className="text-base text-gray-700 leading-relaxed">
+                        {feedback.answer}
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-white border border-border-input rounded-xl shadow-md p-5 transition-all duration-200 hover:shadow-lg">
-                    <p className="text-base text-gray-700 leading-relaxed">
-                      {feedback.answer}
-                    </p>
-                  </div>
-                </div>
-              </Accordion.AccordionContent>
-            </Accordion.AccordionItem>
-          ))}
+                </Accordion.AccordionContent>
+              </Accordion.AccordionItem>
+            ))}
         </Accordion.Accordion>
       </Sidebar>
     </>
