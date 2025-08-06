@@ -1,4 +1,4 @@
-import { cn } from "#utils/index.ts";
+import { cn } from "../../utils/index.ts";
 import { cva, VariantProps } from "class-variance-authority";
 import React from "react";
 

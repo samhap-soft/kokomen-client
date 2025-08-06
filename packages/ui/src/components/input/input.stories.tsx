@@ -1,4 +1,4 @@
-import { Input } from "#components/input/index.tsx";
+import { Input } from "./index";
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 
