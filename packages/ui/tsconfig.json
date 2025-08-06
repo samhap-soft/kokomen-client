@@ -5,10 +5,6 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "allowImportingTsExtensions": true,
-    "paths": {
-      "@assets/*": ["./assets/*"],
-      "@components/*": ["./src/components/*"]
-    },
     "types": ["@kokomen/types"]
   },
   "include": ["./**/*"],
