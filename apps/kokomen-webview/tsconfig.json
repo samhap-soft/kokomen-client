@@ -12,9 +12,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@kokomen/ui/*": ["../../packages/ui/src/*"],
-      "@kokomen/utils/*": ["../../packages/kokomen-utils/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "exclude": [
