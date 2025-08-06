@@ -1,8 +1,8 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Button } from "#components/button/index.tsx";
+import { Button } from "../button";
 import { X } from "lucide-react";
-import { cn } from "#utils/index.ts";
+import { cn } from "../../utils/index.ts";
 
 // Sidebar 스타일 variants
 const sidebarVariants = cva(
