@@ -1,4 +1,5 @@
-import { cn } from "#utils/index.ts";
+import { cva } from "class-variance-authority";
+import { cn } from "../../utils/index.ts";
 import { HTMLAttributes } from "react";
 
 function RoundSpinner() {
@@ -23,12 +24,34 @@ function RoundSpinner() {
     </div>
   );
 }
-function LoadingCircles() {
+
+const loadingCircleSizes = {
+  sm: "w-4 h-4",
+  md: "w-6 h-6",
+  lg: "w-8 h-8"
+};
+
+function LoadingCircles({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   return (
     <div className="flex items-center justify-center space-x-2" role="status">
-      <div className="w-4 h-4 rounded-full bg-primary-border animate-bounce [animation-delay:0ms]"></div>
-      <div className="w-4 h-4 rounded-full bg-primary-hover animate-bounce [animation-delay:200ms]"></div>
-      <div className="w-4 h-4 rounded-full bg-primary animate-bounce [animation-delay:400ms]"></div>
+      <div
+        className={cn(
+          "rounded-full bg-primary-border animate-bounce [animation-delay:0ms]",
+          loadingCircleSizes[size]
+        )}
+      ></div>
+      <div
+        className={cn(
+          "rounded-full bg-primary-hover animate-bounce [animation-delay:200ms]",
+          loadingCircleSizes[size]
+        )}
+      ></div>
+      <div
+        className={cn(
+          "rounded-full bg-primary animate-bounce [animation-delay:400ms]",
+          loadingCircleSizes[size]
+        )}
+      ></div>
     </div>
   );
 }
