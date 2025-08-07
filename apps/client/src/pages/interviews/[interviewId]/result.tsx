@@ -1,6 +1,6 @@
 import { getInterviewReport } from "@/domains/interviewReport/api/report";
 import { FeedbackAccordion } from "@/domains/interviewReport/components/feedbackAccordion";
-import { InterviewReport } from "@/domains/interviewReport/types";
+import { InterviewReport } from "@kokomen/types";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,

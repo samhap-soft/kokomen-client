@@ -14,13 +14,13 @@ import {
   deleteAnswerMemo,
   updateAnswerMemo
 } from "@/domains/interviewReport/api/answerMemo";
-import { AnswerMemo } from "@/domains/interviewReport/types/memo";
 import { isAxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useModal } from "@/hooks/useModal";
 import { captureFormSubmitEvent } from "@/utils/analytics";
+import { AnswerMemo } from "@kokomen/types";
 
 export default function AnswerMemoComponent({
   answerId,
