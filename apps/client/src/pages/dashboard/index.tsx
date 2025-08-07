@@ -8,11 +8,11 @@ import {
 } from "next";
 import { Coins, User, Star } from "lucide-react";
 import InterviewHistory from "@/domains/dashboard/components/interviewHistory";
-import { User as UserType } from "@/domains/auth/types";
 import { JSX } from "react";
 import { getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
 import { Rank, Percentile } from "@kokomen/ui";
+import { UserInfo } from "@kokomen/types";
 
 export default function Dashboard({
   userInfo
@@ -100,7 +100,7 @@ export default function Dashboard({
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ userInfo: UserType }>> => {
+): Promise<GetServerSidePropsResult<{ userInfo: UserInfo }>> => {
   return withCheckInServer(
     async () => {
       const userInfo = await getUserInfo(context);

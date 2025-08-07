@@ -1,11 +1,11 @@
 import { serverInstance } from "@/api";
-import { User } from "@/domains/auth/types";
+import { UserInfo } from "@kokomen/types";
 import axios, { AxiosInstance, AxiosPromise } from "axios";
 import { GetServerSidePropsContext } from "next";
 
 const authServerInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true,
+  withCredentials: true
 });
 
 interface KakaoLoginResponse {
@@ -22,7 +22,7 @@ const postAuthorizationCode = async (
     `/auth/kakao-login`,
     {
       code,
-      redirect_uri: redirectUri,
+      redirect_uri: redirectUri
     },
     { withCredentials: true }
   );
@@ -30,11 +30,11 @@ const postAuthorizationCode = async (
 
 const getUserInfo = async (
   context: GetServerSidePropsContext
-): AxiosPromise<User> => {
+): AxiosPromise<UserInfo> => {
   return authServerInstance.get(`/members/me/profile`, {
     headers: {
-      Cookie: context.req.headers.cookie,
-    },
+      Cookie: context.req.headers.cookie
+    }
   });
 };
 
@@ -43,7 +43,7 @@ const logout = async (): AxiosPromise<void> => {
     `/api/auth/logout`,
     {},
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
 };

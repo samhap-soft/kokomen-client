@@ -22,8 +22,8 @@ import {
 } from "lucide-react";
 import { withCheckInServer } from "@/utils/auth";
 import { getUserInfo } from "@/domains/auth/api";
-import { User } from "@/domains/auth/types";
 import { SEO } from "@/shared/seo";
+import { UserInfo } from "@kokomen/types";
 
 export default function MyInterviewResultPage({
   report,
@@ -165,12 +165,15 @@ interface PageParams extends ParsedUrlQuery {
   interviewId: string;
 }
 export const getServerSideProps: GetServerSideProps<
-  { report: InterviewReport; userInfo: User | null },
+  { report: InterviewReport; userInfo: UserInfo | null },
   PageParams
 > = async (
   context
 ): Promise<
-  GetServerSidePropsResult<{ report: InterviewReport; userInfo: User | null }>
+  GetServerSidePropsResult<{
+    report: InterviewReport;
+    userInfo: UserInfo | null;
+  }>
 > => {
   const interviewId = context.params?.interviewId;
   if (!interviewId) {

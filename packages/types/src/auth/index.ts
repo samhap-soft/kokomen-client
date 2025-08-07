@@ -4,7 +4,7 @@ interface User {
   profile_completed: boolean;
 }
 
-interface UserInfo {
+interface UserInfo extends User {
   score: number;
   total_member_count: number;
   token_count: number;

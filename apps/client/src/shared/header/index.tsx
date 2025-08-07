@@ -1,4 +1,3 @@
-import { User } from "@/domains/auth/types";
 import {
   LayoutDashboard,
   LogOut,
@@ -13,9 +12,10 @@ import React, { JSX, useEffect, useRef, useState } from "react";
 import { Button } from "@kokomen/ui";
 import { useLogout } from "@/hooks/useLogout";
 import NotificationPanelIcon from "@/domains/notifications/components/notificationPanel";
+import { UserInfo } from "@kokomen/types";
 
 interface HeaderProps {
-  user: User | null;
+  user: UserInfo | null;
 }
 
 type HeaderNavigation = { href: string; label: string; current: boolean };

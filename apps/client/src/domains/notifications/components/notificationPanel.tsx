@@ -10,7 +10,7 @@ import {
   getInfiniteReadNotifications,
   getInfiniteUnreadNotifications
 } from "@/domains/notifications/api";
-import { BaseNotification, User } from "@kokomen/types";
+import { BaseNotification, UserInfo } from "@kokomen/types";
 import { KeyboardEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
@@ -137,7 +137,7 @@ const NotificationPanel = ({
   );
 };
 
-const NotificationPanelIcon = ({ user }: { user: User | null }) => {
+const NotificationPanelIcon = ({ user }: { user: UserInfo | null }) => {
   const {
     isOpen,
     toggleModal: toggleNotificationPanel,
