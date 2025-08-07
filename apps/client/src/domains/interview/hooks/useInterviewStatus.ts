@@ -1,4 +1,4 @@
-import { InterviewStatus, QuestionAndAnswer } from "@/domains/interview/types";
+import { InterviewStatus, QuestionAndAnswer } from "@kokomen/types";
 import { Dispatch, useReducer } from "react";
 
 const INTERVIEW_STARTUP: string =
@@ -56,19 +56,19 @@ function reducer(
     case "ANSWER_QUESTION":
       return {
         ...state,
-        status: "thinking",
+        status: "thinking"
       };
     case "START_UP":
       return {
         ...state,
         status: "standby",
-        message: INTERVIEW_STARTUP,
+        message: INTERVIEW_STARTUP
       };
     case "INTERVIEW_END":
       return {
         ...state,
         status: "standby",
-        message: INTERVIEW_FINISHED,
+        message: INTERVIEW_FINISHED
       };
     case "NEXT_QUESTION":
       return {
@@ -80,22 +80,22 @@ function reducer(
           ...state.questionsAndAnswers,
           {
             question: state.message,
-            answer: action.prevAnswer,
-          },
-        ],
+            answer: action.prevAnswer
+          }
+        ]
       };
     case "QUESTION":
       return {
         ...state,
         status: "question",
         message: action.message,
-        currentQuestionId: action.currentQuestionId,
+        currentQuestionId: action.currentQuestionId
       };
     case "SUBMIT_FAILED":
       return {
         ...state,
         status: "standby",
-        message: INTERVIEW_SUBMIT_FAILED,
+        message: INTERVIEW_SUBMIT_FAILED
       };
     default:
       return state;
@@ -104,7 +104,7 @@ function reducer(
 
 const useInterviewStatus = ({
   questionId,
-  questionsAndAnswers,
+  questionsAndAnswers
 }: {
   questionId: number;
   questionsAndAnswers: Omit<QuestionAndAnswer, "answer_id" | "question_id">[];
@@ -113,7 +113,7 @@ const useInterviewStatus = ({
     message: INTERVIEW_STARTUP,
     status: "standby",
     currentQuestionId: questionId,
-    questionsAndAnswers: questionsAndAnswers,
+    questionsAndAnswers: questionsAndAnswers
   });
 
   return { state, dispatch };

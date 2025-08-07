@@ -13,7 +13,7 @@ import { getInterview } from "@/domains/interview/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { interviewKeys } from "@/utils/querykeys";
 import { Button } from "@kokomen/ui";
-import { Interview } from "@/domains/interview/types";
+import { Interview } from "@kokomen/types";
 import InterviewFinishModal from "@/domains/interview/components/interviewFinishModal";
 import { SEO } from "@/shared/seo";
 
