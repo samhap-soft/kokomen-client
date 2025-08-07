@@ -4,12 +4,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useToast } from "@kokomen/ui";
 import { AxiosError } from "axios";
-import { User } from "../types";
-import z from "zod";
 import { updateUserProfile } from "@/domains/auth/api";
 import { Input } from "@kokomen/ui";
 import { Button } from "@kokomen/ui";
 import { captureFormSubmitEvent } from "@/utils/analytics";
+import { User } from "@kokomen/types";
+import z from "zod";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const ProfileSetting = z.object({

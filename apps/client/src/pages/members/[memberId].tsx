@@ -1,5 +1,4 @@
 import { getUserInfo } from "@/domains/auth/api";
-import { User } from "@/domains/auth/types";
 import MemberInterviewHistory from "@/domains/members/components/memberInterviewHistory";
 import {
   GetServerSideProps,
@@ -10,11 +9,12 @@ import { Layout } from "@kokomen/ui";
 import Header from "@/shared/header";
 import { JSX } from "react";
 import { getMemberInterviews } from "@/domains/members/api";
-import { MemberInterview } from "@/domains/members/types";
+import { MemberInterview } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { TrendingUp } from "lucide-react";
 import { SEO } from "@/shared/seo";
 import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
+import { UserInfo } from "@kokomen/types";
 
 export default function MemberInterviewPage({
   memberId,
@@ -142,7 +142,7 @@ export default function MemberInterviewPage({
 
 export const getServerSideProps: GetServerSideProps<{
   memberId: string;
-  user: User | null;
+  user: UserInfo | null;
   interviews: CamelCasedProperties<MemberInterview>;
   sort: "asc" | "desc";
   page: number;
@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps<{
 ): Promise<
   GetServerSidePropsResult<{
     memberId: string;
-    user: User | null;
+    user: UserInfo | null;
     interviews: CamelCasedProperties<MemberInterview>;
     sort: "asc" | "desc";
     page: number;

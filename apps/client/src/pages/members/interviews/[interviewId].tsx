@@ -1,7 +1,6 @@
 import { getUserInfo } from "@/domains/auth/api";
-import { User } from "@/domains/auth/types";
 import { getMemberInterviewResult } from "@/domains/members/api";
-import { MemberInterviewResult } from "@/domains/members/types";
+import { MemberInterviewResult } from "@kokomen/types";
 import Header from "@/shared/header";
 import {
   GetServerSidePropsContext,
@@ -15,6 +14,7 @@ import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedbac
 import MemberQuestionFeedback from "@/domains/members/components/memberQuestionFeedback";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { SEO } from "@/shared/seo";
+import { UserInfo } from "@kokomen/types";
 
 export default function MemberInterviewResultPage({
   result,
@@ -153,7 +153,7 @@ export const getServerSideProps = async (
 ): Promise<
   GetServerSidePropsResult<{
     result: CamelCasedProperties<MemberInterviewResult>;
-    user: User | null;
+    user: UserInfo | null;
     interviewId: number;
   }>
 > => {

@@ -1,12 +1,12 @@
-import { Interview } from "@/domains/interview/types";
+import { Interview } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json"
   },
-  withCredentials: true,
+  withCredentials: true
 });
 
 interface NewInterviewResponse {
@@ -27,7 +27,7 @@ export const startNewInterview = async (
     "/interviews",
     data,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return responseData;
@@ -37,7 +37,7 @@ export const getInterview = async (interviewId: string): Promise<Interview> => {
   const { data } = await interviewApiInstance.get(
     `/interviews/${interviewId}/check`,
     {
-      withCredentials: true,
+      withCredentials: true
     }
   );
   return data;

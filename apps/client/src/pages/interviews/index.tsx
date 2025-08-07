@@ -9,13 +9,14 @@ import Header from "@/shared/header";
 import { withCheckInServer } from "@/utils/auth";
 import { Trophy, Coins, User as UserIcon, Star, Zap } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
-import { User as UserType } from "@/domains/auth/types";
+
 import CreateInterviewForm from "@/domains/interview/components/createInterviewForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
 import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
+import { UserInfo } from "@kokomen/types";
 
 export default function InterviewMainPage({
   categories,
@@ -131,12 +132,12 @@ export const getServerSideProps = async (
 ): Promise<
   GetServerSidePropsResult<{
     categories: Category[];
-    userInfo: UserType | null;
+    userInfo: UserInfo | null;
   }>
 > => {
   return withCheckInServer<{
     categories: Category[];
-    userInfo: UserType | null;
+    userInfo: UserInfo | null;
   }>(
     async () => {
       const [categoriesResponse, userInfoResponse] = await Promise.allSettled([

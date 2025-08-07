@@ -1,4 +1,4 @@
-import { Feedback } from "@/domains/interviewReport/types";
+import { PrivateFeedback } from "@kokomen/types";
 import {
   getScoreColor,
   getScoreIcon,
@@ -12,7 +12,7 @@ import AnswerMemoComponent from "@/domains/interviewReport/components/answerMemo
 export function FeedbackAccordion({
   feedbacks
 }: {
-  feedbacks: Feedback[];
+  feedbacks: PrivateFeedback[];
 }): JSX.Element {
   return (
     <Accordion.Accordion
@@ -35,7 +35,7 @@ function FeedBackAccordionItem({
   feedback,
   idx
 }: {
-  feedback: Feedback;
+  feedback: PrivateFeedback;
   idx: number;
 }): JSX.Element {
   return (

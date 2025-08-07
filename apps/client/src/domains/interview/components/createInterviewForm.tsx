@@ -1,6 +1,6 @@
 import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
-import { InterviewType } from "@/domains/interview/types";
+import { InterviewType } from "@kokomen/types";
 import { Button } from "@kokomen/ui";
 import { Keyboard, MicVocal } from "lucide-react";
 import Image from "next/image";

@@ -1,5 +1,5 @@
 import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
-import { Interview } from "@/domains/interview/types";
+import { Interview } from "@kokomen/types";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { captureFormSubmitEvent } from "@/utils/analytics";
@@ -20,7 +20,9 @@ type InterviewInputProps = Pick<
   interviewId: number;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
   totalQuestions: number;
-  setInterviewerEmotion: React.Dispatch<React.SetStateAction<InterviewerEmotion>>;
+  setInterviewerEmotion: React.Dispatch<
+    React.SetStateAction<InterviewerEmotion>
+  >;
 };
 const SUBMIT_FAILED_MESSAGE: string =
   "제출 중 오류가 발생했습니다. 다시 시도해주세요.";

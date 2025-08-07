@@ -1,6 +1,6 @@
 import { FC, JSX, memo, MemoExoticComponent } from "react";
 import { Modal } from "@kokomen/ui";
-import { Interview } from "@/domains/interview/types";
+import { Interview } from "@kokomen/types";
 import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
