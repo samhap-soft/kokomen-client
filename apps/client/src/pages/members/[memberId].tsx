@@ -9,7 +9,7 @@ import { Layout } from "@kokomen/ui";
 import Header from "@/shared/header";
 import { JSX } from "react";
 import { getMemberInterviews } from "@/domains/members/api";
-import { MemberInterview } from "@/domains/members/types";
+import { MemberInterview } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { TrendingUp } from "lucide-react";
 import { SEO } from "@/shared/seo";

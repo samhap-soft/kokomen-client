@@ -6,7 +6,7 @@ import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
-import { MemberInterviewResult } from "@/domains/members/types";
+import { MemberInterviewResult } from "@kokomen/types";
 import { captureButtonEvent } from "@/utils/analytics";
 import { useRouter } from "next/router";
 

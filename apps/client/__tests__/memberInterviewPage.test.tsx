@@ -1,4 +1,4 @@
-import { MemberInterview } from "@/domains/members/types";
+import { MemberInterview } from "@kokomen/types";
 import MemberInterviewPage from "@/pages/members/[memberId]";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { renderWithProviders } from "@/utils/test-utils";

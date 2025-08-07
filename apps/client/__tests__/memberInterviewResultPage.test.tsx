@@ -5,9 +5,9 @@ import { server } from "@/mocks";
 import { http, HttpResponse } from "msw";
 import {
   CamelCasedProperties,
-  mapToCamelCase,
+  mapToCamelCase
 } from "@/utils/convertConvention";
-import { MemberInterviewResult } from "@/domains/members/types";
+import { MemberInterviewResult } from "@kokomen/types";
 
 const memberInterviewResultData = {
   feedbacks: [
@@ -21,14 +21,14 @@ const memberInterviewResultData = {
       answer_feedback:
         "명확하고 간결한 자기소개로 좋은 첫인상을 주었습니다. 기술 스택과 개발 철학을 잘 어필했습니다.",
       answer_like_count: 15,
-      answer_already_liked: false,
-    },
+      answer_already_liked: false
+    }
   ],
   total_feedback:
     "전반적으로 기술적 역량과 협업 능력이 균형있게 발달한 개발자로 보입니다. 구체적인 경험과 성과를 바탕으로 답변하여 신뢰도가 높습니다. 향후 더 큰 규모의 프로젝트에서 리더십을 발휘할 수 있을 것으로 기대됩니다.",
   total_score: 85,
   interview_like_count: 23,
-  interview_already_liked: false,
+  interview_already_liked: false
 };
 
 describe("면접 결과 페이지 테스트", () => {
@@ -66,7 +66,7 @@ describe("면접 결과 페이지 테스트", () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/like`,
         () => {
           return HttpResponse.json({
-            message: "좋아요 성공",
+            message: "좋아요 성공"
           });
         }
       )
@@ -76,7 +76,7 @@ describe("면접 결과 페이지 테스트", () => {
       expect(screen.getByText("자기소개를 해주세요.")).toBeInTheDocument();
     });
     const interviewLikeButton = screen.getByRole("button", {
-      name: "전체 인터뷰 좋아요",
+      name: "전체 인터뷰 좋아요"
     });
     fireEvent.click(interviewLikeButton);
     await waitFor(() => {
@@ -88,7 +88,7 @@ describe("면접 결과 페이지 테스트", () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/like`,
         async () => {
           return HttpResponse.json({
-            message: "좋아요 취소 성공",
+            message: "좋아요 취소 성공"
           });
         }
       )
@@ -117,7 +117,7 @@ describe("면접 결과 페이지 테스트", () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/answers/1/like`,
         async () => {
           return HttpResponse.json({
-            message: "좋아요 성공",
+            message: "좋아요 성공"
           });
         }
       )
@@ -127,7 +127,7 @@ describe("면접 결과 페이지 테스트", () => {
     });
     //좋아요 안 눌렀을 경우
     const answerLikeButton = screen.getByRole("button", {
-      name: "답변 1 좋아요",
+      name: "답변 1 좋아요"
     });
     fireEvent.click(answerLikeButton);
     await waitFor(() => {
@@ -140,7 +140,7 @@ describe("면접 결과 페이지 테스트", () => {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/answers/1/like`,
         () => {
           return HttpResponse.json({
-            message: "좋아요 취소 성공",
+            message: "좋아요 취소 성공"
           });
         }
       )

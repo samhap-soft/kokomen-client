@@ -5,7 +5,7 @@ import { JSX, useState } from "react";
 import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
 import { Button } from "@kokomen/ui";
-import { MemberInterviewResult } from "@/domains/members/types";
+import { MemberInterviewResult } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { captureButtonEvent } from "@/utils/analytics";
 import { useRouter } from "next/router";

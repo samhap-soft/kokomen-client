@@ -1,6 +1,6 @@
 import { getUserInfo } from "@/domains/auth/api";
 import { getMemberInterviewResult } from "@/domains/members/api";
-import { MemberInterviewResult } from "@/domains/members/types";
+import { MemberInterviewResult } from "@kokomen/types";
 import Header from "@/shared/header";
 import {
   GetServerSidePropsContext,

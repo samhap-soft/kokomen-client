@@ -11,7 +11,7 @@ import {
 import Link from "next/link";
 import { JSX } from "react";
 import { Button } from "@kokomen/ui";
-import { MemberInterview } from "@/domains/members/types";
+import { MemberInterview } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { useRouter } from "next/router";
 import { formatDate } from "@/utils/date";
