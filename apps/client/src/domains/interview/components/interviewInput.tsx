@@ -1,4 +1,4 @@
-import { submitInterviewAnswer } from "@/domains/interview/api/interviewAnswer";
+import { submitInterviewAnswerV2 } from "@/domains/interview/api/interviewAnswer";
 import { Interview } from "@kokomen/types";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
@@ -59,7 +59,7 @@ export function InterviewAnswerInput({
   });
   const router = useRouter();
   const { mutate, isPending } = useMutation({
-    mutationFn: submitInterviewAnswer,
+    mutationFn: submitInterviewAnswerV2,
     onMutate: (data) => {
       captureFormSubmitEvent({
         name: "submitInterviewAnswer",
