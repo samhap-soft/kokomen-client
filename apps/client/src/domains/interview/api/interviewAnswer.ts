@@ -3,8 +3,7 @@ import axios, {
   AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
-  AxiosResponse,
-  isAxiosError
+  AxiosResponse
 } from "axios";
 import { exponentialDelay } from "@kokomen/utils";
 
@@ -48,25 +47,6 @@ const answerServerInstance: AxiosInstance = axios.create({
   withCredentials: true
 });
 
-// 커스텀 에러 클래스들
-class InterviewAnswerPollingServerError extends Error {
-  constructor() {
-    super("서버의 응답을 가져오던 중 오류가 발생했습니다.");
-  }
-}
-
-class InterviewAnswerPollingException extends Error {
-  constructor() {
-    super("서버의 응답을 가져오던 중 오류가 발생했습니다.");
-  }
-}
-
-class InterviewAnswerServerException extends Error {
-  constructor() {
-    super("서버의 응답을 가져오던 중 오류가 발생했습니다.");
-  }
-}
-
 // 에러 타입 정의
 type ErrorType =
   | "pollingException"
@@ -77,28 +57,21 @@ type ErrorType =
 interface RetryConfig {
   MAX_RETRY: number;
   STATUS_CODE: number;
-  ERROR_CLASS:
-    | typeof InterviewAnswerPollingServerError
-    | typeof InterviewAnswerPollingException
-    | typeof InterviewAnswerServerException;
 }
 
 // Retry 설정 객체
 const RETRY_CONFIG: Record<string, RetryConfig> = {
   POLLING_SERVER_EXCEPTION: {
     MAX_RETRY: 3,
-    STATUS_CODE: 503,
-    ERROR_CLASS: InterviewAnswerPollingServerError
+    STATUS_CODE: 503
   },
   POLLING_EXCEPTION: {
     MAX_RETRY: 5,
-    STATUS_CODE: 408,
-    ERROR_CLASS: InterviewAnswerPollingException
+    STATUS_CODE: 408
   },
   SERVER_EXCEPTION: {
     MAX_RETRY: 3,
-    STATUS_CODE: 500,
-    ERROR_CLASS: InterviewAnswerServerException
+    STATUS_CODE: 500
   }
 } as const;
 
@@ -119,8 +92,7 @@ const executeRetry = async (
   error: AxiosError,
   config: AxiosRequestConfig,
   maxRetry: number,
-  errorType: ErrorType,
-  ErrorClass: any
+  errorType: ErrorType
 ): Promise<AxiosResponse> => {
   const requestKey = createRequestKey(config);
 
@@ -131,23 +103,16 @@ const executeRetry = async (
     retryStateMap.set(requestKey, retryState);
   }
 
-  console.log("retryState", retryStateMap);
   retryState.count++;
-
-  console.log(
-    `Retry 시도 ${retryState.count}/${maxRetry} - 상태코드: ${error.response?.status}`
-  );
 
   // 최대 retry 횟수 초과 시 에러 throw
   if (retryState.count >= maxRetry) {
     retryStateMap.delete(requestKey); // 상태 정리
-    throw new ErrorClass();
+    throw new Error("서버에 오류가 발생했습니다.");
   }
 
-  console.log("지수백오프 go");
   // 지수 백오프 적용하여 재시도
   await exponentialDelay(retryState.count);
-  console.log("지수백오프 끝");
 
   // 재요청 실행
   const response = await answerServerInstance.request(config);
@@ -186,8 +151,7 @@ answerServerInstance.interceptors.response.use(
             error,
             config,
             RETRY_CONFIG.POLLING_SERVER_EXCEPTION.MAX_RETRY,
-            "pollingServerException",
-            RETRY_CONFIG.POLLING_SERVER_EXCEPTION.ERROR_CLASS
+            "pollingServerException"
           );
 
         case RETRY_CONFIG.POLLING_EXCEPTION.STATUS_CODE:
@@ -195,8 +159,7 @@ answerServerInstance.interceptors.response.use(
             error,
             config,
             RETRY_CONFIG.POLLING_EXCEPTION.MAX_RETRY,
-            "pollingException",
-            RETRY_CONFIG.POLLING_EXCEPTION.ERROR_CLASS
+            "pollingException"
           );
 
         case RETRY_CONFIG.SERVER_EXCEPTION.STATUS_CODE:
@@ -204,8 +167,7 @@ answerServerInstance.interceptors.response.use(
             error,
             config,
             RETRY_CONFIG.SERVER_EXCEPTION.MAX_RETRY,
-            "serverException",
-            RETRY_CONFIG.SERVER_EXCEPTION.ERROR_CLASS
+            "serverException"
           );
 
         default:
