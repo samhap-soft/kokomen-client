@@ -57,14 +57,10 @@ export default async function handler(
         res.status(408).json({ message: "서버에 오류가 발생했습니다." });
       } catch (error) {
         // 폴링 중 오류가 발생했을 경우
-        return res
-          .status(503)
-          .json({ message: "서버에 오류가 발생했습니다.", error });
+        return res.status(503).json({ message: "서버에 오류가 발생했습니다." });
       }
     })
-    .catch((error) => {
-      return res
-        .status(500)
-        .json({ message: "서버에 오류가 발생했습니다.", error });
+    .catch(() => {
+      return res.status(500).json({ message: "서버에 오류가 발생했습니다." });
     });
 }
