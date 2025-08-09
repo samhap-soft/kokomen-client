@@ -146,7 +146,7 @@ describe("면접 페이지 테스트", () => {
     );
     server.use(
       http.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/questions/2/answers`,
+        `/api/interviews/answers?interviewId=1&questionId=2`,
         async () => {
           await delay(100);
           return HttpResponse.json(interviewAnswerData);
