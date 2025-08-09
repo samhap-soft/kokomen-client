@@ -111,8 +111,8 @@ const InterviewTypeSelector: MemoExoticComponent<
 );
 InterviewTypeSelector.displayName = "InterviewTypeSelector";
 
-const DEFAULT_INTERVIEW_CONFIGS: Record<string, string | number> = {
-  MAX_QUESTION_COUNT: 20,
+const DEFAULT_INTERVIEW_CONFIGS = {
+  MAX_QUESTION_COUNT: 10,
   MIN_QUESTION_COUNT: 3,
   INTERVIEW_TYPE: "text"
 };
@@ -133,7 +133,9 @@ const CreateInterviewForm = ({
 
   const handleQuestionCountChange = useCallback((event: "plus" | "minus") => {
     setQuestionCount((prev) =>
-      event === "plus" ? Math.min(20, prev + 1) : Math.max(3, prev - 1)
+      event === "plus"
+        ? Math.min(DEFAULT_INTERVIEW_CONFIGS.MAX_QUESTION_COUNT, prev + 1)
+        : Math.max(DEFAULT_INTERVIEW_CONFIGS.MIN_QUESTION_COUNT, prev - 1)
     );
   }, []);
 

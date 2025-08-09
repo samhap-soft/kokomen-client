@@ -6,7 +6,7 @@ import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
 import type { CamelCasedProperties } from "@kokomen/utils";
 import { Interview } from "@kokomen/types";
 import { useRouter } from "@tanstack/react-router";
-import { submitInterviewAnswer } from "@/domains/interviews/api/interviewAnswer";
+import { submitInterviewAnswerV2 } from "@/domains/interviews/api/interviewAnswer";
 import useSpeechRecognition from "@/domains/interviews/hooks/useSpeechRecognition";
 
 type InterviewInputProps = Pick<
@@ -57,7 +57,7 @@ export function InterviewAnswerInput({
   });
   const router = useRouter();
   const { mutate, isPending } = useMutation({
-    mutationFn: submitInterviewAnswer,
+    mutationFn: submitInterviewAnswerV2,
     onMutate: () => {
       //TODO: 모니터링 커스텀 이벤트 부착
       // captureFormSubmitEvent({

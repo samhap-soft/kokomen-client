@@ -15,7 +15,9 @@ export {
   meKeys,
   notificationKeys,
   mapToCamelCase,
-  getEmotion
+  getEmotion,
+  delay,
+  exponentialDelay
 } from "./general";
 export {
   useCombinedRefs,
