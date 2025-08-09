@@ -43,6 +43,63 @@ export async function submitInterviewAnswer({
   );
 }
 
+const answerV2ServerInstance: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_V2_API_BASE_URL,
+  withCredentials: true
+});
+
+export async function getInterviewAnswerV2({
+  interviewId,
+  questionId
+}: {
+  interviewId: number;
+  questionId: number;
+}) {
+  return answerV2ServerInstance.get(
+    `/interviews/${interviewId}/questions/${questionId}`
+  );
+}
+
+// 요청별 retry 상태를 관리하기 위한 Map
+const v2RetryStateMap = new Map<string, { count: number }>();
+
+const MAX_RETRY = 10;
+
+answerV2ServerInstance.interceptors.response.use(async (response) => {
+  const requestKey = `${response.config.method}:${response.config.url}`;
+
+  if (response.data.llm_proceed_state === "COMPLETED") {
+    v2RetryStateMap.delete(requestKey);
+    if (response.data.interview_state === "FINISHED") {
+      response.status = 204;
+      return response;
+    }
+    return response;
+  }
+
+  if (response.data.llm_proceed_state === "FAILED") {
+    v2RetryStateMap.delete(requestKey);
+    return Promise.reject(response.data);
+  }
+
+  // retry 상태 가져오기 또는 초기화
+  let retryState = v2RetryStateMap.get(requestKey);
+  if (!retryState) {
+    retryState = { count: 0 };
+    v2RetryStateMap.set(requestKey, retryState);
+  }
+
+  if (retryState.count >= MAX_RETRY) {
+    v2RetryStateMap.delete(requestKey);
+    return Promise.reject(response);
+  }
+
+  retryState.count++;
+
+  await exponentialDelay(retryState.count);
+  return answerV2ServerInstance.request(response.config);
+});
+
 const answerServerInstance: AxiosInstance = axios.create({
   withCredentials: true
 });
@@ -87,6 +144,16 @@ const retryStateMap = new Map<
   { count: number; errorType: ErrorType }
 >();
 
+function getInterviewIdAndQuestionId(url: string) {
+  const urlParams = new URLSearchParams(url.split("?")[1]);
+  const interviewId = urlParams.get("interviewId");
+  const questionId = urlParams.get("questionId");
+  return {
+    interviewId: interviewId ? parseInt(interviewId) : undefined,
+    questionId: questionId ? parseInt(questionId) : undefined
+  };
+}
+
 // Retry 처리 함수
 const executeRetry = async (
   error: AxiosError,
@@ -114,10 +181,25 @@ const executeRetry = async (
   // 지수 백오프 적용하여 재시도
   await exponentialDelay(retryState.count);
 
-  // 재요청 실행
-  const response = await answerServerInstance.request(config);
-  retryStateMap.delete(requestKey); // 성공 시 상태 정리
-  return response;
+  // URL에서 interviewId와 questionId 추출
+  const { interviewId, questionId } = getInterviewIdAndQuestionId(
+    config.url ?? ""
+  );
+
+  if (errorType === "serverException") {
+    const response = await answerServerInstance.request(config);
+    retryStateMap.delete(requestKey); // 성공 시 상태 정리
+    return response;
+  } else {
+    // 다른 경우에는 기존 서버로 재시도
+    // serverException일 때 V2 API로 전환
+    const response = await getInterviewAnswerV2({
+      interviewId: interviewId!,
+      questionId: questionId!
+    });
+    retryStateMap.delete(requestKey); // 성공 시 상태 정리
+    return response;
+  }
 };
 
 // Response interceptor 설정
@@ -140,8 +222,6 @@ answerServerInstance.interceptors.response.use(
     if (!config) {
       return Promise.reject(error);
     }
-
-    console.log(`에러 발생 - 상태코드: ${status}`);
 
     // 상태코드에 따른 retry 로직
     try {
@@ -194,6 +274,6 @@ export async function submitInterviewAnswerV2({
   return answerServerInstance.post<InterviewAnswerApiResponse>(
     `/api/interviews/answers?interviewId=${interviewId}&questionId=${questionId}`,
     { answer },
-    { timeout: 30000 }
+    { timeout: 25000 }
   );
 }
