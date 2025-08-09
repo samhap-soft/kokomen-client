@@ -191,11 +191,12 @@ const executeRetry = async (
     retryStateMap.delete(requestKey); // 성공 시 상태 정리
     return response;
   } else {
-    // 다른 경우에는 기존 서버로 재시도
-    // serverException일 때 V2 API로 전환
+    if (!interviewId || !questionId) {
+      throw new Error("interviewId 또는 questionId가 없습니다.");
+    }
     const response = await getInterviewAnswerV2({
-      interviewId: interviewId!,
-      questionId: questionId!
+      interviewId,
+      questionId
     });
     retryStateMap.delete(requestKey); // 성공 시 상태 정리
     return response;
