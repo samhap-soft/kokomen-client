@@ -2,6 +2,7 @@ import axios from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const MAX_RETRY: number = 20;
+const RETRY_DELAY: number = 500;
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -50,7 +51,7 @@ export default async function handler(
             return res.status(500).json(getResponse.data);
           }
           retry++;
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
         }
         // 최대 폴링 횟수 도달 시 에러 반환
         res.status(408).json({ message: "서버에 오류가 발생했습니다." });
