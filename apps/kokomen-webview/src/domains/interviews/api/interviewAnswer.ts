@@ -5,12 +5,6 @@ import axios, {
   AxiosResponse
 } from "axios";
 import { exponentialDelay } from "@kokomen/utils";
-import { interviewApiInstance } from "@/domains/interviews/api";
-
-// 더 구체적인 타입 정의
-interface InterviewAnswerApiRequest {
-  answer: string;
-}
 
 interface InterviewAnswerApiResponse {
   cur_answer_rank: "A" | "B" | "C" | "D" | "F";
@@ -18,33 +12,8 @@ interface InterviewAnswerApiResponse {
   next_question: string;
 }
 
-// API 함수의 매개변수 타입 정의
-interface SubmitInterviewAnswerParams {
-  interviewId: number;
-  questionId: number;
-  answer: string;
-}
-
-export async function submitInterviewAnswer({
-  interviewId,
-  questionId,
-  answer
-}: SubmitInterviewAnswerParams): Promise<
-  AxiosResponse<InterviewAnswerApiResponse>
-> {
-  return interviewApiInstance.post<
-    InterviewAnswerApiResponse,
-    AxiosResponse<InterviewAnswerApiResponse>,
-    InterviewAnswerApiRequest
-  >(
-    `/interviews/${interviewId}/questions/${questionId}/answers`,
-    { answer },
-    { timeout: 30000 }
-  );
-}
-
 const answerV2ServerInstance: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_V2_API_BASE_URL,
+  baseURL: import.meta.env.VITE_V2_API_BASE_URL,
   withCredentials: true
 });
 
@@ -101,6 +70,7 @@ answerV2ServerInstance.interceptors.response.use(async (response) => {
 });
 
 const answerServerInstance: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_WEB_BASE_URL,
   withCredentials: true
 });
 
