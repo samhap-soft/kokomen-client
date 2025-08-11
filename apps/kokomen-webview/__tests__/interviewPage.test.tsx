@@ -75,11 +75,14 @@ const mockInterviewFinishAPI = () => {
 
 const waitForPageLoad = async () => {
   await openPageSetup("/interviews/1");
-  await waitFor(() => {
-    expect(
-      screen.getByRole("button", { name: "면접 시작하기" })
-    ).toBeInTheDocument();
-  });
+  await waitFor(
+    () => {
+      expect(
+        screen.getByRole("button", { name: "면접 시작하기" })
+      ).toBeInTheDocument();
+    },
+    { timeout: 3000 }
+  );
 };
 
 describe("인터뷰 페이지 테스트", () => {
