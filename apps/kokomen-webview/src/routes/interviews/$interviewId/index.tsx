@@ -26,7 +26,12 @@ export const Route = createFileRoute("/interviews/$interviewId/")({
       gcTime: 1000 * 60 * 60 * 24,
       retry: 1
     };
-    return queryClient.ensureQueryData(interviewQueryOptions);
+    return queryClient
+      .ensureQueryData(interviewQueryOptions)
+      .then((data) => data)
+      .catch(() => {
+        throw new Error("인터뷰를 찾을 수 없습니다.");
+      });
   },
   pendingComponent: LoadingFullScreen
 });
