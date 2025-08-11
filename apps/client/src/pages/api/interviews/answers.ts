@@ -7,10 +7,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://webview-dev.kokomen.kr, https://webview.kokomen.kr, https://local.kokomen.kr:3000"
-  );
+  const allowedOrigins = [
+    "https://webview-dev.kokomen.kr",
+    "https://webview.kokomen.kr",
+    "https://local.kokomen.kr:3000"
+  ];
+
+  const origin = req.headers.origin;
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Access-Control-Allow-Credentials", "true");
