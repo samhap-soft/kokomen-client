@@ -19,19 +19,12 @@ import InterviewFinishModal from "@/domains/interviews/components/interviewFinis
 export const Route = createFileRoute("/interviews/$interviewId/")({
   component: RouteComponent,
   loader: ({ params: { interviewId }, context: { queryClient } }) => {
-    const interviewQueryOptions = {
-      queryKey: interviewKeys.byInterviewId(Number(interviewId)),
-      queryFn: () => getInterview(interviewId),
-      staleTime: 1000 * 60 * 60 * 24,
-      gcTime: 1000 * 60 * 60 * 24,
-      retry: 1
-    };
-    return queryClient
-      .ensureQueryData(interviewQueryOptions)
-      .then((data) => data)
-      .catch(() => {
-        throw new Error("인터뷰를 찾을 수 없습니다.");
-      });
+    return getInterview(interviewId).then((data) =>
+      queryClient.setQueryData(
+        interviewKeys.byInterviewId(Number(interviewId)),
+        data
+      )
+    );
   },
   errorComponent: () => (
     <ErrorComponent
@@ -98,7 +91,7 @@ function RouteComponent(): ReactNode {
     }, 4000);
   }, [data?.curQuestion]);
 
-  if (isError)
+  if (!data || isError)
     return (
       <ErrorComponent
         cause="인터뷰를 찾을 수 없습니다."

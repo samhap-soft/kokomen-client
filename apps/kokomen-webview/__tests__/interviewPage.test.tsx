@@ -436,7 +436,12 @@ describe("인터뷰 페이지 테스트", () => {
     await waitFor(
       () => {
         expect(
-          screen.getByText("서버에 오류가 발생했어요.")
+          screen.getByText("인터뷰를 찾을 수 없습니다.")
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(
+            "인터뷰 링크가 잘못되었거나 본인의 인터뷰가 맞는지 확인해주세요."
+          )
         ).toBeInTheDocument();
       },
       { timeout: 3000 }
