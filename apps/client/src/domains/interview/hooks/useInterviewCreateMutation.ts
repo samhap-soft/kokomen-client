@@ -16,7 +16,8 @@ const useInterviewCreateMutation = () => {
         name: "startNewInterview",
         properties: {
           category: data.category,
-          questionCount: data.max_question_count
+          questionCount: data.max_question_count,
+          mode: data.mode
         }
       });
     },

@@ -25,7 +25,7 @@ type InterviewConfig = {
   max_question_count: number;
   interview_type: InterviewType;
 };
-type InterviewType = "text" | "voice";
+type InterviewType = "TEXT" | "VOICE";
 interface InterviewState {
   message: string;
   status: InterviewStatus;
