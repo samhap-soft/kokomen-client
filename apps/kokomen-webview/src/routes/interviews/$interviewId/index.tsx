@@ -19,15 +19,19 @@ import InterviewFinishModal from "@/domains/interviews/components/interviewFinis
 export const Route = createFileRoute("/interviews/$interviewId/")({
   component: RouteComponent,
   loader: ({ params: { interviewId }, context: { queryClient } }) => {
-    const interviewQueryOptions = {
-      queryKey: interviewKeys.byInterviewId(Number(interviewId)),
-      queryFn: () => getInterview(interviewId),
-      staleTime: 1000 * 60 * 60 * 24,
-      gcTime: 1000 * 60 * 60 * 24,
-      retry: 1
-    };
-    return queryClient.ensureQueryData(interviewQueryOptions);
+    return getInterview(interviewId).then((data) =>
+      queryClient.setQueryData(
+        interviewKeys.byInterviewId(Number(interviewId)),
+        data
+      )
+    );
   },
+  errorComponent: () => (
+    <ErrorComponent
+      cause="인터뷰를 찾을 수 없습니다."
+      subText="인터뷰 링크가 잘못되었거나 본인의 인터뷰가 맞는지 확인해주세요."
+    />
+  ),
   pendingComponent: LoadingFullScreen
 });
 
@@ -52,16 +56,7 @@ function RouteComponent(): ReactNode {
     CamelCasedProperties<Interview>
   >({
     queryKey: interviewKeys.byInterviewId(Number(interviewId)),
-    queryFn: () => getInterview(interviewId),
-    initialData: () => ({
-      interviewId: Number(interviewId),
-      interviewState: "IN_PROGRESS",
-      prevQuestionsAndAnswers: [],
-      curQuestionId: 0,
-      curQuestion: "",
-      maxQuestionCount: 0,
-      curQuestionCount: 0
-    })
+    queryFn: () => getInterview(interviewId)
   });
 
   // 면접관 캐릭터 끄덕거리게 하거나 대화하는 것처럼 보이게 하기
@@ -94,9 +89,15 @@ function RouteComponent(): ReactNode {
     setTimeout(() => {
       setIsSpeaking(false);
     }, 4000);
-  }, [data.curQuestion]);
+  }, [data?.curQuestion]);
 
-  if (isError) return <ErrorComponent />;
+  if (!data || isError)
+    return (
+      <ErrorComponent
+        cause="인터뷰를 찾을 수 없습니다."
+        subText="인터뷰 링크가 잘못되었거나 본인의 인터뷰가 맞는지 확인해주세요."
+      />
+    );
   if (isPending) return <LoadingFullScreen />;
 
   return (

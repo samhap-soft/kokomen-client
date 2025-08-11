@@ -10,8 +10,12 @@ jobs:
     env:
       NEXT_PUBLIC_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
       NEXT_PUBLIC_BASE_URL: https://localhost:3000
+      NEXT_PUBLIC_NOTIFICATION_API_BASE_URL: https://notification.kokomen.kr/api/v1
       VITE_API_BASE_URL: https://api-dev.kokomen.kr/api/v1
       VITE_BASE_URL: https://localhost:3000
+      VITE_V2_API_BASE_URL: https://api-dev.kokomen.kr/api/v2
+      VITE_WEB_BASE_URL: https://kokomen.kr
+      VITE_NOTIFICATION_API_BASE_URL: https://notification.kokomen.kr/api/v1
 
     steps:
       - name: Checkout code
