@@ -8,7 +8,7 @@ services:
       args:
         NEXT_PUBLIC_BASE_URL: https://kokomen.kr
         NEXT_PUBLIC_API_BASE_URL: https://api.kokomen.kr/api/v1
-        NEXT_PUBLIC_NOTIFICATION_API_BASE_URL: https://notification.kokomen.kr/api/v1
+        NEXT_PUBLIC_NOTIFICATION_API_BASE_URL: https://notification-api.kokomen.kr/api/v1
         NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY}
         NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST}
         SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN}
