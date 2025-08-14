@@ -1,3 +1,4 @@
+import { events } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseSpeechRecognitionOptions {
@@ -22,25 +23,48 @@ interface UseSpeechRecognitionProps {
   // eslint-disable-next-line no-unused-vars
   onSpeechEnd: (result: string) => void;
   options?: UseSpeechRecognitionOptions;
+  startOnMount?: boolean;
 }
 export const useSpeechRecognition = ({
   onSpeechEnd,
-  options = {},
+  startOnMount = false,
+  options = {}
 }: UseSpeechRecognitionProps): UseSpeechRecognitionReturn => {
   const {
     lang = "ko-KR",
     continuous = true,
-    interimResults = false,
-    maxAlternatives = 1,
+    interimResults = true,
+    maxAlternatives = 1
   } = options;
 
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSupported, setIsSupported] = useState(false);
+  const result = useRef<string[]>([]);
+  const resultPointer = useRef<number>(0);
 
   const recognitionRef = useRef<InstanceType<SpeechRecognitionType> | null>(
     null
   );
+
+  const startListening = useCallback(() => {
+    if (!isSupported || !recognitionRef.current) {
+      setError("음성 인식이 지원되지 않습니다.");
+      return;
+    }
+
+    try {
+      recognitionRef.current?.start();
+    } catch (error) {
+      setError("음성 인식을 시작할 수 없습니다.");
+    }
+  }, [isSupported]);
+
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current?.stop();
+    }
+  }, [isListening]);
 
   useEffect(() => {
     // 브라우저 지원 확인
@@ -54,6 +78,9 @@ export const useSpeechRecognition = ({
     }
 
     setIsSupported(true);
+    if (startOnMount) {
+      startListening();
+    }
 
     // SpeechRecognition 인스턴스 생성
     const recognition = new SpeechRecognition();
@@ -72,18 +99,12 @@ export const useSpeechRecognition = ({
     };
 
     recognition.onresult = (event) => {
-      let finalTranscript = "";
-      let interimTranscript = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
-        } else {
-          interimTranscript += transcript;
-        }
+      let resultString = "";
+      for (const result of event.results) {
+        resultString += result[0].transcript;
       }
-      onSpeechEnd(finalTranscript + interimTranscript);
+      result.current[resultPointer.current] = resultString;
+      onSpeechEnd(result.current.join(" "));
     };
 
     recognition.onerror = (event) => {
@@ -112,6 +133,10 @@ export const useSpeechRecognition = ({
 
     recognition.onend = () => {
       setIsListening(false);
+      if (result.current[resultPointer.current] === "") {
+        return;
+      }
+      resultPointer.current++;
     };
 
     return () => {
@@ -119,32 +144,22 @@ export const useSpeechRecognition = ({
         recognition.abort();
       }
     };
-  }, [lang, continuous, interimResults, maxAlternatives, onSpeechEnd]);
-
-  const startListening = useCallback(() => {
-    if (!isSupported || !recognitionRef.current) {
-      setError("음성 인식이 지원되지 않습니다.");
-      return;
-    }
-
-    try {
-      recognitionRef.current?.start();
-    } catch (error) {
-      setError("음성 인식을 시작할 수 없습니다.");
-    }
-  }, [isSupported]);
-
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current?.stop();
-    }
-  }, [isListening]);
+  }, [
+    lang,
+    continuous,
+    interimResults,
+    maxAlternatives,
+    onSpeechEnd,
+    startOnMount,
+    startListening,
+    stopListening
+  ]);
 
   return {
     isListening,
     isSupported,
     startListening,
     stopListening,
-    error,
+    error
   };
 };
