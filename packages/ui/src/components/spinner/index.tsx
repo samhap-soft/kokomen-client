@@ -62,7 +62,10 @@ function LoadingFullScreen({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(`flex items-center justify-center h-full`, className)}
+      className={cn(
+        `flex items-center justify-center h-full w-full`,
+        className
+      )}
       {...props}
     >
       <LoadingCircles />
