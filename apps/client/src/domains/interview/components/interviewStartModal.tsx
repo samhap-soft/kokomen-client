@@ -11,6 +11,7 @@ interface MicrophoneDevice {
 interface InterviewStartModalProps {
   isInterviewStarted: boolean;
   disabled: boolean;
+  // eslint-disable-next-line no-unused-vars
   onInterviewStart: (audioStream?: MediaStream) => void;
 }
 

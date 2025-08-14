@@ -1,4 +1,3 @@
-import { events } from "@react-three/fiber";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseSpeechRecognitionOptions {
