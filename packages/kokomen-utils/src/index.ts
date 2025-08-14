@@ -25,5 +25,6 @@ export {
   useModal,
   useScreenSize,
   useSidebar,
-  useSpeechRecognition
+  useSpeechRecognition,
+  useAudio
 } from "./react";
