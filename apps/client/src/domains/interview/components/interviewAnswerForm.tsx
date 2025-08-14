@@ -1,5 +1,12 @@
-import { submitInterviewAnswerV2 } from "@/domains/interview/api/interviewAnswer";
-import { Interview, InterviewMode } from "@kokomen/types";
+import {
+  getInterviewAnswerV2,
+  submitInterviewAnswerV2
+} from "@/domains/interview/api/interviewAnswer";
+import {
+  Interview,
+  InterviewMode,
+  InterviewAnswerForm as InterviewAnswerFormType
+} from "@kokomen/types";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { captureFormSubmitEvent } from "@/utils/analytics";
@@ -7,7 +14,6 @@ import { Button, Textarea } from "@kokomen/ui";
 import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
-import { useRouter } from "next/router";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -45,13 +51,14 @@ export function InterviewAnswerForm({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const updateInterviewInput = useCallback(
     (result: string) => {
-      setInterviewInput((prev) => prev + " " + result);
+      if (!isInterviewStarted) return;
+      setInterviewInput(result);
       if (textAreaRef.current) {
         textAreaRef.current.style.height = "auto";
         textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight > 400 ? 400 : textAreaRef.current.scrollHeight}px`;
       }
     },
-    [setInterviewInput]
+    [setInterviewInput, isInterviewStarted]
   );
   const {
     startListening,
@@ -61,9 +68,15 @@ export function InterviewAnswerForm({
     onSpeechEnd: updateInterviewInput,
     startOnMount: mode === "VOICE"
   });
-  const router = useRouter();
   const { mutate, isPending } = useMutation({
-    mutationFn: submitInterviewAnswerV2,
+    mutationFn: (data: InterviewAnswerFormType) => {
+      return submitInterviewAnswerV2(data).then(() =>
+        getInterviewAnswerV2({
+          interviewId: data.interviewId,
+          questionId: data.questionId
+        }).then((res) => res.data)
+      );
+    },
     onMutate: (data) => {
       captureFormSubmitEvent({
         name: "submitInterviewAnswer",
@@ -92,8 +105,8 @@ export function InterviewAnswerForm({
         previousMessage
       };
     },
-    onSuccess: ({ status, data }) => {
-      if (status === 204) {
+    onSuccess: (data) => {
+      if (data.interview_state === "FINISHED") {
         updateInterviewData({
           interview_state: "FINISHED",
           cur_question: FINISHED_MESSAGE
@@ -102,7 +115,7 @@ export function InterviewAnswerForm({
       }
       setInterviewerEmotion(getEmotion(data.cur_answer_rank));
       updateInterviewData({
-        cur_question: data.next_question,
+        cur_question: data.next_question_voice_url ?? data.next_question,
         cur_question_id: data.next_question_id
       });
       setInterviewInput("");
@@ -142,7 +155,6 @@ export function InterviewAnswerForm({
       });
     }
   };
-
   return (
     <form className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
       <Textarea
@@ -252,6 +264,7 @@ function VoiceInputButton({
       </Button>
     );
   }
+
   return (
     <Button
       type="button"
