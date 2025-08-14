@@ -21,9 +21,10 @@ const useInterviewCreateMutation = () => {
         }
       });
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       router.push({
-        pathname: `/interviews/${data.interview_id}`
+        pathname: `/interviews/${data.interview_id}`,
+        search: `mode=${variables.mode}`
       });
     },
     onError: (error) => {
