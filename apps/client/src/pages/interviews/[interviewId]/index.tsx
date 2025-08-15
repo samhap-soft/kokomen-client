@@ -159,6 +159,7 @@ export default function InterviewPage({
               setIsListening={setIsListening}
               totalQuestions={data.max_question_count}
               playAudio={playAudio}
+              mode={mode}
             />
           </div>
           <InterviewSideBar
