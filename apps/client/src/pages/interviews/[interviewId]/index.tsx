@@ -18,6 +18,7 @@ import InterviewFinishModal from "@/domains/interview/components/interviewFinish
 import { SEO } from "@/shared/seo";
 import { InterviewQuestion } from "@/domains/interview/components/interviewQuestion";
 import InterviewStartModal from "@/domains/interview/components/interviewStartModal";
+import { InterviewNotFoundError } from "@/domains/interview/components/interviewNotFoundError";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
@@ -40,17 +41,13 @@ export type InterviewerEmotion = "happy" | "encouraging" | "angry" | "neutral";
 const isTextInterview = (
   interview: Interview
 ): interview is Extract<Interview, { cur_question: string }> => {
-  return (
-    "cur_question" in interview && !("cur_question_voice_url" in interview)
-  );
+  return "cur_question" in interview;
 };
 
 const isVoiceInterview = (
   interview: Interview
 ): interview is Extract<Interview, { cur_question_voice_url: string }> => {
-  return (
-    "cur_question_voice_url" in interview && !("cur_question" in interview)
-  );
+  return "cur_question_voice_url" in interview;
 };
 
 // 현재 질문을 안전하게 가져오는 함수
@@ -116,9 +113,7 @@ export default function InterviewPage({
   };
 
   if (isPending) return <LoadingFullScreen className="h-screen w-screen" />;
-  if (isError || !data)
-    throw new Error("인터뷰 정보를 불러오는데 실패했습니다.");
-
+  if (isError) return <InterviewNotFoundError />;
   return (
     <>
       <SEO
@@ -163,6 +158,7 @@ export default function InterviewPage({
               interviewId={interviewId}
               setIsListening={setIsListening}
               totalQuestions={data.max_question_count}
+              playAudio={playAudio}
             />
           </div>
           <InterviewSideBar
@@ -177,7 +173,9 @@ export default function InterviewPage({
           disabled={isPending}
           onInterviewStart={() => {
             setIsInterviewStarted(true);
-            playAudio();
+            if (isVoiceInterview(data)) {
+              playAudio(data.cur_question_voice_url);
+            }
           }}
         />
         <InterviewFinishModal
