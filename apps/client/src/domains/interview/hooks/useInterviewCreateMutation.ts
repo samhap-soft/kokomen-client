@@ -16,13 +16,15 @@ const useInterviewCreateMutation = () => {
         name: "startNewInterview",
         properties: {
           category: data.category,
-          questionCount: data.max_question_count
+          questionCount: data.max_question_count,
+          mode: data.mode
         }
       });
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       router.push({
-        pathname: `/interviews/${data.interview_id}`
+        pathname: `/interviews/${data.interview_id}`,
+        search: `mode=${variables.mode}`
       });
     },
     onError: (error) => {

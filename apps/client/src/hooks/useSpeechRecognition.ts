@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
 interface UseSpeechRecognitionOptions {
   lang?: string;
   continuous?: boolean;
@@ -22,71 +21,74 @@ interface UseSpeechRecognitionProps {
   // eslint-disable-next-line no-unused-vars
   onSpeechEnd: (result: string) => void;
   options?: UseSpeechRecognitionOptions;
+  startOnMount?: boolean;
 }
 export const useSpeechRecognition = ({
   onSpeechEnd,
-  options = {},
+  startOnMount = false,
+  options = {}
 }: UseSpeechRecognitionProps): UseSpeechRecognitionReturn => {
   const {
     lang = "ko-KR",
     continuous = true,
-    interimResults = false,
-    maxAlternatives = 1,
+    interimResults = true,
+    maxAlternatives = 1
   } = options;
 
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSupported, setIsSupported] = useState(false);
+  const result = useRef<string[]>([]);
+  const resultPointer = useRef<number>(0);
 
   const recognitionRef = useRef<InstanceType<SpeechRecognitionType> | null>(
     null
   );
 
-  useEffect(() => {
-    // 브라우저 지원 확인
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current?.abort();
+      recognitionRef.current = null;
+    }
+    result.current = [];
+    resultPointer.current = 0;
+  }, [isListening]);
 
-    if (!SpeechRecognition) {
-      setIsSupported(false);
-      setError("이 브라우저는 음성 인식을 지원하지 않습니다.");
+  const handleSpeechStart = useCallback((): void => {
+    setIsListening(true);
+    setError(null);
+  }, []);
+
+  const handleSpeechEnd = useCallback((): void => {
+    setIsListening(false);
+    if (result.current[resultPointer.current] === "") {
       return;
     }
+    resultPointer.current++;
+    if (startOnMount) {
+      recognitionRef.current?.start();
+    }
+  }, [startOnMount]);
 
-    setIsSupported(true);
-
-    // SpeechRecognition 인스턴스 생성
-    const recognition = new SpeechRecognition();
-    recognitionRef.current = recognition;
-
-    // 설정
-    recognition.lang = lang;
-    recognition.continuous = continuous;
-    recognition.interimResults = interimResults;
-    recognition.maxAlternatives = maxAlternatives;
-
-    // 이벤트 핸들러
-    recognition.onstart = () => {
-      setIsListening(true);
-      setError(null);
-    };
-
-    recognition.onresult = (event) => {
-      let finalTranscript = "";
-      let interimTranscript = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
-        } else {
-          interimTranscript += transcript;
+  const handleSpeechResult = useCallback(
+    // eslint-disable-next-line no-undef
+    (event: SpeechRecognitionEvent): void => {
+      let resultString = "";
+      for (const result of event.results) {
+        if (result[0].transcript) {
+          resultString += result[0].transcript;
         }
       }
-      onSpeechEnd(finalTranscript + interimTranscript);
-    };
+      result.current[resultPointer.current] = resultString;
+      onSpeechEnd(result.current.join(" "));
+    },
+    [onSpeechEnd]
+  );
 
-    recognition.onerror = (event) => {
+  // eslint-disable-next-line no-undef
+  const handleSpeechError = useCallback(
+    // eslint-disable-next-line no-undef
+    (event: SpeechRecognitionErrorEvent): void => {
       setIsListening(false);
       let errorMessage = "음성 인식 중 오류가 발생했습니다.";
 
@@ -108,43 +110,85 @@ export const useSpeechRecognition = ({
       }
 
       setError(errorMessage);
-    };
+    },
+    []
+  );
 
-    recognition.onend = () => {
-      setIsListening(false);
-    };
+  const createSpeechRecognition =
+    useCallback((): InstanceType<SpeechRecognitionType> => {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = lang;
+      recognition.continuous = continuous;
+      recognition.interimResults = interimResults;
+      recognition.maxAlternatives = maxAlternatives;
+      recognition.lang = lang;
+      recognition.continuous = continuous;
+      recognition.interimResults = interimResults;
+      recognition.maxAlternatives = maxAlternatives;
 
-    return () => {
-      if (recognition) {
-        recognition.abort();
-      }
-    };
-  }, [lang, continuous, interimResults, maxAlternatives, onSpeechEnd]);
+      // 이벤트 핸들러
+      recognition.onstart = handleSpeechStart;
+
+      recognition.onresult = (event) => {
+        handleSpeechResult(event);
+      };
+
+      recognition.onerror = (event) => {
+        handleSpeechError(event);
+      };
+
+      recognition.onend = handleSpeechEnd;
+
+      return recognition;
+    }, [
+      lang,
+      continuous,
+      interimResults,
+      maxAlternatives,
+      handleSpeechStart,
+      handleSpeechResult,
+      handleSpeechError,
+      handleSpeechEnd
+    ]);
 
   const startListening = useCallback(() => {
-    if (!isSupported || !recognitionRef.current) {
+    if (!isSupported) {
       setError("음성 인식이 지원되지 않습니다.");
       return;
     }
 
     try {
+      recognitionRef.current = createSpeechRecognition();
       recognitionRef.current?.start();
     } catch (error) {
       setError("음성 인식을 시작할 수 없습니다.");
     }
-  }, [isSupported]);
+  }, [isSupported, createSpeechRecognition]);
 
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current?.stop();
+  useEffect(() => {
+    // 브라우저 지원 확인
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setIsSupported(false);
+      setError("이 브라우저는 음성 인식을 지원하지 않습니다.");
+      return;
     }
-  }, [isListening]);
+
+    setIsSupported(true);
+    if (startOnMount) {
+      startListening();
+    }
+  }, [startOnMount, createSpeechRecognition]);
 
   return {
     isListening,
     isSupported,
     startListening,
     stopListening,
-    error,
+    error
   };
 };

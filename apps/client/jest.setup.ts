@@ -4,6 +4,10 @@ const mockPrefetch = jest.fn();
 const mockBack = jest.fn();
 const mockReload = jest.fn();
 
+jest.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams("mode=TEXT")
+}));
+
 jest.mock("next/router", () => ({
   useRouter: () => ({
     push: mockPush,

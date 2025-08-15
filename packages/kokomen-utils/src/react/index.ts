@@ -3,3 +3,4 @@ export * from "./useIntersectionObserver";
 export * from "./useModal";
 export * from "./useScreenSize";
 export * from "./useSpeechRecognition";
+export * from "./useAudio";

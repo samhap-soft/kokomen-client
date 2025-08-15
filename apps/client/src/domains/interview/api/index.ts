@@ -1,4 +1,4 @@
-import { Interview } from "@kokomen/types";
+import { Interview, InterviewMode, InterviewType } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
@@ -18,6 +18,7 @@ interface NewInterviewResponse {
 interface NewInterviewRequest {
   category: string;
   max_question_count: number;
+  mode: InterviewType;
 }
 
 export const startNewInterview = async (
@@ -33,9 +34,12 @@ export const startNewInterview = async (
   return responseData;
 };
 
-export const getInterview = async (interviewId: string): Promise<Interview> => {
+export const getInterview = async (
+  interviewId: string,
+  mode: InterviewMode
+): Promise<Interview> => {
   const { data } = await interviewApiInstance.get(
-    `/interviews/${interviewId}/check`,
+    `/interviews/${interviewId}/check?mode=${mode}`,
     {
       withCredentials: true
     }
