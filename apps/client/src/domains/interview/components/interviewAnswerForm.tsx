@@ -31,6 +31,8 @@ type InterviewInputProps = Pick<
   setInterviewerEmotion: React.Dispatch<
     React.SetStateAction<InterviewerEmotion>
   >;
+  // eslint-disable-next-line no-unused-vars
+  playAudio: (audioUrl?: string) => Promise<void>;
 };
 const SUBMIT_FAILED_MESSAGE: string =
   "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
@@ -44,7 +46,8 @@ export function InterviewAnswerForm({
   interviewId,
   setIsListening,
   totalQuestions,
-  setInterviewerEmotion
+  setInterviewerEmotion,
+  playAudio
 }: InterviewInputProps): JSX.Element {
   const mode = useSearchParams().get("mode");
   const [interviewInput, setInterviewInput] = useState<string>("");
@@ -73,7 +76,8 @@ export function InterviewAnswerForm({
       return submitInterviewAnswerV2(data).then(() =>
         getInterviewAnswerV2({
           interviewId: data.interviewId,
-          questionId: data.questionId
+          questionId: data.questionId,
+          mode: data.mode
         }).then((res) => res.data)
       );
     },
@@ -114,11 +118,19 @@ export function InterviewAnswerForm({
         return;
       }
       setInterviewerEmotion(getEmotion(data.cur_answer_rank));
+      const updatedata = () => {
+        if (data.next_question_voice_url)
+          return { cur_question_voice_url: data.next_question_voice_url };
+        return { cur_question: data.next_question ?? "" };
+      };
       updateInterviewData({
-        cur_question: data.next_question_voice_url ?? data.next_question,
+        ...updatedata(),
         cur_question_id: data.next_question_id
       });
       setInterviewInput("");
+      if (data.next_question_voice_url) {
+        playAudio(data.next_question_voice_url);
+      }
     },
     onError: (_, __, context) => {
       updateInterviewData({
@@ -199,6 +211,7 @@ export function InterviewAnswerForm({
           <span className="text-text-tertiary font-bold">
             {prev_questions_and_answers.length} / {totalQuestions}
           </span>
+
           <VoiceInputButton
             onVoiceStart={() => {
               setIsListening(true);
