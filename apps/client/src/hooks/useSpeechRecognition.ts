@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-
 interface UseSpeechRecognitionOptions {
   lang?: string;
   continuous?: boolean;
@@ -70,8 +69,9 @@ export const useSpeechRecognition = ({
       recognitionRef.current?.start();
     }
   }, [startOnMount]);
-  // eslint-disable-next-line no-undef
+
   const handleSpeechResult = useCallback(
+    // eslint-disable-next-line no-undef
     (event: SpeechRecognitionEvent): void => {
       let resultString = "";
       for (const result of event.results) {
@@ -87,6 +87,7 @@ export const useSpeechRecognition = ({
 
   // eslint-disable-next-line no-undef
   const handleSpeechError = useCallback(
+    // eslint-disable-next-line no-undef
     (event: SpeechRecognitionErrorEvent): void => {
       setIsListening(false);
       let errorMessage = "음성 인식 중 오류가 발생했습니다.";

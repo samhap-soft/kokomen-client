@@ -15,7 +15,6 @@ import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 type InterviewInputProps = Pick<
   Interview,
@@ -33,6 +32,7 @@ type InterviewInputProps = Pick<
   >;
   // eslint-disable-next-line no-unused-vars
   playAudio: (audioUrl?: string) => Promise<void>;
+  mode: InterviewMode;
 };
 const SUBMIT_FAILED_MESSAGE: string =
   "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
@@ -47,9 +47,9 @@ export function InterviewAnswerForm({
   setIsListening,
   totalQuestions,
   setInterviewerEmotion,
-  playAudio
+  playAudio,
+  mode
 }: InterviewInputProps): JSX.Element {
-  const mode = useSearchParams().get("mode");
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const updateInterviewInput = useCallback(
@@ -226,6 +226,7 @@ export function InterviewAnswerForm({
             }}
             isVoiceListening={isVoiceListening}
             disabled={isPending || !isInterviewStarted}
+            mode={mode as InterviewMode}
           />
         </div>
         <Button
@@ -250,14 +251,15 @@ function VoiceInputButton({
   onVoiceStart,
   onVoiceStop,
   isVoiceListening,
-  disabled
+  disabled,
+  mode
 }: {
   onVoiceStart: () => void;
   onVoiceStop: () => void;
   isVoiceListening: boolean;
   disabled: boolean;
+  mode: InterviewMode;
 }): JSX.Element | null {
-  const mode: InterviewMode = useSearchParams().get("mode") as InterviewMode;
   if (mode === "VOICE") return null;
   if (isVoiceListening) {
     return (

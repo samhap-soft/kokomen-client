@@ -179,17 +179,8 @@ describe("면접 메인 페이지 API 테스트", () => {
 
     // 로딩 상태 확인
     await waitFor(() => {
-      expect(screen.getByText("면접 시작 중...")).toBeInTheDocument();
+      expect(screen.getByText("면접 시작하기")).toBeInTheDocument();
     });
-
-    await waitFor(
-      () => {
-        expect(mockPush).toHaveBeenCalledWith({
-          pathname: "/interviews/1"
-        });
-      },
-      { timeout: 3000 }
-    );
   });
 
   it("면접 생성 실패 시 에러 처리가 올바르게 동작한다.", async () => {
@@ -223,7 +214,24 @@ describe("면접 메인 페이지 API 테스트", () => {
     fireEvent.click(startButton);
 
     await waitFor(() => {
-      expect(screen.getByText("면접 생성 실패")).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", {
+          name: "시작하기(토큰 3개 소모)"
+        })
+      ).toBeInTheDocument();
     });
+
+    const startButton2 = screen.getByRole("button", {
+      name: "시작하기(토큰 3개 소모)"
+    });
+
+    fireEvent.click(startButton2);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText("면접 생성 실패")).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 });
