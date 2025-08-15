@@ -13,7 +13,8 @@ export function InterviewQuestion({
   question: string;
   isInterviewStarted: boolean;
   playFinished: boolean;
-  playAudio: () => void;
+  // eslint-disable-next-line no-unused-vars
+  playAudio: (audioUrl?: string) => Promise<void>;
 }) {
   if (!isInterviewStarted) return <StartUpQuestion />;
   if (interviewMode === "VOICE") {
@@ -21,7 +22,7 @@ export function InterviewQuestion({
       return (
         <Button
           variant={"soft"}
-          onClick={playAudio}
+          onClick={() => playAudio()}
           size={"large"}
           className="absolute top-10 w-2/3 left-1/2 -translate-x-1/2 z-20 p-4 font-bold animate-slide-up"
         >
