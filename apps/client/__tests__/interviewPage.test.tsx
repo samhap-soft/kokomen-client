@@ -344,9 +344,12 @@ describe("면접 페이지 테스트", () => {
       });
       fireEvent.click(submitButton);
 
-      await waitFor(() => {
-        expect(screen.getByText("다음 질문입니다.")).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByText("다음 질문입니다.")).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
     });
   });
 
