@@ -82,6 +82,7 @@ export function InterviewAnswerForm({
       );
     },
     onMutate: (data) => {
+      stopListening();
       captureFormSubmitEvent({
         name: "submitInterviewAnswer",
         properties: {
@@ -117,7 +118,9 @@ export function InterviewAnswerForm({
         });
         return;
       }
+      stopListening();
       setInterviewerEmotion(getEmotion(data.cur_answer_rank));
+      setInterviewInput("");
       const updatedata = () => {
         if (data.next_question_voice_url)
           return { cur_question_voice_url: data.next_question_voice_url };
