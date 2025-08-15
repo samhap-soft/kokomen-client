@@ -8,6 +8,7 @@ import axios, {
 import { delay, exponentialDelay } from "@kokomen/utils";
 import {
   InterviewAnswerForm,
+  InterviewMode,
   InterviewSubmitPolling,
   InterviewSubmitPollingSuccess
 } from "@kokomen/types";
@@ -22,6 +23,10 @@ interface RetryConfig {
 const RETRY_CONFIG: Record<string, RetryConfig> = {
   POLLING: {
     max: 20,
+    retry: 0
+  },
+  POLLING_REJECTED: {
+    max: 3,
     retry: 0
   },
   ANSWER_SUBMIT: {
@@ -78,13 +83,15 @@ const answerV2ServerInstance: AxiosInstance = axios.create({
 // API 요청
 export async function getInterviewAnswerV2({
   interviewId,
-  questionId
+  questionId,
+  mode
 }: {
   interviewId: number;
   questionId: number;
+  mode: InterviewMode;
 }): AxiosPromise<InterviewSubmitPollingSuccess> {
   return answerV2ServerInstance.get(
-    `/interviews/${interviewId}/questions/${questionId}`
+    `/interviews/${interviewId}/questions/${questionId}?mode=${mode}`
   );
 }
 
@@ -116,5 +123,20 @@ const onFullFilledPolling = async (
   return answerV2ServerInstance.request(response.config);
 };
 
+const onRejectedPolling = async (error: AxiosError) => {
+  if (
+    RETRY_CONFIG.POLLING_REJECTED.retry >= RETRY_CONFIG.POLLING_REJECTED.max
+  ) {
+    RETRY_CONFIG.POLLING_REJECTED.retry = 0;
+    return Promise.reject(error);
+  }
+  RETRY_CONFIG.POLLING_REJECTED.retry++;
+  await exponentialDelay(RETRY_CONFIG.POLLING_REJECTED.retry);
+  return answerV2ServerInstance.request(error.config as AxiosRequestConfig);
+};
+
 // 인터뷰 면접 답변 폴링을 위한 서버 인스턴스
-answerV2ServerInstance.interceptors.response.use(onFullFilledPolling);
+answerV2ServerInstance.interceptors.response.use(
+  onFullFilledPolling,
+  onRejectedPolling
+);
