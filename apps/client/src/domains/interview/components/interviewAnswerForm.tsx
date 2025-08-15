@@ -118,7 +118,7 @@ export function InterviewAnswerForm({
         });
         return;
       }
-      stopListening();
+      startListening();
       setInterviewerEmotion(getEmotion(data.cur_answer_rank));
       setInterviewInput("");
       const updatedata = () => {
@@ -225,7 +225,7 @@ export function InterviewAnswerForm({
               stopListening();
             }}
             isVoiceListening={isVoiceListening}
-            disabled={isPending || !isInterviewStarted || isVoiceListening}
+            disabled={isPending || !isInterviewStarted}
           />
         </div>
         <Button
@@ -268,9 +268,7 @@ function VoiceInputButton({
         name="interview-voice-stop"
         variant={"glass"}
         className="flex items-center gap-2 text-text-tertiary"
-        onClick={() => {
-          onVoiceStop();
-        }}
+        onClick={onVoiceStop}
         disabled={disabled}
       >
         <CircleStop
@@ -289,9 +287,7 @@ function VoiceInputButton({
       name="interview-voice-start"
       variant={"glass"}
       className="flex items-center gap-2 text-text-tertiary"
-      onClick={() => {
-        onVoiceStart();
-      }}
+      onClick={onVoiceStart}
       disabled={disabled}
     >
       <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />

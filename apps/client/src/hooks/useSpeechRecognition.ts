@@ -59,13 +59,17 @@ export const useSpeechRecognition = ({
     setIsListening(true);
     setError(null);
   }, []);
+
   const handleSpeechEnd = useCallback((): void => {
     setIsListening(false);
     if (result.current[resultPointer.current] === "") {
       return;
     }
     resultPointer.current++;
-  }, []);
+    if (startOnMount) {
+      recognitionRef.current?.start();
+    }
+  }, [startOnMount]);
   // eslint-disable-next-line no-undef
   const handleSpeechResult = useCallback(
     (event: SpeechRecognitionEvent): void => {
@@ -149,15 +153,13 @@ export const useSpeechRecognition = ({
     ]);
 
   const startListening = useCallback(() => {
-    if (!isSupported || !recognitionRef.current) {
+    if (!isSupported) {
       setError("음성 인식이 지원되지 않습니다.");
       return;
     }
 
     try {
-      if (!recognitionRef.current) {
-        recognitionRef.current = createSpeechRecognition();
-      }
+      recognitionRef.current = createSpeechRecognition();
       recognitionRef.current?.start();
     } catch (error) {
       setError("음성 인식을 시작할 수 없습니다.");
@@ -176,24 +178,10 @@ export const useSpeechRecognition = ({
     }
 
     setIsSupported(true);
-    recognitionRef.current = createSpeechRecognition();
     if (startOnMount) {
       startListening();
     }
-
-    return () => {
-      recognitionRef.current?.abort();
-    };
-  }, [
-    lang,
-    continuous,
-    interimResults,
-    maxAlternatives,
-    startOnMount,
-    startListening,
-    stopListening,
-    createSpeechRecognition
-  ]);
+  }, [startOnMount, createSpeechRecognition]);
 
   return {
     isListening,
