@@ -93,9 +93,11 @@ function RouteComponent(): ReactNode {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const { interviewId } = useParams({ from: "/interviews/$interviewId/" });
-  const interviewData = useLoaderData({
+  const data = useLoaderData({
     from: "/interviews/$interviewId/"
   }) as CamelCasedProperties<Interview>;
+  const [interviewData, setInterviewData] =
+    useState<CamelCasedProperties<Interview>>(data);
   const { mode } = useSearch({ from: "/interviews/$interviewId/" });
 
   // 인터뷰 질문 및 답변 사이드바 훅
@@ -129,19 +131,7 @@ function RouteComponent(): ReactNode {
   const updateInterviewData = (
     updates: Partial<CamelCasedProperties<Interview>>
   ) => {
-    const queryKey = interviewKeys.byInterviewId(Number(interviewId));
-
-    queryClient.setQueryData(
-      queryKey,
-      (oldData: CamelCasedProperties<Interview>) => {
-        if (!oldData) return oldData;
-
-        return {
-          ...oldData,
-          ...updates
-        };
-      }
-    );
+    setInterviewData((prev) => ({ ...prev, ...updates }));
   };
 
   return (
