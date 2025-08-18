@@ -29,10 +29,15 @@ export const mockApi = {
       })
     );
   },
-  createInterviewError: (status: number, message: string) => {
+  createInterviewError: (status: number) => {
     server.use(
       http.post(`${import.meta.env.VITE_API_BASE_URL}/interviews`, () => {
-        return HttpResponse.json({ message }, { status });
+        return HttpResponse.json(
+          {
+            message: "면접 생성에 실패했습니다."
+          },
+          { status }
+        );
       })
     );
   },
