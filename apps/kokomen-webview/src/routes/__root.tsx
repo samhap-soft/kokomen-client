@@ -33,9 +33,9 @@ const headerTitle: Record<FileRouteTypes["fullPaths"], string> = {
 
 function getRouteKey(pathname: string): keyof typeof headerTitle {
   if (/^\/members\/[^/]+$/.test(pathname)) return "/members/$memberId";
-  if (/^\/interviews\/[^/]+$/.test(pathname)) return "/interviews/$interviewId";
   if (/^\/interviews\/[^/]+\/result$/.test(pathname))
     return "/interviews/$interviewId/result";
+  if (/^\/interviews\/[^/]+$/.test(pathname)) return "/interviews/$interviewId";
   if (/^\/members\/interviews\/[^/]+$/.test(pathname))
     return "/members/interviews/$interviewId";
   return pathname as keyof typeof headerTitle;

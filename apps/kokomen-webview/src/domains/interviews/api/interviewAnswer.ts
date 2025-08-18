@@ -14,27 +14,30 @@ import {
   InterviewSubmitPollingSuccess
 } from "@kokomen/types";
 
-// Retry 설정 타입
-interface RetryConfig {
-  max: number;
-  retry: number;
-}
+// 요청별 재시도 상태를 관리하는 Map
+const retryStateMap = new Map<string, number>();
 
-// Retry 설정 객체
-const RETRY_CONFIG: Record<string, RetryConfig> = {
-  POLLING: {
-    max: 20,
-    retry: 0
-  },
-  POLLING_REJECTED: {
-    max: 3,
-    retry: 0
-  },
-  ANSWER_SUBMIT: {
-    max: 3,
-    retry: 0
-  }
-} as const;
+// 요청 식별자 생성 함수
+const createRequestId = (config: AxiosRequestConfig): string => {
+  const { method, url, data } = config;
+  return `${method}:${url}:${JSON.stringify(data || {})}`;
+};
+
+// 재시도 상태 관리 함수들
+const getRetryCount = (requestId: string): number => {
+  return retryStateMap.get(requestId) || 0;
+};
+
+const incrementRetryCount = (requestId: string): number => {
+  const currentCount = getRetryCount(requestId);
+  const newCount = currentCount + 1;
+  retryStateMap.set(requestId, newCount);
+  return newCount;
+};
+
+const resetRetryCount = (requestId: string): void => {
+  retryStateMap.delete(requestId);
+};
 
 // 인터뷰 면접 답변에 대한 서버 인스턴스
 const answerServerInstance: AxiosInstance = axios.create({
@@ -58,19 +61,24 @@ export async function submitInterviewAnswerV2({
 // POST 요청에 대한 인터셉터
 answerServerInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 성공 시 retry 상태 정리
-    RETRY_CONFIG.ANSWER_SUBMIT.retry = 0;
+    // 성공 시 해당 요청의 retry 상태 정리
+    const requestId = createRequestId(response.config);
+    resetRetryCount(requestId);
     return response;
   },
 
   // 에러 응답 처리
   async (error: AxiosError) => {
-    if (RETRY_CONFIG.ANSWER_SUBMIT.retry >= RETRY_CONFIG.ANSWER_SUBMIT.max) {
-      RETRY_CONFIG.ANSWER_SUBMIT.retry = 0;
+    const requestId = createRequestId(error.config as AxiosRequestConfig);
+    const retryCount = incrementRetryCount(requestId);
+    const maxRetries = 3;
+
+    if (retryCount >= maxRetries) {
+      resetRetryCount(requestId);
       return Promise.reject(error);
     }
-    RETRY_CONFIG.ANSWER_SUBMIT.retry++;
-    await exponentialDelay(RETRY_CONFIG.ANSWER_SUBMIT.retry);
+
+    await exponentialDelay(retryCount);
     return answerServerInstance.request(error.config as AxiosRequestConfig);
   }
 );
@@ -99,12 +107,14 @@ export async function getInterviewAnswerV2({
     .then((data) => mapToCamelCase(data));
 }
 
-// 폴링 중에는 서버 오류가 아닌 이상 200번대 응답이 오기 때문에 200처리에서도 오류 분기처리
+// 폴링 응답 처리 함수
 const onFullFilledPolling = async (
   response: AxiosResponse<InterviewSubmitPolling>
 ) => {
+  const requestId = createRequestId(response.config);
+
   if (response.data.proceed_state === "COMPLETED") {
-    RETRY_CONFIG.POLLING.retry = 0;
+    resetRetryCount(requestId);
     return response;
   }
 
@@ -112,36 +122,39 @@ const onFullFilledPolling = async (
     response.data.proceed_state === "LLM_FAILED" ||
     response.data.proceed_state === "TTS_FAILED"
   ) {
-    RETRY_CONFIG.POLLING.retry = 0;
+    resetRetryCount(requestId);
     return Promise.reject("답변에 대한 처리를 하던 중 오류가 발생했습니다.");
   }
 
-  if (RETRY_CONFIG.POLLING.retry >= RETRY_CONFIG.POLLING.max) {
-    RETRY_CONFIG.POLLING.retry = 0;
+  const retryCount = incrementRetryCount(requestId);
+  const maxRetries = 20;
+
+  if (retryCount >= maxRetries) {
+    resetRetryCount(requestId);
     return Promise.reject("서버가 응답하지 않습니다.");
   }
-
-  RETRY_CONFIG.POLLING.retry++;
 
   await delay(1000);
   return answerV2ServerInstance.request(response.config);
 };
 
+// 폴링 에러 처리 함수
 const onRejectedPolling = async (error: AxiosError) => {
-  if (
-    RETRY_CONFIG.POLLING_REJECTED.retry >= RETRY_CONFIG.POLLING_REJECTED.max
-  ) {
-    RETRY_CONFIG.POLLING_REJECTED.retry = 0;
+  const requestId = createRequestId(error.config as AxiosRequestConfig);
+  const retryCount = incrementRetryCount(requestId);
+  const maxRetries = 3;
+
+  if (retryCount >= maxRetries) {
+    resetRetryCount(requestId);
     return Promise.reject(error);
   }
-  RETRY_CONFIG.POLLING_REJECTED.retry++;
-  await exponentialDelay(RETRY_CONFIG.POLLING_REJECTED.retry);
+
+  await exponentialDelay(retryCount);
   return answerV2ServerInstance.request(error.config as AxiosRequestConfig);
 };
 
 // 인터뷰 면접 답변 폴링을 위한 서버 인스턴스
 answerV2ServerInstance.interceptors.response.use(
   onFullFilledPolling,
-
   onRejectedPolling
 );
