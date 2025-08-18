@@ -20,9 +20,10 @@ const useInterviewCreateMutation = () => {
     //     },
     //   });
     // },
-    onSuccess: (data) => {
+    onSuccess: (data, vars) => {
       navigate({
-        to: `/interviews/${data.interview_id}`
+        to: `/interviews/${data.interviewId}`,
+        search: { mode: vars.mode }
       });
     },
     onError: (error) => {
