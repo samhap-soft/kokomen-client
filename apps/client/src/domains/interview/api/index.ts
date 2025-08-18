@@ -1,4 +1,4 @@
-import { Interview, InterviewMode, InterviewType } from "@kokomen/types";
+import { Interview, InterviewMode } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
@@ -18,7 +18,7 @@ interface NewInterviewResponse {
 interface NewInterviewRequest {
   category: string;
   max_question_count: number;
-  mode: InterviewType;
+  mode: InterviewMode;
 }
 
 export const startNewInterview = async (

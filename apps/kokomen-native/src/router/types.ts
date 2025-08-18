@@ -5,9 +5,8 @@ export type RootStackParamList = {
 };
 
 export type MainStackParamList = {
-  Home: undefined;
-  Dashboard: undefined;
   InterviewMain: undefined;
+  Interview: { interviewId: number; mode: "TEXT" | "VOICE" };
 };
 
 export type DashboardStackParamList = {
@@ -22,3 +21,7 @@ export type TabParamList = {
 
 export type MainStackParam<R extends keyof MainStackParamList> =
   NativeStackScreenProps<MainStackParamList, R>;
+
+export type MainStackNavigationProp<
+  T extends keyof MainStackParamList = keyof MainStackParamList,
+> = NativeStackNavigationProp<MainStackParamList, T>;

@@ -1,250 +1,147 @@
 import axios, {
   AxiosError,
   AxiosInstance,
+  AxiosPromise,
   AxiosRequestConfig,
   AxiosResponse
 } from "axios";
-import { exponentialDelay } from "@kokomen/utils";
-
-interface InterviewAnswerApiResponse {
-  cur_answer_rank: "A" | "B" | "C" | "D" | "F";
-  next_question_id: number;
-  next_question: string;
-}
-
-const answerV2ServerInstance: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_V2_API_BASE_URL,
-  withCredentials: true
-});
-
-export async function getInterviewAnswerV2({
-  interviewId,
-  questionId
-}: {
-  interviewId: number;
-  questionId: number;
-}) {
-  return answerV2ServerInstance.get(
-    `/interviews/${interviewId}/questions/${questionId}`
-  );
-}
-
-// 요청별 retry 상태를 관리하기 위한 Map
-const v2RetryStateMap = new Map<string, { count: number }>();
-
-const MAX_RETRY = 10;
-
-answerV2ServerInstance.interceptors.response.use(async (response) => {
-  const requestKey = `${response.config.method}:${response.config.url}`;
-
-  if (response.data.llm_proceed_state === "COMPLETED") {
-    v2RetryStateMap.delete(requestKey);
-    if (response.data.interview_state === "FINISHED") {
-      response.status = 204;
-      return response;
-    }
-    return response;
-  }
-
-  if (response.data.llm_proceed_state === "FAILED") {
-    v2RetryStateMap.delete(requestKey);
-    return Promise.reject(response.data);
-  }
-
-  // retry 상태 가져오기 또는 초기화
-  let retryState = v2RetryStateMap.get(requestKey);
-  if (!retryState) {
-    retryState = { count: 0 };
-    v2RetryStateMap.set(requestKey, retryState);
-  }
-
-  if (retryState.count >= MAX_RETRY) {
-    v2RetryStateMap.delete(requestKey);
-    return Promise.reject(response);
-  }
-
-  retryState.count++;
-
-  await exponentialDelay(retryState.count);
-  return answerV2ServerInstance.request(response.config);
-});
-
-const answerServerInstance: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_WEB_BASE_URL,
-  withCredentials: true
-});
-
-// 에러 타입 정의
-type ErrorType =
-  | "pollingException"
-  | "serverException"
-  | "pollingServerException";
+import { delay, exponentialDelay, mapToCamelCase } from "@kokomen/utils";
+import {
+  CamelCasedProperties,
+  InterviewAnswerForm,
+  InterviewMode,
+  InterviewSubmitPolling,
+  InterviewSubmitPollingSuccess
+} from "@kokomen/types";
 
 // Retry 설정 타입
 interface RetryConfig {
-  MAX_RETRY: number;
-  STATUS_CODE: number;
+  max: number;
+  retry: number;
 }
 
 // Retry 설정 객체
 const RETRY_CONFIG: Record<string, RetryConfig> = {
-  POLLING_SERVER_EXCEPTION: {
-    MAX_RETRY: 3,
-    STATUS_CODE: 503
+  POLLING: {
+    max: 20,
+    retry: 0
   },
-  POLLING_EXCEPTION: {
-    MAX_RETRY: 5,
-    STATUS_CODE: 408
+  POLLING_REJECTED: {
+    max: 3,
+    retry: 0
   },
-  SERVER_EXCEPTION: {
-    MAX_RETRY: 3,
-    STATUS_CODE: 500
+  ANSWER_SUBMIT: {
+    max: 3,
+    retry: 0
   }
 } as const;
 
-// 요청을 식별할 수 있는 고유 키 생성 함수
-const createRequestKey = (config: AxiosRequestConfig): string => {
-  const { method, url, data } = config;
-  return `${method}:${url}:${JSON.stringify(data)}`;
-};
+// 인터뷰 면접 답변에 대한 서버 인스턴스
+const answerServerInstance: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_V2_API_BASE_URL,
+  withCredentials: true
+});
 
-// Retry 상태를 관리하기 위한 Map (요청 키를 사용)
-const retryStateMap = new Map<
-  string,
-  { count: number; errorType: ErrorType }
->();
-
-function getInterviewIdAndQuestionId(url: string) {
-  const urlParams = new URLSearchParams(url.split("?")[1]);
-  const interviewId = urlParams.get("interviewId");
-  const questionId = urlParams.get("questionId");
-  return {
-    interviewId: interviewId ? parseInt(interviewId) : undefined,
-    questionId: questionId ? parseInt(questionId) : undefined
-  };
+export async function submitInterviewAnswerV2({
+  interviewId,
+  questionId,
+  answer,
+  mode
+}: InterviewAnswerForm): AxiosPromise {
+  return answerServerInstance.post(
+    `/interviews/${interviewId}/questions/${questionId}/answers`,
+    { answer, mode },
+    { timeout: 2000 }
+  );
 }
 
-// Retry 처리 함수
-const executeRetry = async (
-  error: AxiosError,
-  config: AxiosRequestConfig,
-  maxRetry: number,
-  errorType: ErrorType
-): Promise<AxiosResponse> => {
-  const requestKey = createRequestKey(config);
-
-  // 현재 retry 상태 가져오기 또는 초기화
-  let retryState = retryStateMap.get(requestKey);
-  if (!retryState) {
-    retryState = { count: 0, errorType };
-    retryStateMap.set(requestKey, retryState);
-  }
-
-  retryState.count++;
-
-  // 최대 retry 횟수 초과 시 에러 throw
-  if (retryState.count >= maxRetry) {
-    retryStateMap.delete(requestKey); // 상태 정리
-    throw new Error("서버에 오류가 발생했습니다.");
-  }
-
-  // 지수 백오프 적용하여 재시도
-  await exponentialDelay(retryState.count);
-
-  // URL에서 interviewId와 questionId 추출
-  const { interviewId, questionId } = getInterviewIdAndQuestionId(
-    config.url ?? ""
-  );
-
-  if (errorType === "serverException") {
-    const response = await answerServerInstance.request(config);
-    retryStateMap.delete(requestKey); // 성공 시 상태 정리
-    return response;
-  } else {
-    if (!interviewId || !questionId) {
-      throw new Error("interviewId 또는 questionId가 없습니다.");
-    }
-    const response = await getInterviewAnswerV2({
-      interviewId,
-      questionId
-    });
-    retryStateMap.delete(requestKey); // 성공 시 상태 정리
-    return response;
-  }
-};
-
-// Response interceptor 설정
+// POST 요청에 대한 인터셉터
 answerServerInstance.interceptors.response.use(
-  // 성공 응답 처리
   (response: AxiosResponse) => {
     // 성공 시 retry 상태 정리
-    if (response.config) {
-      const requestKey = createRequestKey(response.config);
-      retryStateMap.delete(requestKey);
-    }
+    RETRY_CONFIG.ANSWER_SUBMIT.retry = 0;
     return response;
   },
 
   // 에러 응답 처리
   async (error: AxiosError) => {
-    const status = error.response?.status;
-    const config = error.config;
-
-    if (!config) {
+    if (RETRY_CONFIG.ANSWER_SUBMIT.retry >= RETRY_CONFIG.ANSWER_SUBMIT.max) {
+      RETRY_CONFIG.ANSWER_SUBMIT.retry = 0;
       return Promise.reject(error);
     }
-
-    // 상태코드에 따른 retry 로직
-    try {
-      switch (status) {
-        case RETRY_CONFIG.POLLING_SERVER_EXCEPTION.STATUS_CODE:
-          return await executeRetry(
-            error,
-            config,
-            RETRY_CONFIG.POLLING_SERVER_EXCEPTION.MAX_RETRY,
-            "pollingServerException"
-          );
-
-        case RETRY_CONFIG.POLLING_EXCEPTION.STATUS_CODE:
-          return await executeRetry(
-            error,
-            config,
-            RETRY_CONFIG.POLLING_EXCEPTION.MAX_RETRY,
-            "pollingException"
-          );
-
-        case RETRY_CONFIG.SERVER_EXCEPTION.STATUS_CODE:
-          return await executeRetry(
-            error,
-            config,
-            RETRY_CONFIG.SERVER_EXCEPTION.MAX_RETRY,
-            "serverException"
-          );
-
-        default:
-          // retry 대상이 아닌 에러는 그대로 reject
-          return Promise.reject(error);
-      }
-    } catch (retryError) {
-      // retry 실패 시 에러 reject
-      return Promise.reject(retryError);
-    }
+    RETRY_CONFIG.ANSWER_SUBMIT.retry++;
+    await exponentialDelay(RETRY_CONFIG.ANSWER_SUBMIT.retry);
+    return answerServerInstance.request(error.config as AxiosRequestConfig);
   }
 );
 
-// API 호출 함수
-export async function submitInterviewAnswerV2({
+// 인터뷰 면접 답변 폴링을 위한 서버 인스턴스
+const answerV2ServerInstance: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_V2_API_BASE_URL,
+  withCredentials: true
+});
+
+// API 요청
+export async function getInterviewAnswerV2({
   interviewId,
   questionId,
-  answer
+  mode
 }: {
   interviewId: number;
   questionId: number;
-  answer: string;
-}): Promise<AxiosResponse<InterviewAnswerApiResponse>> {
-  return answerServerInstance.post<InterviewAnswerApiResponse>(
-    `/api/interviews/answers?interviewId=${interviewId}&questionId=${questionId}`,
-    { answer },
-    { timeout: 25000 }
-  );
+  mode: InterviewMode;
+}): Promise<CamelCasedProperties<InterviewSubmitPollingSuccess>> {
+  return answerV2ServerInstance
+    .get<InterviewSubmitPollingSuccess>(
+      `/interviews/${interviewId}/questions/${questionId}?mode=${mode}`
+    )
+    .then((res) => res.data)
+    .then((data) => mapToCamelCase(data));
 }
+
+// 폴링 중에는 서버 오류가 아닌 이상 200번대 응답이 오기 때문에 200처리에서도 오류 분기처리
+const onFullFilledPolling = async (
+  response: AxiosResponse<InterviewSubmitPolling>
+) => {
+  if (response.data.proceed_state === "COMPLETED") {
+    RETRY_CONFIG.POLLING.retry = 0;
+    return response;
+  }
+
+  if (
+    response.data.proceed_state === "LLM_FAILED" ||
+    response.data.proceed_state === "TTS_FAILED"
+  ) {
+    RETRY_CONFIG.POLLING.retry = 0;
+    return Promise.reject("답변에 대한 처리를 하던 중 오류가 발생했습니다.");
+  }
+
+  if (RETRY_CONFIG.POLLING.retry >= RETRY_CONFIG.POLLING.max) {
+    RETRY_CONFIG.POLLING.retry = 0;
+    return Promise.reject("서버가 응답하지 않습니다.");
+  }
+
+  RETRY_CONFIG.POLLING.retry++;
+
+  await delay(1000);
+  return answerV2ServerInstance.request(response.config);
+};
+
+const onRejectedPolling = async (error: AxiosError) => {
+  if (
+    RETRY_CONFIG.POLLING_REJECTED.retry >= RETRY_CONFIG.POLLING_REJECTED.max
+  ) {
+    RETRY_CONFIG.POLLING_REJECTED.retry = 0;
+    return Promise.reject(error);
+  }
+  RETRY_CONFIG.POLLING_REJECTED.retry++;
+  await exponentialDelay(RETRY_CONFIG.POLLING_REJECTED.retry);
+  return answerV2ServerInstance.request(error.config as AxiosRequestConfig);
+};
+
+// 인터뷰 면접 답변 폴링을 위한 서버 인스턴스
+answerV2ServerInstance.interceptors.response.use(
+  onFullFilledPolling,
+
+  onRejectedPolling
+);

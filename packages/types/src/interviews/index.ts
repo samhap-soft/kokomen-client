@@ -3,6 +3,8 @@ import { Dispatch } from "react";
 type InterviewStatus = "standby" | "thinking" | "question" | "finished";
 type AnswerScore = "A" | "B" | "C" | "D" | "F";
 
+type InterviewerEmotion = "happy" | "encouraging" | "angry" | "neutral";
+
 type QuestionAndAnswer = {
   question_id: number;
   answer_id: number;
@@ -135,6 +137,7 @@ type InterviewAction =
 
 export type {
   InterviewStatus,
+  InterviewerEmotion,
   QuestionAndAnswer,
   PrevQuestionAndAnswers,
   Interview,
