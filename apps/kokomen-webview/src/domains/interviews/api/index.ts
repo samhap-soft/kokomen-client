@@ -1,4 +1,4 @@
-import { Interview } from "@kokomen/types";
+import { Interview, InterviewMode } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 import type { CamelCasedProperties } from "@kokomen/utils";
 import { mapToCamelCase } from "@kokomen/utils";
@@ -20,23 +20,27 @@ interface NewInterviewResponse {
 interface NewInterviewRequest {
   category: string;
   max_question_count: number;
+  mode: InterviewMode;
 }
 
 export const startNewInterview = async (
   data: NewInterviewRequest
-): Promise<NewInterviewResponse> => {
-  const { data: responseData } = await interviewApiInstance.post(
-    "/interviews",
-    data
-  );
-  return responseData;
+): Promise<CamelCasedProperties<NewInterviewResponse>> => {
+  return interviewApiInstance
+    .post("/interviews", data)
+    .then((res) => ({
+      interviewId: Number(res.data.interview_id),
+      ...res.data
+    }))
+    .then(mapToCamelCase);
 };
 
 export const getInterview = async (
-  interviewId: string
+  interviewId: string,
+  mode: InterviewMode
 ): Promise<CamelCasedProperties<Interview>> => {
   return interviewApiInstance
-    .get(`/interviews/${interviewId}/check`)
+    .get(`/interviews/${interviewId}/check?mode=${mode}`)
     .then((res) => ({ interviewId: Number(interviewId), ...res.data }))
     .then(mapToCamelCase);
 };
