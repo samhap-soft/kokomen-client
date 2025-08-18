@@ -12,7 +12,6 @@ import {
   CamelCasedProperties,
   useAudio
 } from "@kokomen/utils";
-import { useQueryClient } from "@tanstack/react-query";
 import { Interview, InterviewerEmotion, InterviewMode } from "@kokomen/types";
 import { LoadingFullScreen } from "@kokomen/ui";
 import ErrorComponent from "@/common/components/ErrorComponent";
@@ -91,7 +90,6 @@ const getCurrentQuestion = (
 
 function RouteComponent(): ReactNode {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
-  const queryClient = useQueryClient();
   const { interviewId } = useParams({ from: "/interviews/$interviewId/" });
   const data = useLoaderData({
     from: "/interviews/$interviewId/"
