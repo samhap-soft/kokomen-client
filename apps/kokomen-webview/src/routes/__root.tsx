@@ -44,13 +44,21 @@ function getRouteKey(pathname: string): keyof typeof headerTitle {
 function RootComponent(): React.ReactNode {
   const canGoBack = useCanGoBack();
   const router = useRouter();
+  const handleGoBack = () => {
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({
+        type: "pageChange"
+      })
+    );
+    router.history.back();
+  };
   return (
     <div className="flex flex-col h-screen">
       <header className="p-2 flex gap-2 flex-shrink-0 items-center">
         {canGoBack && (
           <Button
             variant={"text"}
-            onClick={() => router.history.back()}
+            onClick={handleGoBack}
             className="[&_svg]:size-6"
           >
             <ChevronLeft />
