@@ -19,7 +19,9 @@ export default function ErrorComponent({
         <h1 className="text-2xl font-bold mt-10">
           {cause ?? "서버에 오류가 발생했어요."}
         </h1>
-        <p className="my-4">{subText ?? "잠시 후 다시 시도해 주세요."}</p>
+        <p className="my-4 px-6 text-center">
+          {subText ?? "잠시 후 다시 시도해 주세요."}
+        </p>
         <Button
           variant={"gradient"}
           onClick={() => {

@@ -1,11 +1,12 @@
 type WebviewMessageType =
   | "startListening"
   | "stopListening"
-  | "speechRecognitionResult";
+  | "speechRecognitionResult"
+  | "checkSpeechRecognitionSupported";
 
-type WebviewMessage = {
+type WebviewMessage<T> = {
   type: WebviewMessageType;
-  result?: string;
+  data?: T;
 };
 
 export { WebviewMessage, WebviewMessageType };

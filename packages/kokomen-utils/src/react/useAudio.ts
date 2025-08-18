@@ -19,6 +19,7 @@ function useAudio(
   useEffect(() => {
     // 기존 audio 요소가 있다면 제거
     if (audioRef.current) {
+      audioRef.current.pause(); // 오디오 일시정지 추가
       audioRef.current.remove();
     }
 
@@ -63,33 +64,44 @@ function useAudio(
 
     // cleanup 함수
     return () => {
-      audio.removeEventListener("ended", handleEnded);
-      audio.removeEventListener("error", handleError);
-      audio.removeEventListener("canplaythrough", handleCanPlayThrough);
-      audio.removeEventListener("loadstart", handleLoadStart);
-      audio.removeEventListener("play", handlePlay);
-      audio.remove();
-      audioRef.current = null;
+      if (audioRef.current) {
+        audioRef.current.pause(); // 오디오 일시정지 추가
+        audioRef.current.removeEventListener("ended", handleEnded);
+        audioRef.current.removeEventListener("error", handleError);
+        audioRef.current.removeEventListener(
+          "canplaythrough",
+          handleCanPlayThrough
+        );
+        audioRef.current.removeEventListener("loadstart", handleLoadStart);
+        audioRef.current.removeEventListener("play", handlePlay);
+        audioRef.current.remove();
+        audioRef.current = null;
+      }
     };
-  }, []);
+  }, []); // 의존성 배열 수정
+
+  const afterLoad = () => {
+    loadingRef.current = false;
+    readyRef.current = true;
+    audioRef.current.play().catch((err) => {
+      console.error(err);
+    });
+  };
 
   const playAudio = useCallback(
     async (audioUrl?: string) => {
       if (!audioRef.current) {
         throw new Error("Audio element not available");
       }
-      if (!audioUrl) {
+      if (!audioUrl && audioRef.current.src) {
         return audioRef.current.play();
       }
+      audioRef.current.addEventListener("loadeddata", afterLoad, {
+        once: true
+      });
 
       audioRef.current.src = audioUrl;
-      audioRef.current.addEventListener("loadeddata", () => {
-        loadingRef.current = false;
-        readyRef.current = true;
-        audioRef.current.play().catch((err) => {
-          console.error(err);
-        });
-      });
+      audioRef.current.load();
     },
     [onPlayStart]
   );

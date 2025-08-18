@@ -31,13 +31,18 @@ const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
               type="button"
               role="button"
               aria-label="home-button"
-              onClick={() =>
+              onClick={() => {
+                window.ReactNativeWebView?.postMessage(
+                  JSON.stringify({
+                    type: "pageChange"
+                  })
+                );
                 router.navigate({
                   to: "/",
                   replace: true,
                   viewTransition: true
-                })
-              }
+                });
+              }}
               variant={"gradient"}
               size={"xl"}
               className="w-full"
@@ -48,13 +53,18 @@ const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
               type="button"
               role="button"
               aria-label="go-to-result-button"
-              onClick={() =>
+              onClick={() => {
+                window.ReactNativeWebView?.postMessage(
+                  JSON.stringify({
+                    type: "pageChange"
+                  })
+                );
                 router.navigate({
                   to: `/interviews/${interviewId}/result`,
                   replace: true,
                   viewTransition: true
-                })
-              }
+                });
+              }}
               variant={"success"}
               size={"xl"}
               className="w-full"

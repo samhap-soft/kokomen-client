@@ -1,6 +1,6 @@
 import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
-import { InterviewType } from "@kokomen/types";
+import { InterviewMode } from "@kokomen/types";
 import { useModal } from "@kokomen/utils";
 import { Button, Modal } from "@kokomen/ui";
 import { Keyboard, MicVocal, TriangleAlert } from "lucide-react";
@@ -63,9 +63,9 @@ const QuestionCountSelector: MemoExoticComponent<
 QuestionCountSelector.displayName = "QuestionCountSelector";
 
 type InterviewTypeSelectorProps = {
-  selectedInterviewType: InterviewType;
+  selectedInterviewType: InterviewMode;
   // eslint-disable-next-line no-unused-vars
-  handleInterviewTypeChange: (type: InterviewType) => void;
+  handleInterviewTypeChange: (type: InterviewMode) => void;
 };
 const InterviewTypeSelector: MemoExoticComponent<
   FC<InterviewTypeSelectorProps>
@@ -125,7 +125,7 @@ const InterviewStartModal = ({
   onPressStart: () => void;
   questionCount: number;
   categoryTitle: string;
-  interviewType: InterviewType;
+  interviewType: InterviewMode;
 }) => {
   const requiredToken =
     interviewType === "VOICE" ? questionCount * 2 : questionCount;
@@ -205,8 +205,8 @@ const CreateInterviewForm = ({
     DEFAULT_INTERVIEW_CONFIGS.MIN_QUESTION_COUNT as number
   );
   const [selectedInterviewType, setSelectedInterviewType] =
-    useState<InterviewType>(
-      DEFAULT_INTERVIEW_CONFIGS.INTERVIEW_TYPE as InterviewType
+    useState<InterviewMode>(
+      DEFAULT_INTERVIEW_CONFIGS.INTERVIEW_TYPE as InterviewMode
     );
   const { isOpen, openModal, closeModal } = useModal();
   const createInterviewMutation = useInterviewCreateMutation();
@@ -219,7 +219,7 @@ const CreateInterviewForm = ({
     );
   }, []);
 
-  const handleInterviewTypeChange = useCallback((type: InterviewType) => {
+  const handleInterviewTypeChange = useCallback((type: InterviewMode) => {
     setSelectedInterviewType(type);
   }, []);
 

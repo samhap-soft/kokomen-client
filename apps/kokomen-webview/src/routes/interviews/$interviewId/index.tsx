@@ -1,25 +1,41 @@
 import { getInterview } from "@/domains/interviews/api";
-import { createFileRoute, useParams } from "@tanstack/react-router";
-import { lazy, ReactNode, useEffect, useState } from "react";
+import {
+  createFileRoute,
+  useLoaderData,
+  useParams,
+  useSearch
+} from "@tanstack/react-router";
+import { lazy, ReactNode, useState } from "react";
 import {
   interviewKeys,
   useSidebar,
-  CamelCasedProperties
+  CamelCasedProperties,
+  useAudio
 } from "@kokomen/utils";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Interview } from "@kokomen/types";
+import { Interview, InterviewerEmotion, InterviewMode } from "@kokomen/types";
 import { LoadingFullScreen } from "@kokomen/ui";
 import ErrorComponent from "@/common/components/ErrorComponent";
-import { InterviewAnswerInput } from "@/domains/interviews/components/interviewInput";
-import { InterviewSideBar } from "@kokomen/ui/domains";
-import { Button } from "@kokomen/ui";
+import { InterviewAnswerForm } from "@/domains/interviews/components/interviewAnswerForm";
+import { InterviewQuestion, InterviewSideBar } from "@kokomen/ui/domains";
 import InterviewFinishModal from "@/domains/interviews/components/interviewFinishModal";
+import InterviewStartModal from "@/domains/interviews/components/interviewStartModal";
 
 // eslint-disable-next-line @rushstack/typedef-var
 export const Route = createFileRoute("/interviews/$interviewId/")({
   component: RouteComponent,
-  loader: ({ params: { interviewId }, context: { queryClient } }) => {
-    return getInterview(interviewId).then((data) =>
+  validateSearch: (search) => {
+    if (!search.mode) throw new Error("mode is required");
+    return {
+      mode: search.mode as InterviewMode
+    };
+  },
+  loaderDeps: ({ search: { mode } }) => ({ mode }),
+  loader: ({
+    params: { interviewId },
+    context: { queryClient },
+    deps: { mode }
+  }) => {
+    return getInterview(interviewId, mode).then((data) =>
       queryClient.setQueryData(
         interviewKeys.byInterviewId(Number(interviewId)),
         data
@@ -41,75 +57,93 @@ const AiInterviewInterface = lazy(() =>
   }))
 );
 
-const START_UP_QUESTION: string =
-  "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요.";
+const isTextInterview = (
+  interview: CamelCasedProperties<Interview>
+): interview is Extract<
+  CamelCasedProperties<Interview>,
+  { curQuestion: string }
+> => {
+  return "curQuestion" in interview;
+};
+
+const isVoiceInterview = (
+  interview: CamelCasedProperties<Interview>
+): interview is Extract<
+  CamelCasedProperties<Interview>,
+  { curQuestionVoiceUrl: string }
+> => {
+  return "curQuestionVoiceUrl" in interview;
+};
+
+// 현재 질문을 안전하게 가져오는 함수
+const getCurrentQuestion = (
+  interview: CamelCasedProperties<Interview>
+): string => {
+  if (isTextInterview(interview)) {
+    return interview.curQuestion;
+  }
+  if (isVoiceInterview(interview)) {
+    return interview.curQuestionVoiceUrl;
+  }
+  throw new Error("Invalid interview type");
+};
 
 function RouteComponent(): ReactNode {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
-  const queryClient = useQueryClient();
   const { interviewId } = useParams({ from: "/interviews/$interviewId/" });
+  const data = useLoaderData({
+    from: "/interviews/$interviewId/"
+  }) as CamelCasedProperties<Interview>;
+  const [interviewData, setInterviewData] =
+    useState<CamelCasedProperties<Interview>>(data);
+  const { mode } = useSearch({ from: "/interviews/$interviewId/" });
 
   // 인터뷰 질문 및 답변 사이드바 훅
   const { open: isSidebarOpen, openSidebar, closeSidebar } = useSidebar();
 
-  const { data, isPending, isError } = useQuery<
-    CamelCasedProperties<Interview>
-  >({
-    queryKey: interviewKeys.byInterviewId(Number(interviewId)),
-    queryFn: () => getInterview(interviewId)
-  });
+  const audioUrl = (() => {
+    if (!interviewData) return "";
+    if (isVoiceInterview(interviewData))
+      return interviewData.curQuestionVoiceUrl;
+    return "";
+  })();
 
   // 면접관 캐릭터 끄덕거리게 하거나 대화하는 것처럼 보이게 하기
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
-  const listeningEmotion = isListening ? "happy" : "encouraging";
-  const interviewerEmotion = isSpeaking ? "neutral" : listeningEmotion;
+  const [interviewerEmotion, setInterviewerEmotion] =
+    useState<InterviewerEmotion>("happy");
+  const { playAudio, playFinished } = useAudio(audioUrl, {
+    onPlayEnd: () => {
+      setIsSpeaking(false);
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "startListening" })
+      );
+    },
+    onPlayStart: () => {
+      setIsSpeaking(true);
+    }
+  });
 
   //기존 면접 정보 업데이트
   const updateInterviewData = (
     updates: Partial<CamelCasedProperties<Interview>>
   ) => {
-    const queryKey = interviewKeys.byInterviewId(Number(interviewId));
-
-    queryClient.setQueryData(
-      queryKey,
-      (oldData: CamelCasedProperties<Interview>) => {
-        if (!oldData) return oldData;
-
-        return {
-          ...oldData,
-          ...updates
-        };
-      }
-    );
+    setInterviewData((prev) => ({ ...prev, ...updates }));
   };
-
-  useEffect(() => {
-    setIsSpeaking(true);
-    setTimeout(() => {
-      setIsSpeaking(false);
-    }, 4000);
-  }, [data?.curQuestion]);
-
-  if (!data || isError)
-    return (
-      <ErrorComponent
-        cause="인터뷰를 찾을 수 없습니다."
-        subText="인터뷰 링크가 잘못되었거나 본인의 인터뷰가 맞는지 확인해주세요."
-      />
-    );
-  if (isPending) return <LoadingFullScreen />;
 
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full">
         <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
           <div className="flex flex-col flex-1 relative min-w-0">
-            <div className="p-4 absolute top-20 left-[10%] w-[80%] h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
-              <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
-                {isInterviewStarted ? data.curQuestion : START_UP_QUESTION}
-              </div>
-            </div>
+            <InterviewQuestion
+              interviewMode={mode}
+              question={getCurrentQuestion(interviewData)}
+              isInterviewStarted={isInterviewStarted}
+              playFinished={playFinished}
+              playAudio={playAudio}
+            />
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
               <div className="bg-gradient-to-r w-full h-full from-blue-50 to-primary-bg-hover relative rounded-lg">
                 <AiInterviewInterface
@@ -119,37 +153,40 @@ function RouteComponent(): ReactNode {
                 />
               </div>
             </div>
-            <InterviewAnswerInput
+            <InterviewAnswerForm
               isInterviewStarted={isInterviewStarted}
-              curQuestion={data.curQuestion}
-              curQuestionId={data.curQuestionId}
-              prevQuestionsAndAnswers={data.prevQuestionsAndAnswers}
+              curQuestion={getCurrentQuestion(interviewData)}
+              curQuestionId={interviewData.curQuestionId}
+              prevQuestionsAndAnswers={interviewData.prevQuestionsAndAnswers}
               updateInterviewData={updateInterviewData}
               interviewId={Number(interviewId)}
+              setInterviewerEmotion={setInterviewerEmotion}
               setIsListening={setIsListening}
-              totalQuestions={data.maxQuestionCount}
+              totalQuestions={interviewData.maxQuestionCount}
+              mode={mode}
+              playAudio={playAudio}
             />
           </div>
           <InterviewSideBar
-            prevQuestionAndAnswer={data.prevQuestionsAndAnswers}
+            prevQuestionAndAnswer={interviewData.prevQuestionsAndAnswers}
             open={isSidebarOpen}
             openSidebar={openSidebar}
             closeSidebar={closeSidebar}
           />
         </div>
-        {!isInterviewStarted && (
-          <Button
-            className="w-1/2 absolute bottom-40 left-1/4 text-xl font-bold"
-            variant={"primary"}
-            size={"xl"}
-            disabled={isPending}
-            onClick={() => setIsInterviewStarted(true)}
-          >
-            면접 시작하기
-          </Button>
-        )}
+        <InterviewStartModal
+          isInterviewStarted={isInterviewStarted}
+          onInterviewStart={() => {
+            setIsInterviewStarted(true);
+            if (isVoiceInterview(interviewData)) {
+              playAudio(interviewData.curQuestionVoiceUrl);
+            }
+          }}
+          disabled={false}
+          mode={mode}
+        />
         <InterviewFinishModal
-          interviewState={data.interviewState}
+          interviewState={interviewData.interviewState}
           interviewId={Number(interviewId)}
         />
       </div>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
 interface UseSpeechRecognitionOptions {
   lang?: string;
   continuous?: boolean;
@@ -13,6 +14,7 @@ interface UseSpeechRecognitionReturn {
   stopListening: () => void;
   error: string | null;
 }
+
 type SpeechRecognitionType =
   | typeof window.SpeechRecognition
   | typeof window.webkitSpeechRecognition;
@@ -20,12 +22,15 @@ type SpeechRecognitionType =
 interface UseSpeechRecognitionProps {
   // eslint-disable-next-line no-unused-vars
   onSpeechEnd: (result: string) => void;
+  startOnMount: boolean;
+  enabled: boolean;
   options?: UseSpeechRecognitionOptions;
-  startOnMount?: boolean;
 }
+
 export const useSpeechRecognition = ({
   onSpeechEnd,
   startOnMount = false,
+  enabled = true,
   options = {}
 }: UseSpeechRecognitionProps): UseSpeechRecognitionReturn => {
   const {
@@ -45,15 +50,7 @@ export const useSpeechRecognition = ({
     null
   );
 
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current?.abort();
-      recognitionRef.current = null;
-    }
-    result.current = [];
-    resultPointer.current = 0;
-  }, [isListening]);
-
+  // 이벤트 핸들러들
   const handleSpeechStart = useCallback((): void => {
     setIsListening(true);
     setError(null);
@@ -73,6 +70,7 @@ export const useSpeechRecognition = ({
   const handleSpeechResult = useCallback(
     // eslint-disable-next-line no-undef
     (event: SpeechRecognitionEvent): void => {
+      if (!enabled) return;
       let resultString = "";
       for (const result of event.results) {
         if (result[0].transcript) {
@@ -82,7 +80,7 @@ export const useSpeechRecognition = ({
       result.current[resultPointer.current] = resultString;
       onSpeechEnd(result.current.join(" "));
     },
-    [onSpeechEnd]
+    [onSpeechEnd, enabled]
   );
 
   // eslint-disable-next-line no-undef
@@ -114,32 +112,43 @@ export const useSpeechRecognition = ({
     []
   );
 
+  // 이벤트 리스너 등록 함수
+  const attachEventListeners = useCallback(
+    (recognition: InstanceType<SpeechRecognitionType>): void => {
+      recognition.onstart = handleSpeechStart;
+      recognition.onresult = handleSpeechResult;
+      recognition.onerror = handleSpeechError;
+      recognition.onend = handleSpeechEnd;
+    },
+    [handleSpeechStart, handleSpeechResult, handleSpeechError, handleSpeechEnd]
+  );
+
+  // 이벤트 리스너 해제 함수
+  const detachEventListeners = useCallback(
+    (recognition: InstanceType<SpeechRecognitionType>): void => {
+      recognition.onstart = null;
+      recognition.onresult = null;
+      recognition.onerror = null;
+      recognition.onend = null;
+    },
+    []
+  );
+
+  // SpeechRecognition 인스턴스 생성 및 설정
   const createSpeechRecognition =
     useCallback((): InstanceType<SpeechRecognitionType> => {
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
+
+      // 설정 적용
       recognition.lang = lang;
       recognition.continuous = continuous;
       recognition.interimResults = interimResults;
       recognition.maxAlternatives = maxAlternatives;
-      recognition.lang = lang;
-      recognition.continuous = continuous;
-      recognition.interimResults = interimResults;
-      recognition.maxAlternatives = maxAlternatives;
 
-      // 이벤트 핸들러
-      recognition.onstart = handleSpeechStart;
-
-      recognition.onresult = (event) => {
-        handleSpeechResult(event);
-      };
-
-      recognition.onerror = (event) => {
-        handleSpeechError(event);
-      };
-
-      recognition.onend = handleSpeechEnd;
+      // 이벤트 리스너 등록
+      attachEventListeners(recognition);
 
       return recognition;
     }, [
@@ -147,10 +156,7 @@ export const useSpeechRecognition = ({
       continuous,
       interimResults,
       maxAlternatives,
-      handleSpeechStart,
-      handleSpeechResult,
-      handleSpeechError,
-      handleSpeechEnd
+      attachEventListeners
     ]);
 
   const startListening = useCallback(() => {
@@ -160,15 +166,38 @@ export const useSpeechRecognition = ({
     }
 
     try {
+      // 기존 인스턴스가 있다면 정리
+      if (recognitionRef.current) {
+        detachEventListeners(recognitionRef.current);
+        recognitionRef.current.abort();
+      }
+
+      // 새 인스턴스 생성 및 시작
       recognitionRef.current = createSpeechRecognition();
-      recognitionRef.current?.start();
+      recognitionRef.current.start();
     } catch (error) {
       setError("음성 인식을 시작할 수 없습니다.");
     }
-  }, [isSupported, createSpeechRecognition]);
+  }, [isSupported, createSpeechRecognition, detachEventListeners]);
 
+  const stopListening = useCallback(() => {
+    if (recognitionRef.current && isListening) {
+      // 이벤트 리스너 해제
+      detachEventListeners(recognitionRef.current);
+
+      // 음성 인식 중단
+      recognitionRef.current.abort();
+      recognitionRef.current = null;
+    }
+
+    // 상태 초기화
+    setIsListening(false);
+    result.current = [];
+    resultPointer.current = 0;
+  }, [isListening, detachEventListeners]);
+
+  // 컴포넌트 마운트 시 브라우저 지원 확인
   useEffect(() => {
-    // 브라우저 지원 확인
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -179,10 +208,24 @@ export const useSpeechRecognition = ({
     }
 
     setIsSupported(true);
+  }, [startListening]);
+
+  useEffect(() => {
     if (startOnMount) {
       startListening();
     }
-  }, [startOnMount, createSpeechRecognition]);
+  }, [startOnMount, startListening]);
+
+  // 컴포넌트 언마운트 시 정리
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        detachEventListeners(recognitionRef.current);
+        recognitionRef.current.abort();
+        recognitionRef.current = null;
+      }
+    };
+  }, [detachEventListeners]);
 
   return {
     isListening,

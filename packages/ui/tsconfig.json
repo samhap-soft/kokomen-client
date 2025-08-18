@@ -5,7 +5,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "allowImportingTsExtensions": true,
-    "types": ["@kokomen/types"]
+    "types": ["@kokomen/types", "@types/dom-speech-recognition"]
   },
   "include": ["./**/*"],
   "exclude": ["**/*.test.*", "**/*.spec.*"]

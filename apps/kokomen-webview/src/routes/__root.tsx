@@ -33,9 +33,9 @@ const headerTitle: Record<FileRouteTypes["fullPaths"], string> = {
 
 function getRouteKey(pathname: string): keyof typeof headerTitle {
   if (/^\/members\/[^/]+$/.test(pathname)) return "/members/$memberId";
-  if (/^\/interviews\/[^/]+$/.test(pathname)) return "/interviews/$interviewId";
   if (/^\/interviews\/[^/]+\/result$/.test(pathname))
     return "/interviews/$interviewId/result";
+  if (/^\/interviews\/[^/]+$/.test(pathname)) return "/interviews/$interviewId";
   if (/^\/members\/interviews\/[^/]+$/.test(pathname))
     return "/members/interviews/$interviewId";
   return pathname as keyof typeof headerTitle;
@@ -44,13 +44,21 @@ function getRouteKey(pathname: string): keyof typeof headerTitle {
 function RootComponent(): React.ReactNode {
   const canGoBack = useCanGoBack();
   const router = useRouter();
+  const handleGoBack = () => {
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({
+        type: "pageChange"
+      })
+    );
+    router.history.back();
+  };
   return (
     <div className="flex flex-col h-screen">
       <header className="p-2 flex gap-2 flex-shrink-0 items-center">
         {canGoBack && (
           <Button
             variant={"text"}
-            onClick={() => router.history.back()}
+            onClick={handleGoBack}
             className="[&_svg]:size-6"
           >
             <ChevronLeft />

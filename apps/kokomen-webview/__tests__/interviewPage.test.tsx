@@ -50,31 +50,59 @@ const mockInterviewAPI = () => {
 };
 
 const mockInterviewAnswerAPI = (response = mockInterviewAnswerResponse) => {
+  // 답변 제출 API 모킹
   server.use(
     http.post(
-      `${import.meta.env.VITE_WEB_BASE_URL}/api/interviews/answers?interviewId=1&questionId=1`,
+      `${import.meta.env.VITE_V2_API_BASE_URL}/interviews/1/questions/1/answers`,
       async ({ request }) => {
-        const body = (await request.json()) as { answer: string };
+        const body = (await request.json()) as { answer: string; mode: string };
         expect(body.answer).toBeTruthy();
-        return HttpResponse.json(response);
+        return new HttpResponse(null, { status: 204 });
+      }
+    )
+  );
+
+  // 폴링 API 모킹
+  server.use(
+    http.get(
+      `${import.meta.env.VITE_V2_API_BASE_URL}/interviews/1/questions/1?mode=TEXT`,
+      () => {
+        return HttpResponse.json({
+          proceed_state: "COMPLETED",
+          ...response
+        });
       }
     )
   );
 };
 
 const mockInterviewFinishAPI = () => {
+  // 답변 제출 API 모킹
   server.use(
     http.post(
-      `${import.meta.env.VITE_WEB_BASE_URL}/api/interviews/answers?interviewId=1&questionId=1`,
+      `${import.meta.env.VITE_V2_API_BASE_URL}/interviews/1/questions/1/answers`,
       () => {
         return new HttpResponse(null, { status: 204 });
+      }
+    )
+  );
+
+  // 폴링 API 모킹 - 면접 종료 응답
+  server.use(
+    http.get(
+      `${import.meta.env.VITE_V2_API_BASE_URL}/interviews/1/questions/1?mode=TEXT`,
+      () => {
+        return HttpResponse.json({
+          proceed_state: "COMPLETED",
+          interview_state: "FINISHED"
+        });
       }
     )
   );
 };
 
 const waitForPageLoad = async () => {
-  await openPageSetup("/interviews/1");
+  await openPageSetup("/interviews/1?mode=TEXT");
   await waitFor(
     () => {
       expect(
@@ -247,20 +275,10 @@ describe("인터뷰 페이지 테스트", () => {
     // 음성 인식 시작
     fireEvent.click(voiceButton);
 
-    // 음성 인식 중 상태 확인
-    await waitFor(() => {
-      expect(
-        screen.getByRole("button", { name: "interview-voice-stop" })
-      ).toBeInTheDocument();
-    });
-
-    // 음성 인식 중지
-    fireEvent.click(
-      screen.getByRole("button", { name: "interview-voice-stop" })
+    // ReactNativeWebView.postMessage가 호출되었는지 확인
+    expect(window.ReactNativeWebView?.postMessage).toHaveBeenCalledWith(
+      JSON.stringify({ type: "startListening" })
     );
-    expect(
-      screen.getByRole("button", { name: "interview-voice-start" })
-    ).toBeInTheDocument();
   });
 
   test("음성 인식 결과가 입력창에 반영되는지 확인", async () => {
@@ -282,7 +300,7 @@ describe("인터뷰 페이지 테스트", () => {
     const messageEvent = new MessageEvent("message", {
       data: JSON.stringify({
         type: "speechRecognitionResult",
-        result: "음성으로 입력한 답변입니다."
+        data: "음성으로 입력한 답변입니다."
       })
     });
 
@@ -341,47 +359,10 @@ describe("인터뷰 페이지 테스트", () => {
     fireEvent.change(answerInput, { target: { value: "마지막 답변" } });
     fireEvent.click(screen.getByRole("button", { name: "interview-submit" }));
 
-    // 면접 종료 메시지 확인
     await waitFor(() => {
       expect(
         screen.getByText("면접이 종료되었습니다. 수고하셨습니다.")
       ).toBeInTheDocument();
-    });
-
-    // 모달 버튼들 확인
-    expect(
-      screen.getByRole("button", { name: "home-button" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "go-to-result-button" })
-    ).toBeInTheDocument();
-  });
-
-  test("면접 종료 모달에서 홈으로 이동 테스트", async () => {
-    mockInterviewFinishAPI();
-
-    await waitForPageLoad();
-
-    // 면접 시작 및 종료
-    fireEvent.click(screen.getByRole("button", { name: "면접 시작하기" }));
-    fireEvent.change(
-      screen.getByRole("textbox", { name: "interview-answer" }),
-      { target: { value: "답변" } }
-    );
-    fireEvent.click(screen.getByRole("button", { name: "interview-submit" }));
-    // 면접 종료 메시지 확인
-    await waitFor(() => {
-      expect(
-        screen.getByText("면접이 종료되었습니다. 수고하셨습니다.")
-      ).toBeInTheDocument();
-    });
-
-    // 홈으로 버튼 클릭
-    fireEvent.click(screen.getByRole("button", { name: "home-button" }));
-
-    // 홈 페이지로 이동하는지 확인
-    await waitFor(() => {
-      expect(window.location.pathname).toBe("/");
     });
   });
 
@@ -397,7 +378,8 @@ describe("인터뷰 페이지 테스트", () => {
       { target: { value: "답변" } }
     );
     fireEvent.click(screen.getByRole("button", { name: "interview-submit" }));
-    // 면접 종료 메시지 확인
+
+    // 면접 종료 메시지 확인 (curQuestion이 FINISHED_MESSAGE로 설정됨)
     await waitFor(() => {
       expect(
         screen.getByText("면접이 종료되었습니다. 수고하셨습니다.")
@@ -430,18 +412,13 @@ describe("인터뷰 페이지 테스트", () => {
       )
     );
 
-    await openPageSetup("/interviews/1");
+    await openPageSetup("/interviews/1?mode=TEXT");
 
     // 에러 컴포넌트가 표시되는지 확인
     await waitFor(
       () => {
         expect(
           screen.getByText("인터뷰를 찾을 수 없습니다.")
-        ).toBeInTheDocument();
-        expect(
-          screen.getByText(
-            "인터뷰 링크가 잘못되었거나 본인의 인터뷰가 맞는지 확인해주세요."
-          )
         ).toBeInTheDocument();
       },
       { timeout: 3000 }

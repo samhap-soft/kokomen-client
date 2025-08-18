@@ -46,8 +46,11 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
     mockApi.ranking(mockRankList);
     mockApi.categories(mockCategories);
     await openPageSetup("/interviews");
+
     await waitFor(() => {
-      expect(screen.getByText("테스트 면접 면접 시작하기")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 1, name: "테스트 면접" })
+      ).toBeInTheDocument();
     });
 
     // 랭킹 카드가 렌더링되는지 확인
@@ -67,13 +70,16 @@ describe("면접 메인 페이지 버튼 테스트", () => {
     await openPageSetup("/interviews");
 
     await waitFor(() => {
-      expect(screen.getByText("테스트 면접 면접 시작하기")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 1, name: "테스트 면접" })
+      ).toBeInTheDocument();
     });
 
-    // 초기 문제 개수 확인 (기본값 3)
-    expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-      "3"
-    );
+    // 초기 문제 개수 확인 (기본값 3) - 문제 개수 선택기의 큰 숫자를 찾음
+    const questionCountDisplay = screen.getByText("3", {
+      selector: "span.text-3xl"
+    });
+    expect(questionCountDisplay).toBeInTheDocument();
 
     // 플러스 버튼 클릭
     const plusButton = screen.getByRole("button", { name: "+" });
@@ -83,27 +89,27 @@ describe("면접 메인 페이지 버튼 테스트", () => {
       plusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "4"
-      );
+      expect(
+        screen.getByText("4", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
     });
 
     await act(async () => {
       plusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "5"
-      );
+      expect(
+        screen.getByText("5", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
     });
 
     await act(async () => {
       plusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "6"
-      );
+      expect(
+        screen.getByText("6", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
     });
 
     // 마이너스 버튼 클릭
@@ -114,27 +120,27 @@ describe("면접 메인 페이지 버튼 테스트", () => {
       minusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "5"
-      );
+      expect(
+        screen.getByText("5", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
     });
 
     await act(async () => {
       minusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "4"
-      );
+      expect(
+        screen.getByText("4", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
     });
 
     await act(async () => {
       minusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "3"
-      );
+      expect(
+        screen.getByText("3", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
     });
 
     // 최소 문제 개수 제한 테스트 (3개 이하로 내려가지 않음)
@@ -142,18 +148,58 @@ describe("면접 메인 페이지 버튼 테스트", () => {
       minusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "3"
-      );
+      expect(
+        screen.getByText("3", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
     });
 
     await act(async () => {
       minusButton.click();
     });
     await waitFor(() => {
-      expect(screen.getByLabelText("interviewQuestionCount")).toHaveTextContent(
-        "3"
-      );
+      expect(
+        screen.getByText("3", { selector: "span.text-3xl" })
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("면접 타입 선택이 정상적으로 동작하는지 테스트", async () => {
+    mockApi.ranking(mockRankList);
+    mockApi.categories(mockCategories);
+
+    await openPageSetup("/interviews");
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { level: 1, name: "테스트 면접" })
+      ).toBeInTheDocument();
+    });
+
+    // 기본적으로 텍스트 타입이 선택되어 있는지 확인
+    const textButton = screen.getByRole("button", { name: /텍스트/ });
+    const voiceButton = screen.getByRole("button", { name: /음성/ });
+
+    expect(textButton).toHaveAttribute("aria-selected", "true");
+    expect(voiceButton).toHaveAttribute("aria-selected", "false");
+
+    // 음성 타입으로 변경
+    await act(async () => {
+      voiceButton.click();
+    });
+
+    await waitFor(() => {
+      expect(voiceButton).toHaveAttribute("aria-selected", "true");
+      expect(textButton).toHaveAttribute("aria-selected", "false");
+    });
+
+    // 다시 텍스트 타입으로 변경
+    await act(async () => {
+      textButton.click();
+    });
+
+    await waitFor(() => {
+      expect(textButton).toHaveAttribute("aria-selected", "true");
+      expect(voiceButton).toHaveAttribute("aria-selected", "false");
     });
   });
 });
@@ -174,7 +220,9 @@ describe("면접 메인 페이지 API 테스트", () => {
     await openPageSetup("/interviews");
 
     await waitFor(() => {
-      expect(screen.getByText("테스트 면접 면접 시작하기")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 1, name: "테스트 면접" })
+      ).toBeInTheDocument();
     });
 
     const startButton = screen.getByRole("button", {
@@ -185,6 +233,23 @@ describe("면접 메인 페이지 API 테스트", () => {
 
     await act(async () => {
       startButton.click();
+    });
+
+    // 모달이 열리는지 확인
+    await waitFor(() => {
+      expect(screen.getByText("면접 시작하기")).toBeInTheDocument();
+      expect(
+        screen.getByText("테스트 면접 면접을 시작하시겠습니까?")
+      ).toBeInTheDocument();
+    });
+
+    // 모달에서 시작하기 버튼 클릭 - 더 구체적인 선택자 사용
+    const confirmButton = screen.getByRole("button", {
+      name: /시작하기\(토큰/
+    });
+
+    await act(async () => {
+      confirmButton.click();
     });
 
     // 로딩 상태 확인
@@ -205,12 +270,14 @@ describe("면접 메인 페이지 API 테스트", () => {
     mockApi.ranking(mockRankList);
     mockApi.categories(mockCategories);
 
-    mockApi.createInterviewError(400, "면접 생성에 실패했습니다.");
+    mockApi.createInterviewError(400);
 
     await openPageSetup("/interviews");
 
     await waitFor(() => {
-      expect(screen.getByText("테스트 면접 면접 시작하기")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 1, name: "테스트 면접" })
+      ).toBeInTheDocument();
     });
 
     const startButton = screen.getByRole("button", {
@@ -221,10 +288,29 @@ describe("면접 메인 페이지 API 테스트", () => {
       startButton.click();
     });
 
-    // 에러 토스트 메시지 확인
+    // 모달이 열리는지 확인
     await waitFor(() => {
-      expect(screen.getByText("면접 생성 실패")).toBeInTheDocument();
+      expect(screen.getByText("면접 시작하기")).toBeInTheDocument();
     });
+
+    // 모달에서 시작하기 버튼 클릭 - 더 구체적인 선택자 사용
+    const confirmButton = screen.getByRole("button", {
+      name: /시작하기\(토큰/
+    });
+
+    await act(async () => {
+      confirmButton.click();
+    });
+
+    // 에러 토스트 메시지 확인
+    await waitFor(
+      () => {
+        expect(
+          screen.getByText("면접 생성에 실패했습니다.")
+        ).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it("카테고리 탭 변경이 정상적으로 동작하는지 테스트", async () => {
@@ -250,7 +336,7 @@ describe("면접 메인 페이지 API 테스트", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("테스트 면접 1 면접 시작하기")
+        screen.getByRole("heading", { level: 1, name: "테스트 면접 1" })
       ).toBeInTheDocument();
     });
 
@@ -263,7 +349,7 @@ describe("면접 메인 페이지 API 테스트", () => {
     // 두 번째 카테고리 내용이 표시되는지 확인
     await waitFor(() => {
       expect(
-        screen.getByText("테스트 면접 2 면접 시작하기")
+        screen.getByRole("heading", { level: 1, name: "테스트 면접 2" })
       ).toBeInTheDocument();
     });
 

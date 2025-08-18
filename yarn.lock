@@ -3302,6 +3302,7 @@ __metadata:
   dependencies:
     "@kokomen/eslint-config": "workspace:*"
     "@kokomen/types": "workspace:*"
+    "@kokomen/utils": "workspace:*"
     "@react-three/drei": "npm:^10.3.0"
     "@react-three/fiber": "npm:^9.1.2"
     "@storybook/addon-essentials": "npm:^8.6.12"
@@ -3312,6 +3313,7 @@ __metadata:
     "@storybook/react-vite": "npm:^8.6.12"
     "@storybook/test": "npm:^8.6.12"
     "@tailwindcss/vite": "npm:^4.1.7"
+    "@types/dom-speech-recognition": "npm:^0.0.6"
     "@types/prop-types": "npm:^15"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
