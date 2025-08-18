@@ -1,21 +1,24 @@
-import useInterviewCreateMutation from "@/domains/interviews/hooks/useInterviewCreateMutation";
 import { Category } from "@kokomen/types";
-import { Button } from "@kokomen/ui";
-import { Keyboard, MicVocal } from "lucide-react";
+import { InterviewMode } from "@kokomen/types";
+import { useModal } from "@kokomen/utils";
+import { Button, Modal } from "@kokomen/ui";
+import { Keyboard, MicVocal, TriangleAlert } from "lucide-react";
 import {
   FC,
+  FormEvent,
   JSX,
   memo,
   MemoExoticComponent,
   useCallback,
   useState
 } from "react";
+import useInterviewCreateMutation from "@/domains/interviews/hooks/useInterviewCreateMutation";
 
-interface QuestionCountSelectorProps {
+type QuestionCountSelectorProps = {
   questionCount: number;
   // eslint-disable-next-line no-unused-vars
   handleQuestionCountChange: (event: "plus" | "minus") => void;
-}
+};
 const QuestionCountSelector: MemoExoticComponent<
   FC<QuestionCountSelectorProps>
 > = memo(
@@ -39,10 +42,7 @@ const QuestionCountSelector: MemoExoticComponent<
             -
           </Button>
           <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-xl">
-            <span
-              aria-label="interviewQuestionCount"
-              className="text-3xl font-bold text-text-light-solid"
-            >
+            <span className="text-3xl font-bold text-text-light-solid">
               {questionCount}
             </span>
           </div>
@@ -61,12 +61,11 @@ const QuestionCountSelector: MemoExoticComponent<
 );
 QuestionCountSelector.displayName = "QuestionCountSelector";
 
-type InterviewType = "text" | "voice";
-interface InterviewTypeSelectorProps {
-  selectedInterviewType: InterviewType;
+type InterviewTypeSelectorProps = {
+  selectedInterviewType: InterviewMode;
   // eslint-disable-next-line no-unused-vars
-  handleInterviewTypeChange: (type: InterviewType) => void;
-}
+  handleInterviewTypeChange: (type: InterviewMode) => void;
+};
 const InterviewTypeSelector: MemoExoticComponent<
   FC<InterviewTypeSelectorProps>
 > = memo(
@@ -83,27 +82,26 @@ const InterviewTypeSelector: MemoExoticComponent<
         <div className="grid grid-cols-2 gap-3">
           <Button
             type="button"
-            aria-selected={selectedInterviewType === "text"}
-            onClick={() => handleInterviewTypeChange("text")}
+            aria-selected={selectedInterviewType === "TEXT"}
+            onClick={() => handleInterviewTypeChange("TEXT")}
             className="py-6"
-            variant={selectedInterviewType === "text" ? "primary" : "outline"}
+            variant={selectedInterviewType === "TEXT" ? "primary" : "outline"}
           >
             <div className="flex flex-col items-center gap-2">
               <Keyboard className="w-6 h-6" />
-              <span className="text-base font-bold">텍스트</span>
+              <span className="text-base font-medium">텍스트</span>
             </div>
           </Button>
           <Button
             type="button"
-            aria-selected={selectedInterviewType === "voice"}
-            onClick={() => handleInterviewTypeChange("voice")}
+            aria-selected={selectedInterviewType === "VOICE"}
+            onClick={() => handleInterviewTypeChange("VOICE")}
             className="py-6"
-            disabled
-            variant={selectedInterviewType === "voice" ? "primary" : "outline"}
+            variant={selectedInterviewType === "VOICE" ? "primary" : "outline"}
           >
             <div className="flex flex-col items-center gap-2">
               <MicVocal className="w-6 h-6" />
-              <span className="text-base font-bold">음성</span>
+              <span className="text-base font-medium">음성</span>
             </div>
           </Button>
         </div>
@@ -113,10 +111,86 @@ const InterviewTypeSelector: MemoExoticComponent<
 );
 InterviewTypeSelector.displayName = "InterviewTypeSelector";
 
-const DEFAULT_INTERVIEW_CONFIGS: Record<string, string | number> = {
-  MAX_QUESTION_COUNT: 20,
+const InterviewStartModal = ({
+  isOpen,
+  closeModal,
+  onPressStart,
+  questionCount,
+  categoryTitle,
+  interviewType
+}: {
+  isOpen: boolean;
+  closeModal: () => void;
+  onPressStart: () => void;
+  questionCount: number;
+  categoryTitle: string;
+  interviewType: InterviewMode;
+}) => {
+  const requiredToken =
+    interviewType === "VOICE" ? questionCount * 2 : questionCount;
+  return (
+    <Modal isOpen={isOpen} onClose={closeModal} title="면접 시작하기">
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-text-heading mb-2">
+            {categoryTitle} 면접을 시작하시겠습니까?
+          </h3>
+          <p className="text-sm text-text-description">
+            선택한 카테고리의 {questionCount}개 문제로 면접을 진행합니다
+          </p>
+        </div>
+        {interviewType === "VOICE" && (
+          <div className="flex items-center gap-2 text-sm text-orange-6 text-center justify-center">
+            <TriangleAlert />
+            음성 면접은 토큰이 1문제당 2개씩 소모됩니다.
+          </div>
+        )}
+
+        <div className="bg-fill-quaternary rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-text-heading">
+              면접 진행 중 주의사항
+            </span>
+          </div>
+          <ul className="text-sm text-text-description space-y-1 ml-5">
+            <li>• 면접 진행 중에는 면접 중단이 불가능합니다</li>
+            <li>
+              • {interviewType === "VOICE" ? "음성" : "텍스트"} 방식으로 면접이
+              진행됩니다
+            </li>
+            <li>• 총 {questionCount}개의 문제가 출제됩니다</li>
+          </ul>
+        </div>
+
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="soft"
+            size={"large"}
+            onClick={closeModal}
+            className="flex-1"
+          >
+            취소
+          </Button>
+          <Button
+            type="button"
+            size={"large"}
+            variant="primary"
+            onClick={onPressStart}
+            className="flex-1"
+          >
+            시작하기(토큰 {requiredToken}개 소모)
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+const DEFAULT_INTERVIEW_CONFIGS = {
+  MAX_QUESTION_COUNT: 10,
   MIN_QUESTION_COUNT: 3,
-  INTERVIEW_TYPE: "text"
+  INTERVIEW_TYPE: "TEXT"
 };
 const CreateInterviewForm = ({
   categories
@@ -130,37 +204,59 @@ const CreateInterviewForm = ({
     DEFAULT_INTERVIEW_CONFIGS.MIN_QUESTION_COUNT as number
   );
   const [selectedInterviewType, setSelectedInterviewType] =
-    useState<InterviewType>("text");
+    useState<InterviewMode>(
+      DEFAULT_INTERVIEW_CONFIGS.INTERVIEW_TYPE as InterviewMode
+    );
+  const { isOpen, openModal, closeModal } = useModal();
   const createInterviewMutation = useInterviewCreateMutation();
 
   const handleQuestionCountChange = useCallback((event: "plus" | "minus") => {
     setQuestionCount((prev) =>
-      event === "plus" ? Math.min(20, prev + 1) : Math.max(3, prev - 1)
+      event === "plus"
+        ? Math.min(DEFAULT_INTERVIEW_CONFIGS.MAX_QUESTION_COUNT, prev + 1)
+        : Math.max(DEFAULT_INTERVIEW_CONFIGS.MIN_QUESTION_COUNT, prev - 1)
     );
   }, []);
 
-  const handleInterviewTypeChange = useCallback((type: InterviewType) => {
+  const handleInterviewTypeChange = useCallback((type: InterviewMode) => {
     setSelectedInterviewType(type);
   }, []);
 
   const handleNewInterview = useCallback(() => {
     createInterviewMutation.mutate({
       category: selectedCategory.key,
-      max_question_count: questionCount
+      max_question_count: questionCount,
+      mode: selectedInterviewType
     });
-  }, [selectedCategory, questionCount, createInterviewMutation]);
+  }, [
+    selectedCategory,
+    questionCount,
+    selectedInterviewType,
+    createInterviewMutation
+  ]);
+
+  const handleSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault();
+      openModal();
+    },
+    [openModal]
+  );
+
+  const handleConfirmStart = useCallback(() => {
+    closeModal();
+    handleNewInterview();
+  }, [closeModal, handleNewInterview]);
+
   return (
     <form
-      className="w-full lg:flex-1 lg:min-w-0 flex flex-col mt-10"
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleNewInterview();
-      }}
+      className="w-full lg:flex-1 lg:min-w-0 flex flex-col"
+      onSubmit={handleSubmit}
     >
       {/* 카테고리 탭 */}
       <nav className="w-full mb-8">
-        <div className="bg-bg-elevated rounded-2xl p-2 border border-border">
-          <div className="flex overflow-x-auto gap-1 p-2 scrollbar-hidden">
+        <div className="bg-bg-elevated rounded-2xl p-2 shadow-lg border border-border">
+          <div className="flex overflow-x-auto gap-1 p-2">
             {categories.map((category) => (
               <Button
                 type="button"
@@ -181,7 +277,7 @@ const CreateInterviewForm = ({
       </nav>
 
       {/* 메인 컨텐츠(카테고리) */}
-      <div className="bg-bg-elevated rounded-3xl border border-border overflow-hidden">
+      <div className="bg-bg-elevated rounded-3xl border border-border shadow-2xl overflow-hidden">
         <div className="p-8 lg:p-12">
           <div className="text-center mb-12">
             <div className="relative inline-block mb-6">
@@ -233,6 +329,16 @@ const CreateInterviewForm = ({
               선택한 카테고리의 {questionCount}개 문제로 면접을 진행합니다
             </p>
           </div>
+
+          {/* 면접 시작 확인 모달 */}
+          <InterviewStartModal
+            isOpen={isOpen}
+            closeModal={closeModal}
+            onPressStart={handleConfirmStart}
+            questionCount={questionCount}
+            categoryTitle={selectedCategory.title}
+            interviewType={selectedInterviewType}
+          />
         </div>
       </div>
     </form>
