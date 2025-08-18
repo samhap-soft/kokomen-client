@@ -24,6 +24,20 @@ export default function InterviewMainScreen() {
       });
       webviewRef.current?.postMessage(speechRecognitionResult);
     },
+    onStart: () => {
+      webviewRef.current?.postMessage(
+        JSON.stringify({
+          type: "startListening",
+        }),
+      );
+    },
+    onEnd: () => {
+      webviewRef.current?.postMessage(
+        JSON.stringify({
+          type: "stopListening",
+        }),
+      );
+    },
   });
   const checkSpeechRecognitionSupported = () => {
     ExpoSpeechRecognitionModule.requestPermissionsAsync()
@@ -62,6 +76,7 @@ export default function InterviewMainScreen() {
   const handleMessage = (event: WebViewMessageEvent) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
+      console.log("data", data);
       switch (data.type) {
         case "startListening":
           handleStart();
