@@ -3,29 +3,43 @@ import { Textarea } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
-import type { CamelCasedProperties } from "@kokomen/utils";
-import { Interview } from "@kokomen/types";
-import { useRouter } from "@tanstack/react-router";
-import { submitInterviewAnswerV2 } from "@/domains/interviews/api/interviewAnswer";
+import { getEmotion, type CamelCasedProperties } from "@kokomen/utils";
+import {
+  Interview,
+  InterviewAnswerForm as InterviewAnswerFormType,
+  InterviewerEmotion,
+  InterviewMode
+} from "@kokomen/types";
+import {
+  getInterviewAnswerV2,
+  submitInterviewAnswerV2
+} from "@/domains/interviews/api/interviewAnswer";
 import useSpeechRecognition from "@/domains/interviews/hooks/useSpeechRecognition";
 
 type InterviewInputProps = Pick<
   CamelCasedProperties<Interview>,
-  "curQuestion" | "curQuestionId" | "prevQuestionsAndAnswers"
+  "curQuestionId" | "prevQuestionsAndAnswers"
 > & {
   isInterviewStarted: boolean;
   updateInterviewData: (
     // eslint-disable-next-line no-unused-vars
     updates: Partial<CamelCasedProperties<Interview>>
   ) => void;
+  curQuestion: string;
   interviewId: number;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
   totalQuestions: number;
+  setInterviewerEmotion: React.Dispatch<
+    React.SetStateAction<InterviewerEmotion>
+  >;
+  // eslint-disable-next-line no-unused-vars
+  playAudio: (audioUrl?: string) => Promise<void>;
+  mode: InterviewMode;
 };
 const SUBMIT_FAILED_MESSAGE: string =
   "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
 const FINISHED_MESSAGE: string = "면접이 종료되었습니다. 수고하셨습니다.";
-export function InterviewAnswerInput({
+export function InterviewAnswerForm({
   isInterviewStarted,
   curQuestion,
   curQuestionId,
@@ -33,7 +47,10 @@ export function InterviewAnswerInput({
   updateInterviewData,
   interviewId,
   setIsListening,
-  totalQuestions
+  totalQuestions,
+  mode,
+  setInterviewerEmotion,
+  playAudio
 }: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -50,14 +67,20 @@ export function InterviewAnswerInput({
   const {
     startListening,
     isListening: isVoiceListening,
-    stopListening,
-    isSupported
+    stopListening
   } = useSpeechRecognition((result) => {
     updateInterviewInput(result);
-  });
-  const router = useRouter();
+  }, mode);
   const { mutate, isPending } = useMutation({
-    mutationFn: submitInterviewAnswerV2,
+    mutationFn: (data: InterviewAnswerFormType) => {
+      return submitInterviewAnswerV2(data).then(() =>
+        getInterviewAnswerV2({
+          interviewId: data.interviewId,
+          questionId: data.questionId,
+          mode: mode
+        })
+      );
+    },
     onMutate: () => {
       //TODO: 모니터링 커스텀 이벤트 부착
       // captureFormSubmitEvent({
@@ -87,26 +110,34 @@ export function InterviewAnswerInput({
         previousMessage
       };
     },
-    onSuccess: ({ status, data }) => {
-      if (status === 204) {
+    onSuccess: (data) => {
+      if (data.interviewState === "FINISHED") {
+        stopListening();
         updateInterviewData({
           interviewState: "FINISHED",
           curQuestion: FINISHED_MESSAGE
         });
-        setTimeout(() => {
-          router.navigate({
-            to: `/interviews/${interviewId}/result`,
-            replace: true,
-            viewTransition: true
-          });
-        }, 2000);
         return;
       }
+      if (mode === "VOICE") {
+        startListening();
+      }
+      setInterviewerEmotion(
+        getEmotion(data.curAnswerRank) as InterviewerEmotion
+      );
+      const updatedata = () => {
+        if (data.nextQuestionVoiceUrl)
+          return { curQuestionVoiceUrl: data.nextQuestionVoiceUrl };
+        return { curQuestion: data.nextQuestion ?? "" };
+      };
       updateInterviewData({
-        curQuestion: data.next_question,
-        curQuestionId: data.next_question_id
+        ...updatedata(),
+        curQuestionId: data.nextQuestionId
       });
       setInterviewInput("");
+      if (data.nextQuestionVoiceUrl) {
+        playAudio(data.nextQuestionVoiceUrl);
+      }
     },
     onError: (_, __, context) => {
       updateInterviewData({
@@ -136,11 +167,11 @@ export function InterviewAnswerInput({
       mutate({
         interviewId: interviewId,
         questionId: curQuestionId,
-        answer: interviewInput
+        answer: interviewInput,
+        mode: mode
       });
     }
   };
-
   return (
     <form className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
       <Textarea
@@ -167,7 +198,8 @@ export function InterviewAnswerInput({
             mutate({
               interviewId: interviewId,
               questionId: curQuestionId,
-              answer: interviewInput
+              answer: interviewInput,
+              mode: mode as InterviewMode
             });
           }
         }}
@@ -184,51 +216,20 @@ export function InterviewAnswerInput({
           <span className="text-text-tertiary font-bold">
             {prevQuestionsAndAnswers.length} / {totalQuestions}
           </span>
-          {isVoiceListening ? (
-            <Button
-              type="button"
-              role="button"
-              aria-label="interview-voice-stop"
-              name="interview-voice-stop"
-              variant={"glass"}
-              className="flex items-center gap-2 text-text-tertiary"
-              onClick={() => {
-                setIsListening(false);
-                stopListening();
-              }}
-              disabled={!isVoiceListening || isPending || !isInterviewStarted}
-            >
-              <CircleStop
-                className={`${isVoiceListening ? "animate-pulse text-volcano-6" : ""}`}
-              />
-              <span className="text-text-tertiary font-bold">중지</span>
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              role="button"
-              aria-label="interview-voice-start"
-              name="interview-voice-start"
-              variant={"glass"}
-              className="flex items-center gap-2 text-text-tertiary"
-              onClick={() => {
-                setIsListening(true);
-                startListening();
-              }}
-              disabled={
-                isVoiceListening ||
-                isPending ||
-                !isInterviewStarted ||
-                !isSupported
-              }
-            >
-              <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />
 
-              <span className="text-text-tertiary font-bold">
-                음성으로 말하기
-              </span>
-            </Button>
-          )}
+          <VoiceInputButton
+            onVoiceStart={() => {
+              setIsListening(true);
+              startListening();
+            }}
+            onVoiceStop={() => {
+              setIsListening(false);
+              stopListening();
+            }}
+            isVoiceListening={isVoiceListening}
+            disabled={isPending || !isInterviewStarted}
+            mode={mode as InterviewMode}
+          />
         </div>
         <Button
           type="submit"
@@ -245,5 +246,57 @@ export function InterviewAnswerInput({
         </Button>
       </div>
     </form>
+  );
+}
+
+function VoiceInputButton({
+  onVoiceStart,
+  onVoiceStop,
+  isVoiceListening,
+  disabled,
+  mode
+}: {
+  onVoiceStart: () => void;
+  onVoiceStop: () => void;
+  isVoiceListening: boolean;
+  disabled: boolean;
+  mode: InterviewMode;
+}): JSX.Element | null {
+  if (mode === "VOICE") return null;
+  if (isVoiceListening) {
+    return (
+      <Button
+        type="button"
+        role="button"
+        aria-label="interview-voice-stop"
+        name="interview-voice-stop"
+        variant={"glass"}
+        className="flex items-center gap-2 text-text-tertiary"
+        onClick={onVoiceStop}
+        disabled={disabled}
+      >
+        <CircleStop
+          className={`${isVoiceListening ? "animate-pulse text-volcano-6" : ""}`}
+        />
+        <span className="text-text-tertiary font-bold">중지</span>
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      type="button"
+      role="button"
+      aria-label="interview-voice-start"
+      name="interview-voice-start"
+      variant={"glass"}
+      className="flex items-center gap-2 text-text-tertiary"
+      onClick={onVoiceStart}
+      disabled={disabled}
+    >
+      <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />
+
+      <span className="text-text-tertiary font-bold">음성으로 말하기</span>
+    </Button>
   );
 }
