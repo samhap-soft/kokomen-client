@@ -145,14 +145,6 @@ function VoiceModeStartModal({
     checkSpeechRecognitionSupported();
   }, []);
 
-  function startListening() {
-    window.ReactNativeWebView?.postMessage(
-      JSON.stringify({
-        type: "startListening"
-      })
-    );
-  }
-
   if (isInterviewStarted) return null;
 
   const handleStartInterview = () => {
@@ -160,7 +152,6 @@ function VoiceModeStartModal({
       onInterviewStart();
       closeModal();
     }
-    startListening();
   };
 
   const isStartDisabled = disabled || !isSpeechRecognitionSupported;

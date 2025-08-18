@@ -114,8 +114,15 @@ function RouteComponent(): ReactNode {
   const [interviewerEmotion, setInterviewerEmotion] =
     useState<InterviewerEmotion>("happy");
   const { playAudio, playFinished } = useAudio(audioUrl, {
-    onPlayEnd: () => setIsSpeaking(false),
-    onPlayStart: () => setIsSpeaking(true)
+    onPlayEnd: () => {
+      setIsSpeaking(false);
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "startListening" })
+      );
+    },
+    onPlayStart: () => {
+      setIsSpeaking(true);
+    }
   });
 
   //기존 면접 정보 업데이트

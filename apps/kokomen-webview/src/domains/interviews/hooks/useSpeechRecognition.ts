@@ -52,7 +52,6 @@ export default function useSpeechRecognition(
           if (data) callback(data);
           break;
       }
-      if (type === "speechRecognitionResult" && data) callback(data);
     };
     window.addEventListener("message", handleMessage);
 
