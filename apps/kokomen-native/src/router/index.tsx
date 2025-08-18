@@ -2,8 +2,8 @@ import { TabParamList } from "./types";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import MyTabBar from "@/components/common/tabBar";
-import InterviewMainScreen from "@/screens/interviews/interviewMain";
 import DashboardScreen from "@/screens/my/dashboard";
+import MainStack from "@/router/stack";
 
 const BottomTab = createBottomTabNavigator<TabParamList>();
 
@@ -15,11 +15,7 @@ const BottomTabNavigator = () => {
         headerShown: false,
       }}
     >
-      <BottomTab.Screen
-        name="Home"
-        component={InterviewMainScreen}
-        options={{}}
-      />
+      <BottomTab.Screen name="Home" component={MainStack} options={{}} />
       <BottomTab.Screen name="Dashboard" component={DashboardScreen} />
     </BottomTab.Navigator>
   );
