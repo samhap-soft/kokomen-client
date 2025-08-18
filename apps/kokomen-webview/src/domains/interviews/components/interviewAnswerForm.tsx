@@ -91,6 +91,9 @@ export function InterviewAnswerForm({
       //     question_id: data.questionId,
       //   },
       // });
+      window.ReactNativeWebView?.postMessage(
+        JSON.stringify({ type: "stopListening" })
+      );
       const previousMessage = {
         prevMessage: curQuestion,
         prevQuestionId: curQuestionId
@@ -118,9 +121,6 @@ export function InterviewAnswerForm({
           curQuestion: FINISHED_MESSAGE
         });
         return;
-      }
-      if (mode === "VOICE") {
-        startListening();
       }
       setInterviewerEmotion(
         getEmotion(data.curAnswerRank) as InterviewerEmotion
@@ -219,11 +219,9 @@ export function InterviewAnswerForm({
 
           <VoiceInputButton
             onVoiceStart={() => {
-              setIsListening(true);
               startListening();
             }}
             onVoiceStop={() => {
-              setIsListening(false);
               stopListening();
             }}
             isVoiceListening={isVoiceListening}
