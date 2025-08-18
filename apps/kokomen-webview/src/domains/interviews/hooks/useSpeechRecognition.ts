@@ -1,24 +1,18 @@
-import { WebviewMessage } from "@kokomen/types";
+import { InterviewMode, WebviewMessage } from "@kokomen/types";
 import { useEffect, useState } from "react";
 
 export default function useSpeechRecognition(
   // eslint-disable-next-line no-unused-vars
-  callback: (result: string) => void
+  callback: (result: string) => void,
+  mode: InterviewMode
 ): {
   startListening: () => void;
   stopListening: () => void;
   isListening: boolean;
   isSupported: boolean;
 } {
-  const [isListening, setIsListening] = useState<boolean>(false);
+  const [isListening, setIsListening] = useState<boolean>(mode === "VOICE");
   const [isSupported, setIsSupported] = useState<boolean>(false);
-
-  // useEffect로 이동하여 한 번만 실행되도록 수정
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.ReactNativeWebView) {
-      setIsSupported(true);
-    }
-  }, []); // 빈 의존성 배열로 한 번만 실행
 
   const startListening = (): void => {
     window.ReactNativeWebView?.postMessage(
@@ -26,7 +20,6 @@ export default function useSpeechRecognition(
         type: "startListening"
       })
     );
-    setIsListening(true);
   };
 
   const stopListening = (): void => {
@@ -35,14 +28,31 @@ export default function useSpeechRecognition(
         type: "stopListening"
       })
     );
-    setIsListening(false);
   };
+
+  // useEffect로 이동하여 한 번만 실행되도록 수정
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.ReactNativeWebView) {
+      setIsSupported(true);
+      return;
+    }
+  }, []);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent): void => {
-      const data = JSON.parse(event.data) as WebviewMessage;
-      if (data.type === "speechRecognitionResult" && data.result)
-        callback(data.result);
+      const { type, data } = JSON.parse(event.data) as WebviewMessage<string>;
+      switch (type) {
+        case "startListening":
+          setIsListening(true);
+          break;
+        case "stopListening":
+          setIsListening(false);
+          break;
+        case "speechRecognitionResult":
+          if (data) callback(data);
+          break;
+      }
+      if (type === "speechRecognitionResult" && data) callback(data);
     };
     window.addEventListener("message", handleMessage);
 
