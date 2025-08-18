@@ -2,7 +2,7 @@ import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
 } from "expo-speech-recognition";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 
 export default function useSpeechRecognition({
@@ -80,8 +80,16 @@ export default function useSpeechRecognition({
 
   const handleStop = () => {
     setIsListening(false);
-    ExpoSpeechRecognitionModule.stop();
+    results.current = [];
+    resultPointer.current = 0;
+    ExpoSpeechRecognitionModule.abort();
   };
+
+  useEffect(() => {
+    return () => {
+      handleStop();
+    };
+  }, []);
 
   return {
     handleStart,
