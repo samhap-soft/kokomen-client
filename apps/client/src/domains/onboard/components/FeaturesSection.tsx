@@ -54,7 +54,7 @@ const features: Feature[] = [
     id: 1,
     title: "프론트엔드",
     description: "JS, TS, React, Next.js 기반의 실무 중심의 깊은 기술적 지식",
-    image: "/card-frontend.png",
+    image: "/card-frontend.svg",
     color: "bg-blue-4"
   },
   {
@@ -62,7 +62,7 @@ const features: Feature[] = [
     title: "백엔드",
     description:
       "Java, Spring, 데이터베이스 기반의 실무 중심의 깊은 기술적 지식",
-    image: "/card-backend.png",
+    image: "/card-backend.svg",
     color: "bg-green-4"
   },
   {
@@ -70,7 +70,7 @@ const features: Feature[] = [
     title: "네트워크",
     description:
       "TCP, UDP, HTTP, HTTPS, DNS, 네트워크 보안 등 실무 중심의 깊은 기술적 지식",
-    image: "/card-network.png",
+    image: "/card-network.svg",
     color: "bg-yellow-4"
   },
   {
@@ -78,7 +78,7 @@ const features: Feature[] = [
     title: "운영체제",
     description:
       "프로세스, 스레드, 메모리 관리부터 시작해서 디스크 관리까지 실무 중심의 깊은 기술적 지식",
-    image: "/card-os.png",
+    image: "/card-os.svg",
     color: "bg-red-4"
   }
 ];
