@@ -4,7 +4,6 @@ import ChangeNickname from "@/domains/dashboard/components/changeNickname";
 import Withdrawal from "@/domains/dashboard/components/withDrawl";
 import { UserInfo } from "@kokomen/types";
 import { Button } from "@kokomen/ui";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 type Section = "interview" | "changeNickname" | "withdrawal";
