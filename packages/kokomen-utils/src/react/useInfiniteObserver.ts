@@ -1,6 +1,6 @@
 import { RefObject, useEffect, useRef } from "react";
 
-export const useIntersectionObserver = (
+export const useInfiniteObserver = (
   targetRef: RefObject<HTMLDivElement | null>,
   callback: () => void,
   options: IntersectionObserverInit = {}
@@ -26,7 +26,7 @@ export const useIntersectionObserver = (
       {
         rootMargin: "100px", // 100px 전에 미리 로드
         threshold: 0.1,
-        ...options,
+        ...options
       }
     );
 

@@ -1,39 +1,46 @@
-import { RefObject, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, RefObject } from "react";
+
+interface UseIntersectionObserverOptions {
+  threshold?: number;
+  rootMargin?: string;
+  triggerOnce?: boolean;
+}
 
 export const useIntersectionObserver = (
-  targetRef: RefObject<HTMLDivElement | null>,
-  callback: () => void,
-  options: IntersectionObserverInit = {}
-) => {
-  const callbackRef = useRef(callback);
+  options: UseIntersectionObserverOptions = {}
+): [RefObject<HTMLElement | null>, boolean] => {
+  const {
+    threshold = 0.1,
+    rootMargin = "0px 0px -100px 0px",
+    triggerOnce = false
+  } = options;
+  const [isVisible, setIsVisible] = useState(false);
+  const elementRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  useEffect(() => {
-    const target = targetRef.current;
-    if (!target) return;
-
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            callbackRef.current();
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (triggerOnce) {
+            observer.disconnect();
           }
-        });
+        } else if (!triggerOnce) {
+          setIsVisible(false);
+        }
       },
       {
-        rootMargin: "100px", // 100px 전에 미리 로드
-        threshold: 0.1,
-        ...options,
+        threshold,
+        rootMargin
       }
     );
 
-    observer.observe(target);
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
 
-    return () => {
-      observer.unobserve(target);
-    };
-  }, [targetRef, options]);
+    return () => observer.disconnect();
+  }, [threshold, rootMargin, triggerOnce]);
+
+  return [elementRef, isVisible];
 };
