@@ -1,7 +1,7 @@
 import { FC, JSX, memo, MemoExoticComponent } from "react";
-import { Modal } from "@kokomen/ui/components/modal";
-import { Interview } from "@/domains/interview/types";
-import { Button } from "@kokomen/ui/components/button";
+import { Modal } from "@kokomen/ui";
+import { Interview } from "@kokomen/types";
+import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
 type InterviewFinishModalProps = {
@@ -12,7 +12,7 @@ const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
   memo(
     ({
       interviewState,
-      interviewId,
+      interviewId
     }: InterviewFinishModalProps): JSX.Element => {
       const router = useRouter();
       return (

@@ -1,63 +1,102 @@
-import { Layout } from "@kokomen/ui/components/layout";
-import { InterviewAnswerInput } from "@/domains/interview/components/interviewInput";
-import React, { JSX, useEffect, useState } from "react";
+import { Layout, LoadingFullScreen } from "@kokomen/ui";
+import { InterviewAnswerForm } from "@/domains/interview/components/interviewAnswerForm";
+import { InterviewSideBar } from "@kokomen/ui/domains";
+import { useModal } from "@kokomen/utils";
+import React, { JSX, useState } from "react";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
-import InterviewSideBar from "@/domains/interview/components/interviewSideBar";
 import dynamic from "next/dynamic";
+import { useAudio } from "@kokomen/utils";
 import { getInterview } from "@/domains/interview/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { interviewKeys } from "@/utils/querykeys";
-import { Button } from "@kokomen/ui/components/button";
-import { Interview } from "@/domains/interview/types";
+import { Interview, InterviewMode } from "@kokomen/types";
 import InterviewFinishModal from "@/domains/interview/components/interviewFinishModal";
 import { SEO } from "@/shared/seo";
+import { InterviewQuestion } from "@/domains/interview/components/interviewQuestion";
+import InterviewStartModal from "@/domains/interview/components/interviewStartModal";
+import { InterviewNotFoundError } from "@/domains/interview/components/interviewNotFoundError";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
-  () => import("@/domains/interview/components/AiInterviewInterface"),
+  () =>
+    import("@kokomen/ui/domains").then(
+      (component) => component.AiInterviewInterface
+    ),
   {
     ssr: false,
     loading: () => (
       <div className="font-bold text-xl text-center w-full h-full flex items-center justify-center">
         면접장을 정리하는 중...
       </div>
-    ),
+    )
   }
 );
 
-const InterviewLoading = (): JSX.Element => {
-  return (
-    <div className="bg-gradient-to-r w-screen h-screen from-blue-50 to-primary-bg-hover relative rounded-lg">
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    </div>
-  );
+export type InterviewerEmotion = "happy" | "encouraging" | "angry" | "neutral";
+
+const isTextInterview = (
+  interview: Interview
+): interview is Extract<Interview, { cur_question: string }> => {
+  return "cur_question" in interview;
 };
 
-const START_UP_QUESTION: string =
-  "꼬꼬면 면접에 오신걸 환영합니다. 준비가 되시면 버튼을 눌러 면접을 시작해주세요.";
+const isVoiceInterview = (
+  interview: Interview
+): interview is Extract<Interview, { cur_question_voice_url: string }> => {
+  return "cur_question_voice_url" in interview;
+};
+
+// 현재 질문을 안전하게 가져오는 함수
+const getCurrentQuestion = (interview: Interview): string => {
+  if (isTextInterview(interview)) {
+    return interview.cur_question;
+  }
+  if (isVoiceInterview(interview)) {
+    return interview.cur_question_voice_url;
+  }
+  throw new Error("Invalid interview type");
+};
+
 export default function InterviewPage({
   interviewId,
+  mode
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
+  const {
+    isOpen: isInterviewSidebarOpen,
+    openModal: openInterviewSidebar,
+    closeModal: closeInterviewSidebar
+  } = useModal();
   const queryClient = useQueryClient();
   const { data, isPending, isError } = useQuery({
     queryKey: interviewKeys.byInterviewId(interviewId),
-    queryFn: () => getInterview(interviewId.toString()),
-    initialData: {
-      interview_state: "IN_PROGRESS",
-      prev_questions_and_answers: [],
-      cur_question_id: 0,
-      cur_question: "",
-      cur_question_count: 0,
-      max_question_count: 0,
-    },
+    queryFn: () => getInterview(interviewId.toString(), mode)
   });
+
+  // data가 존재하고 voice interview인 경우에만 voice_url 사용
+  const audioUrl = (() => {
+    if (!data) return "";
+    if (isVoiceInterview(data)) return data.cur_question_voice_url;
+    return "";
+  })();
+
+  // 면접관 캐릭터 끄덕거리게 하거나 대화하는 것처럼 보이게 하기
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [interviewerEmotion, setInterviewerEmotion] =
+    useState<InterviewerEmotion>("happy");
+
+  const { playAudio, playFinished } = useAudio(audioUrl, {
+    onPlayEnd: () => setIsSpeaking(false),
+    onPlayStart: () => setIsSpeaking(true)
+  });
+
+  // 타입 안전한 방식으로 현재 질문 가져오기
+  const currentQuestion = data ? getCurrentQuestion(data) : "";
 
   //기존 면접 정보 업데이트
   const updateInterviewData = (updates: Partial<Interview>) => {
@@ -68,27 +107,13 @@ export default function InterviewPage({
 
       return {
         ...oldData,
-        ...updates,
+        ...updates
       };
     });
   };
 
-  // 면접관 캐릭터 끄덕거리게 하거나 대화하는 것처럼 보이게 하기
-  const [isListening, setIsListening] = useState<boolean>(false);
-  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
-  const listeningEmotion = isListening ? "happy" : "encouraging";
-  const interviewerEmotion = isSpeaking ? "neutral" : listeningEmotion;
-
-  useEffect(() => {
-    setIsSpeaking(true);
-    setTimeout(() => {
-      setIsSpeaking(false);
-    }, 4000);
-  }, [data.cur_question]);
-
-  if (isPending) return <InterviewLoading />;
-  if (isError) throw new Error("인터뷰 정보를 불러오는데 실패했습니다.");
-
+  if (isPending) return <LoadingFullScreen className="h-screen w-screen" />;
+  if (isError) return <InterviewNotFoundError />;
   return (
     <>
       <SEO
@@ -102,11 +127,14 @@ export default function InterviewPage({
       <Layout>
         <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
           <div className="flex flex-col flex-1 relative min-w-0">
-            <div className="p-4 absolute top-20 left-[10%] w-[80%] h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
-              <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
-                {isInterviewStarted ? data.cur_question : START_UP_QUESTION}
-              </div>
-            </div>
+            <InterviewQuestion
+              interviewMode={mode}
+              question={currentQuestion}
+              isInterviewStarted={isInterviewStarted}
+              playFinished={playFinished}
+              playAudio={playAudio}
+            />
+
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
               <div className="bg-gradient-to-r w-full h-full from-blue-50 to-primary-bg-hover relative rounded-lg">
                 <AiInterviewInterface
@@ -116,32 +144,41 @@ export default function InterviewPage({
                 />
               </div>
             </div>
-            <InterviewAnswerInput
+            <InterviewAnswerForm
+              setInterviewerEmotion={setInterviewerEmotion}
               isInterviewStarted={isInterviewStarted}
-              cur_question={data.cur_question}
+              cur_question={
+                isTextInterview(data)
+                  ? data.cur_question
+                  : data.cur_question_voice_url
+              }
               cur_question_id={data.cur_question_id}
               prev_questions_and_answers={data.prev_questions_and_answers}
               updateInterviewData={updateInterviewData}
               interviewId={interviewId}
               setIsListening={setIsListening}
               totalQuestions={data.max_question_count}
+              playAudio={playAudio}
+              mode={mode}
             />
           </div>
           <InterviewSideBar
+            open={isInterviewSidebarOpen}
+            openSidebar={openInterviewSidebar}
+            closeSidebar={closeInterviewSidebar}
             prevQuestionAndAnswer={data.prev_questions_and_answers}
           />
         </div>
-        {!isInterviewStarted && (
-          <Button
-            className="w-1/2 absolute bottom-40 left-1/4 text-xl font-bold"
-            variant={"primary"}
-            size={"xl"}
-            disabled={isPending}
-            onClick={() => setIsInterviewStarted(true)}
-          >
-            면접 시작하기
-          </Button>
-        )}
+        <InterviewStartModal
+          isInterviewStarted={isInterviewStarted}
+          disabled={isPending}
+          onInterviewStart={() => {
+            setIsInterviewStarted(true);
+            if (isVoiceInterview(data)) {
+              playAudio(data.cur_question_voice_url);
+            }
+          }}
+        />
         <InterviewFinishModal
           interviewState={data.interview_state}
           interviewId={interviewId}
@@ -153,20 +190,24 @@ export default function InterviewPage({
 
 export const getServerSideProps: GetServerSideProps<{
   interviewId: number;
+  mode: InterviewMode;
 }> = async (
   context
-): Promise<GetServerSidePropsResult<{ interviewId: number }>> => {
-  const { interviewId } = context.query;
+): Promise<
+  GetServerSidePropsResult<{ interviewId: number; mode: InterviewMode }>
+> => {
+  const { interviewId, mode } = context.query;
 
-  if (!interviewId) {
+  if (!interviewId || !mode) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
 
   return {
     props: {
       interviewId: +interviewId,
-    },
+      mode: mode as InterviewMode
+    }
   };
 };

@@ -1,0 +1,33 @@
+{
+  "name": "@kokomen/utils",
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "test": "vitest",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "devDependencies": {
+    "@kokomen/eslint-config": "workspace:*",
+    "@types/dom-speech-recognition": "^0.0.6",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^8.57.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5.8.3"
+  }
+}

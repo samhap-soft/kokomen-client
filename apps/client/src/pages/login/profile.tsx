@@ -1,10 +1,9 @@
 import { getUserInfo } from "@/domains/auth/api";
-import { User } from "@/domains/auth/types";
 import { withCheckInServer } from "@/utils/auth";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
 import { JSX } from "react";
 import { Layout } from "@/components/layout";
@@ -12,15 +11,16 @@ import Header from "@/shared/header";
 import ProfileSettingForm from "@/domains/auth/components/profilesettingForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import { SEO } from "@/shared/seo";
+import { UserInfo } from "@kokomen/types";
 
 interface LoginProfileSettingProps {
-  userInfo: User;
+  userInfo: UserInfo;
   state: string;
 }
 
 export default function LoginProfileSetting({
   userInfo,
-  state,
+  state
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   useRouterPrefetch(state || "/");
   return (
@@ -60,16 +60,16 @@ export const getServerSideProps = async (
       return {
         redirect: {
           destination: (context.query.state as string) || "/",
-          permanent: false,
-        },
+          permanent: false
+        }
       };
     }
 
     return {
       data: {
         userInfo: userInfo.data,
-        state: (context.query.state as string) || "/",
-      },
+        state: (context.query.state as string) || "/"
+      }
     };
   });
 };

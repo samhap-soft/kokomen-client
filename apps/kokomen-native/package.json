@@ -1,0 +1,47 @@
+{
+  "name": "kokomen-native",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start --clear",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "prebuild": "expo prebuild",
+    "eas-build-pre-install": "corepack enable && yarn set version 4"
+  },
+  "workspaces": {
+    "nohoist": [
+      "react-native",
+      "react-native/**",
+      "expo/**",
+      "metro/**",
+      "@react-native-community/**"
+    ]
+  },
+  "dependencies": {
+    "@react-navigation/bottom-tabs": "^7.4.2",
+    "@react-navigation/native": "^7.1.14",
+    "@react-navigation/native-stack": "^7.3.21",
+    "@react-navigation/stack": "^7.4.2",
+    "expo": "~53.0.17",
+    "expo-speech-recognition": "^2.1.1",
+    "expo-status-bar": "~2.2.3",
+    "lucide-react-native": "^0.525.0",
+    "react": "19.0.0",
+    "react-native": "0.79.5",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1",
+    "react-native-svg": "15.11.2",
+    "react-native-webview": "13.15.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@react-native-community/cli": "^19.1.0",
+    "@types/react": "~19.0.10",
+    "prettier": "^3.5.3",
+    "typescript": "~5.8.3"
+  },
+  "private": true
+}

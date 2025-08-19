@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "kokomen-native",
+    "slug": "kokomen-native",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "plugins": [
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "면접에서 음성을 인식하기 위해 마이크 권한이 필요합니다.",
+          "speechRecognitionPermission": "면접에서 음성을 인식하기 위해 음성 인식 권한이 필요합니다.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox"
+          ]
+        }
+      ]
+    ],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "deploymentTarget": "17.0",
+      "supportsTablet": true,
+      "bundleIdentifier": "kr.kokomen"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "kr.kokomen"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

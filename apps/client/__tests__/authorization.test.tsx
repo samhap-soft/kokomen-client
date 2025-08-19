@@ -11,7 +11,7 @@ describe("Oauth 카카오 로그인 테스트", () => {
   it("카카오 로그인 버튼이 렌더링 되는지 테스트", () => {
     render(<LoginPage />);
     const kakaoLoginButton = screen.getByRole("link", {
-      name: "카카오로 시작하기",
+      name: "카카오로 시작하기"
     });
     expect(kakaoLoginButton).toBeInTheDocument();
   });
@@ -21,7 +21,7 @@ describe("로그인 페이지가 제대로 이동하는지 테스트", () => {
   it("로그인 페이지가 올바른 URL로 이동하는지 테스트", () => {
     renderWithProviders(<LoginPage />);
     const kakaoLoginButton = screen.getByRole("link", {
-      name: "카카오로 시작하기",
+      name: "카카오로 시작하기"
     });
     expect(kakaoLoginButton).toHaveAttribute(
       "href",
@@ -86,7 +86,7 @@ describe("Oauth 로그인 버튼 누른 후 리다이렉트 페이지 테스트"
           return HttpResponse.json({
             id: 1,
             nickname: "오상훈",
-            profile_completed: true,
+            profile_completed: true
           });
         }
       )

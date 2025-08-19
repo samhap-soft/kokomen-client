@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useToast } from "@kokomen/ui/hooks/useToast";
+import { useToast } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { startNewInterview } from "../api";
@@ -17,12 +17,14 @@ const useInterviewCreateMutation = () => {
         properties: {
           category: data.category,
           questionCount: data.max_question_count,
-        },
+          mode: data.mode
+        }
       });
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       router.push({
         pathname: `/interviews/${data.interview_id}`,
+        search: `mode=${variables.mode}`
       });
     },
     onError: (error) => {
@@ -33,7 +35,7 @@ const useInterviewCreateMutation = () => {
         }
         errorToast({
           title: "면접 생성 실패",
-          description: error.response?.data.message,
+          description: error.response?.data.message
         });
       }
     },
@@ -50,7 +52,7 @@ const useInterviewCreateMutation = () => {
       }
       return false;
     },
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
 };
 

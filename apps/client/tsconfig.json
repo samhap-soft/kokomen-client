@@ -17,13 +17,13 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*", "../../packages/ui/src/*"],
-      "@kokomen/ui/*": ["../../packages/ui/src/*"]
+      "@/*": ["./src/*", "../../packages/ui/src/*"]
     },
     "types": ["jest", "@testing-library/jest-dom", "dom-speech-recognition"]
   },
   "include": [
     "next-env.d.ts",
+    "env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "../../packages/ui/src",

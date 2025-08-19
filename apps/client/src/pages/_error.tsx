@@ -24,7 +24,7 @@ function Error({ statusCode }: CustomErrorProps): JSX.Element {
             "일시적인 서버 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
           emoji: "🔧",
           bgClasses: "bg-slate-50",
-          suggestion: "페이지를 새로고침하거나 잠시 후 다시 접속해보세요.",
+          suggestion: "페이지를 새로고침하거나 잠시 후 다시 접속해보세요."
         };
       case 502:
         return {
@@ -32,7 +32,7 @@ function Error({ statusCode }: CustomErrorProps): JSX.Element {
           description: "서버 간 통신에 문제가 발생했습니다.",
           emoji: "🌐",
           bgClasses: "bg-blue-50",
-          suggestion: "네트워크 연결을 확인하고 다시 시도해주세요.",
+          suggestion: "네트워크 연결을 확인하고 다시 시도해주세요."
         };
       case 503:
         return {
@@ -41,7 +41,7 @@ function Error({ statusCode }: CustomErrorProps): JSX.Element {
             "현재 서비스 점검 중이거나 일시적으로 이용할 수 없습니다.",
           emoji: "🚧",
           bgClasses: "bg-amber-50",
-          suggestion: "점검이 완료될 때까지 잠시만 기다려주세요.",
+          suggestion: "점검이 완료될 때까지 잠시만 기다려주세요."
         };
       case 504:
         return {
@@ -49,7 +49,7 @@ function Error({ statusCode }: CustomErrorProps): JSX.Element {
           description: "서버 응답 시간이 초과되었습니다.",
           emoji: "⏱️",
           bgClasses: "bg-orange-50",
-          suggestion: "잠시 후 다시 시도해주세요.",
+          suggestion: "잠시 후 다시 시도해주세요."
         };
       default:
         return {
@@ -57,7 +57,7 @@ function Error({ statusCode }: CustomErrorProps): JSX.Element {
           description: "예상치 못한 서버 문제가 발생했습니다.",
           emoji: "⚠️",
           bgClasses: "bg-gray-50",
-          suggestion: "문제가 지속되면 고객센터로 문의해주세요.",
+          suggestion: "문제가 지속되면 고객센터로 문의해주세요."
         };
     }
   };

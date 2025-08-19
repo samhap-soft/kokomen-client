@@ -1,9 +1,9 @@
-import { AnswerMemo } from "@/domains/interviewReport/types/memo";
+import { AnswerMemo } from "@kokomen/types";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 const answerMemoApiInstance: AxiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}/answers`,
-  withCredentials: true,
+  withCredentials: true
 });
 
 const createNewAnswerMemo = async (
@@ -12,7 +12,7 @@ const createNewAnswerMemo = async (
 ): Promise<AxiosResponse> => {
   return answerMemoApiInstance.post(`/${answerId}/memo`, {
     content: memo.content,
-    visibility: memo.visibility,
+    visibility: memo.visibility
   });
 };
 
@@ -22,7 +22,7 @@ const updateAnswerMemo = async (
 ): Promise<AxiosResponse> => {
   return answerMemoApiInstance.patch(`/${answerId}/memo`, {
     content: memo.content,
-    visibility: memo.visibility,
+    visibility: memo.visibility
   });
 };
 

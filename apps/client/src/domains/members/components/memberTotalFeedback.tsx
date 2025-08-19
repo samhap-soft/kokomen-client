@@ -2,17 +2,17 @@ import { toggleMemberInterviewLike } from "@/domains/members/api";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle, Eye, Heart, MessageCircle, Trophy } from "lucide-react";
 import { JSX, useState } from "react";
-import { useToast } from "@kokomen/ui/hooks/useToast";
+import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
-import { Button } from "@kokomen/ui/components/button";
-import { MemberInterviewResult } from "@/domains/members/types";
+import { Button } from "@kokomen/ui";
+import { MemberInterviewResult } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { captureButtonEvent } from "@/utils/analytics";
 import { useRouter } from "next/router";
 
 export default function MemberTotalFeedback({
   result,
-  interviewId,
+  interviewId
 }: {
   result: CamelCasedProperties<MemberInterviewResult>;
   interviewId: number;
@@ -33,8 +33,8 @@ export default function MemberTotalFeedback({
         properties: {
           type: "interview",
           likedInterviewId: interviewId,
-          liked: !isTotalLikedIncludesMine,
-        },
+          liked: !isTotalLikedIncludesMine
+        }
       });
       setIsTotalLikedIncludesMine(!isTotalLikedIncludesMine);
       setTotalLikedCount(
@@ -49,19 +49,19 @@ export default function MemberTotalFeedback({
         }
         errorToast({
           title: "좋아요 실패",
-          description: error.response?.data.message,
+          description: error.response?.data.message
         });
       } else {
         errorToast({
           title: "좋아요 실패",
-          description: "서버 오류가 발생했습니다.",
+          description: "서버 오류가 발생했습니다."
         });
       }
       setIsTotalLikedIncludesMine(!isTotalLikedIncludesMine);
       setTotalLikedCount(
         isTotalLikedIncludesMine ? totalLikedCount + 1 : totalLikedCount - 1
       );
-    },
+    }
   });
 
   return (

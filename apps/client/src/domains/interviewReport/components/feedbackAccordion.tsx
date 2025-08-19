@@ -1,26 +1,21 @@
-import { Feedback } from "@/domains/interviewReport/types";
+import { PrivateFeedback } from "@kokomen/types";
 import {
   getScoreColor,
   getScoreIcon,
-  getScoreLabel,
+  getScoreLabel
 } from "@/utils/rankDisplay";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@kokomen/ui/components/accordion";
+import { Accordion } from "@kokomen/ui";
 import { MessageSquare, Star, Award } from "lucide-react";
 import { JSX } from "react";
 import AnswerMemoComponent from "@/domains/interviewReport/components/answerMemo";
 
 export function FeedbackAccordion({
-  feedbacks,
+  feedbacks
 }: {
-  feedbacks: Feedback[];
+  feedbacks: PrivateFeedback[];
 }): JSX.Element {
   return (
-    <Accordion
+    <Accordion.Accordion
       allowMultiple
       defaultActiveKey={["feedback-1"]}
       className="w-full space-y-4"
@@ -32,24 +27,24 @@ export function FeedbackAccordion({
           idx={idx}
         />
       ))}
-    </Accordion>
+    </Accordion.Accordion>
   );
 }
 
 function FeedBackAccordionItem({
   feedback,
-  idx,
+  idx
 }: {
-  feedback: Feedback;
+  feedback: PrivateFeedback;
   idx: number;
 }): JSX.Element {
   return (
-    <AccordionItem
+    <Accordion.AccordionItem
       key={feedback.question_id}
       itemKey={`feedback-${feedback.question_id}`}
       className="border border-border rounded-xl overflow-hidden bg-bg-elevated shadow-sm hover:shadow-md transition-shadow duration-200"
     >
-      <AccordionTrigger className="px-6 py-4 hover:bg-fill-secondary transition-colors duration-200">
+      <Accordion.AccordionTrigger className="px-6 py-4 hover:bg-fill-secondary transition-colors duration-200">
         <div className="flex items-center gap-3 w-full">
           <div className="flex items-center justify-center w-8 h-8 bg-primary-bg rounded-full">
             <span className="text-sm font-semibold text-primary">
@@ -68,8 +63,8 @@ function FeedBackAccordionItem({
             {feedback.answer_rank}등급
           </div>
         </div>
-      </AccordionTrigger>
-      <AccordionContent className="px-6">
+      </Accordion.AccordionTrigger>
+      <Accordion.AccordionContent className="px-6">
         <div className="flex flex-col gap-6">
           {/* 내 답변 섹션 */}
           <div className="space-y-3">
@@ -130,7 +125,7 @@ function FeedBackAccordionItem({
             visibility={feedback.answer_memo_visibility}
           />
         </div>
-      </AccordionContent>
-    </AccordionItem>
+      </Accordion.AccordionContent>
+    </Accordion.AccordionItem>
   );
 }

@@ -1,27 +1,27 @@
 import { getUserInfo } from "@/domains/auth/api";
-import { User } from "@/domains/auth/types";
 import MemberInterviewHistory from "@/domains/members/components/memberInterviewHistory";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
-import { Layout } from "@kokomen/ui/components/layout";
+import { Layout } from "@kokomen/ui";
 import Header from "@/shared/header";
 import { JSX } from "react";
 import { getMemberInterviews } from "@/domains/members/api";
-import { MemberInterview } from "@/domains/members/types";
+import { MemberInterview } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { TrendingUp } from "lucide-react";
 import { SEO } from "@/shared/seo";
 import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
+import { UserInfo } from "@kokomen/types";
 
 export default function MemberInterviewPage({
   memberId,
   user,
   interviews,
   sort,
-  page,
+  page
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const percentile = Math.round(
     (interviews.intervieweeRank / interviews.totalMemberCount) * 100
@@ -33,8 +33,8 @@ export default function MemberInterviewPage({
   return (
     <>
       <SEO
-        title={`${interviews.intervieweeNickname}의 면접 기록`}
-        description={`${interviews.intervieweeNickname}님의 면접 기록을 확인해보세요.`}
+        title={`${interviews.intervieweeNickname ?? "탈퇴한 사용자"}의 면접 기록`}
+        description={`${interviews.intervieweeNickname ?? "탈퇴한 사용자"}님의 면접 기록을 확인해보세요.`}
         robots="index, follow"
         pathname={`/members/${memberId}`}
       />
@@ -52,7 +52,7 @@ export default function MemberInterviewPage({
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-text-heading">
-                    {interviews.intervieweeNickname}
+                    {interviews.intervieweeNickname ?? "탈퇴한 사용자"}
                   </h1>
                 </div>
               </div>
@@ -142,7 +142,7 @@ export default function MemberInterviewPage({
 
 export const getServerSideProps: GetServerSideProps<{
   memberId: string;
-  user: User | null;
+  user: UserInfo | null;
   interviews: CamelCasedProperties<MemberInterview>;
   sort: "asc" | "desc";
   page: number;
@@ -151,7 +151,7 @@ export const getServerSideProps: GetServerSideProps<{
 ): Promise<
   GetServerSidePropsResult<{
     memberId: string;
-    user: User | null;
+    user: UserInfo | null;
     interviews: CamelCasedProperties<MemberInterview>;
     sort: "asc" | "desc";
     page: number;
@@ -161,14 +161,14 @@ export const getServerSideProps: GetServerSideProps<{
   const { sort, page } = context.query as { sort: string; page: string };
   if (!memberId) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
   const sortOption = sort === "asc" ? "asc" : "desc";
   const pageOption = isNaN(Number(page)) ? 0 : Number(page);
   const [user, interviews] = await Promise.allSettled([
     getUserInfo(context),
-    getMemberInterviews(Number(memberId), pageOption, sortOption),
+    getMemberInterviews(Number(memberId), pageOption, sortOption)
   ]);
 
   if (interviews.status === "fulfilled") {
@@ -179,8 +179,8 @@ export const getServerSideProps: GetServerSideProps<{
           user: null,
           interviews: interviews.value,
           sort: sortOption,
-          page: pageOption,
-        },
+          page: pageOption
+        }
       };
     }
     return {
@@ -189,12 +189,12 @@ export const getServerSideProps: GetServerSideProps<{
         user: user.value.data,
         interviews: interviews.value,
         sort: sortOption,
-        page: pageOption,
-      },
+        page: pageOption
+      }
     };
   }
 
   return {
-    notFound: true,
+    notFound: true
   };
 };

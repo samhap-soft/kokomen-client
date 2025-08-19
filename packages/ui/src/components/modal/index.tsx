@@ -1,7 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority";
 import React, { JSX, useCallback, useEffect } from "react";
 import { X } from "lucide-react";
-import { Button } from "#components/button/index.tsx";
+import { Button } from "../button";
 
 type ModalVariants = VariantProps<typeof modalVariants>;
 const modalVariants = cva(

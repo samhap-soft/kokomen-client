@@ -1,18 +1,14 @@
-import {
-  MemberInterview,
-  MemberInterviewResult,
-  Rank,
-} from "@/domains/members/types";
+import { MemberInterview, MemberInterviewResult, Rank } from "@kokomen/types";
 import {
   CamelCasedProperties,
-  mapToCamelCase,
+  mapToCamelCase
 } from "@/utils/convertConvention";
 import axios, { AxiosInstance } from "axios";
 import { GetServerSidePropsContext } from "next";
 
 const memberInstance: AxiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
-  withCredentials: true,
+  withCredentials: true
 });
 
 const getRankList = async (
@@ -20,7 +16,7 @@ const getRankList = async (
   size = 10
 ): Promise<CamelCasedProperties<Rank>[]> => {
   const response = await memberInstance.get("/members/ranking", {
-    params: { page, size },
+    params: { page, size }
   });
   return response.data;
 };
@@ -33,7 +29,7 @@ const getMemberInterviews = async (
 ): Promise<CamelCasedProperties<MemberInterview>> =>
   memberInstance
     .get<MemberInterview>("/interviews", {
-      params: { member_id: memberId, page, size, sort: `id,${sort}` },
+      params: { member_id: memberId, page, size, sort: `id,${sort}` }
     })
     .then((res) => res.data)
     .then(mapToCamelCase);
@@ -46,8 +42,8 @@ const getMemberInterviewResult = async (
     .get<MemberInterviewResult>(`/interviews/${interviewId}/result`, {
       headers: {
         cookie: context.req.headers.cookie,
-        "X-Forwarded-For": context.req.headers["x-real-ip"],
-      },
+        "X-Forwarded-For": context.req.headers["x-real-ip"]
+      }
     })
     .then((res) => res.data)
     .then(mapToCamelCase);
@@ -79,5 +75,5 @@ export {
   getMemberInterviews,
   getMemberInterviewResult,
   toggleMemberInterviewLike,
-  toggleMemberInterviewAnswerLike,
+  toggleMemberInterviewAnswerLike
 };

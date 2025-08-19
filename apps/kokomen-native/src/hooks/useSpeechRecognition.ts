@@ -1,0 +1,99 @@
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from "expo-speech-recognition";
+import { useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
+
+export default function useSpeechRecognition({
+  onStart,
+  onEnd,
+  onResult,
+  onError,
+  abortOnError = false,
+}: {
+  onStart?: () => void;
+  onEnd?: () => void;
+  onResult?: (transcript: string) => void;
+  onError?: (error: string) => void;
+  abortOnError?: boolean;
+}) {
+  const [isListening, setIsListening] = useState(false);
+  const results = useRef<string[]>([]);
+  const resultPointer = useRef<number>(0);
+
+  useSpeechRecognitionEvent("start", () => {
+    setIsListening(true);
+    onStart?.();
+  });
+  useSpeechRecognitionEvent("end", () => {
+    setIsListening(false);
+    onEnd?.();
+  });
+
+  useSpeechRecognitionEvent("result", (event) => {
+    if (event.isFinal) {
+      results.current[resultPointer.current] =
+        event.results[0]?.transcript || "";
+      resultPointer.current++;
+    } else {
+      results.current[resultPointer.current] =
+        event.results[0]?.transcript || "";
+    }
+    onResult?.(results.current.join(" "));
+  });
+  useSpeechRecognitionEvent("error", (event) => {
+    onError?.(event.error);
+    if (abortOnError) {
+      ExpoSpeechRecognitionModule.abort();
+    }
+  });
+
+  const handleStart = async () => {
+    const microphonePermissions =
+      await ExpoSpeechRecognitionModule.requestMicrophonePermissionsAsync();
+    if (!microphonePermissions.granted) {
+      alert("마이크 허용을 해야 인터뷰 내 마이크 인식이 가능합니다.");
+      return;
+    }
+
+    if (Platform.OS === "ios") {
+      const speechRecognizerPermissions =
+        await ExpoSpeechRecognitionModule.requestSpeechRecognizerPermissionsAsync();
+      if (!speechRecognizerPermissions.granted) {
+        if (speechRecognizerPermissions.restricted) {
+          alert("음성 인식 권한이 제한되었습니다.");
+        } else {
+          alert("음성 인식 권한이 없습니다.");
+        }
+        return;
+      }
+    }
+    // Start speech recognition
+    ExpoSpeechRecognitionModule.start({
+      lang: "ko-KR",
+      interimResults: true,
+      continuous: true,
+      requiresOnDeviceRecognition: Platform.OS === "ios",
+    });
+  };
+
+  const handleStop = () => {
+    setIsListening(false);
+    results.current = [];
+    resultPointer.current = 0;
+    ExpoSpeechRecognitionModule.abort();
+  };
+
+  useEffect(() => {
+    return () => {
+      handleStop();
+    };
+  }, []);
+
+  return {
+    handleStart,
+    handleStop,
+    isListening,
+  };
+}

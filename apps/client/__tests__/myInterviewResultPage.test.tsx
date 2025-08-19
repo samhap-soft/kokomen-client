@@ -1,4 +1,4 @@
-import { InterviewReport } from "@/domains/interviewReport/types";
+import { InterviewReport } from "@kokomen/types";
 import { server } from "@/mocks";
 import MyInterviewResultPage from "@/pages/interviews/[interviewId]/result";
 import { renderWithProviders } from "@/utils/test-utils";
@@ -18,8 +18,8 @@ const myInterviewResultData: InterviewReport = {
         "명확하고 간결한 자기소개로 좋은 첫인상을 주었습니다. 기술 스택과 개발 철학을 잘 어필했습니다.",
       submitted_answer_memo_content: "작성된 메모",
       temp_answer_memo_content: "임시작성 메모",
-      answer_memo_visibility: "PUBLIC",
-    },
+      answer_memo_visibility: "PUBLIC"
+    }
   ],
   total_feedback:
     "전반적으로 기술적 역량과 협업 능력이 균형있게 발달한 개발자로 보입니다. 구체적인 경험과 성과를 바탕으로 답변하여 신뢰도가 높습니다. 향후 더 큰 규모의 프로젝트에서 리더십을 발휘할 수 있을 것으로 기대됩니다.",
@@ -27,7 +27,7 @@ const myInterviewResultData: InterviewReport = {
   user_cur_score: 85,
   user_prev_score: 80,
   user_cur_rank: "A",
-  user_prev_rank: "B",
+  user_prev_rank: "B"
 };
 
 describe("내 면접결과 페이지 테스트", () => {
@@ -66,7 +66,7 @@ describe("내 면접결과 메모 테스트", () => {
     const answerFeedbackButton = screen.getByText("자기소개를 해주세요.");
     fireEvent.click(answerFeedbackButton);
     const memoEditButton = screen.getByRole("button", {
-      name: "메모 편집하기",
+      name: "메모 편집하기"
     });
     fireEvent.click(memoEditButton);
     await waitFor(() => {
@@ -75,12 +75,12 @@ describe("내 면접결과 메모 테스트", () => {
       ).toBeInTheDocument();
       expect(
         screen.getByRole("button", {
-          name: "새로쓰기",
+          name: "새로쓰기"
         })
       ).toBeInTheDocument();
       expect(
         screen.getByRole("button", {
-          name: "이어서 작성",
+          name: "이어서 작성"
         })
       ).toBeInTheDocument();
     });
@@ -95,7 +95,7 @@ describe("내 면접결과 메모 테스트", () => {
     const answerFeedbackButton = screen.getByText("자기소개를 해주세요.");
     fireEvent.click(answerFeedbackButton);
     const memoEditButton = screen.getByRole("button", {
-      name: "메모 편집하기",
+      name: "메모 편집하기"
     });
     fireEvent.click(memoEditButton);
     await waitFor(() => {
@@ -104,13 +104,13 @@ describe("내 면접결과 메모 테스트", () => {
       ).toBeInTheDocument();
       expect(
         screen.getByRole("button", {
-          name: "이어서 작성",
+          name: "이어서 작성"
         })
       ).toBeInTheDocument();
     });
 
     const continueMemoButton = screen.getByRole("button", {
-      name: "이어서 작성",
+      name: "이어서 작성"
     });
     fireEvent.click(continueMemoButton);
     await waitFor(() => {
@@ -127,7 +127,7 @@ describe("내 면접결과 메모 테스트", () => {
     const answerFeedbackButton = screen.getByText("자기소개를 해주세요.");
     fireEvent.click(answerFeedbackButton);
     const memoEditButton = screen.getByRole("button", {
-      name: "메모 삭제하기",
+      name: "메모 삭제하기"
     });
     fireEvent.click(memoEditButton);
   });
@@ -140,7 +140,7 @@ describe("내 면접결과 메모 테스트", () => {
         () => {
           deleteCalled();
           return HttpResponse.json({
-            message: "메모 삭제 성공",
+            message: "메모 삭제 성공"
           });
         }
       )
@@ -154,11 +154,11 @@ describe("내 면접결과 메모 테스트", () => {
     const answerFeedbackButton = screen.getByText("자기소개를 해주세요.");
     fireEvent.click(answerFeedbackButton);
     const memoEditButton = screen.getByRole("button", {
-      name: "메모 삭제하기",
+      name: "메모 삭제하기"
     });
     fireEvent.click(memoEditButton);
     const deleteButton = screen.getByRole("button", {
-      name: "삭제하기",
+      name: "삭제하기"
     });
     fireEvent.click(deleteButton);
     await waitFor(() => {
@@ -175,7 +175,7 @@ describe("내 면접결과 메모 테스트", () => {
         async () => {
           saveCalled();
           return HttpResponse.json({
-            message: "메모 저장 성공",
+            message: "메모 저장 성공"
           });
         }
       )
@@ -193,7 +193,7 @@ describe("내 면접결과 메모 테스트", () => {
     fireEvent.click(answerFeedbackButton);
 
     const memoEditButton = screen.getByRole("button", {
-      name: "메모 편집하기",
+      name: "메모 편집하기"
     });
     fireEvent.click(memoEditButton);
 
@@ -204,7 +204,7 @@ describe("내 면접결과 메모 테스트", () => {
     });
 
     const continueMemoButton = screen.getByRole("button", {
-      name: "이어서 작성",
+      name: "이어서 작성"
     });
     fireEvent.click(continueMemoButton);
 
@@ -213,7 +213,7 @@ describe("내 면접결과 메모 테스트", () => {
     });
 
     const saveMemoButton = screen.getByRole("button", {
-      name: "저장",
+      name: "저장"
     });
     fireEvent.click(saveMemoButton);
 

@@ -1,14 +1,14 @@
 import { getInterviewReport } from "@/domains/interviewReport/api/report";
 import { FeedbackAccordion } from "@/domains/interviewReport/components/feedbackAccordion";
-import { InterviewReport } from "@/domains/interviewReport/types";
+import { InterviewReport } from "@kokomen/types";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { Layout } from "@kokomen/ui/components/layout";
-import { Button } from "@kokomen/ui/components/button";
+import { Layout } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 import Header from "@/shared/header";
@@ -18,16 +18,16 @@ import {
   TrendingDown,
   Home,
   Star,
-  Target,
+  Target
 } from "lucide-react";
 import { withCheckInServer } from "@/utils/auth";
 import { getUserInfo } from "@/domains/auth/api";
-import { User } from "@/domains/auth/types";
 import { SEO } from "@/shared/seo";
+import { UserInfo } from "@kokomen/types";
 
 export default function MyInterviewResultPage({
   report,
-  userInfo,
+  userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const navigate = useRouter();
   const scoreDiff = report.user_cur_score - report.user_prev_score;
@@ -165,34 +165,37 @@ interface PageParams extends ParsedUrlQuery {
   interviewId: string;
 }
 export const getServerSideProps: GetServerSideProps<
-  { report: InterviewReport; userInfo: User | null },
+  { report: InterviewReport; userInfo: UserInfo | null },
   PageParams
 > = async (
   context
 ): Promise<
-  GetServerSidePropsResult<{ report: InterviewReport; userInfo: User | null }>
+  GetServerSidePropsResult<{
+    report: InterviewReport;
+    userInfo: UserInfo | null;
+  }>
 > => {
   const interviewId = context.params?.interviewId;
   if (!interviewId) {
     return {
-      notFound: true,
+      notFound: true
     };
   }
   return withCheckInServer(
     async () => {
       const [report, userInfo] = await Promise.all([
         getInterviewReport(context.req.cookies, interviewId as string),
-        getUserInfo(context),
+        getUserInfo(context)
       ]);
       return {
         data: {
           report: report.data,
-          userInfo: userInfo.data,
-        },
+          userInfo: userInfo.data
+        }
       };
     },
     {
-      redirectPathWhenUnauthorized: "/interviews",
+      redirectPathWhenUnauthorized: "/interviews"
     }
   );
 };

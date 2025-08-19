@@ -1,0 +1,36 @@
+name: Deployment (Storybook)
+
+on:
+  push:
+    branches: [development]
+
+jobs:
+  deploy:
+    name: Deploy to Chromatic
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.17.0
+
+      - name: Project setup
+        run: |
+          corepack enable
+          yarn set version berry
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: Run Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: "packages/ui"

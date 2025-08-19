@@ -1,11 +1,11 @@
-import { Button } from "@kokomen/ui/components/button";
-import { MessageCircleHeart } from "lucide-react";
+import { Button } from "@kokomen/ui";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 const FeedbackButton = () => {
   const router = useRouter();
   const handleFeedbackButtonClick = () => {
-    window.open("https://forms.gle/8WkaCYJQR1kzGGDN8", "_blank");
+    window.open("https://open.kakao.com/o/sE3WgnNh", "_blank");
   };
 
   if (router.pathname.startsWith("/interviews/")) {
@@ -15,10 +15,16 @@ const FeedbackButton = () => {
   return (
     <Button
       onClick={handleFeedbackButtonClick}
-      className="fixed bottom-5 right-5 z-50 w-15 h-15 bg-orange-3 hover:bg-orange-5"
+      className="fixed bottom-5 right-5 z-50 w-15 h-15 bg-orange-3 hover:bg-orange-5 animate-bounce"
       round
     >
-      <MessageCircleHeart className="w-7 h-7" />
+      <Image
+        src="/hurray.svg"
+        alt="feedback"
+        width={20}
+        height={20}
+        className="absolute top-0 left-0 w-full"
+      />
     </Button>
   );
 };

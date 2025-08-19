@@ -1,7 +1,7 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useInfiniteObserver } from "@kokomen/utils";
 import { interviewHistoryKeys } from "@/utils/querykeys";
-import Select from "@kokomen/ui/components/select";
+import { Select } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Calendar,
@@ -10,7 +10,7 @@ import {
   Heart,
   NotebookPen,
   TrendingUp,
-  Trophy,
+  Trophy
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
@@ -24,7 +24,7 @@ export default function InterviewHistory() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    isError,
+    isError
   } = useInfiniteQuery({
     queryKey: interviewHistoryKeys.infinite([sort, range]),
     queryFn: ({ pageParam = 0 }) =>
@@ -32,7 +32,7 @@ export default function InterviewHistory() {
         page: pageParam,
         size: 10,
         sort: sort,
-        range: range,
+        range: range
       }),
     getNextPageParam: (lastPage, allPages) => {
       // 마지막 페이지가 10개 미만이면 더 이상 페이지가 없음
@@ -42,7 +42,7 @@ export default function InterviewHistory() {
       // 다음 페이지 번호 반환 (0부터 시작)
       return allPages.length;
     },
-    initialPageParam: 0,
+    initialPageParam: 0
   });
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -53,7 +53,7 @@ export default function InterviewHistory() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  useIntersectionObserver(loadMoreRef, handleIntersection);
+  useInfiniteObserver(loadMoreRef, handleIntersection);
 
   // 모든 페이지의 데이터를 평탄화
   const allInterviews = data?.pages.flat() || [];
@@ -62,7 +62,7 @@ export default function InterviewHistory() {
     return new Date(dateString).toLocaleDateString("ko-KR", {
       year: "numeric",
       month: "long",
-      day: "numeric",
+      day: "numeric"
     });
   };
 
@@ -82,7 +82,7 @@ export default function InterviewHistory() {
   };
 
   return (
-    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="flex-1">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">면접 기록</h1>
         <p className="text-gray-600">나의 면접 히스토리를 확인해보세요</p>
@@ -95,7 +95,7 @@ export default function InterviewHistory() {
           options={[
             { value: "ALL", label: "전체" },
             { value: "FINISHED", label: "완료" },
-            { value: "IN_PROGRESS", label: "진행중" },
+            { value: "IN_PROGRESS", label: "진행중" }
           ]}
           onChange={(value) => {
             setRange(value as "IN_PROGRESS" | "FINISHED" | "ALL");
@@ -107,7 +107,7 @@ export default function InterviewHistory() {
           value={sort}
           options={[
             { value: "desc", label: "최신순", disabled: false },
-            { value: "asc", label: "오래된순", disabled: false },
+            { value: "asc", label: "오래된순", disabled: false }
           ]}
           onChange={(value) => setSort(value as "desc" | "asc")}
         />
@@ -220,7 +220,7 @@ export default function InterviewHistory() {
                     href={
                       interview.interview_state === "FINISHED"
                         ? `/interviews/${interview.interview_id}/result`
-                        : `/interviews/${interview.interview_id}`
+                        : `/interviews/${interview.interview_id}?mode=${interview.interview_mode}`
                     }
                     className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
                   >

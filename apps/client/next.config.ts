@@ -3,33 +3,34 @@ import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
 
 const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
+  enabled: process.env.ANALYZE === "true"
 });
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@kokomen/ui"],
+  transpilePackages: ["@kokomen/ui", "@kokomen/types", "@kokomen/utils"],
+  allowedDevOrigins: ["*.kokomen.kr"],
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true
   },
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "d2ftfzru2cd49g.cloudfront.net",
-      },
+        hostname: "d2ftfzru2cd49g.cloudfront.net"
+      }
     ],
-    minimumCacheTTL: 31536000,
+    minimumCacheTTL: 31536000
   },
   productionBrowserSourceMaps: false,
   experimental: {
     webpackMemoryOptimizations: true,
     webpackBuildWorker: true,
-    preloadEntriesOnStart: true,
-  },
+    preloadEntriesOnStart: true
+  }
 };
 
 export default withSentryConfig(withBundleAnalyzer(nextConfig), {
@@ -61,5 +62,5 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  automaticVercelMonitors: true
 });

@@ -1,13 +1,13 @@
 import { ChevronDown, Check, Search } from "lucide-react";
 import { FC, useState, useRef, useEffect, useCallback } from "react";
 
-export interface SelectOption {
+interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
 }
 
-export interface SelectProps {
+interface SelectProps {
   options: SelectOption[];
   value?: string;
   onChange?: (value: string) => void;
@@ -32,7 +32,7 @@ const Select: FC<SelectProps> = ({
   error = false,
   errorMessage,
   className = "",
-  "aria-label": ariaLabel,
+  "aria-label": ariaLabel
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,7 +55,7 @@ const Select: FC<SelectProps> = ({
   const sizeClasses = {
     small: "text-sm px-3 py-1.5",
     medium: "text-sm px-4 py-2",
-    large: "text-base px-4 py-3",
+    large: "text-base px-4 py-3"
   };
 
   // 드롭다운 토글
@@ -271,4 +271,5 @@ const Select: FC<SelectProps> = ({
   );
 };
 
-export default Select;
+export { Select };
+export type { SelectProps, SelectOption };

@@ -1,4 +1,4 @@
-import { cn } from "#utils/index.ts";
+import { cn } from "../../utils/index.ts";
 import { HTMLAttributes } from "react";
 
 export function Layout({

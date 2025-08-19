@@ -1,37 +1,36 @@
 import { getUserInfo } from "@/domains/auth/api";
-import { User } from "@/domains/auth/types";
 import { getMemberInterviewResult } from "@/domains/members/api";
-import { MemberInterviewResult } from "@/domains/members/types";
+import { MemberInterviewResult } from "@kokomen/types";
 import Header from "@/shared/header";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
-import { Layout } from "@kokomen/ui/components/layout";
+import { Layout, Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { HelpCircle, Info, Users, Share2, Eye } from "lucide-react";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
 import MemberQuestionFeedback from "@/domains/members/components/memberQuestionFeedback";
-import { Button } from "@kokomen/ui/components/button";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { SEO } from "@/shared/seo";
+import { UserInfo } from "@kokomen/types";
 
 export default function MemberInterviewResultPage({
   result,
   user,
-  interviewId,
+  interviewId
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
           title: "면접 결과 공유",
-          text: `${result.intervieweeNickname}님은 ${result.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`,
-          url: window.location.href,
+          text: `${result.intervieweeNickname ?? "탈퇴한 사용자"}님은 ${result.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`,
+          url: window.location.href
         });
       } catch (err) {
-        console.log("공유 실패:", err);
+        console.error("공유 실패:", err);
       }
     } else {
       await navigator.clipboard.writeText(window.location.href);
@@ -41,8 +40,8 @@ export default function MemberInterviewResultPage({
   return (
     <>
       <SEO
-        title={`${result.intervieweeNickname}님의 면접 결과`}
-        description={`${result.intervieweeNickname}님은 ${result.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`}
+        title={`${result.intervieweeNickname ?? "탈퇴한 사용자"}님의 면접 결과`}
+        description={`${result.intervieweeNickname ?? "탈퇴한 사용자"}님은 ${result.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`}
         robots="index, follow"
         pathname={`/members/interviews/${interviewId}`}
         image="/og-report.png"
@@ -61,7 +60,8 @@ export default function MemberInterviewResultPage({
                     </div>
                     <div>
                       <h1 className="text-2xl font-bold text-white">
-                        {result.intervieweeNickname}님의 면접 결과
+                        {result.intervieweeNickname ?? "탈퇴한 사용자"}님의 면접
+                        결과
                       </h1>
                       <p className="text-blue-1 text-sm">
                         {/* 멤버 이름 들어갈 곳 */}
@@ -154,7 +154,7 @@ export const getServerSideProps = async (
 ): Promise<
   GetServerSidePropsResult<{
     result: CamelCasedProperties<MemberInterviewResult>;
-    user: User | null;
+    user: UserInfo | null;
     interviewId: number;
   }>
 > => {
@@ -169,7 +169,7 @@ export const getServerSideProps = async (
   const interviewIdNumber = Number(interviewId);
   const [userResult, interviewResult] = await Promise.allSettled([
     getUserInfo(context),
-    getMemberInterviewResult(interviewIdNumber, context),
+    getMemberInterviewResult(interviewIdNumber, context)
   ]);
 
   if (interviewResult.status === "rejected") {
@@ -183,7 +183,7 @@ export const getServerSideProps = async (
     props: {
       result,
       user,
-      interviewId: interviewIdNumber,
-    },
+      interviewId: interviewIdNumber
+    }
   };
 };

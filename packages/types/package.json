@@ -1,0 +1,25 @@
+{
+  "name": "@kokomen/types",
+  "version": "0.0.1",
+  "description": "Kokomen 프로젝트 타입 정의 패키지",
+  "main": "src/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/react": "^19"
+  }
+}

@@ -2,24 +2,25 @@ import { Category, getCategories } from "@/api/category";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-  InferGetServerSidePropsType,
+  InferGetServerSidePropsType
 } from "next";
 import { JSX } from "react";
 import Header from "@/shared/header";
 import { withCheckInServer } from "@/utils/auth";
 import { Trophy, Coins, User as UserIcon, Star, Zap } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
-import { User as UserType } from "@/domains/auth/types";
+
 import CreateInterviewForm from "@/domains/interview/components/createInterviewForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
-import { Button } from "@kokomen/ui/components/button";
+import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
+import { UserInfo } from "@kokomen/types";
 
 export default function InterviewMainPage({
   categories,
-  userInfo,
+  userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   useRouterPrefetch("/interviews");
   const router = useRouter();
@@ -131,25 +132,25 @@ export const getServerSideProps = async (
 ): Promise<
   GetServerSidePropsResult<{
     categories: Category[];
-    userInfo: UserType | null;
+    userInfo: UserInfo | null;
   }>
 > => {
   return withCheckInServer<{
     categories: Category[];
-    userInfo: UserType | null;
+    userInfo: UserInfo | null;
   }>(
     async () => {
       const [categoriesResponse, userInfoResponse] = await Promise.allSettled([
         getCategories(),
-        getUserInfo(context),
+        getUserInfo(context)
       ]);
 
       if (categoriesResponse.status === "rejected") {
         return {
           redirect: {
             destination: "/error",
-            permanent: false,
-          },
+            permanent: false
+          }
         };
       }
       const categoryData = categoriesResponse.value.data;
@@ -159,7 +160,7 @@ export const getServerSideProps = async (
           : null;
 
       return {
-        data: { categories: categoryData, userInfo: userInfoData },
+        data: { categories: categoryData, userInfo: userInfoData }
       };
     },
     {
@@ -167,11 +168,11 @@ export const getServerSideProps = async (
         return {
           redirect: {
             destination: "/500",
-            permanent: false,
-          },
+            permanent: false
+          }
         };
       },
-      context,
+      context
     }
   );
 };
