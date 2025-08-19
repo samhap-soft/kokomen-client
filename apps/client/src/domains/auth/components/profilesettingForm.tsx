@@ -15,7 +15,7 @@ import z from "zod";
 const ProfileSetting = z.object({
   nickname: z
     .string()
-    .min(3, { message: "닉네임은 3자 이상이어야 합니다." })
+    .min(2, { message: "닉네임은 2자 이상이어야 합니다." })
     .max(20, { message: "닉네임은 20자 이하이어야 합니다." })
     .regex(/^[가-힣a-zA-Z0-9]+$/, {
       message: "닉네임은 한글 조합, 영문, 숫자만 사용할 수 있습니다."
@@ -25,10 +25,15 @@ type ProfileSettingType = z.infer<typeof ProfileSetting>;
 
 export default function ProfileSettingForm({
   userInfo,
-  redirectTo
+  redirectTo,
+  onSuccess,
+  onFormSubmit
 }: {
   userInfo: User;
   redirectTo: string;
+  onSuccess?: () => void;
+  // eslint-disable-next-line no-unused-vars
+  onFormSubmit?: (data: ProfileSettingType) => void;
 }) {
   const {
     register,
@@ -58,7 +63,11 @@ export default function ProfileSettingForm({
       });
     },
     onSuccess: () => {
-      router.replace(redirectTo ?? "/");
+      if (onSuccess) {
+        onSuccess?.();
+      } else {
+        router.replace(redirectTo ?? "/");
+      }
     },
     onError: (error: AxiosError) => {
       errorToast({
@@ -71,7 +80,11 @@ export default function ProfileSettingForm({
   });
 
   const onSubmit = (data: ProfileSettingType) => {
-    updateUserProfileMutation(data.nickname);
+    if (onFormSubmit) {
+      onFormSubmit(data);
+    } else {
+      updateUserProfileMutation(data.nickname);
+    }
   };
 
   return (

@@ -16,7 +16,7 @@ describe("profile setting 페이지 이동 테스트", () => {
           return HttpResponse.json({
             id: 1,
             nickname: "오상훈",
-            profile_completed: false,
+            profile_completed: false
           });
         }
       )
@@ -40,7 +40,7 @@ describe("profile setting 렌더링 테스트", () => {
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,
-          rank: 1,
+          rank: 1
         }}
       />
     );
@@ -71,7 +71,7 @@ describe("profile setting 기능 테스트", () => {
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,
-          rank: 1,
+          rank: 1
         }}
       />
     );
@@ -107,7 +107,7 @@ describe("profile setting 기능 테스트", () => {
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,
-          rank: 1,
+          rank: 1
         }}
       />
     );
@@ -135,7 +135,7 @@ describe("profile setting 기능 테스트", () => {
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,
-          rank: 1,
+          rank: 1
         }}
       />
     );
@@ -153,8 +153,8 @@ describe("profile setting 기능 테스트", () => {
     //20자 이하 테스트
     fireEvent.change(nicknameInput, {
       target: {
-        value: "오상훈1234567890123142214124214214214214",
-      },
+        value: "오상훈1234567890123142214124214214214214"
+      }
     });
     expect(nicknameInput).toHaveValue(
       "오상훈1234567890123142214124214214214214"
@@ -169,14 +169,14 @@ describe("profile setting 기능 테스트", () => {
     //3자 이상 테스트
     fireEvent.change(nicknameInput, {
       target: {
-        value: "오상",
-      },
+        value: "오"
+      }
     });
-    expect(nicknameInput).toHaveValue("오상");
+    expect(nicknameInput).toHaveValue("오");
     fireEvent.click(saveButton);
     await waitFor(() => {
       expect(
-        screen.getByText("닉네임은 3자 이상이어야 합니다.")
+        screen.getByText("닉네임은 2자 이상이어야 합니다.")
       ).toBeInTheDocument();
     });
   });
