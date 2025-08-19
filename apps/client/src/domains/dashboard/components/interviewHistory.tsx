@@ -82,7 +82,7 @@ export default function InterviewHistory() {
   };
 
   return (
-    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="flex-1">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">면접 기록</h1>
         <p className="text-gray-600">나의 면접 히스토리를 확인해보세요</p>

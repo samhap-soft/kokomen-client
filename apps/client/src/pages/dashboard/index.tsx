@@ -7,7 +7,7 @@ import {
   InferGetServerSidePropsType
 } from "next";
 import { Coins, User, Star } from "lucide-react";
-import InterviewHistory from "@/domains/dashboard/components/interviewHistory";
+import SelectSection from "@/domains/dashboard/components/selectSection";
 import { JSX } from "react";
 import { getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
@@ -92,7 +92,7 @@ export default function Dashboard({
             )}
           </div>
         </div>
-        <InterviewHistory />
+        <SelectSection userInfo={userInfo} />
       </main>
     </>
   );
