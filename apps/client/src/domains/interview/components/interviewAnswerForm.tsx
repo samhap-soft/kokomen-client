@@ -78,7 +78,7 @@ export function InterviewAnswerForm({
           interviewId: data.interviewId,
           questionId: data.questionId,
           mode: data.mode
-        }).then((res) => res.data)
+        })
       );
     },
     onMutate: (data) => {
@@ -111,7 +111,7 @@ export function InterviewAnswerForm({
       };
     },
     onSuccess: (data) => {
-      if (data.interview_state === "FINISHED") {
+      if (data.interviewState === "FINISHED") {
         updateInterviewData({
           interview_state: "FINISHED",
           cur_question: FINISHED_MESSAGE
@@ -119,20 +119,20 @@ export function InterviewAnswerForm({
         return;
       }
       startListening();
-      setInterviewerEmotion(getEmotion(data.cur_answer_rank));
+      setInterviewerEmotion(getEmotion(data.curAnswerRank));
       setInterviewInput("");
       const updatedata = () => {
-        if (data.next_question_voice_url)
-          return { cur_question_voice_url: data.next_question_voice_url };
-        return { cur_question: data.next_question ?? "" };
+        if ("nextQuestionVoiceUrl" in data)
+          return { cur_question_voice_url: data.nextQuestionVoiceUrl };
+        return { cur_question: data.nextQuestion ?? "" };
       };
       updateInterviewData({
         ...updatedata(),
-        cur_question_id: data.next_question_id
+        cur_question_id: data.nextQuestionId
       });
       setInterviewInput("");
-      if (data.next_question_voice_url) {
-        playAudio(data.next_question_voice_url);
+      if (data.nextQuestionVoiceUrl) {
+        playAudio(data.nextQuestionVoiceUrl);
       }
     },
     onError: (_, __, context) => {

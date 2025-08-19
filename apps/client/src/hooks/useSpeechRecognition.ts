@@ -23,7 +23,7 @@ interface UseSpeechRecognitionProps {
   // eslint-disable-next-line no-unused-vars
   onSpeechEnd: (result: string) => void;
   startOnMount: boolean;
-  enabled: boolean;
+  enabled?: boolean;
   options?: UseSpeechRecognitionOptions;
 }
 
