@@ -549,7 +549,40 @@
     opacity: 1;
   }
 }
-
+@theme {
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    25% {
+      transform: translateY(-8px);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+    75% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes float-reverse {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    25% {
+      transform: translateY(8px);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+    75% {
+      transform: translateY(12px);
+    }
+  }
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-float-reverse: float-reverse 3s ease-in-out infinite;
+}
 @keyframes toast-slide-out {
   from {
     transform: translateX(0) scale(1);
@@ -586,7 +619,6 @@
       transform: scale(1);
     }
   }
-  --animate-slide-up: slide-up 0.3s ease-out forwards;
   @keyframes slide-up {
     from {
       opacity: 0;
@@ -597,6 +629,90 @@
       transform: translateY(0);
     }
   }
+  --animate-slide-up: slide-up 0.3s ease-out forwards;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    25% {
+      transform: translateY(-8px);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+    75% {
+      transform: translateY(-12px);
+    }
+  }
+
+  @keyframes float-reverse {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    25% {
+      transform: translateY(8px);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+    75% {
+      transform: translateY(12px);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-float-reverse: float-reverse 3s ease-in-out infinite;
+  --animate-fade-in-up: fadeInUp 0.8s ease-out;
+  --animate-fade-in-left: fadeInLeft 0.8s ease-out;
+  --animate-fade-in-right: fadeInRight 0.8s ease-out;
+  --animate-scale-in: scaleIn 0.8s ease-out;
 }
 
 /* Toast 애니메이션 클래스 */

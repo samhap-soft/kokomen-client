@@ -1,11 +1,7 @@
 import { Bell } from "lucide-react";
 import { Button, RoundSpinner } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import {
-  notificationKeys,
-  useModal,
-  useIntersectionObserver
-} from "@kokomen/utils";
+import { notificationKeys, useModal } from "@kokomen/utils";
 import {
   getInfiniteReadNotifications,
   getInfiniteUnreadNotifications
@@ -13,6 +9,7 @@ import {
 import { BaseNotification, UserInfo } from "@kokomen/types";
 import { KeyboardEvent, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { useInfiniteObserver } from "@kokomen/utils";
 
 const NotificationPanel = ({
   readNotifications,
@@ -37,7 +34,7 @@ const NotificationPanel = ({
     useState<boolean>(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  useIntersectionObserver(loadMoreRef, () => {
+  useInfiniteObserver(loadMoreRef, () => {
     showReadNotifications ? fetchNextPageRead() : fetchNextPageUnread();
   });
 

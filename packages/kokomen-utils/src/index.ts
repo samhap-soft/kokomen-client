@@ -22,6 +22,7 @@ export {
 export {
   useCombinedRefs,
   useIntersectionObserver,
+  useInfiniteObserver,
   useModal,
   useScreenSize,
   useSidebar,
