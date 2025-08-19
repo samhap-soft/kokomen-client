@@ -41,37 +41,44 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
       {/* 네비게이션 탭 */}
       <div className="lg:w-64 flex-shrink-0">
         <nav className="space-y-1">
-          {/* 면접 기록 탭 */}
-          {interviewSections.map((sec) => (
-            <Button
-              variant={"link"}
-              className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
-                sec.value === section
-                  ? "bg-blue-50 text-blue-700 border border-blue-200"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-              key={sec.value}
-              onClick={() => handleTabClick(sec.value as Section)}
-            >
-              {sec.label}
-            </Button>
-          ))}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium text-text-secondary">면접</p>
+            {/* 면접 기록 탭 */}
+            {interviewSections.map((sec) => (
+              <Button
+                variant={"link"}
+                className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
+                  sec.value === section
+                    ? "bg-blue-50 text-blue-700 border border-blue-200"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+                key={sec.value}
+                onClick={() => handleTabClick(sec.value as Section)}
+              >
+                {sec.label}
+              </Button>
+            ))}
+            <hr className="my-4 border-t border-border-secondary" />
 
-          {/* 유저 설정 탭 */}
-          {userSections.map((sec) => (
-            <Button
-              variant={"link"}
-              className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium  ${
-                sec.value === section
-                  ? "bg-blue-50 text-blue-700 border border-blue-200"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-              key={sec.value}
-              onClick={() => handleTabClick(sec.value as Section)}
-            >
-              {sec.label}
-            </Button>
-          ))}
+            <p className="text-sm font-medium text-text-secondary">
+              유저 정보 관리
+            </p>
+            {/* 유저 설정 탭 */}
+            {userSections.map((sec) => (
+              <Button
+                variant={"link"}
+                className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium  ${
+                  sec.value === section
+                    ? "bg-blue-50 text-blue-700 border border-blue-200"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                }`}
+                key={sec.value}
+                onClick={() => handleTabClick(sec.value as Section)}
+              >
+                {sec.label}
+              </Button>
+            ))}
+          </div>
         </nav>
       </div>
 
