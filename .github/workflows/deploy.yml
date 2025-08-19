@@ -12,6 +12,11 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
+      - name: install dependencies
+        run: |
+          corepack enable
+          yarn set version berry
+          yarn install
 
       - name: Run Docker Compose
         env:
