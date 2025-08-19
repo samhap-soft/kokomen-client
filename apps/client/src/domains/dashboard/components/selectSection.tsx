@@ -4,6 +4,8 @@ import ChangeNickname from "@/domains/dashboard/components/changeNickname";
 import Withdrawal from "@/domains/dashboard/components/withDrawl";
 import { UserInfo } from "@kokomen/types";
 import { Button } from "@kokomen/ui";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 type Section = "interview" | "changeNickname" | "withdrawal";
 
@@ -35,6 +37,7 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
   const handleTabClick = (selectedSection: Section) => {
     setSection(selectedSection);
   };
+  const router = useRouter();
 
   return (
     <section className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
@@ -78,6 +81,25 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
                 {sec.label}
               </Button>
             ))}
+
+            <hr className="my-4 border-t border-border-secondary" />
+            <p className="text-sm font-medium text-text-secondary">
+              약관 및 정책
+            </p>
+            <Button
+              variant={"link"}
+              onClick={() => router.push("/terms/termsofuse")}
+              className="justify-start"
+            >
+              서비스 이용 약관
+            </Button>
+            <Button
+              variant={"link"}
+              onClick={() => router.push("/terms/privacy")}
+              className="justify-start"
+            >
+              개인정보 처리 방침
+            </Button>
           </div>
         </nav>
       </div>
