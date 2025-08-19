@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Button, Modal } from "@kokomen/ui";
+import { Button, Modal, useToast } from "@kokomen/ui";
 import { AlertTriangle, Trash2, CheckCircle, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { deleteUser } from "@/domains/auth/api";
 import { useRouter } from "next/router";
+import { AxiosError } from "axios";
 
 export default function Withdrawal() {
   const [confirmText, setConfirmText] = useState("");
@@ -12,14 +13,23 @@ export default function Withdrawal() {
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   const router = useRouter();
 
+  const { error: errorToast } = useToast();
+
   const { mutate: deleteUserMutation } = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
       setIsLoadingModalOpen(false);
       setIsSuccessModalOpen(true);
     },
-    onError: () => {
+    onError: (error: AxiosError) => {
       setIsLoadingModalOpen(false);
+      if (error.response?.status === 400) {
+        const data = error.response?.data as { message?: string };
+        errorToast({
+          title: "회원 탈퇴에 실패했습니다.",
+          description: data?.message ?? "서버 오류가 발생했습니다."
+        });
+      }
     }
   });
 
