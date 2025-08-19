@@ -10,6 +10,9 @@ import { Button } from "@kokomen/ui";
 import { captureFormSubmitEvent } from "@/utils/analytics";
 import { User } from "@kokomen/types";
 import z from "zod";
+import { RotateCcw } from "lucide-react";
+// @ts-expect-error : 선언 파일 없음
+import { getRandomNickname } from "@woowa-babble/random-nickname";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const ProfileSetting = z.object({
@@ -17,8 +20,8 @@ const ProfileSetting = z.object({
     .string()
     .min(2, { message: "닉네임은 2자 이상이어야 합니다." })
     .max(20, { message: "닉네임은 20자 이하이어야 합니다." })
-    .regex(/^[가-힣a-zA-Z0-9]+$/, {
-      message: "닉네임은 한글 조합, 영문, 숫자만 사용할 수 있습니다."
+    .regex(/^[가-힣a-zA-Z0-9\s]+$/, {
+      message: "닉네임은 한글 조합, 영문, 숫자, 띄어쓰기만 사용할 수 있습니다."
     })
 });
 type ProfileSettingType = z.infer<typeof ProfileSetting>;
@@ -43,7 +46,9 @@ export default function ProfileSettingForm({
   } = useForm<ProfileSettingType>({
     resolver: standardSchemaResolver(ProfileSetting),
     defaultValues: {
-      nickname: userInfo.nickname
+      nickname: userInfo.profile_completed
+        ? userInfo.nickname
+        : getRandomNickname("animals")
     }
   });
   const router = useRouter();
@@ -96,14 +101,25 @@ export default function ProfileSettingForm({
         >
           닉네임
         </label>
-        <Input
-          {...register("nickname", { required: true })}
-          type="text"
-          className="w-full"
-          role="textbox"
-          placeholder="닉네임을 입력해주세요"
-          onChange={(e) => setValue("nickname", e.target.value)}
-        />
+        <div className="flex gap-2">
+          <Input
+            {...register("nickname", { required: true })}
+            type="text"
+            className="flex-1"
+            role="textbox"
+            placeholder="닉네임을 입력해주세요"
+            onChange={(e) => setValue("nickname", e.target.value)}
+          />
+          <Button
+            variant={"glass"}
+            type="button"
+            onClick={() => {
+              setValue("nickname", getRandomNickname("animals"));
+            }}
+          >
+            <RotateCcw />
+          </Button>
+        </div>
         {errors.nickname && (
           <p className="mt-2 text-sm text-red-600">{errors.nickname.message}</p>
         )}

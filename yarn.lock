@@ -3241,6 +3241,7 @@ __metadata:
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@types/three": "npm:^0"
+    "@woowa-babble/random-nickname": "npm:^1.0.2"
     axios: "npm:^1.9.0"
     babel-jest: "npm:^30.0.2"
     eslint: "npm:8.57.1"
@@ -7039,6 +7040,13 @@ __metadata:
   version: 0.1.63
   resolution: "@webgpu/types@npm:0.1.63"
   checksum: 10c0/c756d467d33b6685cb884701e84431f640fc067ad2925f62ac0c760aabe3c9953e5ec0ef97c27467013a6ae9b16b26d9d2831b789717534f06abaed6bcfd5113
+  languageName: node
+  linkType: hard
+
+"@woowa-babble/random-nickname@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@woowa-babble/random-nickname@npm:1.0.2"
+  checksum: 10c0/2ae11cc3a01c3380a4e12e860e5f4193833540f0f4734119017fa4b5c7e056a984a3f84bff3093c486fb47fc14ca1c4df0d9a53f96e1a9bda6359f01779d0cd0
   languageName: node
   linkType: hard
 
