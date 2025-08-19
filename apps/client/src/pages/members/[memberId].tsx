@@ -33,8 +33,8 @@ export default function MemberInterviewPage({
   return (
     <>
       <SEO
-        title={`${interviews.intervieweeNickname}의 면접 기록`}
-        description={`${interviews.intervieweeNickname}님의 면접 기록을 확인해보세요.`}
+        title={`${interviews.intervieweeNickname ?? "탈퇴한 사용자"}의 면접 기록`}
+        description={`${interviews.intervieweeNickname ?? "탈퇴한 사용자"}님의 면접 기록을 확인해보세요.`}
         robots="index, follow"
         pathname={`/members/${memberId}`}
       />
@@ -52,7 +52,7 @@ export default function MemberInterviewPage({
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-text-heading">
-                    {interviews.intervieweeNickname}
+                    {interviews.intervieweeNickname ?? "탈퇴한 사용자"}
                   </h1>
                 </div>
               </div>
