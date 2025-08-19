@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { memberKeys, useIntersectionObserver } from "@kokomen/utils";
+import { memberKeys, useInfiniteObserver } from "@kokomen/utils";
 import { getMemberInterviews } from "@/domains/members/api";
 import { LoadingFullScreen, RoundSpinner } from "@kokomen/ui";
 import { useState, useRef } from "react";
@@ -54,7 +54,7 @@ function RouteComponent() {
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  useIntersectionObserver(loadMoreRef, () => {
+  useInfiniteObserver(loadMoreRef, () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }

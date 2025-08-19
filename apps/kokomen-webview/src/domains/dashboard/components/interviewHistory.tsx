@@ -1,5 +1,5 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
-import { useIntersectionObserver, interviewHistoryKeys } from "@kokomen/utils";
+import { interviewHistoryKeys, useInfiniteObserver } from "@kokomen/utils";
 import { Select } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
@@ -52,7 +52,7 @@ export default function InterviewHistory() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  useIntersectionObserver(loadMoreRef, handleIntersection);
+  useInfiniteObserver(loadMoreRef, handleIntersection);
 
   // 모든 페이지의 데이터를 평탄화
   const allInterviews = data?.pages.flat() || [];
