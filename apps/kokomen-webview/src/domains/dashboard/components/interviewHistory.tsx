@@ -230,6 +230,9 @@ export default function InterviewHistory() {
                   ) : (
                     <Link
                       to={`/interviews/$interviewId`}
+                      search={{
+                        mode: interview.interview_mode
+                      }}
                       params={{
                         interviewId: interview.interview_id.toString()
                       }}
