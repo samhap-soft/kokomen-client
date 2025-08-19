@@ -118,7 +118,9 @@ export function InterviewAnswerForm({
         });
         return;
       }
-      startListening();
+      if (mode === "VOICE") {
+        startListening();
+      }
       setInterviewerEmotion(getEmotion(data.curAnswerRank));
       setInterviewInput("");
       const updatedata = () => {
