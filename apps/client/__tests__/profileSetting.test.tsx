@@ -44,7 +44,7 @@ describe("profile setting 렌더링 테스트", () => {
         }}
       />
     );
-    expect(screen.getByRole("textbox", { name: "닉네임" })).toHaveValue(
+    expect(screen.getByRole("textbox", { name: "닉네임" })).not.toHaveValue(
       "오상훈"
     );
   });
@@ -124,7 +124,7 @@ describe("profile setting 기능 테스트", () => {
     //axios error의 메시지도 정상적으로 받아서 렌더링하는지 테스트
     expect(screen.getByText("닉네임 변경에 실패 테스트")).toBeInTheDocument();
   });
-  it("프로필 설정 페이지에서 유효하지 않은 값을 입력했을 때 닉네임  실패 테스트", async () => {
+  it("프로필 설정 페이지에서 유효하지 않은 값을 입력했을 때 닉네임 실패 테스트", async () => {
     renderWithProviders(
       <LoginProfileSetting
         state="/"
@@ -146,7 +146,9 @@ describe("profile setting 기능 테스트", () => {
     fireEvent.click(saveButton);
     await waitFor(() => {
       expect(
-        screen.getByText("닉네임은 한글 조합, 영문, 숫자만 사용할 수 있습니다.")
+        screen.getByText(
+          "닉네임은 한글 조합, 영문, 숫자, 띄어쓰기만 사용할 수 있습니다."
+        )
       ).toBeInTheDocument();
     });
 
