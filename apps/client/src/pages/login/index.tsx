@@ -2,6 +2,7 @@ import { SEO } from "@/shared/seo";
 import { clearSessionCookieSSR } from "@/utils/auth";
 import { GetServerSidePropsContext } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 
@@ -51,20 +52,22 @@ export default function LoginPage(): JSX.Element {
             <div className="text-center space-y-4">
               <div className="border-t border-gray-200 pt-4">
                 <p className="text-xs text-gray-500 leading-relaxed">
-                  로그인 시 꼬꼬면의{" "}
-                  <a
-                    href="/terms"
+                  로그인 시 꼬꼬면의
+                  <Link
+                    target="_blank"
+                    href="/terms/termsofuse"
                     className="text-blue-600 hover:text-blue-800 underline"
                   >
                     서비스 이용약관
-                  </a>
-                  과{" "}
-                  <a
-                    href="/privacy"
+                  </Link>
+                  과
+                  <Link
+                    target="_blank"
+                    href="/terms/privacy"
                     className="text-blue-600 hover:text-blue-800 underline"
                   >
                     개인정보 처리방침
-                  </a>
+                  </Link>
                   에 동의하게 됩니다.
                 </p>
               </div>
@@ -72,14 +75,6 @@ export default function LoginPage(): JSX.Element {
           </div>
 
           {/* 하단 정보 */}
-          <div className="text-center">
-            <p className="text-sm text-gray-500">
-              처음 방문하시나요?{" "}
-              <span className="text-blue-600 font-medium">
-                카카오로 간편하게 가입하세요
-              </span>
-            </p>
-          </div>
         </div>
       </div>
     </>
@@ -97,6 +92,6 @@ export const getServerSideProps = async (
   }
 
   return {
-    props: {},
+    props: {}
   };
 };

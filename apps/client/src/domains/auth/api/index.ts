@@ -52,4 +52,16 @@ const updateUserProfile = async (nickname: string): AxiosPromise<void> => {
   return authServerInstance.patch(`/members/me/profile`, { nickname });
 };
 
-export { postAuthorizationCode, getUserInfo, logout, updateUserProfile };
+const deleteUser = async (): AxiosPromise<void> => {
+  return authServerInstance.delete(`/auth/kakao-withdraw`, {
+    withCredentials: true
+  });
+};
+
+export {
+  postAuthorizationCode,
+  getUserInfo,
+  logout,
+  updateUserProfile,
+  deleteUser
+};

@@ -66,21 +66,17 @@ export default function RankCard(): JSX.Element {
             router.push(`/members/${rank.id}`);
           }}
         >
-          <div className="flex items-center gap-4">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-primary  text-white font-bold text-lg">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-primary text-white font-bold text-lg flex-shrink-0">
               {index + 1}
             </div>
-            <div>
-              <p className="font-semibold text-lg text-gray-900">
-                {rank.nickname}
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-xl font-bold text-gray-900">
-              {rank.score} <span className="text-sm text-gray-500">점</span>
+            <p className="font-semibold text-lg text-gray-900 truncate min-w-0 flex-1 text-left">
+              {rank.nickname ?? "탈퇴한 사용자"}
             </p>
           </div>
+          <p className="text-xl font-bold text-gray-900">
+            {rank.score} <span className="text-sm text-gray-500">점</span>
+          </p>
         </Button>
       ))}
     </div>
