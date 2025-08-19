@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import React, { JSX, useEffect, useRef, useState } from "react";
 import { Button } from "@kokomen/ui";
 import { useLogout } from "@/hooks/useLogout";
-import NotificationPanelIcon from "@/domains/notifications/components/notificationPanel";
+// import NotificationPanelIcon from "@/domains/notifications/components/notificationPanel";
 import { UserInfo } from "@kokomen/types";
 
 interface HeaderProps {
@@ -269,7 +269,7 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
             })}
           </nav>
           <div className="flex items-center space-x-2">
-            <NotificationPanelIcon user={user} />
+            {/* <NotificationPanelIcon user={user} /> */}
             <DesktopProfileDropdown user={user} />
             <MobileProfileDropdown user={user} />
           </div>
