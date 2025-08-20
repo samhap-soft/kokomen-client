@@ -7,10 +7,14 @@ import {
   InterviewMode,
   InterviewAnswerForm as InterviewAnswerFormType
 } from "@kokomen/types";
-import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { useSpeechRecognitionWithEvents } from "@/domains/interview/hooks/useSpeechRecognitionWithEvents";
+import {
+  useInterviewEvent,
+  interviewEventHelpers
+} from "@/domains/interview/utils/interviewEventEmitter";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { captureFormSubmitEvent } from "@/utils/analytics";
-import { Button, Textarea } from "@kokomen/ui";
+import { Button, LoadingCircles, RoundSpinner, Textarea } from "@kokomen/ui";
 import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
@@ -37,6 +41,7 @@ type InterviewInputProps = Pick<
 const SUBMIT_FAILED_MESSAGE: string =
   "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
 const FINISHED_MESSAGE: string = "면접이 종료되었습니다. 수고하셨습니다.";
+
 export function InterviewAnswerForm({
   isInterviewStarted,
   cur_question,
@@ -52,6 +57,7 @@ export function InterviewAnswerForm({
 }: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
   const updateInterviewInput = useCallback(
     (result: string) => {
       if (!isInterviewStarted) return;
@@ -63,14 +69,14 @@ export function InterviewAnswerForm({
     },
     [setInterviewInput, isInterviewStarted]
   );
-  const {
-    startListening,
-    isListening: isVoiceListening,
-    stopListening
-  } = useSpeechRecognition({
-    onSpeechEnd: updateInterviewInput,
-    startOnMount: mode === "VOICE"
-  });
+
+  const { isListening: isVoiceListening, error: voiceError } =
+    useSpeechRecognitionWithEvents({
+      onSpeechEnd: updateInterviewInput,
+      enabled: isInterviewStarted,
+      mode: mode
+    });
+
   const { mutate, isPending } = useMutation({
     mutationFn: (data: InterviewAnswerFormType) => {
       return submitInterviewAnswerV2(data).then(() =>
@@ -82,7 +88,7 @@ export function InterviewAnswerForm({
       );
     },
     onMutate: (data) => {
-      stopListening();
+      interviewEventHelpers.stopVoiceRecognition();
       captureFormSubmitEvent({
         name: "submitInterviewAnswer",
         properties: {
@@ -118,9 +124,6 @@ export function InterviewAnswerForm({
         });
         return;
       }
-      if (mode === "VOICE") {
-        startListening();
-      }
       setInterviewerEmotion(getEmotion(data.curAnswerRank));
       setInterviewInput("");
       const updatedata = () => {
@@ -154,7 +157,7 @@ export function InterviewAnswerForm({
             cur_question: context?.previousMessage?.prevMessage ?? ""
           });
         }
-      }, 2000);
+      }, 1000);
     },
     retry: false
   });
@@ -174,6 +177,8 @@ export function InterviewAnswerForm({
   };
   return (
     <form className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
+      {/* 음성 인식 상태 표시 */}
+
       <Textarea
         ref={textAreaRef}
         role="textbox"
@@ -205,27 +210,51 @@ export function InterviewAnswerForm({
         }}
         value={interviewInput}
         autoAdjust={true}
-        disabled={isPending || !isInterviewStarted || isVoiceListening}
+        disabled={
+          isPending ||
+          !isInterviewStarted ||
+          isVoiceListening ||
+          mode === "VOICE"
+        }
         aria-disabled={isPending || !isInterviewStarted || isVoiceListening}
         placeholder={"답변을 입력해주세요..."}
         onFocus={() => setIsListening(true)}
         onBlur={() => setIsListening(false)}
       />
-      <div className="flex w-full gap-5">
+      <div className="relative flex w-full gap-5">
         <div className="flex-1 items-center flex gap-5 justify-between">
           <span className="text-text-tertiary font-bold">
             {prev_questions_and_answers.length} / {totalQuestions}
           </span>
+          {isVoiceListening && (
+            <div
+              className={`absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-300 ease-in-out overflow-hidden animate-fade-in-up`}
+            >
+              <div className="flex items-center justify-center">
+                <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-primary-bg to-primary-bg-hover rounded-full border border-primary-border shadow-lg">
+                  <div className="flex space-x-1">
+                    <LoadingCircles size="xs" />
+                  </div>
+                  <span className="text-primary font-semibold text-sm tracking-wide">
+                    🎤 면접관님이 듣고있어요!
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+          {voiceError && !isVoiceListening && (
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-300 ease-in-out overflow-hidden animate-fade-in-up">
+              <div className="flex items-center justify-center">
+                <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-error-bg to-error-bg-hover rounded-full border border-error-border shadow-lg">
+                  <span className="text-error font-semibold text-sm tracking-wide">
+                    ❌ {voiceError}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <VoiceInputButton
-            onVoiceStart={() => {
-              setIsListening(true);
-              startListening();
-            }}
-            onVoiceStop={() => {
-              setIsListening(false);
-              stopListening();
-            }}
             isVoiceListening={isVoiceListening}
             disabled={isPending || !isInterviewStarted}
             mode={mode as InterviewMode}
@@ -250,14 +279,10 @@ export function InterviewAnswerForm({
 }
 
 function VoiceInputButton({
-  onVoiceStart,
-  onVoiceStop,
   isVoiceListening,
   disabled,
   mode
 }: {
-  onVoiceStart: () => void;
-  onVoiceStop: () => void;
   isVoiceListening: boolean;
   disabled: boolean;
   mode: InterviewMode;
@@ -272,7 +297,7 @@ function VoiceInputButton({
         name="interview-voice-stop"
         variant={"glass"}
         className="flex items-center gap-2 text-text-tertiary"
-        onClick={onVoiceStop}
+        onClick={interviewEventHelpers.stopVoiceRecognition}
         disabled={disabled}
       >
         <CircleStop
@@ -291,7 +316,7 @@ function VoiceInputButton({
       name="interview-voice-start"
       variant={"glass"}
       className="flex items-center gap-2 text-text-tertiary"
-      onClick={onVoiceStart}
+      onClick={interviewEventHelpers.startVoiceRecognition}
       disabled={disabled}
     >
       <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />
