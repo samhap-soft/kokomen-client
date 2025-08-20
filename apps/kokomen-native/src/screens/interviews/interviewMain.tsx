@@ -76,7 +76,6 @@ export default function InterviewMainScreen() {
   const handleMessage = (event: WebViewMessageEvent) => {
     try {
       const data = JSON.parse(event.nativeEvent.data);
-      console.log("data", data);
       switch (data.type) {
         case "startListening":
           handleStart();
