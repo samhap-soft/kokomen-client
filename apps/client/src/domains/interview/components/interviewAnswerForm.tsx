@@ -8,13 +8,10 @@ import {
   InterviewAnswerForm as InterviewAnswerFormType
 } from "@kokomen/types";
 import { useSpeechRecognitionWithEvents } from "@/domains/interview/hooks/useSpeechRecognitionWithEvents";
-import {
-  useInterviewEvent,
-  interviewEventHelpers
-} from "@/domains/interview/utils/interviewEventEmitter";
+import { interviewEventHelpers } from "@/domains/interview/utils/interviewEventEmitter";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { captureFormSubmitEvent } from "@/utils/analytics";
-import { Button, LoadingCircles, RoundSpinner, Textarea } from "@kokomen/ui";
+import { Button, LoadingCircles, Textarea } from "@kokomen/ui";
 import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
