@@ -2,6 +2,10 @@ import { Layout, LoadingFullScreen } from "@kokomen/ui";
 import { InterviewAnswerForm } from "@/domains/interview/components/interviewAnswerForm";
 import { InterviewSideBar } from "@kokomen/ui/domains";
 import { useModal } from "@kokomen/utils";
+import {
+  interviewEventHelpers,
+  useInterviewEvent
+} from "@/domains/interview/utils/interviewEventEmitter";
 import React, { JSX, useState } from "react";
 import {
   GetServerSideProps,
@@ -66,6 +70,7 @@ export default function InterviewPage({
   mode
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
+
   const {
     isOpen: isInterviewSidebarOpen,
     openModal: openInterviewSidebar,
@@ -91,8 +96,21 @@ export default function InterviewPage({
     useState<InterviewerEmotion>("happy");
 
   const { playAudio, playFinished } = useAudio(audioUrl, {
-    onPlayEnd: () => setIsSpeaking(false),
-    onPlayStart: () => setIsSpeaking(true)
+    onPlayEnd: () => {
+      setIsSpeaking(false);
+      if (mode === "VOICE") {
+        interviewEventHelpers.startVoiceRecognition();
+      }
+    },
+    onPlayStart: () => {
+      setIsSpeaking(true);
+    }
+  });
+  useInterviewEvent("voiceRecognitionStarted", () => {
+    setIsListening(true);
+  });
+  useInterviewEvent("voiceRecognitionStopped", () => {
+    setIsListening(false);
   });
 
   // 타입 안전한 방식으로 현재 질문 가져오기
