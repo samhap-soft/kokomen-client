@@ -9,9 +9,9 @@ import {
   MockInterviewSection,
   RankerReferenceSection,
   FeaturesSection,
-  CTASection,
-  Footer
+  CTASection
 } from "@/domains/onboard/components";
+import { Footer } from "@/shared/footer";
 
 export default function Home({
   user
