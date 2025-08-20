@@ -14,20 +14,24 @@ export const Rank: React.FC<{ rank: number }> = ({ rank }) => {
   let icon: React.ElementType, color: string, bgColor: string;
   if (rank === 1) {
     icon = Crown;
-    color = "text-gold-2";
-    bgColor = "bg-orange-6";
-  } else if (rank <= 3) {
+    color = "text-yellow-8";
+    bgColor = "bg-yellow-2";
+  } else if (rank === 2) {
     icon = Medal;
-    color = "text-gold-2";
-    bgColor = "bg-orange-6";
+    color = "text-gray-600";
+    bgColor = "bg-gray-200";
+  } else if (rank === 3) {
+    icon = Medal;
+    color = "text-orange-7";
+    bgColor = "bg-orange-2";
   } else if (rank <= 10) {
     icon = Award;
-    color = "text-blue-6";
-    bgColor = "bg-blue-1";
+    color = "text-blue-7";
+    bgColor = "bg-blue-2";
   } else {
     icon = Trophy;
-    color = "text-text-tertiary";
-    bgColor = "bg-magenta-1";
+    color = "text-purple-7";
+    bgColor = "bg-purple-2";
   }
   const Icon = icon;
   return (
@@ -47,32 +51,32 @@ export const Percentile: React.FC<{
   const percentile = Math.round((rank / totalMemberCount) * 100);
   let color: string, bgColor: string;
   if (percentile >= 90) {
-    color = "text-volcano-7";
-    bgColor = "bg-volcano-1";
+    color = "text-red-7";
+    bgColor = "bg-red-2";
   } else if (percentile >= 70) {
-    color = "text-volcano-6";
-    bgColor = "bg-volcano-1";
-  } else if (percentile >= 60) {
-    color = "text-volcano-5";
-    bgColor = "bg-volcano-1";
+    color = "text-volcano-7";
+    bgColor = "bg-volcano-2";
   } else if (percentile >= 50) {
-    color = "text-volcano-4";
-    bgColor = "bg-volcano-1";
-  } else if (percentile >= 40) {
-    color = "text-green-7";
-    bgColor = "bg-green-1";
+    color = "text-orange-7";
+    bgColor = "bg-orange-2";
   } else if (percentile >= 30) {
-    color = "text-green-6";
-    bgColor = "bg-green-1";
+    color = "text-yellow-7";
+    bgColor = "bg-yellow-2";
   } else if (percentile >= 20) {
-    color = "text-green-4";
-    bgColor = "bg-green-1";
+    color = "text-lime-7";
+    bgColor = "bg-lime-2";
   } else if (percentile >= 10) {
-    color = "text-primary";
-    bgColor = "bg-primary-hover";
+    color = "text-green-7";
+    bgColor = "bg-green-2";
+  } else if (percentile >= 5) {
+    color = "text-cyan-7";
+    bgColor = "bg-cyan-2";
+  } else if (percentile >= 1) {
+    color = "text-blue-7";
+    bgColor = "bg-blue-2";
   } else {
-    color = "text-gold-2";
-    bgColor = "bg-orange-6";
+    color = "text-purple-7";
+    bgColor = "bg-purple-2";
   }
   return (
     <span
