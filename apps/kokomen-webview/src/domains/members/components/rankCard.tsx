@@ -64,7 +64,7 @@ export function RankCard(): JSX.Element {
               {index + 1}
             </div>
             <span className="text-lg font-medium text-gray-800">
-              {rank.nickname}
+              {rank.nickname ?? "탈퇴한 사용자"}
             </span>
           </div>
           <span className="text-base font-semibold text-gray-700">
