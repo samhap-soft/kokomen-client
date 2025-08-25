@@ -150,7 +150,7 @@ export default function InterviewHistory() {
             >
               <div className="flex items-start justify-between md:flex-row md:w-auto w-full flex-col gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
+                  <div className="flex flex-col items-start gap-3 mb-3">
                     <h3 className="text-lg font-semibold text-gray-900">
                       {interview.interview_category}
                     </h3>
