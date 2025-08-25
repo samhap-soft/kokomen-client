@@ -1,4 +1,3 @@
-import InterviewHistory from "@/domains/dashboard/components/interviewHistory";
 import { useAuthStore, useUser } from "@/store";
 import {
   createFileRoute,
@@ -6,9 +5,10 @@ import {
   useLoaderData
 } from "@tanstack/react-router";
 import { Percentile, Rank } from "@kokomen/ui";
-import { Coins, Star, User } from "lucide-react";
+import { Coins, Star } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
 import { LoadingFullScreen } from "@kokomen/ui";
+import SelectSection from "@/domains/dashboard/components/selectSection";
 
 export const Route = createFileRoute("/dashboard/")({
   component: RouteComponent,
@@ -39,14 +39,11 @@ function RouteComponent() {
   );
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <main className="min-h-screen bg-bg-elevated">
       <div className="mb-2 p-4 max-w-[1280px] mx-auto">
         <div className="rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-center justify-between md:flex-row flex-col gap-6">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary-hover to-primary rounded-full flex items-center justify-center">
-                <User className="w-8 h-8 text-white" />
-              </div>
               <div className="flex-1">
                 <h1 className="text-2xl font-bold break-all">
                   {user?.nickname || "사용자"}
@@ -95,7 +92,7 @@ function RouteComponent() {
           )}
         </div>
       </div>
-      <InterviewHistory />
+      <SelectSection userInfo={userInfo} />
     </main>
   );
 }
