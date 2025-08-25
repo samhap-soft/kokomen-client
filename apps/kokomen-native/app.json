@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "kokomen-native",
-    "slug": "kokomen-native",
+    "name": "kokomen",
+    "slug": "kokomen",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,7 @@
       ]
     ],
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon1024.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -31,14 +31,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon1024.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "package": "kr.kokomen"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     }
   }
 }
