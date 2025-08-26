@@ -72,7 +72,6 @@ export default function ChangeNickname({ userInfo }: ChangeNicknameProps) {
             userInfo={userInfo}
             redirectTo="/dashboard"
             onFormSubmit={handleFormSubmit}
-            onSuccess={() => setIsSuccessModalOpen(true)}
           />
         </div>
       </div>

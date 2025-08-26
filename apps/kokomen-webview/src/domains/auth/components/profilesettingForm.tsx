@@ -25,14 +25,12 @@ type ProfileSettingType = z.infer<typeof ProfileSetting>;
 export default function ProfileSettingForm({
   userInfo,
   redirectTo,
-  onFormSubmit,
-  onSuccess
+  onFormSubmit
 }: {
   userInfo: User;
   redirectTo: string;
   // eslint-disable-next-line no-unused-vars
   onFormSubmit: (data: ProfileSettingType) => void;
-  onSuccess?: () => void;
 }) {
   const {
     register,
@@ -54,11 +52,7 @@ export default function ProfileSettingForm({
   } = useMutation({
     mutationFn: updateUserProfile,
     onSuccess: () => {
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        router.navigate({ to: redirectTo ?? "/interviews" });
-      }
+      router.navigate({ to: redirectTo ?? "/interviews" });
     },
     onError: (error: AxiosError) => {
       errorToast({
