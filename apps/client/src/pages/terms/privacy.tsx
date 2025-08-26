@@ -182,9 +182,9 @@ export default function PrivacyPage({
               </p>
               <div className="ml-4 space-y-1">
                 <p>▶ 개인정보 보호책임자</p>
-                <p>• 성명: [담당자명]</p>
-                <p>• 직책: [직책]</p>
-                <p>• 연락처: [이메일 주소]</p>
+                <p>• 성명: 조민형</p>
+                <p>• 직책: CEO</p>
+                <p>• 연락처: samhapsoft@gmail.com</p>
               </div>
             </div>
           </section>

@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as InterviewsIndexRouteImport } from './routes/interviews/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as TermsTermsofuseRouteImport } from './routes/terms/termsofuse'
+import { Route as TermsPrivacyRouteImport } from './routes/terms/privacy'
 import { Route as MembersMemberIdRouteImport } from './routes/members/$memberId'
 import { Route as LoginProfileRouteImport } from './routes/login/profile'
 import { Route as LoginCallbackRouteImport } from './routes/login/callback'
@@ -38,6 +40,16 @@ const InterviewsIndexRoute = InterviewsIndexRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsTermsofuseRoute = TermsTermsofuseRouteImport.update({
+  id: '/terms/termsofuse',
+  path: '/terms/termsofuse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsPrivacyRoute = TermsPrivacyRouteImport.update({
+  id: '/terms/privacy',
+  path: '/terms/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MembersMemberIdRoute = MembersMemberIdRouteImport.update({
@@ -79,6 +91,8 @@ export interface FileRoutesByFullPath {
   '/login/callback': typeof LoginCallbackRoute
   '/login/profile': typeof LoginProfileRoute
   '/members/$memberId': typeof MembersMemberIdRoute
+  '/terms/privacy': typeof TermsPrivacyRoute
+  '/terms/termsofuse': typeof TermsTermsofuseRoute
   '/dashboard': typeof DashboardIndexRoute
   '/interviews': typeof InterviewsIndexRoute
   '/login': typeof LoginIndexRoute
@@ -91,6 +105,8 @@ export interface FileRoutesByTo {
   '/login/callback': typeof LoginCallbackRoute
   '/login/profile': typeof LoginProfileRoute
   '/members/$memberId': typeof MembersMemberIdRoute
+  '/terms/privacy': typeof TermsPrivacyRoute
+  '/terms/termsofuse': typeof TermsTermsofuseRoute
   '/dashboard': typeof DashboardIndexRoute
   '/interviews': typeof InterviewsIndexRoute
   '/login': typeof LoginIndexRoute
@@ -104,6 +120,8 @@ export interface FileRoutesById {
   '/login/callback': typeof LoginCallbackRoute
   '/login/profile': typeof LoginProfileRoute
   '/members/$memberId': typeof MembersMemberIdRoute
+  '/terms/privacy': typeof TermsPrivacyRoute
+  '/terms/termsofuse': typeof TermsTermsofuseRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/interviews/': typeof InterviewsIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -118,6 +136,8 @@ export interface FileRouteTypes {
     | '/login/callback'
     | '/login/profile'
     | '/members/$memberId'
+    | '/terms/privacy'
+    | '/terms/termsofuse'
     | '/dashboard'
     | '/interviews'
     | '/login'
@@ -130,6 +150,8 @@ export interface FileRouteTypes {
     | '/login/callback'
     | '/login/profile'
     | '/members/$memberId'
+    | '/terms/privacy'
+    | '/terms/termsofuse'
     | '/dashboard'
     | '/interviews'
     | '/login'
@@ -142,6 +164,8 @@ export interface FileRouteTypes {
     | '/login/callback'
     | '/login/profile'
     | '/members/$memberId'
+    | '/terms/privacy'
+    | '/terms/termsofuse'
     | '/dashboard/'
     | '/interviews/'
     | '/login/'
@@ -155,6 +179,8 @@ export interface RootRouteChildren {
   LoginCallbackRoute: typeof LoginCallbackRoute
   LoginProfileRoute: typeof LoginProfileRoute
   MembersMemberIdRoute: typeof MembersMemberIdRoute
+  TermsPrivacyRoute: typeof TermsPrivacyRoute
+  TermsTermsofuseRoute: typeof TermsTermsofuseRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   InterviewsIndexRoute: typeof InterviewsIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
@@ -191,6 +217,20 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms/termsofuse': {
+      id: '/terms/termsofuse'
+      path: '/terms/termsofuse'
+      fullPath: '/terms/termsofuse'
+      preLoaderRoute: typeof TermsTermsofuseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms/privacy': {
+      id: '/terms/privacy'
+      path: '/terms/privacy'
+      fullPath: '/terms/privacy'
+      preLoaderRoute: typeof TermsPrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/members/$memberId': {
@@ -243,6 +283,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginCallbackRoute: LoginCallbackRoute,
   LoginProfileRoute: LoginProfileRoute,
   MembersMemberIdRoute: MembersMemberIdRoute,
+  TermsPrivacyRoute: TermsPrivacyRoute,
+  TermsTermsofuseRoute: TermsTermsofuseRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   InterviewsIndexRoute: InterviewsIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
