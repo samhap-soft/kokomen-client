@@ -107,8 +107,8 @@ export default function SelectSection({
 
             <Accordion.Accordion>
               <Accordion.AccordionItem
-                itemKey={userSections[0].value}
-                key={userSections[0].value}
+                itemKey="terms-and-policies"
+                key="terms-and-policies"
               >
                 <Accordion.AccordionTrigger>
                   <p className="text-sm font-medium text-text-secondary">
