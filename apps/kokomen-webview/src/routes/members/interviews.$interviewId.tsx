@@ -28,7 +28,7 @@ function RouteComponent() {
       try {
         await navigator.share({
           title: "면접 결과 공유",
-          text: `${interview.intervieweeNickname}님은 ${interview.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`,
+          text: `${interview.intervieweeNickname ?? "탈퇴한 사용자"}님은 ${interview.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`,
           url: window.location.href
         });
       } catch (err) {
@@ -49,7 +49,8 @@ function RouteComponent() {
               <div className="flex items-center space-x-4">
                 <div>
                   <h1 className="text-2xl font-bold text-white">
-                    {interview.intervieweeNickname}님의 면접 결과
+                    {interview.intervieweeNickname ?? "탈퇴한 사용자"}님의 면접
+                    결과
                   </h1>
                   <p className="text-blue-1 text-sm">
                     {/* 멤버 이름 들어갈 곳 */}

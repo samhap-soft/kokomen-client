@@ -87,7 +87,7 @@ function RouteComponent() {
           <div className="flex items-center gap-4">
             <div>
               <h1 className="text-2xl font-bold text-text-heading">
-                {memberInfo?.intervieweeNickname}
+                {memberInfo?.intervieweeNickname ?? "탈퇴한 사용자"}
               </h1>
             </div>
           </div>
