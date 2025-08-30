@@ -5,7 +5,7 @@ export const useScreenSize = () => {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
+      setIsMobile(window.innerWidth < 768); // tablet breakpoint
     };
 
     checkScreenSize();
