@@ -25,6 +25,7 @@
     "@woowa-babble/random-nickname": "^1.0.2",
     "axios": "^1.9.0",
     "lucide-react": "^0.511.0",
+    "motion": "^12.23.12",
     "next": "15.3.2",
     "posthog-js": "^1.257.0",
     "react": "^19.0.0",
