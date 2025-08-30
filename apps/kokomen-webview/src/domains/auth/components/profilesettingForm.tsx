@@ -1,14 +1,17 @@
+import z from "zod";
 import { useForm } from "react-hook-form";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@kokomen/ui";
 import { AxiosError } from "axios";
-import z from "zod";
+import { RotateCcw } from "lucide-react";
 import { updateUserProfile } from "@/domains/auth/api";
 import { Input } from "@kokomen/ui";
 import { Button } from "@kokomen/ui";
 import { User } from "@kokomen/types";
 import { useRouter } from "@tanstack/react-router";
+// @ts-expect-error : 선언 파일 없음
+import { getRandomNickname } from "@woowa-babble/random-nickname";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const ProfileSetting = z.object({
@@ -81,14 +84,25 @@ export default function ProfileSettingForm({
         >
           닉네임
         </label>
-        <Input
-          {...register("nickname", { required: true })}
-          type="text"
-          className="w-full"
-          role="textbox"
-          placeholder="닉네임을 입력해주세요"
-          onChange={(e) => setValue("nickname", e.target.value)}
-        />
+        <div className="flex gap-2">
+          <Input
+            {...register("nickname", { required: true })}
+            type="text"
+            className="flex-1"
+            role="textbox"
+            placeholder="닉네임을 입력해주세요"
+            onChange={(e) => setValue("nickname", e.target.value)}
+          />
+          <Button
+            variant={"glass"}
+            type="button"
+            onClick={() => {
+              setValue("nickname", getRandomNickname("animals"));
+            }}
+          >
+            <RotateCcw />
+          </Button>
+        </div>
         {errors.nickname && (
           <p className="mt-2 text-sm text-red-600">{errors.nickname.message}</p>
         )}
