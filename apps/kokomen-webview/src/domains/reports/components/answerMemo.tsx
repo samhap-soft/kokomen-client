@@ -295,7 +295,7 @@ function AnswerMemoEdit({
       className="flex flex-col gap-2 w-full"
       onSubmit={handleSubmit(handleEditSubmitButtonClick)}
     >
-      <div className="flex justify-between">
+      <div className="flex flex-col gap-2 justify-between">
         <p>공개 범위</p>
         <RadioGroup
           onChange={(value) =>

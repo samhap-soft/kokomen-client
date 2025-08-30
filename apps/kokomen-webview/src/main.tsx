@@ -11,6 +11,7 @@ import {
 import { meKeys } from "@kokomen/utils";
 import { getUserInfo } from "@/domains/auth/api";
 import { useAuthStore } from "@/store";
+import posthog from "posthog-js";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -54,6 +55,11 @@ function AuthRouter() {
   }
   return <RouterProvider router={router} context={{ queryClient }} />;
 }
+
+posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
+  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+  defaults: "2025-05-24"
+});
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {

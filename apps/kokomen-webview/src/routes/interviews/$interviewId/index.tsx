@@ -19,6 +19,7 @@ import { InterviewAnswerForm } from "@/domains/interviews/components/interviewAn
 import { InterviewQuestion, InterviewSideBar } from "@kokomen/ui/domains";
 import InterviewFinishModal from "@/domains/interviews/components/interviewFinishModal";
 import InterviewStartModal from "@/domains/interviews/components/interviewStartModal";
+import interviewEventHelpers from "@/domains/interviews/lib/interviewEventHelpers";
 
 // eslint-disable-next-line @rushstack/typedef-var
 export const Route = createFileRoute("/interviews/$interviewId/")({
@@ -116,12 +117,15 @@ function RouteComponent(): ReactNode {
   const { playAudio, playFinished } = useAudio(audioUrl, {
     onPlayEnd: () => {
       setIsSpeaking(false);
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({ type: "startListening" })
-      );
+      if (mode === "VOICE") {
+        interviewEventHelpers.startVoiceRecognition();
+      }
     },
     onPlayStart: () => {
       setIsSpeaking(true);
+      if (mode === "VOICE") {
+        interviewEventHelpers.stopVoiceRecognition();
+      }
     }
   });
 
