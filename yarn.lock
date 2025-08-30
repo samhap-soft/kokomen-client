@@ -3411,6 +3411,7 @@ __metadata:
     lucide-react: "npm:^0.511.0"
     msw: "npm:^2.10.2"
     path: "npm:^0.12.7"
+    posthog-js: "npm:^1.261.0"
     react: "npm:^19.1.0"
     react-dom: "npm:^19.1.0"
     react-hook-form: "npm:^7.59.0"
@@ -4115,6 +4116,13 @@ __metadata:
   version: 1.0.0-next.29
   resolution: "@polka/url@npm:1.0.0-next.29"
   checksum: 10c0/0d58e081844095cb029d3c19a659bfefd09d5d51a2f791bc61eba7ea826f13d6ee204a8a448c2f5a855c17df07b37517373ff916dd05801063c0568ae9937684
+  languageName: node
+  linkType: hard
+
+"@posthog/core@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@posthog/core@npm:1.0.2"
+  checksum: 10c0/b6cb66df077230c5cbd0de15b708b7e6fa47dac20a1bcfe5308d5c1b1ec487e57c923e22a51d6f8d45acea8239562fa9546c528d5c2bef1487419c70d3a76a43
   languageName: node
   linkType: hard
 
@@ -14039,6 +14047,27 @@ __metadata:
     rrweb-snapshot:
       optional: true
   checksum: 10c0/a2471791a6c0ae1fb10ccc36941c111c3e63ca06202d74e727627c887a15c48f1b0d3c177884c49b8fad56148b499ab91e2064baf184e0957af982696096eb59
+  languageName: node
+  linkType: hard
+
+"posthog-js@npm:^1.261.0":
+  version: 1.261.0
+  resolution: "posthog-js@npm:1.261.0"
+  dependencies:
+    "@posthog/core": "npm:1.0.2"
+    core-js: "npm:^3.38.1"
+    fflate: "npm:^0.4.8"
+    preact: "npm:^10.19.3"
+    web-vitals: "npm:^4.2.4"
+  peerDependencies:
+    "@rrweb/types": 2.0.0-alpha.17
+    rrweb-snapshot: 2.0.0-alpha.17
+  peerDependenciesMeta:
+    "@rrweb/types":
+      optional: true
+    rrweb-snapshot:
+      optional: true
+  checksum: 10c0/a2eea325dd10338644d7ed4c77810538adab1365cda725740849ed9f930be152e5b7d4b60533ad3a746b73815b7c74bc72ea1d4d85ad27955673bc74c60bb137
   languageName: node
   linkType: hard
 
