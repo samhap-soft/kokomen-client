@@ -7,6 +7,6 @@ declare const process: {
     NEXT_PUBLIC_NOTIFICATION_API_BASE_URL: string;
     NEXT_PUBLIC_API_BASE_URL: string;
     NEXT_PUBLIC_V2_API_BASE_URL: string;
-    TYPECAST_API_KEY: string;
+    NEXT_PUBLIC_CDN_BASE_URL: string;
   };
 };

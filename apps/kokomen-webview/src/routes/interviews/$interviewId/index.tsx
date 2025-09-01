@@ -113,7 +113,7 @@ function RouteComponent(): ReactNode {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [interviewerEmotion, setInterviewerEmotion] =
-    useState<InterviewerEmotion>("happy");
+    useState<InterviewerEmotion>("neutral");
   const { playAudio, playFinished } = useAudio(audioUrl, {
     onPlayEnd: () => {
       setIsSpeaking(false);
@@ -151,6 +151,7 @@ function RouteComponent(): ReactNode {
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
               <div className="bg-gradient-to-r w-full h-full from-blue-50 to-primary-bg-hover relative rounded-lg">
                 <AiInterviewInterface
+                  avatarUrl={`${import.meta.env.VITE_CDN_BASE_URL}/models/interviewer.glb`}
                   emotion={interviewerEmotion}
                   isListening={isListening}
                   isSpeaking={isSpeaking}

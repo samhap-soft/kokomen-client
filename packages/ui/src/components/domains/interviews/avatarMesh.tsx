@@ -1,42 +1,78 @@
-import { useGLTF } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { JSX, useEffect, useRef } from "react";
-import { Bone, Group, SkinnedMesh } from "three";
+import {
+  AnimationAction,
+  Bone,
+  Group,
+  LoopOnce,
+  LoopRepeat,
+  SkinnedMesh
+} from "three";
 
 type Emotion = "neutral" | "happy" | "encouraging" | "angry";
+
+//애니메이션 : idle, thumbsUp, disappointed, clap
 export interface InterviewerProps {
+  avatarUrl: string;
   isSpeaking?: boolean;
   isListening?: boolean;
   emotion?: Emotion;
 }
 
 export function AvatarMesh({
+  avatarUrl,
   isSpeaking,
   isListening,
   emotion
 }: InterviewerProps): JSX.Element {
-  const gltf = useGLTF(
-    "https://models.readyplayer.me/685c0ddc61adecd150499bc8.glb"
-  );
-
+  const gltf = useGLTF(avatarUrl);
   const avatarRef = useRef<Group>(null);
   const headRef = useRef<Bone>(null);
   const morphRef = useRef<SkinnedMesh>(null);
+  const { actions } = useAnimations(gltf.animations, avatarRef);
+  const currentAction = useRef<AnimationAction | null>(null);
+
+  // 애니메이션 전환하기
+  const transitionToAnimation = (
+    newAction: AnimationAction | null,
+    fadeTime = 0.5,
+    loop: typeof LoopOnce | typeof LoopRepeat = LoopOnce
+  ): void => {
+    if (!newAction) return;
+
+    // 현재 애니메이션 정지
+    if (currentAction.current && currentAction.current !== newAction) {
+      currentAction.current.fadeOut(fadeTime);
+    }
+
+    // 새로운 애니메이션 시작
+    newAction.reset();
+    newAction.fadeIn(fadeTime);
+    newAction.play();
+
+    // 애니메이션 속성 설정
+    newAction.clampWhenFinished = true;
+    newAction.loop = loop; // THREE.LoopOnce
+
+    currentAction.current = newAction;
+  };
 
   useEffect(() => {
     if (gltf && avatarRef.current) {
-      avatarRef.current.traverse((child: any) => {
-        if (child.isBone && child.name.toLowerCase() === "head") {
-          headRef.current = child;
-          child.matrixAutoUpdate = true;
+      avatarRef.current.traverse((child) => {
+        const node = child as Bone & SkinnedMesh;
+        if (node.isBone && node.name.toLowerCase() === "head") {
+          headRef.current = node;
+          node.matrixAutoUpdate = true;
         }
         if (
-          child.isMesh &&
-          child.morphTargetDictionary &&
-          (child.name.toLowerCase().includes("face") ||
-            child.name.toLowerCase().includes("head"))
+          node.isMesh &&
+          node.morphTargetDictionary &&
+          (node.name.toLowerCase().includes("face") ||
+            node.name.toLowerCase().includes("head"))
         ) {
-          morphRef.current = child;
+          morphRef.current = node;
         }
       });
     }
@@ -51,29 +87,34 @@ export function AvatarMesh({
     const dict = mesh.morphTargetDictionary;
     const influences = mesh.morphTargetInfluences;
 
-    // Reset all expressions
+    // Influence 초기화
     for (let i = 0; i < influences.length; i++) {
       influences[i] = 0;
     }
 
-    // Apply base emotion
+    // 기본 감정 적용 및 애니메이션 전환
     switch (emotion) {
       case "happy":
         if (dict.mouthSmile !== undefined) {
           influences[dict.mouthSmile] = 0.7;
         }
+
+        transitionToAnimation(actions.thumbsup);
         break;
 
       case "encouraging":
         if (dict.mouthSmile !== undefined) {
           influences[dict.mouthSmile] = 0.4;
         }
+        transitionToAnimation(actions.clap);
         break;
 
       case "angry":
         if (dict.mouthSmile !== undefined) {
           influences[dict.mouthSmile] = -0.6;
         }
+
+        transitionToAnimation(actions.disappointed);
         break;
 
       case "neutral":
@@ -81,9 +122,24 @@ export function AvatarMesh({
         if (dict.mouthSmile !== undefined) {
           influences[dict.mouthSmile] = 0.1;
         }
+
+        // idle 애니메이션 사용의 경우에는 계속 반복
+        if (actions.idle) {
+          if (currentAction.current && currentAction.current !== actions.idle) {
+            currentAction.current.fadeOut(0.5);
+          }
+          transitionToAnimation(actions.idle, 0.5, LoopRepeat);
+        }
         break;
     }
-  }, [emotion, morphRef]);
+
+    // 클린업
+    return () => {
+      if (currentAction.current) {
+        currentAction.current.fadeOut(0.5);
+      }
+    };
+  }, [emotion, actions]);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -122,7 +178,15 @@ export function AvatarMesh({
         influences[dict.mouthOpen] = mouthMovement * 1.5;
     }
   });
-  return <primitive object={gltf.scene} ref={avatarRef} scale={1} />;
+
+  return (
+    <primitive
+      object={gltf.scene}
+      ref={avatarRef}
+      scale={1.5}
+      position={[0, -3, -0.9]}
+    />
+  );
 }
 
 // Default export 추가
