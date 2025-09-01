@@ -2,18 +2,25 @@ import { InterviewerProps } from "./avatarMesh";
 import Interviewer from "./interviewer";
 import { Environment, Html } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { JSX, lazy, Suspense } from "react";
-
-// eslint-disable-next-line @rushstack/typedef-var
-const InterviewBackground = lazy(() => import("./interviewBackground"));
+import { JSX, Suspense } from "react";
 
 export default function AiInterviewInterface({
+  avatarUrl,
   emotion,
   isListening,
   isSpeaking
 }: InterviewerProps): JSX.Element {
   return (
-    <Canvas camera={{ position: [0, 0, 2], fov: 40 }} shadows dpr={[1, 2]}>
+    <Canvas
+      camera={{ position: [0, 0, 3.6], fov: 30 }}
+      shadows
+      dpr={[1, 2]}
+      style={{
+        backgroundImage: "url(/interviewBg.jpg)",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
       <Suspense
         fallback={
           <Html fullscreen zIndexRange={[40, 49]}>
@@ -23,9 +30,9 @@ export default function AiInterviewInterface({
           </Html>
         }
       >
-        <InterviewBackground />
         <Environment preset="lobby" resolution={2048} />
         <Interviewer
+          avatarUrl={avatarUrl}
           emotion={emotion}
           isSpeaking={isSpeaking}
           isListening={isListening}
