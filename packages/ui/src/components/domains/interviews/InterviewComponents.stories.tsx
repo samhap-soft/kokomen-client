@@ -24,7 +24,7 @@ const meta: Meta<typeof AiInterviewInterface> = {
   component: () => {
     return (
       <div>
-        <AiInterviewInterface />
+        <AiInterviewInterface avatarUrl="/interviewer.glb" />
         <InterviewModals
           state={mockInterviewState}
           dispatch={mockDispatch}
@@ -99,6 +99,7 @@ export const AiInterviewInterfaceDemo: Story = {
 
         <div className="w-full h-screen">
           <AiInterviewInterface
+            avatarUrl="/interviewer.glb"
             emotion={emotion}
             isListening={isListening}
             isSpeaking={isSpeaking}
