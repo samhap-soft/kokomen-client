@@ -14,9 +14,9 @@ const recommendations: Array<{
   //TODO: 복다훈 멘토님 수정
   {
     name: "복다훈",
-    job: "우아한형제들 프론트엔드 개발자",
+    job: "現 우아한형제들 프론트엔드 개발자",
     recommendation:
-      "실제 기술면접 질문들이 확실히 제가 면접관으로 재직하면서 면접자분들께 드렸던 질문과 비슷한 부분이 있었습니다. 꼬꼬면은 기술 면접 질문들을 한 곳에 모아두어 학습에 도움이 "
+      "'꼬꼬면'은 게임처럼 즐기며 면접 실력을 키울 수 있는 실용적인 서비스입니다. 읽거나 시청하는 학습보다 직접 참여해 문제를 풀어보는 방식이 더 효과적인 만큼, 랭커들의 실제 답변과 비교하고 개인 맞춤형 피드백을 받아볼 수 있는 경험은 큰 도움이 될 것입니다. 면접 준비의 부담을 덜고 실전 감각을 기르는 데 든든한 조력자가 되어줄 것 같습니다."
   },
   {
     name: "신기용",
@@ -29,13 +29,13 @@ const recommendations: Array<{
 function Recommendations(): React.ReactElement {
   return (
     <section className="w-full py-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="flex flex-wrap gap-8 w-full justify-center">
         {recommendations.map((recommendation) => (
           <div
             key={recommendation.name}
-            className="group relative bg-bg-elevated rounded-2xl border border-border-secondary hover:border-border transition-all duration-300 overflow-hidden hover:shadow-xl"
+            className="group relative bg-bg-elevated rounded-2xl border border-border-secondary hover:border-border transition-all duration-300 overflow-hidden hover:shadow-xl max-w-[350px]"
           >
-            <div className="relative flex flex-col h-full">
+            <div className="relative flex flex-col">
               <div className="border-b border-border-secondary p-4">
                 <div className="flex-1">
                   <h3 className="font-bold text-text-primary text-lg mb-1">
@@ -46,7 +46,7 @@ function Recommendations(): React.ReactElement {
                   </p>
                 </div>
               </div>
-              <p className="text-text-secondary leading-relaxed flex-grow whitespace-pre-line p-4">
+              <p className="text-text-secondary leading-relaxed whitespace-pre-line p-4">
                 {recommendation.recommendation}
               </p>
             </div>
