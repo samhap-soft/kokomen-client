@@ -25,7 +25,7 @@ export default function Home({
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   return (
     <>
-      <SEO />
+      <SEO robots="index, follow" />
       <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <Header user={user} />
         <section className="relative overflow-hidden pt-16 sm:pt-20 lg:pt-32 bg-gradient-to-r from-blue-1 to-blue-4">

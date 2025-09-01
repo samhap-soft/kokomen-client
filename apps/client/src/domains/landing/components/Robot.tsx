@@ -6,7 +6,9 @@ import { useScreenSize } from "@kokomen/utils";
 import * as THREE from "three";
 
 function RobotModel() {
-  const { scene, animations } = useGLTF("/robotModel.glb");
+  const { scene, animations } = useGLTF(
+    `${process.env.NEXT_PUBLIC_CDN_BASE_URL}/models/robot/robot.gltf`
+  );
   const meshRef = useRef<THREE.Group>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
 
