@@ -113,7 +113,7 @@ function RouteComponent(): ReactNode {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [interviewerEmotion, setInterviewerEmotion] =
-    useState<InterviewerEmotion>("happy");
+    useState<InterviewerEmotion>("neutral");
   const { playAudio, playFinished } = useAudio(audioUrl, {
     onPlayEnd: () => {
       setIsSpeaking(false);

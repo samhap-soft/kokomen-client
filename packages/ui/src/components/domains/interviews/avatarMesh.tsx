@@ -1,7 +1,14 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { JSX, useEffect, useRef } from "react";
-import { AnimationAction, Bone, Group, SkinnedMesh } from "three";
+import {
+  AnimationAction,
+  Bone,
+  Group,
+  LoopOnce,
+  LoopRepeat,
+  SkinnedMesh
+} from "three";
 
 type Emotion = "neutral" | "happy" | "encouraging" | "angry";
 
@@ -29,7 +36,8 @@ export function AvatarMesh({
   // 애니메이션 전환하기
   const transitionToAnimation = (
     newAction: AnimationAction | null,
-    fadeTime = 0.5
+    fadeTime = 0.5,
+    loop: typeof LoopOnce | typeof LoopRepeat = LoopOnce
   ): void => {
     if (!newAction) return;
 
@@ -45,7 +53,7 @@ export function AvatarMesh({
 
     // 애니메이션 속성 설정
     newAction.clampWhenFinished = true;
-    newAction.loop = 2200; // THREE.LoopOnce
+    newAction.loop = loop; // THREE.LoopOnce
 
     currentAction.current = newAction;
   };
@@ -120,11 +128,7 @@ export function AvatarMesh({
           if (currentAction.current && currentAction.current !== actions.idle) {
             currentAction.current.fadeOut(0.5);
           }
-          actions.idle.reset();
-          actions.idle.fadeIn(0.5);
-          actions.idle.play();
-          actions.idle.loop = 2201; // 계속 반복
-          currentAction.current = actions.idle;
+          transitionToAnimation(actions.idle, 0.5, LoopRepeat);
         }
         break;
     }
