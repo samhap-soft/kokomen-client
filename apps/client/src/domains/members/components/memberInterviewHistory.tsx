@@ -86,12 +86,14 @@ export default function InterviewHistory({
                         <Calendar className="w-4 h-4" />
                         {formatDate(interview.createdAt)}
                       </div>
-                      {interview.score && (
-                        <div className="flex items-center gap-1">
-                          <TrendingUp className="w-4 h-4" />
-                          {interview.score}점
-                        </div>
-                      )}
+                      <div
+                        className={`flex items-center gap-1 ${interview.score === 0 ? "text-volcano-6" : "text-green-6"}`}
+                      >
+                        <TrendingUp className="w-4 h-4" />
+                        {interview.score}점
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6 text-sm text-gray-500 mt-2">
                       <div className="flex items-center gap-1">
                         <Eye className="w-4 h-4" />
                         {interview.interviewViewCount}
