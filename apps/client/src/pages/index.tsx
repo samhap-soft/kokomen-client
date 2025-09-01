@@ -64,8 +64,8 @@ export default function Home({
             </motion.div>
           </div>
         </section>
-        <section className="relative p-16 border-y border-border-secondary">
-          <div className=" mx-auto container  ">
+        <section className="relative p-8 md:p-16 border-y border-border-secondary">
+          <div className=" mx-auto container">
             <h1 className="text-3xl font-bold">
               혼자서 하는 면접 연습과는 달라요.
             </h1>
@@ -92,8 +92,8 @@ export default function Home({
             <Image
               src="/screenshot.png"
               alt="모의 면접 화면"
-              width={300}
-              height={300}
+              width={700}
+              height={400}
               className="w-full rounded-lg shadow-xl"
             />
           </motion.div>
@@ -114,8 +114,8 @@ export default function Home({
             <Image
               src="/screenshot-members.png"
               alt="랭커 참고 화면"
-              width={300}
-              height={300}
+              width={700}
+              height={600}
               className="w-full rounded-lg shadow-xl"
             />
           </motion.div>
