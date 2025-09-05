@@ -1,4 +1,4 @@
-import { InterviewHistory } from "@kokomen/types";
+import { InterviewHistory, Streak } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 
 const dashboardServerInstance: AxiosInstance = axios.create({
@@ -26,4 +26,15 @@ export const getInterviewHistory = async ({
     }
   });
   return data;
+};
+
+export const getStreak = async (startDate: string, endDate: string) => {
+  return dashboardServerInstance
+    .get<Streak>("/members/me/streaks", {
+      params: {
+        start_date: startDate,
+        end_date: endDate
+      }
+    })
+    .then((res) => res.data);
 };
