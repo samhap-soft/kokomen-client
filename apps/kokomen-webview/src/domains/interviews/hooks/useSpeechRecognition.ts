@@ -1,17 +1,16 @@
-import { InterviewMode, WebviewMessage } from "@kokomen/types";
+import { WebviewMessage } from "@kokomen/types";
 import { useEffect, useState } from "react";
 
 export default function useSpeechRecognition(
   // eslint-disable-next-line no-unused-vars
-  callback: (result: string) => void,
-  mode: InterviewMode
+  callback: (result: string) => void
 ): {
   startListening: () => void;
   stopListening: () => void;
   isListening: boolean;
   isSupported: boolean;
 } {
-  const [isListening, setIsListening] = useState<boolean>(mode === "VOICE");
+  const [isListening, setIsListening] = useState<boolean>(false);
   const [isSupported, setIsSupported] = useState<boolean>(false);
 
   const startListening = (): void => {

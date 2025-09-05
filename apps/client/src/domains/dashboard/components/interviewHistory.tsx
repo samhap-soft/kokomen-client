@@ -184,6 +184,8 @@ export default function InterviewHistory() {
                         {interview.score}점
                       </div>
                     )}
+                  </div>
+                  <div className="flex items-center gap-6 text-sm text-gray-500 mt-2">
                     {interview.interview_state === "FINISHED" && (
                       <>
                         <div className="flex items-center gap-1">
@@ -192,9 +194,8 @@ export default function InterviewHistory() {
                         </div>
                         <div
                           className={`flex items-center gap-1 ${
-                            interview.interview_already_liked
-                              ? "text-volcano-6"
-                              : "text-gray-400"
+                            interview.interview_already_liked &&
+                            "text-volcano-6"
                           }`}
                         >
                           <Heart className="w-4 h-4" />
@@ -202,9 +203,8 @@ export default function InterviewHistory() {
                         </div>
                         <div
                           className={`flex items-center gap-1 ${
-                            interview.submitted_answer_memo_count > 0
-                              ? "text-gold-6"
-                              : "text-gray-400"
+                            interview.submitted_answer_memo_count > 0 &&
+                            "text-gold-6"
                           }`}
                         >
                           <NotebookPen className="w-4 h-4" />
@@ -231,7 +231,7 @@ export default function InterviewHistory() {
                   {interview.interview_state === "FINISHED" && (
                     <Link
                       href={`/members/interviews/${interview.interview_id}`}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-text-light-solid bg-gradient-primary hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-text-light-solid bg-gradient-primary hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
                     >
                       공개된 결과 보기
                     </Link>

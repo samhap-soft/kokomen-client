@@ -83,7 +83,7 @@ const features: Feature[] = [
   }
 ];
 
-export const FeaturesSection = (): JSX.Element => {
+const FeaturesCards = (): JSX.Element => {
   const [sectionRef, isVisible] = useIntersectionObserver({
     threshold: 0.1,
     rootMargin: "0px 0px -100px 0px",
@@ -105,12 +105,12 @@ export const FeaturesSection = (): JSX.Element => {
             다양한 기술 분야
           </h2>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-            체계적으로 준비된 면접 질문들로 실무 중심의 깊은 기술적 지식을
-            확인해보세요
+            프론트엔드, 백엔드에 국한하지 않고 각종 Computer Science를 포함하여
+            인프라 등 여러 분야의 문제들이 준비되어 있어요.
           </p>
         </div>
 
-        <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] rounded-2xl flex flex-col sm:flex-row gap-4 hidden lg:flex">
+        <div className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] rounded-2xl flex-col sm:flex-row gap-4 hidden lg:flex">
           {features.map((feature, index) => (
             <FeatureCard
               key={feature.id}
@@ -139,7 +139,7 @@ export const FeaturesSection = (): JSX.Element => {
                   alt={feature.title}
                   width={60}
                   height={60}
-                  className="w-16 h-16 object-contain transition-transform duration-300 group-hover:scale-110 mb-3"
+                  className="w-28 h-28 object-contain transition-transform duration-300 group-hover:scale-110 mb-3"
                 />
                 <h3 className="text-sm font-semibold text-gray-900 text-center">
                   {feature.title}
@@ -152,3 +152,5 @@ export const FeaturesSection = (): JSX.Element => {
     </section>
   );
 };
+
+export default FeaturesCards;

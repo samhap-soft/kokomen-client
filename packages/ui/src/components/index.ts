@@ -11,3 +11,4 @@ export * from "./spinner";
 export * from "./textarea";
 export * from "./toast";
 export * from "./statusBadge";
+export * from "./marquee";

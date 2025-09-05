@@ -7,6 +7,7 @@ const AvatarMesh = lazy(() => import("./avatarMesh"));
 
 const Interviewer: React.FC<InterviewerProps> = memo(
   ({
+    avatarUrl,
     isSpeaking = false,
     isListening = false,
     emotion = "happy"
@@ -23,6 +24,7 @@ const Interviewer: React.FC<InterviewerProps> = memo(
       >
         <group position={[0, -1.8, 1]}>
           <AvatarMesh
+            avatarUrl={avatarUrl}
             isSpeaking={isSpeaking}
             isListening={isListening}
             emotion={emotion}
