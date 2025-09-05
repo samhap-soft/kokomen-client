@@ -2,9 +2,9 @@ import { getRankList } from "@/domains/members/api";
 import { memberKeys } from "@/utils/querykeys";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { captureButtonEvent } from "@/utils/analytics";
+import Link from "next/link";
 
 // 스켈레톤 UI 컴포넌트
 const RankCardSkeleton = (): JSX.Element => {
@@ -36,7 +36,6 @@ export default function RankCard(): JSX.Element {
     queryKey: memberKeys.rank(),
     queryFn: () => getRankList()
   });
-  const router = useRouter();
 
   // 로딩 중일 때 스켈레톤 UI 렌더링
   if (isLoading) {
@@ -47,13 +46,12 @@ export default function RankCard(): JSX.Element {
     <div className="bg-bg-elevated rounded-3xl border border-border shadow-2xl overflow-hidden mt-5 ">
       <h3 className="text-lg font-bold text-gray-900 p-4">현재 랭크</h3>
       {data?.map((rank, index) => (
-        <Button
+        <Link
           key={rank.id}
-          variant={"info"}
+          href={`/members/${rank.id}`}
           className="flex items-center justify-between p-4 w-full border-none shadow-none"
           type="button"
           role="button"
-          name={`rank-card-${rank.id}-${rank.nickname}`}
           aria-label={`rank-card-${rank.id}-${rank.nickname}`}
           onClick={() => {
             captureButtonEvent({
@@ -63,7 +61,6 @@ export default function RankCard(): JSX.Element {
                 nickname: rank.nickname
               }
             });
-            router.push(`/members/${rank.id}`);
           }}
         >
           <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -77,7 +74,7 @@ export default function RankCard(): JSX.Element {
           <p className="text-xl font-bold text-gray-900">
             {rank.score} <span className="text-sm text-gray-500">점</span>
           </p>
-        </Button>
+        </Link>
       ))}
     </div>
   );
