@@ -18,13 +18,31 @@ interface HeaderProps {
   user: UserInfo | null;
 }
 
-type HeaderNavigation = { href: string; label: string; current: boolean };
-const navigation: HeaderNavigation[] = [
-  { href: "/", label: "홈", current: true },
-  { href: "/interviews", label: "면접", current: false },
-  { href: "/dashboard", label: "대시보드", current: false },
-  { href: "/purchase", label: "토큰 구매", current: false }
-];
+type HeaderNavigation = {
+  href: string;
+  label: string;
+  current: boolean;
+  featureFlag: boolean;
+};
+// eslint-disable-next-line no-unused-vars
+const navigation = (isTestUser: boolean): HeaderNavigation[] => {
+  return [
+    { href: "/", label: "홈", current: true, featureFlag: true },
+    { href: "/interviews", label: "면접", current: false, featureFlag: true },
+    {
+      href: "/dashboard",
+      label: "대시보드",
+      current: false,
+      featureFlag: true
+    },
+    {
+      href: "/purchase",
+      label: "토큰 구매",
+      current: false,
+      featureFlag: isTestUser
+    }
+  ];
+};
 
 const DesktopProfileDropdown = ({ user }: HeaderProps) => {
   const { logout } = useLogout();
@@ -156,8 +174,9 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
         }}
       >
         <nav className="flex flex-col space-y-2">
-          {navigation.map((item) => {
+          {navigation(user?.is_test_user || false).map((item) => {
             const isActive = router.pathname === item.href;
+
             return (
               <Link
                 key={item.href}
@@ -248,8 +267,9 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => {
+            {navigation(user?.is_test_user || false).map((item) => {
               const isActive = router.pathname === item.href;
+              if (!item.featureFlag) return null;
               return (
                 <Link
                   key={item.href}
