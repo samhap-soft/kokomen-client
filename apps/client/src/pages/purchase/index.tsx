@@ -1,6 +1,7 @@
 import Header from "@/shared/header";
 import PurchaseSection from "@/domains/purchase/components/PurchaseSection";
 import PurchaseHistorySection from "@/domains/purchase/components/purchaseHistorySection";
+import PurchaseSuccessModal from "@/domains/purchase/components/purchaseSuccessModal";
 import Link from "next/link";
 import { getUserInfo } from "@/domains/auth/api";
 import { Footer } from "@/shared/footer";
@@ -75,6 +76,7 @@ export default function PurchasePage({
         </div>
       </div>
       {renderSection()}
+      <PurchaseSuccessModal />
       <Footer />
     </main>
   );
