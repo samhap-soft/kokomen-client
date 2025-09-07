@@ -28,7 +28,6 @@ export default function Streak() {
     gcTime: 1000 * 60 * 60 * 24,
     retry: 1
   });
-  console.log(streakData);
   if (isLoading) return <Skeleton className="w-full h-44" />;
   if (isError || !streakData) return null;
 

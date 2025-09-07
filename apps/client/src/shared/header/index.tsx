@@ -22,7 +22,8 @@ type HeaderNavigation = { href: string; label: string; current: boolean };
 const navigation: HeaderNavigation[] = [
   { href: "/", label: "홈", current: true },
   { href: "/interviews", label: "면접", current: false },
-  { href: "/dashboard", label: "대시보드", current: false }
+  { href: "/dashboard", label: "대시보드", current: false },
+  { href: "/purchase", label: "토큰 구매", current: false }
 ];
 
 const DesktopProfileDropdown = ({ user }: HeaderProps) => {
