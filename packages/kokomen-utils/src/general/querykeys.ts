@@ -76,11 +76,13 @@ const memberKeys: QueryKeyFactory<MemberMethods> = {
 
 interface MeMethods {
   me: () => QueryKey;
+  streak: () => QueryKey;
   detailedInfo: () => QueryKey;
 }
 const meKeys: QueryKeyFactory<MeMethods> = {
   all: ["me"] as const,
   me: (): QueryKey => [...meKeys.all] as const,
+  streak: (): QueryKey => [...meKeys.all, "streak"] as const,
   detailedInfo: (): QueryKey => [...meKeys.all, "detailedInfo"] as const
 };
 
@@ -96,15 +98,25 @@ const notificationKeys: QueryKeyFactory<NotificationMethods> = {
     [...notificationKeys.all, "unread", "infinite"] as const
 };
 
+interface PurchaseMethods {
+  purchaseHistory: (page: number) => QueryKey;
+}
+const purchaseKeys: QueryKeyFactory<PurchaseMethods> = {
+  all: ["purchase"] as const,
+  purchaseHistory: (page: number) => [...purchaseKeys.all, page] as const
+};
+
 export {
   interviewHistoryKeys,
   interviewKeys,
   memberKeys,
   meKeys,
   notificationKeys,
+  purchaseKeys,
   type InterviewHistoryParams,
   type InterviewParams,
   type MemberRankParams,
   type MeMethods,
-  type NotificationMethods
+  type NotificationMethods,
+  type PurchaseMethods
 };

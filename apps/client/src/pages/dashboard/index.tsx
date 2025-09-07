@@ -13,6 +13,7 @@ import { getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
 import { Rank, Percentile } from "@kokomen/ui";
 import { UserInfo } from "@kokomen/types";
+import Streak from "@/domains/dashboard/components/streak";
 
 export default function Dashboard({
   userInfo
@@ -91,6 +92,7 @@ export default function Dashboard({
               </div>
             )}
           </div>
+          <Streak />
         </div>
         <SelectSection userInfo={userInfo} />
       </main>
