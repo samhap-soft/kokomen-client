@@ -32,13 +32,16 @@ export default function Streak() {
   if (isError || !streakData) return null;
 
   return (
-    <div className="max-w-[850px] mx-auto">
-      <StreakCalendar
-        className="mx-auto"
-        streak={streakData}
-        startDate={streakDate.startDate}
-        endDate={streakDate.endDate}
-      />
+    <div className="rounded-2xl shadow-sm border border-border-secondary p-6 mb-6 bg-bg-elevated">
+      <h3 className="text-lg font-bold mb-4">스트릭</h3>
+      <div className="mx-auto">
+        <StreakCalendar
+          className="mx-auto"
+          streak={streakData}
+          startDate={streakDate.startDate}
+          endDate={streakDate.endDate}
+        />
+      </div>
     </div>
   );
 }

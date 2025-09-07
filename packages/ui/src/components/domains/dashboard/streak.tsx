@@ -25,7 +25,7 @@ export default function StreakCalendar({
     y: number;
   } | null>(null);
   const today = new Date();
-  const cellSize = 11;
+  const cellSize = 15;
   const cellGap = 4;
 
   // 기본값 설정: startDate가 없으면 2025-08-01, endDate가 없으면 오늘
