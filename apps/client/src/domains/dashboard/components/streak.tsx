@@ -10,7 +10,7 @@ export default function Streak() {
     .toISOString()
     .split("T")[0];
   const endDate = new Date().toISOString().split("T")[0];
-  const [streakDate, setStreakDate] = useState<{
+  const [streakDate] = useState<{
     startDate: string;
     endDate: string;
   }>({
