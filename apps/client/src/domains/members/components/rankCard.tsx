@@ -1,7 +1,6 @@
 import { getRankList } from "@/domains/members/api";
 import { memberKeys } from "@/utils/querykeys";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 import { JSX } from "react";
 import { captureButtonEvent } from "@/utils/analytics";
 import Link from "next/link";
@@ -50,8 +49,6 @@ export default function RankCard(): JSX.Element {
           key={rank.id}
           href={`/members/${rank.id}`}
           className="flex items-center justify-between p-4 w-full border-none shadow-none"
-          type="button"
-          role="button"
           aria-label={`rank-card-${rank.id}-${rank.nickname}`}
           onClick={() => {
             captureButtonEvent({
