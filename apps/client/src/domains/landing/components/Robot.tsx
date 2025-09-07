@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import { useGLTF } from "@react-three/drei";
+import { OrbitControls, useGLTF } from "@react-three/drei";
 import { useFrame, Canvas } from "@react-three/fiber";
 import { useRef, useEffect } from "react";
 import { useScreenSize } from "@kokomen/utils";
@@ -59,6 +59,11 @@ function Robot() {
         <ambientLight intensity={1} />
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <RobotModel />
+        <OrbitControls
+          enablePan={false}
+          enableZoom={false}
+          enableRotate={true}
+        />
       </Canvas>
     </div>
   );
