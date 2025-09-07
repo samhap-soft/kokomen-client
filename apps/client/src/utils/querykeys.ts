@@ -23,7 +23,7 @@ type InterviewHistoryMethods = {
 const interviewHistoryKeys: QueryKeyFactory<InterviewHistoryMethods> = {
   all: ["interviewHistory"] as const,
   infinite: (filters: string[]): QueryKey =>
-    [...interviewHistoryKeys.all, "infinite", ...filters] as const,
+    [...interviewHistoryKeys.all, "infinite", ...filters] as const
 };
 
 // 인터뷰 관련 도메인
@@ -40,7 +40,7 @@ const interviewKeys: QueryKeyFactory<InterviewMethods> = {
   all: ["interview"] as const,
   byInterviewId: (id: number): QueryKey => [...interviewKeys.all, id] as const,
   byInterviewIdAndQuestionId: (id: number, questionId: number): QueryKey =>
-    [...interviewKeys.all, id, questionId] as const,
+    [...interviewKeys.all, id, questionId] as const
 };
 
 // 멤버 관련 도메인
@@ -65,14 +65,24 @@ const memberKeys: QueryKeyFactory<MemberMethods> = {
     sort: "asc" | "desc",
     page: number = 0
   ): QueryKey =>
-    [...memberKeys.all, "interviews", interviewId, sort, page] as const,
+    [...memberKeys.all, "interviews", interviewId, sort, page] as const
+};
+
+// 구매 관련 도메인
+type PurchaseMethods = {
+  purchaseHistory: () => QueryKey;
+};
+const purchaseKeys: QueryKeyFactory<PurchaseMethods> = {
+  all: ["purchase"] as const,
+  purchaseHistory: (): QueryKey => [...purchaseKeys.all, "history"] as const
 };
 
 export {
   interviewHistoryKeys,
   interviewKeys,
   memberKeys,
+  purchaseKeys,
   type InterviewHistoryParams,
   type InterviewParams,
-  type MemberRankParams,
+  type MemberRankParams
 };
