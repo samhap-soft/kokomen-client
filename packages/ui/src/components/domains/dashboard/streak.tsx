@@ -9,6 +9,8 @@ interface StreakCalendarProps {
   endDate?: string;
 }
 
+const SERVICE_START_DATE = "2025-08-01";
+const MIN_STREAK_COUNT = 4;
 export default function StreakCalendar({
   streak,
   className,
@@ -29,7 +31,7 @@ export default function StreakCalendar({
   // 기본값 설정: startDate가 없으면 2025-08-01, endDate가 없으면 오늘
   const calendarStartDate = startDate
     ? new Date(startDate)
-    : new Date("2025-08-01");
+    : new Date(SERVICE_START_DATE);
   const calendarEndDate = endDate ? new Date(endDate) : today;
 
   const streakMap = new Map(
@@ -39,7 +41,7 @@ export default function StreakCalendar({
   const getIntensity = (count: number): string => {
     const maxPerDay = streak.daily_counts.reduce(
       (max, item) => Math.max(max, item.count),
-      4
+      MIN_STREAK_COUNT
     );
     const ratio = count / maxPerDay;
     if (count === 0) return "bg-gray-100 dark:bg-gray-800";
@@ -110,20 +112,9 @@ export default function StreakCalendar({
   };
 
   const calendarData = generateCalendarData();
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
-  ];
+  const months = Array.from({ length: 12 }, (_, i) =>
+    new Date(0, i).toLocaleString("en-US", { month: "short" })
+  );
 
   const getMonthLabels = (): { month: string; weekIndex: number }[] => {
     const labels: { month: string; weekIndex: number }[] = [];
