@@ -9,7 +9,8 @@
   "workspaces": [
     "packages/*",
     "apps/client",
-    "apps/kokomen-webview"
+    "apps/kokomen-webview",
+    "apps/kokomen-server"
   ],
   "resolutions": {
     "brace-expansion": "^2.0.2"
