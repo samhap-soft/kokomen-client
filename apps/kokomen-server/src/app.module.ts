@@ -1,12 +1,16 @@
+import appConfig from "src/config/app.config";
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ConfigModule } from "@nestjs/config";
-import { DbModule } from "./db/db.module";
-import appConfig from "src/config/app.config";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver } from "@nestjs/apollo";
-import { join } from "path";
+import { Member } from "./member/domains/member";
+import { MemberResolver } from "./member/member.resolver";
+import { MemberService } from "./member/member.service";
+import { RedisModule } from "src/redis/redis.module";
+import { TestResolver } from "src/test.resolver";
 
 @Module({
   imports: [
@@ -15,19 +19,25 @@ import { join } from "path";
       envFilePath: [`.env.${process.env.NODE_ENV || "development"}`, ".env"],
       load: [appConfig]
     }),
-    DbModule,
+    TypeOrmModule.forRoot({
+      type: "mysql",
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [__dirname + "/**/domains/*.{ts,js}"],
+      synchronize: true
+    }),
+    TypeOrmModule.forFeature([Member]),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
-      typePaths: ["./**/*.graphql"],
       playground: true,
-      autoSchemaFile: true,
-      definitions: {
-        path: join(process.cwd(), "src/graphql.ts"),
-        outputAs: "class"
-      }
-    })
+      autoSchemaFile: true
+    }),
+    RedisModule
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService, MemberResolver, MemberService, TestResolver]
 })
 export class AppModule {}
