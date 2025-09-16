@@ -15,6 +15,7 @@ import {
 import { Footer } from "@/shared/footer";
 import { ArrowRightIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { ErrorBoundary } from "@sentry/nextjs";
 
 const Robot = dynamic(() => import("@/domains/landing/components/Robot"), {
   ssr: false
@@ -59,7 +60,13 @@ export default function Home({
                 </Link>
               </div>
               <div className="w-full h-full">
-                <Robot />
+                <ErrorBoundary
+                  fallback={
+                    <div className="md:h-[1000px] h-[500px] w-full bg-transparent" />
+                  }
+                >
+                  <Robot />
+                </ErrorBoundary>
               </div>
             </motion.div>
           </div>

@@ -9,7 +9,8 @@
   "workspaces": [
     "packages/*",
     "apps/client",
-    "apps/kokomen-webview"
+    "apps/kokomen-webview",
+    "apps/kokomen-server"
   ],
   "resolutions": {
     "brace-expansion": "^2.0.2"
@@ -25,6 +26,7 @@
   "scripts": {
     "client:dev": "yarn workspace @kokomen/client dev",
     "client:test": "yarn workspace @kokomen/client test",
+    "server:dev": "yarn workspace @kokomen/server dev",
     "webview:dev": "yarn workspace @kokomen/webview dev",
     "webview:build": "yarn workspace @kokomen/webview build",
     "webview:test": "yarn workspace @kokomen/webview test",
@@ -34,7 +36,7 @@
     "docker-prod-up": "docker-compose -f compose.yaml up -d",
     "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/webview lint && yarn workspace @kokomen/ui lint",
     "types:build": "yarn workspace @kokomen/types build",
-    "test": "yarn workspace @kokomen/client test && yarn workspace @kokomen/webview test",
+    "test": "yarn workspace @kokomen/client test && yarn workspace @kokomen/webview test && yarn workspace @kokomen/server test",
     "lhci": "yarn workspace @kokomen/client lhci",
     "build": "yarn workspace @kokomen/client build"
   }
