@@ -2,7 +2,7 @@ import Header from "@/shared/header";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { JSX, Suspense } from "react";
+import { JSX } from "react";
 import { getUserInfo } from "@/domains/auth/api";
 import { isAxiosError } from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
