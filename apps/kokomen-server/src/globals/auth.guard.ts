@@ -21,7 +21,7 @@ export class SessionGuard implements CanActivate {
     // JSESSIONID 쿠키에서 세션 ID 추출
     const encodedSessionId = this.extractSessionId(request);
     const sessionId = this.extractSessionIdFromBase64(encodedSessionId);
-    console.log("sessionId", sessionId);
+
     if (!sessionId) {
       return false;
     }
@@ -41,7 +41,6 @@ export class SessionGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      console.error("세션 조회 오류:", error);
       return false;
     }
   }
