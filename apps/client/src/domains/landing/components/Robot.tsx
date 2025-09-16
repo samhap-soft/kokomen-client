@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { OrbitControls, useGLTF, Text } from "@react-three/drei";
 import { useFrame, Canvas } from "@react-three/fiber";
 import { useRef, useEffect } from "react";
 import { useScreenSize } from "@kokomen/utils";
@@ -7,7 +7,7 @@ import * as THREE from "three";
 
 function RobotModel() {
   const { scene, animations } = useGLTF(
-    `${process.env.NEXT_PUBLIC_CDN_BASE_URL}/models/robot/robot.gltf`
+    `${process.env.NEXT_PUBLIC_CDN_BASE_URL}/models/robot/robot-v1.glb`
   );
   const meshRef = useRef<THREE.Group>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
@@ -59,6 +59,16 @@ function Robot() {
         <ambientLight intensity={1} />
         <directionalLight position={[10, 10, 5]} intensity={1} />
         <RobotModel />
+        <Text
+          position={[5, 0, 0]}
+          rotation={[0, 5, 0]}
+          fontSize={0.1}
+          color="#ffffff"
+          anchorX="center"
+          anchorY="middle"
+        >
+          provided by sketchfab(Hadrien59)
+        </Text>
         <OrbitControls
           enablePan={false}
           enableZoom={false}
