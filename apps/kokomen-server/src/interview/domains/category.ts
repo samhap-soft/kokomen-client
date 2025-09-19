@@ -166,17 +166,14 @@ export class Category {
 
   static getCategories(): Category[] {
     const BASE_URL = process.env.CLOUD_FRONT_DOMAIN_URL + "category-image/";
-    console.log(Object.values(CategoryType));
-    return Object.values(CategoryType)
-      .filter((type) => typeof type === "number")
-      .map((type: CategoryType) => {
-        const data = CATEGORY_DATA[type];
-        return new Category(
-          type,
-          data.title,
-          data.description,
-          BASE_URL + data.imageUrl
-        );
-      });
+    return Object.values(CategoryType).map((type: CategoryType) => {
+      const data = CATEGORY_DATA[type];
+      return new Category(
+        type,
+        data.title,
+        data.description,
+        BASE_URL + data.imageUrl
+      );
+    });
   }
 }
