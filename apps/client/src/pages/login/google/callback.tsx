@@ -5,7 +5,7 @@ import { JSX, useEffect } from "react";
 import Link from "next/link";
 import { postGoogleAuthorizationCode } from "@/domains/auth/api";
 
-type KakaoCallbackPageProps = {
+type GoogleCallbackPageProps = {
   code: string;
   state: string;
 };
@@ -13,7 +13,7 @@ type KakaoCallbackPageProps = {
 export default function KakaoCallbackPage({
   code,
   state
-}: KakaoCallbackPageProps): JSX.Element | null {
+}: GoogleCallbackPageProps): JSX.Element | null {
   const router = useRouter();
 
   const authMutation = useMutation({
@@ -89,7 +89,7 @@ export default function KakaoCallbackPage({
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               로그인 처리 중...
             </h2>
-            <p className="text-gray-600">카카오 로그인을 완료하고 있습니다</p>
+            <p className="text-gray-600">구글 로그인을 완료하고 있습니다</p>
           </div>
         </div>
       </div>
@@ -204,7 +204,7 @@ export default function KakaoCallbackPage({
 
 export const getServerSideProps = (
   context: GetServerSidePropsContext
-): GetServerSidePropsResult<KakaoCallbackPageProps> => {
+): GetServerSidePropsResult<GoogleCallbackPageProps> => {
   const { code, state } = context.query;
 
   // Authorization code가 없는 경우
