@@ -1,11 +1,11 @@
-import { postAuthorizationCode } from "@/domains/auth/api";
 import { useMutation } from "@tanstack/react-query";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { useRouter } from "next/router";
 import { JSX, useEffect } from "react";
 import Link from "next/link";
+import { postGoogleAuthorizationCode } from "@/domains/auth/api";
 
-type KakaoCallbackPageProps = {
+type GoogleCallbackPageProps = {
   code: string;
   state: string;
 };
@@ -13,7 +13,7 @@ type KakaoCallbackPageProps = {
 export default function KakaoCallbackPage({
   code,
   state
-}: KakaoCallbackPageProps): JSX.Element | null {
+}: GoogleCallbackPageProps): JSX.Element | null {
   const router = useRouter();
 
   const authMutation = useMutation({
@@ -23,7 +23,7 @@ export default function KakaoCallbackPage({
     }: {
       code: string;
       redirectUri: string;
-    }) => postAuthorizationCode(code, redirectUri),
+    }) => postGoogleAuthorizationCode(code, redirectUri),
 
     onSuccess: ({ data }) => {
       if (!data.profile_completed) {
@@ -50,7 +50,7 @@ export default function KakaoCallbackPage({
     )
       return;
 
-    const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/callback`;
+    const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/google/callback`;
 
     authMutation.mutate({
       code: code as string,
@@ -89,7 +89,7 @@ export default function KakaoCallbackPage({
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               로그인 처리 중...
             </h2>
-            <p className="text-gray-600">카카오 로그인을 완료하고 있습니다</p>
+            <p className="text-gray-600">구글 로그인을 완료하고 있습니다</p>
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function KakaoCallbackPage({
               로그인 완료!
             </h2>
             <p className="text-gray-600 mb-6">
-              카카오 로그인이 성공적으로 완료되었습니다
+              로그인이 성공적으로 완료되었습니다
             </p>
             <div className="space-y-4">
               <div className="text-sm text-gray-500">
@@ -172,7 +172,7 @@ export default function KakaoCallbackPage({
             <div className="space-y-3">
               <button
                 onClick={() => {
-                  const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/callback`;
+                  const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/google/callback`;
                   authMutation.mutate({ code, redirectUri });
                 }}
                 className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -204,7 +204,7 @@ export default function KakaoCallbackPage({
 
 export const getServerSideProps = (
   context: GetServerSidePropsContext
-): GetServerSidePropsResult<KakaoCallbackPageProps> => {
+): GetServerSidePropsResult<GoogleCallbackPageProps> => {
   const { code, state } = context.query;
 
   // Authorization code가 없는 경우

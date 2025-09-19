@@ -29,6 +29,7 @@ jobs:
             export NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
             export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             export DEV_CDN_BASE_URL=${{ secrets.DEV_CDN_BASE_URL }}
+            export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_DEV }}
 
             cd kokomen
             docker system prune -f
