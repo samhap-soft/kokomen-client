@@ -123,7 +123,7 @@ export default function MyInterviewResultPage({
                   {report.root_question_reference_answers.map(
                     (reference, idx) => (
                       <div
-                        key={`reference.interview_id_${reference.interview_id}_${idx}`}
+                        key={`reference-${reference.interview_id}-${idx}`}
                         className="bg-fill-tertiary rounded-lg p-4 border border-border-secondary"
                       >
                         <div className="flex items-center justify-between mb-3">
