@@ -10,13 +10,14 @@ import { Member } from "./member/domains/member";
 import { MemberResolver } from "./member/member.resolver";
 import { MemberService } from "./member/member.service";
 import { RedisModule } from "src/redis/redis.module";
-import { TestResolver } from "src/test.resolver";
+import { CategoryModule } from "src/interview/modules/category";
+import { RootQuestionModule } from "src/interview/modules/rootQuestion";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`.env.${process.env.NODE_ENV || "development"}`, ".env"],
+      envFilePath: [`env.${process.env.NODE_ENV || "development"}.`, ".env"],
       load: [appConfig]
     }),
     TypeOrmModule.forRoot({
@@ -26,18 +27,19 @@ import { TestResolver } from "src/test.resolver";
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [__dirname + "/**/domains/*.{ts,js}"],
-      synchronize: true
+      entities: [__dirname + "/**/domains/*.{ts,js}"]
     }),
     TypeOrmModule.forFeature([Member]),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
-      playground: true,
+      graphiql: process.env.NODE_ENV === "development",
       autoSchemaFile: true
     }),
-    RedisModule
+    RedisModule,
+    CategoryModule,
+    RootQuestionModule
   ],
   controllers: [AppController],
-  providers: [AppService, MemberResolver, MemberService, TestResolver]
+  providers: [AppService, MemberResolver, MemberService]
 })
 export class AppModule {}
