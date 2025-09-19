@@ -42,7 +42,7 @@ function FeedBackAccordionItem({
     <Accordion.AccordionItem
       key={feedback.question_id}
       itemKey={`feedback-${feedback.question_id}`}
-      className="border border-border rounded-xl overflow-hidden bg-bg-elevated shadow-sm hover:shadow-md transition-shadow duration-200"
+      className="border-border rounded-xl overflow-hidden bg-bg-elevated shadow-sm hover:shadow-md transition-shadow duration-200"
     >
       <Accordion.AccordionTrigger className="px-6 py-4 hover:bg-fill-secondary transition-colors duration-200">
         <div className="flex items-center gap-3 w-full">
@@ -51,16 +51,18 @@ function FeedBackAccordionItem({
               {idx + 1}
             </span>
           </div>
-          <span className="text-text-heading font-medium text-left flex-1">
-            {feedback.question}
-          </span>
-          <div
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${getScoreColor(
-              feedback.answer_rank
-            )}`}
-          >
-            {getScoreIcon(feedback.answer_rank)}
-            {feedback.answer_rank}등급
+          <div className="flex flex-col justify-center gap-1 w-full">
+            <div
+              className={`flex items-center gap-2 py-1 rounded-full text-sm font-semibold ${getScoreColor(
+                feedback.answer_rank
+              )}`}
+            >
+              {getScoreIcon(feedback.answer_rank)}
+              {feedback.answer_rank}등급
+            </div>
+            <span className="text-text-heading font-medium text-left flex-1">
+              {feedback.question}
+            </span>
           </div>
         </div>
       </Accordion.AccordionTrigger>
