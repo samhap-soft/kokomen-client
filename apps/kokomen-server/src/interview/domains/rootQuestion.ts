@@ -7,22 +7,7 @@ import {
 } from "typeorm";
 import { Interview } from "./interview";
 import { Field, ID, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
-
-export enum QuestionCategory {
-  ALGORITHM_DATA_STRUCTURE,
-  DATABASE,
-  NETWORK,
-  OPERATING_SYSTEM,
-  JAVA_SPRING,
-  INFRA,
-  FRONTEND,
-  REACT,
-  JAVASCRIPT_TYPESCRIPT
-}
-
-registerEnumType(QuestionCategory, {
-  name: "QuestionCategory"
-});
+import { CategoryType } from "src/interview/domains/category";
 
 export enum QuestionState {
   ACTIVE,
@@ -48,9 +33,9 @@ export class RootQuestion {
   @Column({ type: "varchar", length: 1000 })
   content: string;
 
-  @Field(() => QuestionCategory)
-  @Column({ type: "enum", enum: QuestionCategory })
-  category: QuestionCategory;
+  @Field(() => CategoryType)
+  @Column({ type: "enum", enum: CategoryType })
+  category: CategoryType;
 
   @Field(() => QuestionState)
   @Column({ type: "enum", enum: QuestionState })
