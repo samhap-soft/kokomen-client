@@ -172,7 +172,7 @@ export default function KakaoCallbackPage({
             <div className="space-y-3">
               <button
                 onClick={() => {
-                  const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/callback`;
+                  const redirectUri = `${process.env.NEXT_PUBLIC_BASE_URL}/login/google/callback`;
                   authMutation.mutate({ code, redirectUri });
                 }}
                 className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
