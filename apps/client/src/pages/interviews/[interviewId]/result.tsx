@@ -7,23 +7,17 @@ import {
   InferGetServerSidePropsType
 } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { Layout } from "@kokomen/ui";
+import { Layout, Score } from "@kokomen/ui";
 import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 import Header from "@/shared/header";
-import {
-  Trophy,
-  TrendingUp,
-  TrendingDown,
-  Home,
-  Star,
-  Target
-} from "lucide-react";
+import { Trophy, TrendingUp, TrendingDown, Home, Target } from "lucide-react";
 import { withCheckInServer } from "@/utils/auth";
 import { getUserInfo } from "@/domains/auth/api";
 import { SEO } from "@/shared/seo";
 import { UserInfo } from "@kokomen/types";
+import Link from "next/link";
 
 export default function MyInterviewResultPage({
   report,
@@ -36,6 +30,15 @@ export default function MyInterviewResultPage({
   const handleGoHome = () => {
     navigate.push({ pathname: "/" });
   };
+  report.root_question_reference_answers = [
+    {
+      answer_content:
+        "안녕하세용오오안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이하세용오오안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이이하세용오오안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이이이",
+      interview_id: 1,
+      nickname: "오이오이오이오이",
+      answer_rank: "A"
+    }
+  ];
 
   return (
     <>
@@ -48,7 +51,7 @@ export default function MyInterviewResultPage({
         <Header user={userInfo} />
 
         <main className="min-h-screen bg-gradient-to-br from-primary-bg via-bg-base to-primary-bg p-4 md:p-8">
-          <div className="max-w-4xl mx-auto space-y-8">
+          <section className="max-w-4xl mx-auto space-y-8">
             {/* 헤더 섹션 */}
             <div className="text-center space-y-6">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-primary to-primary-active rounded-full mb-6 shadow-lg">
@@ -63,98 +66,149 @@ export default function MyInterviewResultPage({
             </div>
 
             {/* 최종 점수 섹션 */}
-            <div className="bg-bg-elevated rounded-2xl shadow-lg p-8 border border-border">
-              <h2 className="text-2xl font-bold text-center mb-8 flex items-center justify-center gap-3">
-                <Star className="w-7 h-7 text-warning" />
-                <span className="text-text-heading">최종 점수</span>
-              </h2>
-              <div className="flex items-center justify-center space-x-8 mb-8">
-                <div className="text-center">
-                  <p className="text-sm text-text-description mb-3">
-                    이전 점수
-                  </p>
-                  <div className="text-5xl md:text-6xl font-bold text-text-tertiary">
-                    {report.user_prev_score}
+            <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
+                <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
+                  <div className="w-1 h-6 bg-warning rounded-full"></div>
+                  최종 점수
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center justify-center space-x-8 mb-8">
+                  <div className="text-center">
+                    <p className="text-sm text-text-description mb-3">
+                      이전 점수
+                    </p>
+                    <div className="text-5xl md:text-6xl font-bold text-text-tertiary">
+                      {report.user_prev_score}
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="text-3xl text-text-tertiary mb-3">→</div>
+                    {isScoreImproved ? (
+                      <TrendingUp className="w-8 h-8 text-success" />
+                    ) : (
+                      <TrendingDown className="w-8 h-8 text-error" />
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-text-description mb-3">
+                      현재 점수
+                    </p>
+                    <div className="text-5xl md:text-6xl font-bold text-primary">
+                      {report.user_cur_score}
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col items-center">
-                  <div className="text-3xl text-text-tertiary mb-3">→</div>
-                  {isScoreImproved ? (
-                    <TrendingUp className="w-8 h-8 text-success" />
-                  ) : (
-                    <TrendingDown className="w-8 h-8 text-error" />
-                  )}
-                </div>
                 <div className="text-center">
-                  <p className="text-sm text-text-description mb-3">
-                    현재 점수
-                  </p>
-                  <div className="text-5xl md:text-6xl font-bold text-primary">
-                    {report.user_cur_score}
+                  <div
+                    className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-semibold shadow-sm ${
+                      isScoreImproved
+                        ? "bg-success-bg text-success-text border border-success-border"
+                        : "bg-error-bg text-error-text border border-error-border"
+                    }`}
+                  >
+                    {isScoreImproved ? (
+                      <TrendingUp className="w-5 h-5" />
+                    ) : (
+                      <TrendingDown className="w-5 h-5" />
+                    )}
+                    {isScoreImproved ? "+" : ""}
+                    {scoreDiff}점
                   </div>
                 </div>
               </div>
-              <div className="text-center">
-                <div
-                  className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-semibold shadow-sm ${
-                    isScoreImproved
-                      ? "bg-success-bg text-success-text border border-success-border"
-                      : "bg-error-bg text-error-text border border-error-border"
-                  }`}
-                >
-                  {isScoreImproved ? (
-                    <TrendingUp className="w-5 h-5" />
-                  ) : (
-                    <TrendingDown className="w-5 h-5" />
-                  )}
-                  {isScoreImproved ? "+" : ""}
-                  {scoreDiff}점
+            </section>
+
+            {report.root_question_reference_answers.length > 0 && (
+              <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
+                  <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
+                    <div className="w-1 h-6 bg-primary rounded-full"></div>
+                    참고하기 좋은 인터뷰
+                  </h2>
                 </div>
-              </div>
-            </div>
+                <div className="p-6 space-y-6">
+                  {report.root_question_reference_answers.map(
+                    (reference, idx) => (
+                      <div
+                        key={`reference.interview_id_${reference.interview_id}_${idx}`}
+                        className="bg-fill-tertiary rounded-lg p-4 border border-border-secondary"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-text-secondary text-sm font-medium">
+                              {reference.nickname}
+                            </span>
+                            <Score rank={reference.answer_rank} />
+                          </div>
+                          <Link
+                            href={`/members/interviews/${reference.interview_id}`}
+                            className="text-primary text-sm hover:text-primary-hover transition-colors"
+                          >
+                            자세히 보기 →
+                          </Link>
+                        </div>
+                        <div className="text-text-primary text-base leading-relaxed whitespace-wrap break-words line-clamp-1">
+                          {reference.answer_content}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </section>
+            )}
 
             {/* 보완할 점 섹션 */}
-            <div className="bg-bg-elevated rounded-2xl shadow-lg p-8 border border-border">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                <div className="w-2 h-10 bg-gradient-to-b from-primary to-primary-active rounded-full"></div>
-                <span className="text-text-heading">보완할 점</span>
-              </h2>
-              <div className="bg-primary-bg p-8 rounded-xl border-l-4 border-primary">
-                <p className="text-text-primary leading-relaxed mb-6 text-lg">
-                  {report.total_feedback}
-                </p>
-                <div className="text-right">
-                  <span className="inline-flex items-center gap-2 bg-bg-elevated px-6 py-3 rounded-full shadow-sm border border-border">
-                    <Target className="w-5 h-5 text-primary" />
-                    <span className="text-xl font-semibold text-primary">
-                      총점: {report.total_score}점
-                    </span>
-                  </span>
+            <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
+                <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
+                  <div className="w-1 h-6 bg-primary rounded-full"></div>
+                  보완할 점
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="bg-primary-bg p-6 rounded-lg border border-primary-border">
+                  <p className="text-text-primary leading-relaxed mb-4 text-base">
+                    {report.total_feedback}
+                  </p>
+                  <div className="flex justify-end">
+                    <div className="inline-flex items-center gap-2 bg-bg-elevated px-4 py-2 rounded-lg border border-border">
+                      <Target className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium text-primary">
+                        총점: {report.total_score}점
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* 피드백 섹션 */}
-            <div className="bg-bg-elevated rounded-2xl shadow-lg p-8 border border-border">
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                <div className="w-2 h-10 bg-gradient-to-b from-success to-success-active rounded-full"></div>
-                <span className="text-text-heading">각 항목별 피드백</span>
-              </h2>
-              <FeedbackAccordion feedbacks={report.feedbacks} />
-            </div>
+            <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
+                <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
+                  <div className="w-1 h-6 bg-success rounded-full"></div>각
+                  항목별 피드백
+                </h2>
+              </div>
+              <div className="p-6">
+                <FeedbackAccordion feedbacks={report.feedbacks} />
+              </div>
+            </section>
 
             {/* 홈으로 버튼 */}
-            <div className="text-center pt-4">
+            <div className="text-center pt-6">
               <Button
                 size="large"
                 onClick={handleGoHome}
-                className="bg-primary hover:bg-primary-hover text-text-light-solid px-10 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0"
+                className="bg-primary hover:bg-primary-hover text-text-light-solid px-8 py-3 rounded-lg transition-colors border-0"
               >
-                <Home className="w-6 h-6 mr-3" />
+                <Home className="w-5 h-5 mr-2" />
                 홈으로 돌아가기
               </Button>
             </div>
-          </div>
+          </section>
         </main>
       </Layout>
     </>
