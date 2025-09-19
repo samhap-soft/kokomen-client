@@ -21,6 +21,8 @@ const myInterviewResultData: InterviewReport = {
       answer_memo_visibility: "PUBLIC"
     }
   ],
+  root_question_reference_answers: [],
+  interview_mode: "TEXT",
   total_feedback:
     "전반적으로 기술적 역량과 협업 능력이 균형있게 발달한 개발자로 보입니다. 구체적인 경험과 성과를 바탕으로 답변하여 신뢰도가 높습니다. 향후 더 큰 규모의 프로젝트에서 리더십을 발휘할 수 있을 것으로 기대됩니다.",
   total_score: 85,
