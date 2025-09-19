@@ -14,7 +14,7 @@ export class RootQuestionResolver {
 
   @Query(() => [RootQuestion])
   async rootQuestionByCategory(
-    @Args("category") category: CategoryType
+    @Args("category", { type: () => CategoryType }) category: CategoryType
   ): Promise<RootQuestion[]> {
     return this.rootQuestionService.findByCategory(category);
   }

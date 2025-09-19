@@ -17,7 +17,7 @@ import { RootQuestionModule } from "src/interview/modules/rootQuestion";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [".env.development", ".env"],
+      envFilePath: [`env.${process.env.NODE_ENV || "development"}.`, ".env"],
       load: [appConfig]
     }),
     TypeOrmModule.forRoot({
@@ -32,7 +32,7 @@ import { RootQuestionModule } from "src/interview/modules/rootQuestion";
     TypeOrmModule.forFeature([Member]),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
-      graphiql: true,
+      graphiql: process.env.NODE_ENV === "development",
       autoSchemaFile: true
     }),
     RedisModule,
