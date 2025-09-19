@@ -30,15 +30,6 @@ export default function MyInterviewResultPage({
   const handleGoHome = () => {
     navigate.push({ pathname: "/" });
   };
-  report.root_question_reference_answers = [
-    {
-      answer_content:
-        "안녕하세용오오안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이하세용오오안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이이하세용오오안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이안녕하세용오오이이이",
-      interview_id: 1,
-      nickname: "오이오이오이오이",
-      answer_rank: "A"
-    }
-  ];
 
   return (
     <>
