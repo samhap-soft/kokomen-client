@@ -33,7 +33,7 @@ function RouteComponent(): React.ReactNode {
 
     onSuccess: ({ data }) => {
       useAuthStore.getState().setAuth(data);
-      const redirectTo = state === "/" ? ROOT_URI : state || ROOT_URI;
+      const redirectTo = state && state !== "/" ? state : ROOT_URI;
       if (!data.profile_completed) {
         router.navigate({ to: `/login/profile?state=${redirectTo}` });
         return;
@@ -48,7 +48,12 @@ function RouteComponent(): React.ReactNode {
   });
 
   useEffect(() => {
-    if (authMutation.isPending || authMutation.error || authMutation.isSuccess)
+    if (
+      !code ||
+      authMutation.isPending ||
+      authMutation.error ||
+      authMutation.isSuccess
+    )
       return;
 
     const redirectUri = `${import.meta.env.VITE_BASE_URL}/login/google/callback`;
@@ -173,7 +178,7 @@ function RouteComponent(): React.ReactNode {
             <div className="space-y-3">
               <button
                 onClick={() => {
-                  const redirectUri = `${import.meta.env.VITE_BASE_URL}/login/callback`;
+                  const redirectUri = `${import.meta.env.VITE_BASE_URL}/login/google/callback`;
                   authMutation.mutate({ code, redirectUri } as {
                     code: string;
                     redirectUri: string;
