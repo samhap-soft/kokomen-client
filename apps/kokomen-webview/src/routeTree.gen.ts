@@ -20,6 +20,7 @@ import { Route as LoginProfileRouteImport } from './routes/login/profile'
 import { Route as LoginCallbackRouteImport } from './routes/login/callback'
 import { Route as InterviewsInterviewIdIndexRouteImport } from './routes/interviews/$interviewId/index'
 import { Route as MembersInterviewsInterviewIdRouteImport } from './routes/members/interviews.$interviewId'
+import { Route as LoginGoogleCallbackRouteImport } from './routes/login/google.callback'
 import { Route as InterviewsInterviewIdResultRouteImport } from './routes/interviews/$interviewId/result'
 
 const IndexRoute = IndexRouteImport.update({
@@ -79,6 +80,11 @@ const MembersInterviewsInterviewIdRoute =
     path: '/members/interviews/$interviewId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LoginGoogleCallbackRoute = LoginGoogleCallbackRouteImport.update({
+  id: '/login/google/callback',
+  path: '/login/google/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InterviewsInterviewIdResultRoute =
   InterviewsInterviewIdResultRouteImport.update({
     id: '/interviews/$interviewId/result',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/interviews': typeof InterviewsIndexRoute
   '/login': typeof LoginIndexRoute
   '/interviews/$interviewId/result': typeof InterviewsInterviewIdResultRoute
+  '/login/google/callback': typeof LoginGoogleCallbackRoute
   '/members/interviews/$interviewId': typeof MembersInterviewsInterviewIdRoute
   '/interviews/$interviewId': typeof InterviewsInterviewIdIndexRoute
 }
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/interviews': typeof InterviewsIndexRoute
   '/login': typeof LoginIndexRoute
   '/interviews/$interviewId/result': typeof InterviewsInterviewIdResultRoute
+  '/login/google/callback': typeof LoginGoogleCallbackRoute
   '/members/interviews/$interviewId': typeof MembersInterviewsInterviewIdRoute
   '/interviews/$interviewId': typeof InterviewsInterviewIdIndexRoute
 }
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/interviews/': typeof InterviewsIndexRoute
   '/login/': typeof LoginIndexRoute
   '/interviews/$interviewId/result': typeof InterviewsInterviewIdResultRoute
+  '/login/google/callback': typeof LoginGoogleCallbackRoute
   '/members/interviews/$interviewId': typeof MembersInterviewsInterviewIdRoute
   '/interviews/$interviewId/': typeof InterviewsInterviewIdIndexRoute
 }
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/login'
     | '/interviews/$interviewId/result'
+    | '/login/google/callback'
     | '/members/interviews/$interviewId'
     | '/interviews/$interviewId'
   fileRoutesByTo: FileRoutesByTo
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/interviews'
     | '/login'
     | '/interviews/$interviewId/result'
+    | '/login/google/callback'
     | '/members/interviews/$interviewId'
     | '/interviews/$interviewId'
   id:
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/interviews/'
     | '/login/'
     | '/interviews/$interviewId/result'
+    | '/login/google/callback'
     | '/members/interviews/$interviewId'
     | '/interviews/$interviewId/'
   fileRoutesById: FileRoutesById
@@ -185,6 +197,7 @@ export interface RootRouteChildren {
   InterviewsIndexRoute: typeof InterviewsIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   InterviewsInterviewIdResultRoute: typeof InterviewsInterviewIdResultRoute
+  LoginGoogleCallbackRoute: typeof LoginGoogleCallbackRoute
   MembersInterviewsInterviewIdRoute: typeof MembersInterviewsInterviewIdRoute
   InterviewsInterviewIdIndexRoute: typeof InterviewsInterviewIdIndexRoute
 }
@@ -268,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembersInterviewsInterviewIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login/google/callback': {
+      id: '/login/google/callback'
+      path: '/login/google/callback'
+      fullPath: '/login/google/callback'
+      preLoaderRoute: typeof LoginGoogleCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/interviews/$interviewId/result': {
       id: '/interviews/$interviewId/result'
       path: '/interviews/$interviewId/result'
@@ -289,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   InterviewsIndexRoute: InterviewsIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   InterviewsInterviewIdResultRoute: InterviewsInterviewIdResultRoute,
+  LoginGoogleCallbackRoute: LoginGoogleCallbackRoute,
   MembersInterviewsInterviewIdRoute: MembersInterviewsInterviewIdRoute,
   InterviewsInterviewIdIndexRoute: InterviewsInterviewIdIndexRoute,
 }
