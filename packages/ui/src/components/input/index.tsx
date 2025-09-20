@@ -50,6 +50,7 @@ export const Input = ({
     dangerouslySetInnerHTML={undefined}
     ref={ref}
     type={type}
+    name={name}
     className={cn(inputVariants({ variant, size }), className)}
     id={name}
     {...props}

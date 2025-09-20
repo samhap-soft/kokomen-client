@@ -17,4 +17,13 @@ type InterviewHistory = {
   has_temp_answer_memo: boolean;
 };
 
-export type { InterviewHistory };
+type DailyStreak = {
+  date: string;
+  count: number;
+};
+type Streak = {
+  daily_counts: DailyStreak[];
+  max_streak: number;
+  current_streak: number;
+};
+export type { InterviewHistory, Streak };

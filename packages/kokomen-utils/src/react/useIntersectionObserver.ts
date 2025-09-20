@@ -4,6 +4,7 @@ interface UseIntersectionObserverOptions {
   threshold?: number;
   rootMargin?: string;
   triggerOnce?: boolean;
+  callback?: () => void;
 }
 
 export const useIntersectionObserver = (
@@ -12,7 +13,8 @@ export const useIntersectionObserver = (
   const {
     threshold = 0.1,
     rootMargin = "0px 0px -100px 0px",
-    triggerOnce = false
+    triggerOnce = false,
+    callback
   } = options;
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef<HTMLElement>(null);
@@ -22,6 +24,9 @@ export const useIntersectionObserver = (
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          if (callback) {
+            callback();
+          }
           if (triggerOnce) {
             observer.disconnect();
           }

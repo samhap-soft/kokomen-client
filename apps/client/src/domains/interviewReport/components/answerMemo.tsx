@@ -81,9 +81,10 @@ export default function AnswerMemoComponent({
           </p>
         </div>
       ) : (
-        <div className="border border-border-secondary p-4 rounded-lg flex justify-between items-center">
+        <div className="border border-border-secondary p-4 rounded-lg flex flex-col justify-between items-center gap-3">
           <p>보완이 필요하거나 학습한 내용을 메모해 보세요.</p>
           <Button
+            className="w-full"
             variant={"glass"}
             onClick={handleMemoEditButtonClick}
             disabled={isMemoEditOpen}

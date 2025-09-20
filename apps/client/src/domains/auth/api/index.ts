@@ -28,6 +28,20 @@ const postAuthorizationCode = async (
   );
 };
 
+const postGoogleAuthorizationCode = async (
+  code: string,
+  redirectUri: string
+): AxiosPromise<KakaoLoginResponse> => {
+  return serverInstance.post(
+    `/auth/google-login`,
+    {
+      code,
+      redirect_uri: redirectUri
+    },
+    { withCredentials: true }
+  );
+};
+
 const getUserInfo = async (
   context: GetServerSidePropsContext
 ): AxiosPromise<UserInfo> => {
@@ -60,6 +74,7 @@ const deleteUser = async (): AxiosPromise<void> => {
 
 export {
   postAuthorizationCode,
+  postGoogleAuthorizationCode,
   getUserInfo,
   logout,
   updateUserProfile,

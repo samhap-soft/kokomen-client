@@ -12,14 +12,14 @@ type KakaoCallbackPageProps = {
 
 export default function KakaoCallbackPage({
   code,
-  state,
+  state
 }: KakaoCallbackPageProps): JSX.Element | null {
   const router = useRouter();
 
   const authMutation = useMutation({
     mutationFn: ({
       code,
-      redirectUri,
+      redirectUri
     }: {
       code: string;
       redirectUri: string;
@@ -38,7 +38,7 @@ export default function KakaoCallbackPage({
     onError: (error) => {
       console.error("로그인 실패:", error);
     },
-    retry: 1,
+    retry: 1
   });
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function KakaoCallbackPage({
 
     authMutation.mutate({
       code: code as string,
-      redirectUri,
+      redirectUri
     });
   }, [router.isReady, code, state, authMutation]);
 
@@ -212,15 +212,15 @@ export const getServerSideProps = (
     return {
       redirect: {
         destination: "/500",
-        permanent: false,
-      },
+        permanent: false
+      }
     };
   }
 
   return {
     props: {
       code: code as string,
-      state: (state as string) || "/",
-    },
+      state: (state as string) || "/"
+    }
   };
 };

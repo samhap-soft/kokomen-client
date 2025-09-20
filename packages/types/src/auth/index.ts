@@ -9,6 +9,7 @@ interface UserInfo extends User {
   total_member_count: number;
   token_count: number;
   rank: number;
+  is_test_user: boolean;
 }
 
 export type { User, UserInfo };
