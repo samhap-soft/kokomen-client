@@ -16,6 +16,16 @@ const postAuthorizationCode = async (
   });
 };
 
+const postGoogleAuthorizationCode = async (
+  code: string,
+  redirectUri: string
+): AxiosPromise<User> => {
+  return authServerInstance.post(`/auth/google-login`, {
+    code,
+    redirect_uri: redirectUri
+  });
+};
+
 const getUserInfo = async (): AxiosPromise<UserInfo & User> => {
   return authServerInstance.get(`/members/me/profile`);
 };
@@ -42,6 +52,7 @@ const deleteUser = async (): AxiosPromise<void> => {
 
 export {
   postAuthorizationCode,
+  postGoogleAuthorizationCode,
   getUserInfo,
   logout,
   updateUserProfile,
