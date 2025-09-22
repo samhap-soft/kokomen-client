@@ -27,6 +27,7 @@ export default function DashboardScreen() {
           <WebView
             ref={webviewRef as any}
             source={{ uri: `${process.env.EXPO_PUBLIC_CLIENT_URL}/dashboard` }}
+            userAgent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
             javaScriptEnabled={true}
             originWhitelist={["*"]}
             injectedJavaScriptBeforeContentLoaded={runFirst}
