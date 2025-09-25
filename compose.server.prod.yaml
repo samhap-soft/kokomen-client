@@ -1,5 +1,5 @@
 services:
-  kokomen-nest-server-dev:
+  kokomen-nest-server-prod:
     build:
       context: .
       dockerfile: ./apps/kokomen-server/Dockerfile
@@ -28,7 +28,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/dev/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./apps/kokomen-server/nginx/prod/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - kokomen-nest-server-dev
     restart: unless-stopped
