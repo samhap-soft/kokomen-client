@@ -24,9 +24,12 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
+    "client": "yarn workspace @kokomen/client",
     "client:dev": "yarn workspace @kokomen/client dev",
     "client:test": "yarn workspace @kokomen/client test",
     "server:dev": "yarn workspace @kokomen/server dev",
+    "server:build": "yarn workspace @kokomen/server build",
+    "server:start": "yarn workspace @kokomen/server start",
     "webview:dev": "yarn workspace @kokomen/webview dev",
     "webview:build": "yarn workspace @kokomen/webview build",
     "webview:test": "yarn workspace @kokomen/webview test",

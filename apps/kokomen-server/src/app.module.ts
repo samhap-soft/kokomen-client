@@ -17,23 +17,28 @@ import { RootQuestionModule } from "src/interview/modules/rootQuestion";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`env.${process.env.NODE_ENV || "development"}.`, ".env"],
+      envFilePath: [`env.${process.env.NODE_ENV || "development"}`, ".env"],
       load: [appConfig]
     }),
     TypeOrmModule.forRoot({
       type: "mysql",
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
+      host: process.env.DATABASE_HOST,
+      port: process.env.DATABASE_PORT
+        ? parseInt(process.env.DATABASE_PORT, 10)
+        : 3306,
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_DATABASE,
       entities: [__dirname + "/**/domains/*.{ts,js}"]
     }),
     TypeOrmModule.forFeature([Member]),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       graphiql: process.env.NODE_ENV === "development",
-      autoSchemaFile: true
+      autoSchemaFile: true,
+      path: "api/v3/graphql",
+      sortSchema: true,
+      introspection: true
     }),
     RedisModule,
     CategoryModule,

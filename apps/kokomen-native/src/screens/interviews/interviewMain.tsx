@@ -111,6 +111,7 @@ export default function InterviewMainScreen() {
             source={{
               uri: `${process.env.EXPO_PUBLIC_CLIENT_URL}/interviews`,
             }}
+            userAgent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
             javaScriptEnabled={true}
             originWhitelist={["*"]}
             injectedJavaScriptBeforeContentLoaded={runFirst}
