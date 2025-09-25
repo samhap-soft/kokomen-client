@@ -26,6 +26,8 @@ jobs:
           REDIS_HOST_DEV: ${{ secrets.REDIS_HOST_DEV }}
 
         run: |
+          cd /home/ubuntu
+          sudo chmod 666 /var/run/docker.sock 
           yarn types:build
           docker system prune -f
           docker compose -f ./compose.server.dev.yaml down || true
