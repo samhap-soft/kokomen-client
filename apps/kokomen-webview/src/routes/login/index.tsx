@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { Button } from "@kokomen/ui";
 import React from "react";
+import useLogin from "@/domains/auth/hooks/useLogin";
 
 // eslint-disable-next-line @rushstack/typedef-var
 export const Route = createFileRoute("/login/")({
@@ -14,6 +16,8 @@ function RouteComponent(): React.ReactNode {
   const redirectTo = `&state=${query.redirectTo ?? "/"}`;
   const redirectUri = `${import.meta.env.VITE_BASE_URL}/login/callback${redirectTo}`;
   const googleRedirectUri = `${import.meta.env.VITE_BASE_URL}/login/google/callback${redirectTo}`;
+  const ROOT_URI = "/interviews";
+  const { onAppleLogin } = useLogin(query.redirectTo ?? ROOT_URI);
   return (
     <>
       <div className="h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -32,7 +36,7 @@ function RouteComponent(): React.ReactNode {
           <div className="bg-white rounded-2xl shadow-xl p-8 space-y-6">
             <a
               href={`${import.meta.env.VITE_API_BASE_URL}/auth/kakao-login?redirectUri=${redirectUri}`}
-              className="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-xl text-base font-medium text-black bg-[#FEE500] hover:bg-[#FFEB3B] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg"
+              className="w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium text-black bg-[#FEE500] rounded-full"
             >
               <div className="flex items-center w-full">
                 <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
@@ -41,7 +45,7 @@ function RouteComponent(): React.ReactNode {
                     fill="currentColor"
                   />
                 </svg>
-                <span className="flex-1 text-center">카카오로 시작하기</span>
+                <span className="flex-1 text-center">Kakao로 계속하기</span>
               </div>
             </a>
             <a
@@ -73,9 +77,26 @@ function RouteComponent(): React.ReactNode {
                   ></path>
                   <path fill="none" d="M0 0h48v48H0z"></path>
                 </svg>
-                <span className="flex-1 text-center">구글로 시작하기</span>
+                <span className="flex-1 text-center">Google로 계속하기</span>
               </div>
             </a>
+            {window.OS === "ios" && (
+              <Button
+                variant="none"
+                className="border px-4 py-3 w-full bg-black"
+                onClick={onAppleLogin}
+                round
+              >
+                <img
+                  src="/appleLogo-dark.svg"
+                  alt="애플 로그인 버튼"
+                  className="w-6 h-6"
+                />
+                <span className="flex-1 text-center text-base">
+                  Apple로 계속하기
+                </span>
+              </Button>
+            )}
 
             <div className="text-center space-y-4">
               <div className="border-t border-gray-200 pt-4">
