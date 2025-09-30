@@ -42,5 +42,11 @@
     "test": "yarn workspace @kokomen/client test && yarn workspace @kokomen/webview test && yarn workspace @kokomen/server test",
     "lhci": "yarn workspace @kokomen/client lhci",
     "build": "yarn workspace @kokomen/client build"
+  },
+  "dependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "cookie-parser": "^1.4.7"
   }
 }
