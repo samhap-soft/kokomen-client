@@ -8,6 +8,7 @@ import {
 import { Interview } from "../../interview/domains/interview";
 import { AnswerLike } from "../../answer/domains/answerLike";
 import { InterviewLike } from "../../interview/domains/interviewLike";
+import { MemberSocialLogin } from "./memberSocialLogin";
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
@@ -18,24 +19,16 @@ export class Member {
   id: number;
 
   @Field(() => Date)
-  @CreateDateColumn({ name: "created_at", type: "datetime", precision: 6 })
+  @Column({ name: "created_at", type: "datetime", precision: 6 })
   createdAt: Date;
 
-  @Field(() => Int, { nullable: true })
-  @Column({ name: "kakao_id", type: "bigint", nullable: true, unique: true })
-  kakaoId: number | null;
-
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @Column({ type: "varchar", length: 255, nullable: true })
-  nickname: string | null;
+  nickname: string;
 
   @Field(() => Int)
   @Column({ type: "int", default: 0 })
   score: number;
-
-  @Field(() => Int)
-  @Column({ name: "free_token_count", type: "int" })
-  freeTokenCount: number;
 
   @Field(() => Boolean)
   @Column({ name: "profile_completed", type: "boolean" })
@@ -52,4 +45,8 @@ export class Member {
   @Field(() => [InterviewLike])
   @OneToMany(() => InterviewLike, (interviewLike) => interviewLike.member)
   interviewLikes: InterviewLike[];
+
+  @Field(() => [MemberSocialLogin])
+  @OneToMany(() => MemberSocialLogin, (socialLogin) => socialLogin.member)
+  socialLogins: MemberSocialLogin[];
 }
