@@ -7,13 +7,10 @@ import {
 } from "react-native";
 import WebView from "react-native-webview";
 import useWebviewEvents from "@/hooks/useWebviewEvents";
+import { WEBVIEW_RUN_FIRST_SCRIPT } from "@/constants";
 
 export default function InterviewMainScreen() {
   const webviewRef = useRef<WebView>(null);
-  const runFirst = `
-      window.isNativeApp = true;
-      true;
-    `;
 
   const { handleMessage } = useWebviewEvents(webviewRef);
 
@@ -36,7 +33,7 @@ export default function InterviewMainScreen() {
             userAgent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
             javaScriptEnabled={true}
             originWhitelist={["*"]}
-            injectedJavaScriptBeforeContentLoaded={runFirst}
+            injectedJavaScriptBeforeContentLoaded={WEBVIEW_RUN_FIRST_SCRIPT}
             webviewDebuggingEnabled
             onMessage={handleMessage}
             style={{ flex: 1 }}
