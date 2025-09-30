@@ -31,7 +31,7 @@ export class AuthResolver {
     const response: Response = context.res;
     response.setHeader(
       "Set-Cookie",
-      `JSESSIONID=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1800`
+      `JSESSIONID=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=86400`
     );
 
     return {

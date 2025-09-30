@@ -4,6 +4,7 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NestInterceptor
 } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
@@ -12,6 +13,7 @@ import { DataSource } from "typeorm";
 
 @Injectable()
 export class TransactionInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(TransactionInterceptor.name);
   constructor(private readonly dataSource: DataSource) {}
 
   async intercept(
@@ -22,7 +24,6 @@ export class TransactionInterceptor implements NestInterceptor {
       const queryRunner = this.dataSource.createQueryRunner();
       await queryRunner.connect();
       await queryRunner.startTransaction();
-      console.log("TransactionStarted");
 
       // GraphQL 컨텍스트에서 request 가져오기
       const gqlContext = GqlExecutionContext.create(context);
@@ -37,7 +38,7 @@ export class TransactionInterceptor implements NestInterceptor {
 
       return next.handle().pipe(
         catchError(async (error) => {
-          console.error(error);
+          this.logger.error("error in transaction", error);
           await queryRunner.rollbackTransaction();
           await queryRunner.release();
 
@@ -49,11 +50,10 @@ export class TransactionInterceptor implements NestInterceptor {
         tap(async () => {
           await queryRunner.commitTransaction();
           await queryRunner.release();
-          console.log("TransactionCommitted");
         })
       );
     } catch (error) {
-      console.error(error);
+      this.logger.error("unhandled error", error);
       throw new InternalServerErrorException();
     }
   }

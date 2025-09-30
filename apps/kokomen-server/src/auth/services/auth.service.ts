@@ -10,6 +10,7 @@ import { TokenService } from "src/token/services/token.service";
 
 @Injectable()
 export class AuthService {
+  private readonly appleLoginProvider = "APPLE";
   constructor(
     private readonly memberService: MemberService,
     private readonly appleAuthService: AppleAuthService,
@@ -33,20 +34,20 @@ export class AuthService {
     // 소셜 로그인 아이디 조회
     let socialLogin = await this.socialLoginService.findById(
       appleUserId,
-      "apple"
+      this.appleLoginProvider
     );
 
     let member: Member | undefined = socialLogin?.member;
     if (!member) {
       // 소셜 로그인 아이디가 없으면 새로운 가입으로 취급
       const newMember = await this.memberService.create(transactionManager, {
-        nickname: `kokomen_${new Date().getTime().toFixed(6).toString()}`,
+        nickname: `꼬꼬면_${tokenPayload.sub.slice(0, 6)}`,
         createdAt: new Date(),
         profileCompleted: false
       });
       socialLogin = await this.socialLoginService.create(transactionManager, {
         member: newMember,
-        provider: "APPLE",
+        provider: this.appleLoginProvider,
         socialId: appleUserId,
         createdAt: new Date()
       });
