@@ -1,6 +1,5 @@
 import useSpeechRecognition from "@/hooks/useSpeechRecognition";
 import appleAuth from "@invertase/react-native-apple-authentication";
-import axios from "axios";
 import { ExpoSpeechRecognitionModule } from "expo-speech-recognition";
 import WebView, { WebViewMessageEvent } from "react-native-webview";
 
@@ -34,21 +33,12 @@ export default function useWebviewEvents(
   const checkSpeechRecognitionSupported = () => {
     ExpoSpeechRecognitionModule.requestPermissionsAsync()
       .then((result) => {
-        if (result.status === "granted") {
-          webviewRef.current?.postMessage(
-            JSON.stringify({
-              type: "checkSpeechRecognitionSupported",
-              data: true,
-            }),
-          );
-        } else {
-          webviewRef.current?.postMessage(
-            JSON.stringify({
-              type: "checkSpeechRecognitionSupported",
-              data: false,
-            }),
-          );
-        }
+        webviewRef.current?.postMessage(
+          JSON.stringify({
+            type: "checkSpeechRecognitionSupported",
+            data: result.status === "granted",
+          }),
+        );
       })
       .catch(() => {
         webviewRef.current?.postMessage(
