@@ -66,10 +66,9 @@ posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: "https://local.kokomen.kr/api/v3/graphql",
-    credentials: "include",
-  }),
-
+    uri: import.meta.env.VITE_GRAPHQL_API_URL,
+    credentials: "include"
+  })
 });
 
 const rootElement = document.getElementById("root")!;
