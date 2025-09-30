@@ -1,3 +1,4 @@
+import useWebviewEvents from "@/hooks/useWebviewEvents";
 import { useRef } from "react";
 import {
   KeyboardAvoidingView,
@@ -13,6 +14,7 @@ export default function DashboardScreen() {
       window.isNativeApp = true;
       true;
     `;
+  const { handleMessage } = useWebviewEvents(webviewRef);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -37,6 +39,7 @@ export default function DashboardScreen() {
             setBuiltInZoomControls={false}
             domStorageEnabled={true}
             setDisplayZoomControls={false}
+            onMessage={handleMessage}
           />
         </KeyboardAvoidingView>
       </SafeAreaView>
