@@ -2,20 +2,10 @@ services:
   kokomen-nest-server-dev:
     build:
       context: .
-      dockerfile: ./apps/kokomen-server/Dockerfile
-      args:
-        TZ: Asia/Seoul
-        NODE_ENV: development
-        DATABASE_HOST: kokomen-interview-local-mysql
-        DATABASE_PORT: 3306
-        DATABASE_USERNAME: kokomen
-        DATABASE_PASSWORD: kokomen
-        DATABASE_ROOT_PASSWORD: root
-        DATABASE_DATABASE: kokomen-local
-        REDIS_HOST: kokomen-local-redis
-        REDIS_PORT: 6379
-        PORT: 3000
+      dockerfile: ./apps/kokomen-server/local.Dockerfile
     container_name: kokomen-nest-server-dev
+    volumes:
+      - .:/app
     restart: on-failure:3
     ports:
       - "3000:3000"
@@ -40,7 +30,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./apps/kokomen-server/nginx/dev/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./apps/kokomen-server/nginx/local/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./apps/kokomen-server/nginx/local/certs:/etc/nginx/certs:ro
     depends_on:
       - kokomen-nest-server-dev
     restart: unless-stopped
