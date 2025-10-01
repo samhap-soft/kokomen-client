@@ -43,7 +43,8 @@ const buttonVariants = cva(
           "bg-warning-bg text-warning hover:bg-warning-bg-hover active:bg-warning-border shadow-sm hover:shadow-md",
         glass:
           "bg-white/20 backdrop-blur-md border border-white/30 text-text-primary hover:bg-white/30 hover:border-white/50 shadow-lg hover:shadow-xl",
-        neon: "bg-primary text-text-light-solid shadow-[0_0_20px_rgba(22,104,220,0.5)] hover:shadow-[0_0_30px_rgba(22,104,220,0.7)] transform hover:scale-105"
+        neon: "bg-primary text-text-light-solid shadow-[0_0_20px_rgba(22,104,220,0.5)] hover:shadow-[0_0_30px_rgba(22,104,220,0.7)] transform hover:scale-105",
+        none: ""
       },
       size: {
         default: "px-4 py-2 text-sm",

@@ -8,9 +8,16 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
+      "http://localhost:80",
       "http://localhost:3000",
       "http://localhost:3001",
+      "https://localhost:3000",
+      "https://localhost:3001",
       "http://local.kokomen.kr:3000",
+      "http://local.kokomen.kr",
+      "https://local.kokomen.kr:3000",
+      "https://local.kokomen.kr:3001",
+      "https://local.kokomen.kr",
       "https://dev.kokomen.kr",
       "https://kokomen.kr",
       "https://webview.kokomen.kr",

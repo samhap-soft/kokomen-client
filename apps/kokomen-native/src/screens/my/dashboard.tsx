@@ -1,3 +1,5 @@
+import { WEBVIEW_RUN_FIRST_SCRIPT } from "@/constants";
+import useWebviewEvents from "@/hooks/useWebviewEvents";
 import { useRef } from "react";
 import {
   KeyboardAvoidingView,
@@ -9,10 +11,7 @@ import WebView from "react-native-webview";
 
 export default function DashboardScreen() {
   const webviewRef = useRef<WebView>(null);
-  const runFirst = `
-      window.isNativeApp = true;
-      true;
-    `;
+  const { handleMessage } = useWebviewEvents(webviewRef);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -30,13 +29,14 @@ export default function DashboardScreen() {
             userAgent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
             javaScriptEnabled={true}
             originWhitelist={["*"]}
-            injectedJavaScriptBeforeContentLoaded={runFirst}
+            injectedJavaScriptBeforeContentLoaded={WEBVIEW_RUN_FIRST_SCRIPT}
             webviewDebuggingEnabled
             style={{ flex: 1 }}
             pullToRefreshEnabled={true}
             setBuiltInZoomControls={false}
             domStorageEnabled={true}
             setDisplayZoomControls={false}
+            onMessage={handleMessage}
           />
         </KeyboardAvoidingView>
       </SafeAreaView>

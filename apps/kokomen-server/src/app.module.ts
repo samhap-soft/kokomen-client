@@ -12,6 +12,7 @@ import { MemberService } from "./member/member.service";
 import { RedisModule } from "src/redis/redis.module";
 import { CategoryModule } from "src/interview/modules/category";
 import { RootQuestionModule } from "src/interview/modules/rootQuestion";
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -38,11 +39,13 @@ import { RootQuestionModule } from "src/interview/modules/rootQuestion";
       autoSchemaFile: true,
       path: "api/v3/graphql",
       sortSchema: true,
-      introspection: true
+      introspection: true,
+      context: ({ req, res }) => ({ req, res })
     }),
     RedisModule,
     CategoryModule,
-    RootQuestionModule
+    RootQuestionModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService, MemberResolver, MemberService]
