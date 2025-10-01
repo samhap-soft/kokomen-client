@@ -10,9 +10,10 @@ import { useRouter, useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 function useLogin(defaultRedirectTo: string = "/interviews") {
+  const ROOT_URI = "/interviews";
   const client = useApolloClient();
   const router = useRouter();
-  const ROOT_URI = "/interviews";
+
   const query = useSearch({
     from: "/login/",
     select: (search) => search as { redirectTo?: string }
@@ -73,7 +74,7 @@ function useLogin(defaultRedirectTo: string = "/interviews") {
     }
   }, [appleAuthMutation]);
 
-  return { onAppleLogin };
+  return { onAppleLogin, isAppleLoginLoading: appleAuthMutation.isPending };
 }
 
 export default useLogin;

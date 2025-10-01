@@ -17,7 +17,9 @@ function RouteComponent(): React.ReactNode {
   const redirectUri = `${import.meta.env.VITE_BASE_URL}/login/callback${redirectTo}`;
   const googleRedirectUri = `${import.meta.env.VITE_BASE_URL}/login/google/callback${redirectTo}`;
   const ROOT_URI = "/interviews";
-  const { onAppleLogin } = useLogin(query.redirectTo ?? ROOT_URI);
+  const { onAppleLogin, isAppleLoginLoading } = useLogin(
+    query.redirectTo ?? ROOT_URI
+  );
   return (
     <>
       <div className="h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -83,7 +85,8 @@ function RouteComponent(): React.ReactNode {
             {window.OS === "ios" && (
               <Button
                 variant="none"
-                className="border px-4 py-3 w-full bg-black"
+                disabled={isAppleLoginLoading}
+                className="border px-4 py-3 w-full bg-black [disabled:opacity-50]"
                 onClick={onAppleLogin}
                 round
               >
