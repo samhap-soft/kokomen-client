@@ -7,24 +7,28 @@ on:
 jobs:
   build-and-deploy:
     name: Build and Deploy to EC2
-    runs-on: [self-hosted, nest-prod]
+    runs-on: [self-hosted, "${{ matrix.server }}"]
+    strategy:
+      max-parallel: 1 # 순차 배포
+      matrix:
+        server: [nest-prod-a, nest-prod-b]
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
+
       - name: install dependencies
         run: |
           corepack enable
           yarn install
 
-      - name: Run Docker Compose
+      - name: Run Docker Compose on ${{ matrix.server }}
         env:
           DATABASE_HOST_PROD: ${{ secrets.DATABASE_HOST_PROD }}
           DATABASE_USERNAME_PROD: ${{ secrets.DATABASE_USERNAME_PROD }}
           DATABASE_PASSWORD_PROD: ${{ secrets.DATABASE_PASSWORD_PROD }}
           DATABASE_ROOT_PASSWORD_PROD: ${{ secrets.DATABASE_ROOT_PASSWORD_PROD }}
           REDIS_HOST_PROD: ${{ secrets.REDIS_HOST_PROD }}
-
         run: |
           cd /home/ubuntu
           sudo chmod 666 /var/run/docker.sock 
