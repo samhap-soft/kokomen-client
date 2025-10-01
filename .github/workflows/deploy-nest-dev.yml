@@ -1,0 +1,35 @@
+name: Deployment Nestjs server (Dev)
+
+on:
+  push:
+    branches: [development]
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy to EC2
+    runs-on: [self-hosted, nest-dev]
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: install dependencies
+        run: |
+          corepack enable
+          yarn install
+
+      - name: Run Docker Compose
+        env:
+          DATABASE_HOST_DEV: ${{ secrets.DATABASE_HOST_DEV }}
+          DATABASE_USERNAME_DEV: ${{ secrets.DATABASE_USERNAME_DEV }}
+          DATABASE_PASSWORD_DEV: ${{ secrets.DATABASE_PASSWORD_DEV }}
+          DATABASE_ROOT_PASSWORD_DEV: ${{ secrets.DATABASE_ROOT_PASSWORD_DEV }}
+          REDIS_HOST_DEV: ${{ secrets.REDIS_HOST_DEV }}
+
+        run: |
+          cd /home/ubuntu
+          sudo chmod 666 /var/run/docker.sock 
+          cd /home/ubuntu/actions-runner/_work/kokomen-client/kokomen-client
+          yarn types:build
+          docker system prune -f
+          docker compose -f ./compose.server.dev.yaml down || true
+          docker compose -f ./compose.server.dev.yaml up -d --build

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import { Member } from "./domains/member";
 import { InterviewState } from "src/interview/domains/interviewState";
 
@@ -24,16 +24,12 @@ export class MemberService {
     });
   }
 
-  async findByKakaoId(kakaoId: number): Promise<Member | null> {
-    return this.memberRepository.findOne({
-      where: { kakaoId },
-      relations: ["interviews"]
-    });
-  }
-
-  async create(memberData: Partial<Member>): Promise<Member> {
+  async create(
+    transactionManager: EntityManager,
+    memberData: Partial<Member>
+  ): Promise<Member> {
     const member = this.memberRepository.create(memberData);
-    return this.memberRepository.save(member);
+    return transactionManager.save(member);
   }
 
   async updateScore(id: number, score: number): Promise<Member | null> {

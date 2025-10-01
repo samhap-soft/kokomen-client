@@ -69,7 +69,7 @@ function RootComponent(): React.ReactNode {
         </h1>
       </header>
       <Toaster>
-        <main className="flex-1 overflow-auto relative">
+        <main className="flex-1 overflow-auto relative scrollbar-hidden">
           <Outlet />
         </main>
       </Toaster>

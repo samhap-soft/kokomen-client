@@ -30,15 +30,16 @@ export const RankCardSkeleton = (): JSX.Element => {
   );
 };
 
-export function RankCard(): JSX.Element {
-  const { data } = useSuspenseQuery({
+export function RankCard(): JSX.Element | null {
+  const { data, error } = useSuspenseQuery({
     queryKey: memberKeys.rank(),
     queryFn: () => getRankList()
   });
   const navigate = useNavigate();
+  if (error) return null;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mt-5">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden my-5">
       <h3 className="text-base font-semibold text-gray-800 p-4 border-b border-gray-100 flex gap-2 ">
         <Crown className="text-purple-4" />
         <span>현재 면접 등수</span>

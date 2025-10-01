@@ -6,6 +6,7 @@ declare global {
     ReactNativeWebView?: {
       postMessage: (message: string) => void;
     };
+    OS?: "ios" | "android";
   }
 }
 

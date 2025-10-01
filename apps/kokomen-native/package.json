@@ -1,5 +1,5 @@
 {
-  "name": "kokomen-native",
+  "name": "kokomen",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
@@ -20,13 +20,17 @@
     ]
   },
   "dependencies": {
+    "@apollo/client": "^4.0.6",
+    "@invertase/react-native-apple-authentication": "^2.4.1",
     "@react-navigation/bottom-tabs": "^7.4.2",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/native-stack": "^7.3.21",
     "@react-navigation/stack": "^7.4.2",
+    "axios": "^1.9.0",
     "expo": "~53.0.17",
     "expo-speech-recognition": "^2.1.1",
     "expo-status-bar": "~2.2.3",
+    "graphql": "^16.11.0",
     "lucide-react-native": "^0.525.0",
     "react": "19.0.0",
     "react-native": "0.79.5",

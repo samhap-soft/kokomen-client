@@ -3,6 +3,8 @@ import { StrictMode } from "react";
 import { LoadingFullScreen } from "@kokomen/ui";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
 import {
   QueryClient,
   QueryClientProvider,
@@ -61,14 +63,24 @@ posthog.init(import.meta.env.VITE_POSTHOG_KEY, {
   defaults: "2025-05-24"
 });
 
+const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: import.meta.env.VITE_GRAPHQL_API_URL,
+    credentials: "include"
+  })
+});
+
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AuthRouter />
-      </QueryClientProvider>
+      <ApolloProvider client={apolloClient}>
+        <QueryClientProvider client={queryClient}>
+          <AuthRouter />
+        </QueryClientProvider>
+      </ApolloProvider>
     </StrictMode>
   );
 }

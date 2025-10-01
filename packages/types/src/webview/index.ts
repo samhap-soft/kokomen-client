@@ -2,7 +2,8 @@ type WebviewMessageType =
   | "startListening"
   | "stopListening"
   | "speechRecognitionResult"
-  | "checkSpeechRecognitionSupported";
+  | "checkSpeechRecognitionSupported"
+  | "appleLoginResult";
 
 type WebviewMessage<T> = {
   type: WebviewMessageType;
