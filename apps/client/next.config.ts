@@ -29,7 +29,8 @@ const nextConfig: NextConfig = {
   experimental: {
     webpackMemoryOptimizations: true,
     webpackBuildWorker: true,
-    preloadEntriesOnStart: true
+    preloadEntriesOnStart: true,
+    urlImports: ["https://cdn.jsdelivr.net/"]
   }
 };
 
