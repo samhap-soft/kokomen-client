@@ -5,7 +5,8 @@ import { GetServerSidePropsContext } from "next";
 
 const authServerInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true
+  withCredentials: true,
+  timeout: 10000
 });
 
 interface KakaoLoginResponse {

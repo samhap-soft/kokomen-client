@@ -11,7 +11,7 @@ import {
   ResumeEvaluationDto,
   ResumeEvaluationInput
 } from "../dto/resumeEvaluation.dto";
-import { SessionAuthGuard } from "src/globals/session-auth.guard";
+import { SessionAuthGuardForHTTP } from "src/globals/http-session-auth.guard";
 import { ResumeService } from "src/resume/services/resume.service";
 
 @ApiTags("Resume")
@@ -25,7 +25,7 @@ export class ResumeController {
     summary: "Evaluate resume based on job position and description"
   })
   @ApiBody({ type: ResumeEvaluationDto })
-  @UseGuards(SessionAuthGuard)
+  @UseGuards(SessionAuthGuardForHTTP)
   async evaluateResume(
     @Body()
     body: ResumeEvaluationDto

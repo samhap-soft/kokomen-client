@@ -5,15 +5,14 @@ import {
   UnauthorizedException,
   Logger
 } from "@nestjs/common";
-import { GqlExecutionContext } from "@nestjs/graphql";
 import { SpringSessionService } from "../auth/services/spring-session.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Member } from "../member/domains/member";
 
 @Injectable()
-export class SessionAuthGuard implements CanActivate {
-  private readonly logger = new Logger(SessionAuthGuard.name);
+export class SessionAuthGuardForHTTP implements CanActivate {
+  private readonly logger = new Logger(SessionAuthGuardForHTTP.name);
   constructor(
     private readonly springSessionService: SpringSessionService,
     @InjectRepository(Member)
@@ -21,8 +20,7 @@ export class SessionAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req;
+    const request = context.switchToHttp().getRequest();
 
     // Get JSESSIONID from cookie
     const sessionId = request.cookies?.JSESSIONID;

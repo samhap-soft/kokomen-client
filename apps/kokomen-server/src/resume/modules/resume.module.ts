@@ -5,10 +5,10 @@ import { Interview } from "src/interview/domains/interview";
 import { RootQuestion } from "src/interview/domains/rootQuestion";
 import { AWSBedrockFlowService } from "src/resume/services/awsBedrock.service";
 import { ResumeService } from "src/resume/services/resume.service";
-import { InterviewService } from "src/interview/services/interview.service";
 import { ResumeController } from "src/resume/controllers/resume.controller";
 import { SpringSessionService } from "src/auth/services/spring-session.service";
-import { SessionAuthGuard } from "src/globals/session-auth.guard";
+import { SessionAuthGuardForGraphQL } from "src/globals/gql-session-auth.guard";
+import { SessionAuthGuardForHTTP } from "src/globals/http-session-auth.guard";
 import { Member } from "src/member/domains/member";
 
 @Module({
@@ -17,11 +17,11 @@ import { Member } from "src/member/domains/member";
   ],
   controllers: [ResumeController],
   providers: [
-    InterviewService,
     ResumeService,
     AWSBedrockFlowService,
     SpringSessionService,
-    SessionAuthGuard
+    SessionAuthGuardForGraphQL,
+    SessionAuthGuardForHTTP
   ]
 })
 export class ResumeModule {}
