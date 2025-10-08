@@ -64,7 +64,10 @@ export default function ResumeEvaluationForm({
     ResumeInput
   >({
     mutationFn: (data) => submitResumeEvaluation(data),
-    onSuccess: (data) => setResult(data),
+    onSuccess: (data) => {
+      form.reset();
+      setResult(data);
+    },
     onError: withApiErrorCapture((error) => {
       if (isAxiosError(error) && error.response?.status === 401) {
         router.replace("/login?redirectTo=/resume/eval");

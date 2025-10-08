@@ -37,7 +37,7 @@ WORKDIR /app/apps/client
 
 RUN yarn types:build
 
-RUN yarn build
+RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
 
 WORKDIR /app
 CMD ["yarn", "client:prod"]
