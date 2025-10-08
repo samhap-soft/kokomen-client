@@ -36,6 +36,12 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
       featureFlag: true
     },
     {
+      href: "/resume",
+      label: "이력서",
+      current: false,
+      featureFlag: true
+    },
+    {
       href: "/purchase",
       label: "토큰 구매",
       current: false,
