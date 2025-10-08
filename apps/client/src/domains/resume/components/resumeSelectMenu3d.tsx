@@ -183,9 +183,6 @@ const ResumeInterview = () => {
     document.body.style.cursor = "default";
     setTargetScale(0.2);
   };
-  const handleClick = () => {
-    router.push("/resume/interview");
-  };
 
   return (
     <>
@@ -196,7 +193,6 @@ const ResumeInterview = () => {
         scale={0.2}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
-        onClick={handleClick}
       >
         {/* 말풍선 배경 */}
         <RoundedBox
