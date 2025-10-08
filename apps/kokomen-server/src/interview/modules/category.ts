@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { CategoryResolver } from "src/interview/resolvers/category";
+import { CategoryResolver } from "src/interview/resolvers/category.resolver";
 import { CategoryService } from "src/interview/services/category";
 
 @Module({
