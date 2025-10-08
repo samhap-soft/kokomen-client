@@ -8,10 +8,11 @@ import {
 import WebView from "react-native-webview";
 import useWebviewEvents from "@/hooks/useWebviewEvents";
 import { WEBVIEW_RUN_FIRST_SCRIPT } from "@/constants";
+import useUserAgent from "@/hooks/useUserAgent";
 
 export default function InterviewMainScreen() {
   const webviewRef = useRef<WebView>(null);
-
+  const userAgent = useUserAgent();
   const { handleMessage } = useWebviewEvents(webviewRef);
 
   return (
@@ -30,7 +31,7 @@ export default function InterviewMainScreen() {
             source={{
               uri: `${process.env.EXPO_PUBLIC_CLIENT_URL}/interviews`,
             }}
-            userAgent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
+            userAgent={userAgent}
             javaScriptEnabled={true}
             originWhitelist={["*"]}
             injectedJavaScriptBeforeContentLoaded={WEBVIEW_RUN_FIRST_SCRIPT}

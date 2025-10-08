@@ -1,5 +1,7 @@
 declare const process: {
   env: {
+    ANALYZE: string;
+    CI: string;
     SENTRY_AUTH_TOKEN: string;
     NEXT_PUBLIC_POSTHOG_KEY: string;
     NEXT_PUBLIC_POSTHOG_HOST: string;

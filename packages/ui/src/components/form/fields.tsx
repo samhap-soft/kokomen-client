@@ -19,9 +19,9 @@ const FileField = ({
   const [fileName, setFileName] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileName(e.target.files?.[0]?.name || "");
-    register.onChange(e);
+    await register.onChange(e);
   };
 
   const setRef = (ref: HTMLInputElement) => {

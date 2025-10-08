@@ -16,6 +16,21 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
+const ResumeEvaluationLoading = () => (
+  <div className="fixed inset-0 w-full flex items-center justify-center flex-col gap-8 bg-black/50">
+    <Image
+      src="/kokomenReport.png"
+      alt="kokomenReport"
+      width={300}
+      height={300}
+    />
+    <div className="text-lg space-y-2 text-text-light-solid text-center">
+      <p>보고서를 생성하는 중이에요. 잠시만 기다려주세요.</p>
+      <p>최대 1분까지 소요될 수 있어요</p>
+    </div>
+  </div>
+);
+
 const jobCareers = ["0-1년", "1-3년", "3-5년", "5-10년", "10년 이상"];
 const resumeEvalFormFields = z.object({
   resume: z.instanceof(FileList).refine((fileList) => fileList.length > 0, {
@@ -126,7 +141,10 @@ export default function ResumeEvaluationForm({
             />
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-text-heading">
+              <label
+                className="block text-sm font-medium text-text-heading"
+                htmlFor="job_position"
+              >
                 지원 직무 <span className="text-error">*</span>
               </label>
               <Input
@@ -143,7 +161,10 @@ export default function ResumeEvaluationForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-text-heading">
+              <label
+                className="block text-sm font-medium text-text-heading"
+                htmlFor="job_career"
+              >
                 연차
               </label>
               <div className="flex gap-2">
@@ -168,7 +189,10 @@ export default function ResumeEvaluationForm({
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-text-heading">
+              <label
+                className="block text-sm font-medium text-text-heading"
+                htmlFor="job_description"
+              >
                 채용 공고
               </label>
               <textarea
@@ -192,18 +216,3 @@ export default function ResumeEvaluationForm({
     </div>
   );
 }
-
-const ResumeEvaluationLoading = () => (
-  <div className="fixed inset-0 w-full flex items-center justify-center flex-col gap-8 bg-black/50">
-    <Image
-      src="/kokomenReport.png"
-      alt="kokomenReport"
-      width={300}
-      height={300}
-    />
-    <div className="text-lg space-y-2 text-text-light-solid text-center">
-      <p>보고서를 생성하는 중이에요. 잠시만 기다려주세요.</p>
-      <p>최대 1분까지 소요될 수 있어요</p>
-    </div>
-  </div>
-);

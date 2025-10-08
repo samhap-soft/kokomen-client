@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { captureException } from "@sentry/nextjs";
 import { AxiosError } from "axios";
 

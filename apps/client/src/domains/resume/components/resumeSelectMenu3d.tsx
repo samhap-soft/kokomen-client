@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { Button } from "@kokomen/ui";
 import {
   Html,
@@ -162,7 +164,6 @@ const ResumeInterview = () => {
     `${process.env.NEXT_PUBLIC_CDN_BASE_URL}/models/resumeInterview.glb`
   );
   const groupRef = useRef<Group>(null);
-  const router = useRouter();
   const [targetScale, setTargetScale] = useState(0.2);
 
   useFrame(() => {

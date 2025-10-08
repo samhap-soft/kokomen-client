@@ -22,58 +22,6 @@ const menuItems: MenuItemProps[] = [
   }
 ];
 
-export default function ResumeSelectMenuNormal() {
-  return (
-    <div className="w-full flex items-center justify-center px-6 py-12">
-      <SwitchViewButton />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center">
-        <Image
-          src="/kokomenReport.png"
-          alt="kokomenReport"
-          width={300}
-          height={300}
-          className="mx-auto w-3/4"
-        />
-        <div className="text-center space-y-2 mb-8">
-          <div className="text-center space-y-2 mb-8">
-            <h1 className="text-3xl font-bold text-text-heading">
-              맞춤형 이력서 서비스
-            </h1>
-            <p className="text-text-secondary text-lg">
-              원하는 서비스를 선택해주세요
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            {menuItems.map((item, index) => (
-              <MenuItem key={index} {...item} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const SwitchViewButton = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const handleClick = () => {
-    const params = new URLSearchParams(searchParams);
-    params.set("view", "3d");
-    router.replace(`/resume?${params.toString()}`);
-  };
-  return (
-    <Button
-      variant="outline"
-      className="absolute top-4 left-4 z-10 px-4"
-      onClick={handleClick}
-    >
-      3D로 보기
-    </Button>
-  );
-};
-
 interface MenuItemProps {
   title: string;
   description: string;
@@ -126,3 +74,55 @@ const MenuItem = ({
     </Link>
   );
 };
+
+const SwitchViewButton = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const handleClick = () => {
+    const params = new URLSearchParams(searchParams);
+    params.set("view", "3d");
+    router.replace(`/resume?${params.toString()}`);
+  };
+  return (
+    <Button
+      variant="outline"
+      className="absolute top-4 left-4 z-10 px-4"
+      onClick={handleClick}
+    >
+      3D로 보기
+    </Button>
+  );
+};
+
+export default function ResumeSelectMenuNormal() {
+  return (
+    <div className="w-full flex items-center justify-center px-6 py-12">
+      <SwitchViewButton />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center">
+        <Image
+          src="/kokomenReport.png"
+          alt="kokomenReport"
+          width={300}
+          height={300}
+          className="mx-auto w-3/4"
+        />
+        <div className="text-center space-y-2 mb-8">
+          <div className="text-center space-y-2 mb-8">
+            <h1 className="text-3xl font-bold text-text-heading">
+              맞춤형 이력서 서비스
+            </h1>
+            <p className="text-text-secondary text-lg">
+              원하는 서비스를 선택해주세요
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            {menuItems.map((item, index) => (
+              <MenuItem key={index} {...item} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

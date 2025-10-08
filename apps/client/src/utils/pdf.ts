@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-redeclare */
+// @ts-ignore
 import { PDFParse } from "https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/browser/pdf-parse.es.js";
 
 async function parsePdf(pdf: File[], length?: number): Promise<string[]>;
