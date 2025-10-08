@@ -10,7 +10,7 @@ import {
 } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Group } from "three";
 import * as THREE from "three";
 
@@ -65,6 +65,23 @@ const Kokomen3D = () => {
   const object = useGLTF(
     `${process.env.NEXT_PUBLIC_CDN_BASE_URL}/models/kokomen3d.glb`
   );
+
+  useEffect(() => {
+    return () => {
+      // Cleanup GLTF resources
+      object.scene.traverse((child: any) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach((m) => m.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      });
+    };
+  }, [object]);
+
   return (
     <primitive
       object={object.scene}
@@ -92,6 +109,25 @@ const ResumeEval = () => {
       groupRef.current.scale.set(newScale, newScale, newScale);
     }
   });
+
+  useEffect(() => {
+    const originalCursor = document.body.style.cursor;
+    return () => {
+      // Cleanup cursor
+      document.body.style.cursor = originalCursor;
+      // Cleanup GLTF resources
+      object.scene.traverse((child: any) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach((m) => m.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      });
+    };
+  }, [object]);
 
   const handlePointerEnter = () => {
     document.body.style.cursor = "pointer";
@@ -175,6 +211,25 @@ const ResumeInterview = () => {
       groupRef.current.scale.set(newScale, newScale, newScale);
     }
   });
+
+  useEffect(() => {
+    const originalCursor = document.body.style.cursor;
+    return () => {
+      // Cleanup cursor
+      document.body.style.cursor = originalCursor;
+      // Cleanup GLTF resources
+      object.scene.traverse((child: any) => {
+        if (child.geometry) child.geometry.dispose();
+        if (child.material) {
+          if (Array.isArray(child.material)) {
+            child.material.forEach((m) => m.dispose());
+          } else {
+            child.material.dispose();
+          }
+        }
+      });
+    };
+  }, [object]);
 
   const handlePointerEnter = () => {
     document.body.style.cursor = "pointer";
