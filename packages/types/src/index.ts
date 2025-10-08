@@ -8,3 +8,4 @@ export * from "./notifications";
 export * from "./category";
 export * from "./webview";
 export * from "./purchase";
+export * from "./resume";

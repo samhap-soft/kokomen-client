@@ -18,6 +18,7 @@
     "motion": "^12.23.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.59.0",
     "three": "^0.177.0"
   },
   "devDependencies": {

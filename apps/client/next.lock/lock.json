@@ -1,0 +1,4 @@
+{
+  "https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/browser/pdf-parse.es.js": { "integrity": "sha512-2eTbeGze7jo0qJ4BU89ApQzHDlfvhToUH+uhXbRS9q1ypPIm1RHOAZvrdO70S+IwigD8HClaKXiYqJ1DwkYGZw==", "contentType": "application/javascript; charset=utf-8" },
+  "version": 1
+}

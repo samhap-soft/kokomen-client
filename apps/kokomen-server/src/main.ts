@@ -1,5 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,13 +21,22 @@ async function bootstrap() {
       "https://local.kokomen.kr",
       "https://dev.kokomen.kr",
       "https://kokomen.kr",
+      "https://www.kokomen.kr",
+      "https://www.webview.kokomen.kr",
       "https://webview.kokomen.kr",
-      "https://webview-dev.kokomen.kr"
+      "https://webview-dev.kokomen.kr",
+      "https://www.webview-dev.kokomen.kr"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"]
   });
+  const config = new DocumentBuilder()
+    .setTitle("Kokomen API V3")
+    .setVersion("0.0.1")
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api/v3/docs", app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3001);
 }

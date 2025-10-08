@@ -29,7 +29,13 @@ const config = {
     "!<rootDir>/out/**",
     "!<rootDir>/.next/**",
     "!<rootDir>/*.config.js",
-    "!<rootDir>/coverage/**"
+    "!<rootDir>/coverage/**",
+    "!<rootDir>/next.lock/**"
+  ],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "/next.lock/",
+    "https://cdn.jsdelivr.net/"
   ],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testPathIgnorePatterns: ["<rootDir>/node_modules/", "<rootDir>/.next/"],

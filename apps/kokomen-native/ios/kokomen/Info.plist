@@ -37,6 +37,8 @@
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>꼬꼬면에서 프로필 사진 설정 등에서 사용자의 사진을 사용하기 위한 접근을 요청합니다.</string>
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSAllowsArbitraryLoads</key>

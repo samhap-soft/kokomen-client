@@ -5,10 +5,18 @@ services:
       dockerfile: ./apps/kokomen-server/local.Dockerfile
     container_name: kokomen-nest-server-dev
     volumes:
-      - .:/app
+      # 소스 코드만 마운트 (node_modules, .yarn 제외)
+      - ./apps:/app/apps
+      - ./packages:/app/packages
+      - ./package.json:/app/package.json:ro
+      - ./yarn.lock:/app/yarn.lock:ro
+      - ./.yarnrc.yml:/app/.yarnrc.yml:ro
+      - ./.yarn/releases:/app/.yarn/releases:ro
+      - ./.pnp.cjs:/app/.pnp.cjs:ro
+      - ./.pnp.loader.mjs:/app/.pnp.loader.mjs:ro
+      # Yarn PnP 의존성 해결을 위해 필요
     restart: on-failure:3
     ports:
-      - "3000:3000"
       - "3001:3001"
     environment:
       NODE_ENV: development

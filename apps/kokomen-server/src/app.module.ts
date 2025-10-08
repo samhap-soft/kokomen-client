@@ -13,12 +13,13 @@ import { RedisModule } from "src/redis/redis.module";
 import { CategoryModule } from "src/interview/modules/category";
 import { RootQuestionModule } from "src/interview/modules/rootQuestion";
 import { AuthModule } from "./auth/auth.module";
+import { ResumeModule } from "src/resume/modules/resume.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`env.${process.env.NODE_ENV || "development"}`, ".env"],
+      envFilePath: [`.env.${process.env.NODE_ENV || "development"}`, ".env"],
       load: [appConfig]
     }),
     TypeOrmModule.forRoot({
@@ -45,7 +46,8 @@ import { AuthModule } from "./auth/auth.module";
     RedisModule,
     CategoryModule,
     RootQuestionModule,
-    AuthModule
+    AuthModule,
+    ResumeModule
   ],
   controllers: [AppController],
   providers: [AppService, MemberResolver, MemberService]
