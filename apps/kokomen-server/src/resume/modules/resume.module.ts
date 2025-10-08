@@ -4,7 +4,7 @@ import { Category } from "src/interview/domains/category";
 import { Interview } from "src/interview/domains/interview";
 import { RootQuestion } from "src/interview/domains/rootQuestion";
 import { AWSBedrockFlowService } from "src/resume/services/awsBedrock.service";
-import { CustomInterviewService } from "src/resume/services/resume.service";
+import { ResumeService } from "src/resume/services/resume.service";
 import { InterviewService } from "src/interview/services/interview.service";
 import { ResumeController } from "src/resume/controllers/resume.controller";
 import { SpringSessionService } from "src/auth/services/spring-session.service";
@@ -18,10 +18,10 @@ import { Member } from "src/member/domains/member";
   controllers: [ResumeController],
   providers: [
     InterviewService,
-    CustomInterviewService,
+    ResumeService,
     AWSBedrockFlowService,
     SpringSessionService,
     SessionAuthGuard
   ]
 })
-export class InterviewModule {}
+export class ResumeModule {}

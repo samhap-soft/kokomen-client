@@ -7,20 +7,18 @@ import {
   UseGuards
 } from "@nestjs/common";
 import { ApiTags, ApiBody, ApiOperation } from "@nestjs/swagger";
-import { CustomInterviewService } from "../services/resume.service";
 import {
   ResumeEvaluationDto,
   ResumeEvaluationInput
 } from "../dto/resumeEvaluation.dto";
 import { SessionAuthGuard } from "src/globals/session-auth.guard";
+import { ResumeService } from "src/resume/services/resume.service";
 
 @ApiTags("Resume")
 @Controller("resume")
 export class ResumeController {
   private readonly logger = new Logger(ResumeController.name);
-  constructor(
-    private readonly customInterviewService: CustomInterviewService
-  ) {}
+  constructor(private readonly resumeService: ResumeService) {}
 
   @Post("evaluation")
   @ApiOperation({
@@ -51,8 +49,7 @@ export class ResumeController {
         job_career
       };
 
-      const result =
-        await this.customInterviewService.createResumeEvaluation(input);
+      const result = await this.resumeService.createResumeEvaluation(input);
       return result;
     } catch (error) {
       this.logger.error("evaluateResume error", error);

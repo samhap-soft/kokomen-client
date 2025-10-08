@@ -114,7 +114,7 @@ export default function ResumeEvaluationResult({
                   reason: string;
                 };
                 return (
-                  <div key={index} className="space-y-2">
+                  <div key={cat.label + index} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span
@@ -171,7 +171,7 @@ export default function ResumeEvaluationResult({
               };
               return (
                 <div
-                  key={index}
+                  key={cat.label + index}
                   className="border border-border rounded-lg p-6 space-y-3 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center justify-between">

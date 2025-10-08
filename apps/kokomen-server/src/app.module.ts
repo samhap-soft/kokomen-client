@@ -13,7 +13,7 @@ import { RedisModule } from "src/redis/redis.module";
 import { CategoryModule } from "src/interview/modules/category";
 import { RootQuestionModule } from "src/interview/modules/rootQuestion";
 import { AuthModule } from "./auth/auth.module";
-import { InterviewModule } from "src/resume/modules/resume.module";
+import { ResumeModule } from "src/resume/modules/resume.module";
 
 @Module({
   imports: [
@@ -47,7 +47,7 @@ import { InterviewModule } from "src/resume/modules/resume.module";
     CategoryModule,
     RootQuestionModule,
     AuthModule,
-    InterviewModule
+    ResumeModule
   ],
   controllers: [AppController],
   providers: [AppService, MemberResolver, MemberService]

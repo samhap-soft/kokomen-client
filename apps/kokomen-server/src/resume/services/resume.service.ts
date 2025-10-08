@@ -4,7 +4,7 @@ import { ResumeEvaluationInput } from "src/resume/dto/resumeEvaluation.dto";
 import { AWSBedrockFlowService } from "src/resume/services/awsBedrock.service";
 
 @Injectable()
-export class CustomInterviewService {
+export class ResumeService {
   constructor(
     private readonly awsBedrockFlowService: AWSBedrockFlowService,
     private readonly configService: ConfigService

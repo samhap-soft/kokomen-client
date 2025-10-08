@@ -61,7 +61,10 @@ export class AWSBedrockFlowService {
       }
     }
 
-    this.logger.log("results", results[0]);
+    if (!results[0]) {
+      this.logger.error("No response from Bedrock flow");
+      throw new Error("No response from Bedrock flow");
+    }
     return JSON.parse(results[0]);
   }
 }

@@ -118,7 +118,7 @@ export default function ResumeSelectMenuNormal() {
 
           <div className="flex flex-col gap-4">
             {menuItems.map((item, index) => (
-              <MenuItem key={index} {...item} />
+              <MenuItem key={item.title + index} {...item} />
             ))}
           </div>
         </div>
