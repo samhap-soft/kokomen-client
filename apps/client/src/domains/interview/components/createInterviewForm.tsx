@@ -96,13 +96,20 @@ const InterviewTypeSelector: MemoExoticComponent<
           <Button
             type="button"
             aria-selected={selectedInterviewType === "VOICE"}
-            onClick={() => handleInterviewTypeChange("VOICE")}
-            className="py-6"
+            onClick={(e) => {
+              // handleInterviewTypeChange("VOICE");
+              e.preventDefault();
+            }}
+            className="py-6 group relative cursor-not-allowed"
             variant={selectedInterviewType === "VOICE" ? "primary" : "outline"}
           >
             <div className="flex flex-col items-center gap-2">
               <MicVocal className="w-6 h-6" />
               <span className="text-base font-medium">음성</span>
+            </div>
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 pointer-events-none z-10">
+              잠깐 점검중에 있어요
+              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
             </div>
           </Button>
         </div>
@@ -286,9 +293,9 @@ const CreateInterviewForm = ({
                 src={selectedCategory.image_url}
                 alt={selectedCategory.title}
                 width={200}
-                height={200}
+                height={300}
                 priority
-                className="w-52 h-auto"
+                className="h-[300px] w-[200px] object-contain"
               />
             </div>
             <h1 className="text-4xl lg:text-5xl font-bold text-text-heading mb-4">
