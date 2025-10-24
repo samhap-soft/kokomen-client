@@ -16,9 +16,11 @@
     "brace-expansion": "^2.0.2"
   },
   "devDependencies": {
+    "@inquirer/prompts": "^7.9.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
+    "husky": "^9.1.7",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
@@ -41,7 +43,9 @@
     "types:build": "yarn workspace @kokomen/types build",
     "test": "yarn workspace @kokomen/client test && yarn workspace @kokomen/webview test && yarn workspace @kokomen/server test",
     "lhci": "yarn workspace @kokomen/client lhci",
-    "build": "yarn workspace @kokomen/client build"
+    "build": "yarn workspace @kokomen/client build",
+    "prepare": "husky",
+    "commit": "./scripts/commit-msg-helper.js"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.9",

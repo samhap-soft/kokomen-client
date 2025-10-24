@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 스테이지된 파일로부터 워크스페이스 추출 → 해당 패키지 lint 실행
+STAGED_FILES=$(git diff --name-only --cached)
+
+# 워크스페이스 목록(name, location) 확보
+WS_JSON=$(yarn workspaces list --json)
+# 스테이지된 파일이 속한 최상위 디렉터리(apps/*, packages/* 등)만 추출
+PKG_DIRS=$(echo "$STAGED_FILES" | awk -F'/' 'NF>1{print $1"/"$2}' | sort -u)
+
+# 디렉터리→워크스페이스 name 매핑 후 lint 실행
+echo "$PKG_DIRS" | while read dir; do
+  [ -z "$dir" ] && continue
+  PKG_NAME=$(echo "$WS_JSON" | jq -r "select(.location == \"$dir\") | .name")
+  if [ -n "$PKG_NAME" ]; then
+    echo "→ lint $PKG_NAME"
+    yarn workspace "$PKG_NAME" run lint || exit 1
+  fi
+done
