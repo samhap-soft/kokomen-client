@@ -28,9 +28,10 @@ const links = [
     icon: "/icons/interview.svg"
   },
   {
-    title: "이력서 평가",
-    description: "이력서와 포트폴리오를 평가하고 개선점을 제안해요.",
-    href: "/resume/evaluation",
+    title: "이력서",
+    description:
+      "이력서와 포트폴리오를 평가하고 개선점을 제안하고, 이력서 기반 면접을 진행해보세요.",
+    href: "/resume",
     icon: "/icons/report.svg"
   }
 ];
