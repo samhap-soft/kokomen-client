@@ -3,7 +3,7 @@ import { UseInterceptors } from "@nestjs/common";
 import { Response } from "express";
 import { AuthService } from "./services/auth.service";
 import { AppleAuthInput, AuthResponse } from "./dto/apple-auth.dto";
-import { TransactionInterceptor } from "src/globals/interceptors/transactionInterceptor";
+import { TransactionInterceptorForGraphQL } from "src/globals/interceptors/transactionInterceptor";
 import { TransactionManager } from "src/globals/decorators/transactionManager";
 import { EntityManager } from "typeorm";
 
@@ -14,7 +14,7 @@ export class AuthResolver {
   @Mutation(() => AuthResponse, {
     description: "Authenticate with Apple Sign In"
   })
-  @UseInterceptors(TransactionInterceptor)
+  @UseInterceptors(TransactionInterceptorForGraphQL)
   async appleAuth(
     @Args("input") input: AppleAuthInput,
     @TransactionManager() transactionManager: EntityManager,

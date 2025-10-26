@@ -8,7 +8,6 @@ import { AuthService } from "./services/auth.service";
 import { AppleAuthService } from "./services/apple-auth.service";
 import { SpringSessionService } from "./services/spring-session.service";
 import { AuthResolver } from "./auth.resolver";
-import { SessionAuthGuardForGraphQL } from "../globals/gql-session-auth.guard";
 import { SessionAuthGuardForHTTP } from "../globals/http-session-auth.guard";
 import { RedisModule } from "../redis/redis.module";
 import { MemberService } from "src/member/member.service";
@@ -28,7 +27,6 @@ import { TokenModule } from "src/token/token.module";
     AppleAuthService,
     SpringSessionService,
     AuthResolver,
-    SessionAuthGuardForGraphQL,
     SessionAuthGuardForHTTP,
     MemberService,
     SocialLoginService
@@ -37,7 +35,6 @@ import { TokenModule } from "src/token/token.module";
     AuthService,
     AppleAuthService,
     SpringSessionService,
-    SessionAuthGuardForGraphQL,
     SessionAuthGuardForHTTP
   ]
 })

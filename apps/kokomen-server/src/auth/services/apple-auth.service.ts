@@ -73,7 +73,7 @@ export class AppleAuthService {
         throw error;
       }
       throw new UnauthorizedException(
-        `Token verification failed: ${error.message}`
+        `Token verification failed: ${error instanceof Error ? error.message : "Unknown error"}`
       );
     }
   }
@@ -82,7 +82,7 @@ export class AppleAuthService {
     return new Promise((resolve, reject) => {
       this.jwksClient.getSigningKey(kid, (err, key) => {
         if (err || !key) {
-          reject(err);
+          reject(err || new Error("No signing key found"));
           return;
         }
         const signingKey = key.getPublicKey();

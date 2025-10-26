@@ -8,11 +8,11 @@ export class CategoryService {
     this.categories = Category.getCategories();
   }
 
-  async findAll(): Promise<Category[]> {
+  findAll(): Category[] {
     return this.categories;
   }
 
-  async findOne(type: CategoryType): Promise<Category | null> {
+  findOne(type: CategoryType): Category | null {
     const categories = Category.getCategories();
     return categories.find((category) => category.type === type) || null;
   }

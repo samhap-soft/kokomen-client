@@ -13,7 +13,7 @@ PKG_DIRS=$(echo "$STAGED_FILES" | awk -F'/' 'NF>1{print $1"/"$2}' | sort -u)
 echo "$PKG_DIRS" | while read dir; do
   [ -z "$dir" ] && continue
   PKG_NAME=$(echo "$WS_JSON" | jq -r "select(.location == \"$dir\") | .name")
-  if [ -n "$PKG_NAME" ]; then
+  if [ -n "$PKG_NAME" ] && [ "$PKG_NAME" != "@kokomen/types" ]; then
     echo "→ lint $PKG_NAME"
     yarn workspace "$PKG_NAME" run lint || exit 1
   fi

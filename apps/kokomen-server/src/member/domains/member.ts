@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  OneToMany
-} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Interview } from "../../interview/domains/interview";
 import { AnswerLike } from "../../answer/domains/answerLike";
 import { InterviewLike } from "../../interview/domains/interviewLike";

@@ -12,6 +12,7 @@ import { MemberService } from "./member/member.service";
 import { RedisModule } from "src/redis/redis.module";
 import { CategoryModule } from "src/interview/modules/category";
 import { RootQuestionModule } from "src/interview/modules/rootQuestion";
+import { InterviewModule } from "src/interview/modules/interview.module";
 import { AuthModule } from "./auth/auth.module";
 import { ResumeModule } from "src/resume/modules/resume.module";
 
@@ -41,11 +42,12 @@ import { ResumeModule } from "src/resume/modules/resume.module";
       path: "api/v3/graphql",
       sortSchema: true,
       introspection: true,
-      context: ({ req, res }) => ({ req, res })
+      context: ({ req, res }: { req: Request; res: Response }) => ({ req, res })
     }),
     RedisModule,
     CategoryModule,
     RootQuestionModule,
+    InterviewModule,
     AuthModule,
     ResumeModule
   ],
