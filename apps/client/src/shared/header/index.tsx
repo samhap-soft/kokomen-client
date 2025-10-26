@@ -28,7 +28,12 @@ type HeaderNavigation = {
 const navigation = (isTestUser: boolean): HeaderNavigation[] => {
   return [
     { href: "/", label: "홈", current: true, featureFlag: true },
-    { href: "/interviews", label: "면접", current: false, featureFlag: true },
+    {
+      href: "/interviews",
+      label: "모의 면접",
+      current: false,
+      featureFlag: true
+    },
     {
       href: "/dashboard",
       label: "대시보드",
@@ -45,7 +50,7 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
       href: "/purchase",
       label: "토큰 구매",
       current: false,
-      featureFlag: isTestUser
+      featureFlag: true
     }
   ];
 };
@@ -123,20 +128,22 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
             )}
           </div>
           <div className="py-1">
-            <button
+            <Button
+              variant="none"
               onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-bg-hover transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
             >
               <LayoutDashboard className="w-4 h-4" />
               대시보드
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="none"
               onClick={logout}
-              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-bg-hover transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
             >
               <LogOut className="w-4 h-4" />
               로그아웃
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -160,7 +167,8 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
 
   return (
     <>
-      <button
+      <Button
+        variant="none"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="md:hidden p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
         aria-label="메뉴 열기"
@@ -170,7 +178,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
         ) : (
           <Menu className="w-5 h-5 text-gray-700" />
         )}
-      </button>
+      </Button>
 
       <div
         ref={mobileMenuRef}
@@ -189,8 +197,8 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
                 href={item.href}
                 className={`px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 ${
                   isActive
-                    ? "text-blue-600 bg-blue-50 border border-blue-100"
-                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    ? "text-primary bg-primary-bg-light border border-primary-border"
+                    : "text-text-primary hover:bg-primary-bg-light"
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -203,8 +211,8 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
             <div className="flex items-center justify-between">
               {user ? (
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <UserIcon className="w-4 h-4 text-blue-600" />
+                  <div className="w-8 h-8 bg-primary-bg-light rounded-full flex items-center justify-center">
+                    <UserIcon className="w-4 h-4 text-primary" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">
@@ -218,13 +226,13 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
               ) : (
                 <Button
                   type="button"
+                  variant="none"
                   name="login"
                   onClick={() => router.push("/login")}
                   className="flex items-center gap-3 w-full justify-start"
-                  variant={"outline"}
                 >
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <UserIcon className="w-4 h-4 text-blue-600" />
+                  <div className="w-8 h-8 bg-primary-bg-light rounded-full flex items-center justify-center">
+                    <UserIcon className="w-4 h-4 text-primary" />
                   </div>
                   <p className="text-sm font-medium text-gray-900">
                     로그인 후 이용해주세요.
@@ -236,7 +244,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
                   type="button"
                   onClick={logout}
                   name="logout"
-                  variant={"glass"}
+                  variant={"soft"}
                   className="[&_svg]:size-4"
                 >
                   <LogOut className="w-4 h-4 text-gray-600" />
@@ -254,47 +262,43 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
   const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+    <header className="sticky top-0 z-50 bg-bg-base/95 backdrop-blur-xl border-b border-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 md:flex justify-between items-center">
         <div className="flex justify-between items-center h-16 w-full">
           {/* 로고 */}
-          <Link
-            href="/"
-            className="flex items-center group transition-transform duration-200 hover:scale-105"
-          >
-            <Image
-              src="/logo.png"
-              alt="꼬꼬면 로고"
-              width={160}
-              height={40}
-              priority
-              className="h-10 w-auto"
-            />
-          </Link>
-
-          <nav className="hidden md:flex items-center space-x-1">
-            {navigation(user?.is_test_user || false).map((item) => {
-              const isActive = router.pathname === item.href;
-              if (!item.featureFlag) return null;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    isActive
-                      ? "text-blue-600 bg-blue-50 border border-blue-100"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                  }`}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  {item.label}
-                  {isActive && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full" />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+          <div className="flex items-center space-x-2">
+            <Link
+              href="/"
+              className="flex items-center group transition-transform duration-200 hover:scale-105"
+            >
+              <Image
+                src="/logo.svg"
+                alt="꼬꼬면 로고"
+                width={160}
+                height={40}
+                priority
+                className="h-10 w-auto"
+              />
+            </Link>
+            <nav className="hidden md:flex items-center space-x-1">
+              {navigation(user?.is_test_user || false).map((item) => {
+                const isActive = router.pathname === item.href;
+                if (!item.featureFlag) return null;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative px-4 py-2 text-base rounded-lg transition-all duration-200 font-bold hover:text-primary-text-hover ${
+                      isActive ? "text-primary" : "text-black"
+                    }`}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
           <div className="flex items-center space-x-2">
             {/* <NotificationPanelIcon user={user} /> */}
             <DesktopProfileDropdown user={user} />

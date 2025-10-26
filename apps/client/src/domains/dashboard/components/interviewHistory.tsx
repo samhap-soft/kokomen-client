@@ -1,7 +1,7 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
 import { useInfiniteObserver } from "@kokomen/utils";
 import { interviewHistoryKeys } from "@/utils/querykeys";
-import { Select } from "@kokomen/ui";
+import { RoundSpinner, Select } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Calendar,
@@ -114,7 +114,7 @@ export default function InterviewHistory() {
       </div>
       {isLoading && (
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <RoundSpinner size="xl" />
         </div>
       )}
 
@@ -222,7 +222,7 @@ export default function InterviewHistory() {
                         ? `/interviews/${interview.interview_id}/result`
                         : `/interviews/${interview.interview_id}?mode=${interview.interview_mode}`
                     }
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-primary bg-primary-bg-light transition-colors md:w-auto w-full justify-center"
                   >
                     {interview.interview_state === "FINISHED"
                       ? "보고서 보기"

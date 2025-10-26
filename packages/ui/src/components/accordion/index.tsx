@@ -197,7 +197,7 @@ export function AccordionTrigger({
       <button
         type="button"
         id={headerId}
-        className={`flex items-center justify-between w-full p-4 text-left font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 transition-colors duration-150 ease-in-out ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${isOpen ? "bg-gray-200" : ""} ${className || ""}`}
+        className={`flex items-center justify-between w-full p-4 text-left font-medium text-gray-700 bg-primary-bg-light hover:bg-primary-bg-hover focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 transition-colors duration-150 ease-in-out ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${isOpen ? "bg-primary-bg-hover" : ""} ${className || ""}`}
         onClick={toggleOpen}
         aria-expanded={isOpen}
         aria-controls={panelId}

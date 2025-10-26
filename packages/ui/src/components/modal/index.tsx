@@ -2,6 +2,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import React, { JSX, useCallback, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "../button";
+import { cn } from "../../utils/index.ts";
 
 type ModalVariants = VariantProps<typeof modalVariants>;
 const modalVariants = cva(
@@ -9,18 +10,33 @@ const modalVariants = cva(
   {
     variants: {
       size: {
-        sm: "max-w-sm",
+        sm: "max-w-sm max-h-96",
         md: "max-w-md",
         lg: "max-w-lg",
         xl: "max-w-xl",
         "2xl": "max-w-2xl",
         "3xl": "max-w-3xl",
         "4xl": "max-w-4xl",
-        full: "max-w-full",
-      },
-    },
+        full: "max-w-full"
+      }
+    }
   }
 );
+
+const modalBodyVariants = cva("p-6 overflow-y-auto", {
+  variants: {
+    size: {
+      sm: "max-h-96",
+      md: "max-h-[450px]",
+      lg: "max-h-[500px]",
+      xl: "max-h-[550px]",
+      "2xl": "max-h-[600px]",
+      "3xl": "max-h-[650px]",
+      "4xl": "max-h-[700px]",
+      full: "max-h-full"
+    }
+  }
+});
 
 interface ModalProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -28,6 +44,7 @@ interface ModalProps
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  className?: string;
   children: React.ReactNode;
   escToClose?: boolean;
   backdropClose?: boolean;
@@ -38,10 +55,11 @@ const Modal = ({
   onClose,
   title,
   children,
+  className,
   closeButton = true,
   backdropClose = false,
   size = "md",
-  escToClose = false,
+  escToClose = false
 }: ModalProps): JSX.Element | null => {
   useEffect(() => {
     if (!escToClose) return;
@@ -79,7 +97,7 @@ const Modal = ({
       />
 
       {/* Modal */}
-      <div className={modalVariants({ size })}>
+      <div className={cn(modalVariants({ size }), className)}>
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
@@ -95,7 +113,7 @@ const Modal = ({
         </div>
 
         {/* Body */}
-        <div className="p-6">{children}</div>
+        <div className={cn(modalBodyVariants({ size }))}>{children}</div>
       </div>
     </div>
   );

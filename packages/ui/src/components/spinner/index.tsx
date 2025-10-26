@@ -2,12 +2,21 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../utils/index.ts";
 import { HTMLAttributes } from "react";
 
-function RoundSpinner() {
+const sizeVariant = {
+  sm: "size-4",
+  md: "size-5",
+  lg: "size-6",
+  xl: "size-10"
+};
+function RoundSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" | "xl" }) {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className="size-5 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className={cn(
+          "text-gray-200 animate-spin dark:text-gray-600 fill-primary",
+          sizeVariant[size]
+        )}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -37,19 +46,19 @@ function LoadingCircles({ size = "md" }: { size?: "sm" | "md" | "lg" | "xs" }) {
     <div className="flex items-center justify-center space-x-2" role="status">
       <div
         className={cn(
-          "rounded-full bg-primary-border animate-bounce [animation-delay:0ms]",
+          "rounded-full bg-orange-4 animate-bounce [animation-delay:0ms]",
           loadingCircleSizes[size]
         )}
       ></div>
       <div
         className={cn(
-          "rounded-full bg-primary-hover animate-bounce [animation-delay:200ms]",
+          "rounded-full bg-orange-5 animate-bounce [animation-delay:200ms]",
           loadingCircleSizes[size]
         )}
       ></div>
       <div
         className={cn(
-          "rounded-full bg-primary animate-bounce [animation-delay:400ms]",
+          "rounded-full bg-orange-6 animate-bounce [animation-delay:400ms]",
           loadingCircleSizes[size]
         )}
       ></div>

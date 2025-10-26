@@ -4,12 +4,17 @@ import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { startNewInterview } from "../api";
 import { captureFormSubmitEvent } from "@/utils/analytics";
+import { createCustomInterview } from "@/domains/interview/api/questions";
 
-const useInterviewCreateMutation = () => {
+const useInterviewCreateMutation = ({
+  onMutate
+}: {
+  onMutate?: () => void;
+}) => {
   const router = useRouter();
   const { error: errorToast } = useToast();
 
-  return useMutation({
+  const createRandomInterviewMutation = useMutation({
     mutationFn: startNewInterview,
     onMutate: (data) => {
       captureFormSubmitEvent({
@@ -54,6 +59,52 @@ const useInterviewCreateMutation = () => {
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
+  const createCustomInterviewMutation = useMutation({
+    mutationFn: createCustomInterview,
+    onMutate: (data) => {
+      onMutate?.();
+      captureFormSubmitEvent({
+        name: "startNewInterview",
+        properties: {
+          rootQuestionId: data.rootQuestionId,
+          maxQuestionCount: data.maxQuestionCount,
+          mode: data.mode
+        }
+      });
+    },
+    onSuccess: (data, variables) => {
+      router.push({
+        pathname: `/interviews/${data.interview_id}`,
+        search: `mode=${variables.mode}`
+      });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          router.replace("/login");
+          return;
+        }
+      }
+    },
+    retry: (failureCount, error) => {
+      if (isAxiosError(error)) {
+        if (
+          error.response?.status &&
+          error.response.status >= 400 &&
+          error.response.status < 500
+        ) {
+          return false;
+        }
+        return failureCount < 2;
+      }
+      return false;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+  });
+  return {
+    createRandomInterviewMutation,
+    createCustomInterviewMutation
+  };
 };
 
 export default useInterviewCreateMutation;

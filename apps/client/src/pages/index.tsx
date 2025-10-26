@@ -13,7 +13,6 @@ import {
   Recommendations
 } from "@/domains/landing/components";
 import { Footer } from "@/shared/footer";
-import { ArrowRightIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { ErrorBoundary } from "@sentry/nextjs";
 
@@ -21,15 +20,30 @@ const Robot = dynamic(() => import("@/domains/landing/components/Robot"), {
   ssr: false
 });
 
+const links = [
+  {
+    title: "모의 면접",
+    description: "꼬리에 꼬리를 무는 면접으로 연습해보세요.",
+    href: "/interviews",
+    icon: "/icons/interview.svg"
+  },
+  {
+    title: "이력서 평가",
+    description: "이력서와 포트폴리오를 평가하고 개선점을 제안해요.",
+    href: "/resume/evaluation",
+    icon: "/icons/report.svg"
+  }
+];
+
 export default function Home({
   user
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   return (
     <>
       <SEO robots="index, follow" />
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <main className="min-h-screen">
         <Header user={user} />
-        <section className="relative overflow-hidden pt-16 sm:pt-20 lg:pt-32 bg-gradient-to-r from-blue-1 to-blue-4">
+        <section className="relative overflow-hidden pt-16 sm:pt-20 lg:pt-32">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               className="text-center "
@@ -38,26 +52,41 @@ export default function Home({
               transition={{ duration: 0.2, ease: "easeInOut" }}
             >
               <h1
-                className={`text-3xl sm:text-4xl lg:text-6xl font-bold text-gray-900 tracking-tight transition-all duration-1000 ease-out `}
+                className={`text-4xl sm:text-4xl lg:text-6xl font-bold text-gray-900 tracking-tight transition-all duration-1000 ease-out `}
               >
-                <span className="block">AI와 함께</span>
-                <span className="block text-blue-6">면접 준비하기</span>
+                <span className="block">똑똑하게</span>
+                <span className="block text-primary">취업 준비하기</span>
               </h1>
               <p
                 className={`mt-6 text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed transition-all duration-1000 ease-out delay-200 `}
               >
-                체계적인 학습과 실전 연습으로 기술 면접을 완벽하게 준비하세요.
+                취업 준비에 필요한 시간들을 꼬꼬면과 함께 효율적으로
+                사용해보세요.
               </p>
-              <div
-                className={`mt-10 flex flex-col sm:flex-row gap-4 justify-center transition-all duration-1000 ease-out delay-400 `}
-              >
-                <Link
-                  href="/interviews"
-                  className="inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-full text-white bg-blue-6 hover:bg-blue-7 transition-colors duration-200 shadow-lg hover:shadow-xl"
-                >
-                  면접 연습 시작하기
-                  <ArrowRightIcon className="ml-4" />
-                </Link>
+              <div className={`mt-10 flex gap-4 justify-center`}>
+                {links.map((link) => (
+                  <div
+                    key={link.href}
+                    className="relative flex flex-col items-center justify-center gap-2 group"
+                  >
+                    <Link
+                      href={link.href}
+                      className="border border-border rounded-lg p-4 flex items-center justify-center w-16 h-16"
+                    >
+                      <Image
+                        src={link.icon}
+                        alt={link.title}
+                        width={20}
+                        height={20}
+                        className="w-full h-full object-contain"
+                      />
+                    </Link>
+                    <p className="font-bold text-sm">{link.title}</p>
+                    <p className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[110%] bg-bg-spotlight text-white hidden group-hover:block w-[200px] text-center p-2 rounded-md text-sm ">
+                      {link.description}
+                    </p>
+                  </div>
+                ))}
               </div>
               <div className="w-full h-full">
                 <ErrorBoundary
@@ -150,7 +179,7 @@ export default function Home({
           <Recommendations />
         </section>
         <FeaturesCards />
-        <section className="py-16 sm:py-20 bg-gradient-to-r from-blue-6 to-blue-7">
+        <section className="py-16 sm:py-20 bg-gradient-to-r from-primary-6 to-primary-7">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2
               className={`text-2xl sm:text-3xl lg:text-4xl font-bold text-white transition-all duration-1000 ease-out`}
@@ -167,7 +196,7 @@ export default function Home({
             >
               <Link
                 href="/interviews"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-full text-blue-6 bg-white hover:bg-gray-50 transition-colors duration-200 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-full text-primary bg-white hover:bg-primary-hover transition-colors duration-200 shadow-lg hover:shadow-xl"
               >
                 무료로 시작하기
               </Link>
@@ -189,6 +218,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }
     };
   } catch (error) {
+    console.log(error);
     if (isAxiosError(error) && error.response?.status === 401) {
       return {
         props: {
