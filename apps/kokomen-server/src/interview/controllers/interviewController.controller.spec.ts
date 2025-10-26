@@ -15,6 +15,7 @@ import { Member } from "src/member/domains/member";
 import { AuthenticatedRequest } from "src/globals/types/request.type";
 import { SessionAuthGuardForHTTP } from "src/globals/http-session-auth.guard";
 import { TransactionInterceptorForHTTP } from "src/globals/interceptors/transactionInterceptor";
+import { RootQuestionService } from "src/interview/services/rootQuestion";
 
 describe("InterviewController", () => {
   let controller: InterviewController;
@@ -62,6 +63,12 @@ describe("InterviewController", () => {
         {
           provide: EntityManager,
           useValue: mockTransactionManager
+        },
+        {
+          provide: RootQuestionService,
+          useValue: {
+            findByCategory: jest.fn()
+          }
         }
       ]
     })
@@ -97,7 +104,7 @@ describe("InterviewController", () => {
     const dto: CreateCustomInterviewDto = {
       rootQuestionId: 100,
       maxQuestionCount: 10,
-      interviewMode: InterviewMode.TEXT
+      mode: InterviewMode.TEXT
     };
 
     beforeEach(() => {
@@ -109,10 +116,7 @@ describe("InterviewController", () => {
     it("should create interview in TEXT mode successfully", async () => {
       const result = await controller.createCustomInterview(mockRequest, dto);
 
-      expect(result).toEqual({
-        success: true,
-        data: mockTextResponse
-      });
+      expect(result).toEqual(mockTextResponse);
     });
 
     it("should call facade service with correct parameters", async () => {
@@ -126,9 +130,9 @@ describe("InterviewController", () => {
     it("should return interview and question data", async () => {
       const result = await controller.createCustomInterview(mockRequest, dto);
 
-      expect((result as any).data).toHaveProperty("interview_id");
-      expect((result as any).data).toHaveProperty("question_id");
-      expect((result as any).data).toHaveProperty("root_question");
+      expect(result).toHaveProperty("interview_id");
+      expect(result).toHaveProperty("question_id");
+      expect(result).toHaveProperty("root_question");
     });
   });
 
@@ -148,19 +152,15 @@ describe("InterviewController", () => {
     it("should create interview in VOICE mode successfully", async () => {
       const result = await controller.createCustomInterview(mockRequest, dto);
 
-      expect(result).toEqual({
-        success: true,
-        data: mockVoiceResponse
-      });
+      expect(result).toEqual(mockVoiceResponse);
     });
 
     it("should return voice URL for VOICE mode", async () => {
       const result = await controller.createCustomInterview(mockRequest, dto);
 
-      expect((result as any).data).toHaveProperty("interview_id");
-      expect((result as any).data).toHaveProperty("question_id");
-      expect((result as any).data).toHaveProperty("root_question_voice_url");
-      expect((result as any).data).toHaveProperty("root_question_voice_url");
+      expect(result).toHaveProperty("interview_id");
+      expect(result).toHaveProperty("question_id");
+      expect(result).toHaveProperty("root_question_voice_url");
     });
   });
 
@@ -217,7 +217,7 @@ describe("InterviewController", () => {
         .mockResolvedValue(mockTextResponse);
 
       const result = await controller.createCustomInterview(mockRequest, dto);
-      expect((result as any).success).toBe(true);
+      expect(result).toBeDefined();
       expect(mockRequest.member).toBeDefined();
     });
 
@@ -237,14 +237,12 @@ describe("InterviewController", () => {
         invalidDto
       );
 
-      expect((result as any).success).toBe(true);
-    }) as unknown as
-      | CreateCustomInterviewTextModeResponse
-      | CreateCustomInterviewVoiceModeResponse;
+      expect(result).toBeDefined();
+    });
   });
 
   describe("response format", () => {
-    it("should always return success and data properties", async () => {
+    it("should return interview and question properties", async () => {
       const dto: CreateCustomInterviewDto = {
         rootQuestionId: 100,
         maxQuestionCount: 10,
@@ -257,9 +255,9 @@ describe("InterviewController", () => {
 
       const result = await controller.createCustomInterview(mockRequest, dto);
 
-      expect(result).toHaveProperty("success");
-      expect(result).toHaveProperty("data");
-      expect((result as any).success).toBe(true);
+      expect(result).toHaveProperty("interview_id");
+      expect(result).toHaveProperty("question_id");
+      expect(result).toBeDefined();
     });
 
     it("should return correct response structure for TEXT mode", async () => {
@@ -275,9 +273,10 @@ describe("InterviewController", () => {
 
       const result = await controller.createCustomInterview(mockRequest, dto);
 
-      expect((result as any).data).toBeInstanceOf(
-        CreateCustomInterviewTextModeResponse
-      );
+      expect(result).toHaveProperty("interview_id");
+      expect(result).toHaveProperty("question_id");
+      expect(result).toHaveProperty("root_question");
+      expect(result).not.toHaveProperty("root_question_voice_url");
     });
 
     it("should return correct response structure for VOICE mode", async () => {
@@ -293,9 +292,10 @@ describe("InterviewController", () => {
 
       const result = await controller.createCustomInterview(mockRequest, dto);
 
-      expect((result as any).data).toBeInstanceOf(
-        CreateCustomInterviewVoiceModeResponse
-      );
+      expect(result).toHaveProperty("interview_id");
+      expect(result).toHaveProperty("question_id");
+      expect(result).toHaveProperty("root_question_voice_url");
+      expect(result).not.toHaveProperty("root_question");
     });
   });
 
