@@ -8,10 +8,10 @@
   --color-blue-3: #91caff;
   --color-blue-4: #69b1ff;
   --color-blue-5: #4096ff;
-  --color-blue-6: #1677ff;
-  --color-blue-7: #0958d9;
-  --color-blue-8: #003eb3;
-  --color-blue-9: #002c8c;
+  --color-blue-6: #0046ff;
+  --color-blue-7: #0038c4;
+  --color-blue-8: #002994;
+  --color-blue-9: #001e66;
   --color-blue-10: #001d66;
 
   --color-cyan-1: #e6fffb;
@@ -140,6 +140,21 @@
   --color-yellow-8: #ad8b00;
   --color-yellow-9: #876800;
   --color-yellow-10: #614700;
+
+  --color-primary-1: #fff3e6;
+  --color-primary-2: #ffe6cc;
+  --color-primary-3: #ffd6ad;
+  --color-primary-4: #ffc080;
+  --color-primary-5: #ffa64d;
+  --color-primary-6: #ff9013; /* base */
+  --color-primary-7: #cc6900;
+  --color-primary-8: #a85400;
+  --color-primary-9: #804000;
+  --color-primary-10: #5c2f00;
+
+  --color-primary: #ff9013;
+  --color-secondary: #73c8d2;
+  --color-primary-light: #f5f1dc;
 }
 @theme {
   --color-text-primary: #000000;
@@ -166,8 +181,8 @@
   --color-bg-text-hover: var(--color-fill-secondary);
   --color-bg-border-bg: var(--color-bg-container);
 
-  --color-border: #d9d9d9;
-  --color-border-secondary: #f0f0f0;
+  --color-border: var(--color-primary-light);
+  --color-border-secondary: var(--color-primary-light);
   --color-split: rgba(0, 0, 0, 0.06);
 
   --color-fill: rgba(0, 0, 0, 0.15);
@@ -178,16 +193,18 @@
   --color-fill-content-hover: var(--color-fill);
   --color-fill-alter: var(--color-fill-quaternary);
 
-  --color-primary-bg: var(--color-blue-1);
-  --color-primary-bg-hover: var(--color-blue-2);
-  --color-primary-border: var(--color-blue-3);
-  --color-primary-border-hover: var(--color-blue-4);
-  --color-primary-hover: var(--color-blue-5);
-  --color-primary: var(--color-blue-6);
-  --color-primary-active: var(--color-blue-7);
-  --color-primary-text-hover: var(--color-blue-8);
-  --color-primary-text: var(--color-blue-9);
-  --color-primary-text-active: var(--color-blue-10);
+  --color-primary-bg: var(--color-primary-6);
+  --color-primary-bg-light: var(--color-primary-light);
+  --color-primary-bg-hover: var(--color-primary-3);
+  --color-primary-bg-light-hover: var(--color-primary-light-hover);
+  --color-primary-border: var(--color-primary-3);
+  --color-primary-border-hover: var(--color-primary-4);
+  --color-primary-hover: var(--color-primary-4);
+  --color-primary: var(--color-primary-6);
+  --color-primary-active: var(--color-primary-6);
+  --color-primary-text-hover: var(--color-primary-7);
+  --color-primary-text: var(--color-primary-8);
+  --color-primary-text-active: var(--color-primary-9);
 
   /* Success Color Tokens */
   --color-success-bg: var(--color-green-1);

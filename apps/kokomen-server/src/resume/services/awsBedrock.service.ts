@@ -41,7 +41,7 @@ export class AWSBedrockFlowService {
       inputs: [
         {
           content: {
-            document: input
+            document: input as string
           },
           nodeName: "FlowInputNode", // Flow의 입력 노드 이름
           nodeOutputName: "document"
@@ -65,6 +65,7 @@ export class AWSBedrockFlowService {
       this.logger.error("No response from Bedrock flow");
       throw new Error("No response from Bedrock flow");
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return JSON.parse(results[0]);
   }
 }

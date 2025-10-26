@@ -51,8 +51,8 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
                 variant={"link"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
                   sec.value === section
-                    ? "bg-blue-50 text-blue-700 border border-blue-200"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-primary-bg-light text-primary border border-primary-border"
+                    : "text-text-primary hover:bg-primary-bg-light hover:text-primary"
                 }`}
                 key={sec.value}
                 onClick={() => handleTabClick(sec.value as Section)}
@@ -69,10 +69,10 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             {userSections.map((sec) => (
               <Button
                 variant={"link"}
-                className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium  ${
+                className={`w-full justify-start text-left px-4 py-3 rounded-lg  ${
                   sec.value === section
-                    ? "bg-blue-50 text-blue-700 border border-blue-200"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    ? "bg-primary-bg-light text-primary border border-primary-border"
+                    : "text-text-primary hover:bg-primary-bg-light hover:text-primary"
                 }`}
                 key={sec.value}
                 onClick={() => handleTabClick(sec.value as Section)}

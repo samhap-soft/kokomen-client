@@ -4,7 +4,6 @@ import { renderWithProviders } from "@/utils/test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { server } from "@/mocks";
 import { delay, http, HttpResponse } from "msw";
-import { mockPush } from "jest.setup";
 
 const mockRankList = [
   {
@@ -57,7 +56,7 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
       />
     );
 
-    expect(screen.getByText("test 면접 시작하기")).toBeInTheDocument();
+    expect(screen.getByText("랜덤 질문으로 시작하기")).toBeInTheDocument();
   });
 });
 
@@ -170,7 +169,7 @@ describe("면접 메인 페이지 API 테스트", () => {
     );
 
     const startButton = screen.getByRole("button", {
-      name: "test 면접 시작하기"
+      name: "랜덤 질문으로 시작하기"
     });
 
     expect(startButton).toBeEnabled();
@@ -208,7 +207,7 @@ describe("면접 메인 페이지 API 테스트", () => {
     );
 
     const startButton = screen.getByRole("button", {
-      name: "test 면접 시작하기"
+      name: "랜덤 질문으로 시작하기"
     });
 
     fireEvent.click(startButton);

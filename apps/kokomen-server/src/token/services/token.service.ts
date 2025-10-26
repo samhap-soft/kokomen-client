@@ -85,8 +85,9 @@ export class TokenService {
     requiredCount: number
   ): Promise<void> {
     const hasEnough = await this.hasEnoughTokens(memberId, requiredCount);
+    this.logger.log(`hasEnough: ${hasEnough}, requiredCount: ${requiredCount}`);
     if (!hasEnough) {
-      throw new BadRequestException("Not enough tokens");
+      throw new BadRequestException("토큰이 부족합니다.");
     }
   }
 
@@ -101,6 +102,7 @@ export class TokenService {
   private async calculateTotalTokenCount(memberId: number): Promise<number> {
     const freeCount = await this.readFreeTokenCount(memberId);
     const paidCount = await this.readPaidTokenCount(memberId);
+    this.logger.log(`freeCount: ${freeCount}, paidCount: ${paidCount}`);
     return freeCount + paidCount;
   }
 

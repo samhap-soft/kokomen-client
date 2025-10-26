@@ -23,8 +23,13 @@ export default function LoginPage(): JSX.Element {
         <div className="max-w-md w-full space-y-8">
           {/* 로고 및 헤더 */}
           <div className="text-center">
-            <div className="mx-auto h-20 w-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-              <Image src="/icon.png" alt="꼬꼬면 로고" width={60} height={60} />
+            <div className="mx-auto h-20 w-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+              <Image
+                src="/apple-touch-icon.png"
+                alt="꼬꼬면 로고"
+                width={60}
+                height={60}
+              />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               꼬꼬면에 로그인

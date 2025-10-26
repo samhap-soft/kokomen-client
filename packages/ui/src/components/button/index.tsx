@@ -12,18 +12,21 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-bg-base text-text-label outline-border hover:text-primary-hover hover:outline-primary-hover active:outline-primary-active active:text-primary-active outline-1 shadow-sm hover:shadow-md",
+          "bg-bg-base text-text-label outline-border hover:text-primary-bg-hover hover:outline-primary-hover active:outline-primary-active active:text-primary-active outline-1 shadow-sm hover:shadow-md",
         primary:
-          "bg-primary active:bg-primary-active hover:bg-primary-hover text-text-light-solid shadow-lg hover:shadow-xl transform hover:scale-105",
+          "bg-primary text-primary-light hover:bg-orange-5 hover:shadow-lg transform hover:scale-105",
         dashed:
           "text-primary-text outline-border-secondary hover:outline-primary-border-hover focus:outline-primary outline-dashed outline-2 hover:text-primary-hover bg-transparent",
         text: "text-text-primary hover:bg-bg-text-hover active:bg-bg-text-active bg-transparent",
         link: "text-primary hover:text-primary-hover underline-offset-4 hover:underline bg-transparent",
+        cancel:
+          "bg-bg-base text-text-label outline-border hover:text-primary-hover hover:outline-primary-hover active:outline-primary-active active:text-primary-active outline-1 shadow-sm hover:shadow-md",
         success:
           "bg-success hover:bg-success-hover active:bg-success-active text-text-light-solid shadow-lg hover:shadow-xl transform hover:scale-105",
         warning:
           "bg-warning hover:bg-warning-hover active:bg-warning-active text-text-light-solid shadow-lg hover:shadow-xl transform hover:scale-105",
         info: "bg-info hover:bg-info-hover active:bg-info-active text-text-light-solid shadow-lg hover:shadow-xl transform hover:scale-105",
+        submit: "bg-blue-5 text-text-light-solid active:bg-blue-6",
         gradient:
           "bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary-active text-text-light-solid shadow-lg hover:shadow-xl transform hover:scale-105",
         gradientSuccess:
@@ -36,7 +39,7 @@ const buttonVariants = cva(
           "bg-transparent text-success border-2 border-success hover:bg-success hover:text-text-light-solid active:bg-success-active active:text-text-light-solid shadow-sm hover:shadow-md",
         outlineWarning:
           "bg-transparent text-warning border-2 border-warning hover:bg-warning hover:text-text-light-solid active:bg-warning-active active:text-text-light-solid shadow-sm hover:shadow-md",
-        soft: "bg-primary-bg text-primary hover:bg-primary-bg-hover active:bg-primary-border shadow-sm hover:shadow-md",
+        soft: "bg-primary-bg-light text-primary shadow-sm hover:shadow-md",
         softSuccess:
           "bg-success-bg text-success hover:bg-success-bg-hover active:bg-success-border shadow-sm hover:shadow-md",
         softWarning:

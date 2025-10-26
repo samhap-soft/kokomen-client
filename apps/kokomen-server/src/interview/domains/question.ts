@@ -2,7 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
   ManyToOne,
   JoinColumn,
   OneToOne
@@ -19,7 +18,7 @@ export class Question {
   id: number;
 
   @Field(() => Date)
-  @CreateDateColumn({ name: "created_at", type: "datetime", precision: 6 })
+  @Column({ name: "created_at", type: "datetime", precision: 6 })
   createdAt: Date;
 
   @Field(() => Int)

@@ -3,16 +3,17 @@ import {
   Post,
   Body,
   BadRequestException,
-  Logger,
-  UseGuards
+  Logger
 } from "@nestjs/common";
 import { ApiTags, ApiBody, ApiOperation } from "@nestjs/swagger";
 import {
   ResumeEvaluationDto,
   ResumeEvaluationInput
 } from "../dto/resumeEvaluation.dto";
-import { SessionAuthGuardForHTTP } from "src/globals/http-session-auth.guard";
-import { ResumeService } from "src/resume/services/resume.service";
+import {
+  ResumeEvaluationResult,
+  ResumeService
+} from "src/resume/services/resume.service";
 
 @ApiTags("Resume")
 @Controller("resume")
@@ -25,11 +26,10 @@ export class ResumeController {
     summary: "Evaluate resume based on job position and description"
   })
   @ApiBody({ type: ResumeEvaluationDto })
-  @UseGuards(SessionAuthGuardForHTTP)
   async evaluateResume(
     @Body()
     body: ResumeEvaluationDto
-  ) {
+  ): Promise<ResumeEvaluationResult> {
     const { job_position, job_description, resume, portfolio, job_career } =
       body;
 

@@ -7,7 +7,6 @@ import { AWSBedrockFlowService } from "src/resume/services/awsBedrock.service";
 import { ResumeService } from "src/resume/services/resume.service";
 import { ResumeController } from "src/resume/controllers/resume.controller";
 import { SpringSessionService } from "src/auth/services/spring-session.service";
-import { SessionAuthGuardForGraphQL } from "src/globals/gql-session-auth.guard";
 import { SessionAuthGuardForHTTP } from "src/globals/http-session-auth.guard";
 import { Member } from "src/member/domains/member";
 
@@ -20,7 +19,6 @@ import { Member } from "src/member/domains/member";
     ResumeService,
     AWSBedrockFlowService,
     SpringSessionService,
-    SessionAuthGuardForGraphQL,
     SessionAuthGuardForHTTP
   ]
 })

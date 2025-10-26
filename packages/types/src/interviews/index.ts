@@ -4,6 +4,10 @@ type InterviewStatus = "standby" | "thinking" | "question" | "finished";
 type AnswerScore = "A" | "B" | "C" | "D" | "F";
 
 type InterviewerEmotion = "happy" | "encouraging" | "angry" | "neutral";
+type InterviewQuestion = {
+  id: number;
+  content: string;
+};
 
 type QuestionAndAnswer = {
   question_id: number;
@@ -149,5 +153,6 @@ export type {
   InterviewSubmitPollingSuccess,
   InterviewAnswerForm,
   ProceedState,
-  AnswerScore
+  AnswerScore,
+  InterviewQuestion
 };

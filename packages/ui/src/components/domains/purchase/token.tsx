@@ -31,7 +31,7 @@ export default function Token({
       <Button
         variant="primary"
         size="default"
-        className="px-6"
+        className="px-6 font-bold"
         onClick={onPurchase}
       >
         {formattedPrice}원

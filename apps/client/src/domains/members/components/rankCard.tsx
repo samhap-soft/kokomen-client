@@ -61,7 +61,7 @@ export default function RankCard(): JSX.Element {
           }}
         >
           <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-primary text-white font-bold text-lg flex-shrink-0">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-bg-light text-primary font-bold text-lg flex-shrink-0">
               {index + 1}
             </div>
             <p className="font-semibold text-lg text-gray-900 truncate min-w-0 flex-1 text-left">
