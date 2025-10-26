@@ -1,6 +1,6 @@
 import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
-import { InterviewMode } from "@kokomen/types";
+import { InterviewMode, InterviewQuestion } from "@kokomen/types";
 import { useModal } from "@kokomen/utils";
 import { Button, Modal } from "@kokomen/ui";
 import { Keyboard, MicVocal, TriangleAlert } from "lucide-react";
@@ -14,6 +14,7 @@ import {
   useCallback,
   useState
 } from "react";
+import QuestionList from "@/domains/interview/components/questionList";
 
 type QuestionCountSelectorProps = {
   questionCount: number;
@@ -86,7 +87,7 @@ const InterviewTypeSelector: MemoExoticComponent<
             aria-selected={selectedInterviewType === "TEXT"}
             onClick={() => handleInterviewTypeChange("TEXT")}
             className="py-6"
-            variant={selectedInterviewType === "TEXT" ? "primary" : "outline"}
+            variant={selectedInterviewType === "TEXT" ? "primary" : "soft"}
           >
             <div className="flex flex-col items-center gap-2">
               <Keyboard className="w-6 h-6" />
@@ -101,7 +102,7 @@ const InterviewTypeSelector: MemoExoticComponent<
               e.preventDefault();
             }}
             className="py-6 group relative cursor-not-allowed"
-            variant={selectedInterviewType === "VOICE" ? "primary" : "outline"}
+            variant={selectedInterviewType === "VOICE" ? "primary" : "soft"}
           >
             <div className="flex flex-col items-center gap-2">
               <MicVocal className="w-6 h-6" />
@@ -173,7 +174,7 @@ const InterviewStartModal = ({
         <div className="flex gap-3">
           <Button
             type="button"
-            variant="soft"
+            variant="cancel"
             size={"large"}
             onClick={closeModal}
             className="flex-1"
@@ -215,8 +216,16 @@ const CreateInterviewForm = ({
     useState<InterviewMode>(
       DEFAULT_INTERVIEW_CONFIGS.INTERVIEW_TYPE as InterviewMode
     );
+  const [selectedQuestions, setSelectedQuestions] =
+    useState<InterviewQuestion | null>(null);
   const { isOpen, openModal, closeModal } = useModal();
-  const createInterviewMutation = useInterviewCreateMutation();
+  const {
+    isOpen: isQuestionListOpen,
+    openModal: openQuestionListModal,
+    closeModal: closeQuestionListModal
+  } = useModal();
+  const { createRandomInterviewMutation, createCustomInterviewMutation } =
+    useInterviewCreateMutation({ onMutate: () => closeQuestionListModal() });
 
   const handleQuestionCountChange = useCallback((event: "plus" | "minus") => {
     setQuestionCount((prev) =>
@@ -230,18 +239,30 @@ const CreateInterviewForm = ({
     setSelectedInterviewType(type);
   }, []);
 
-  const handleNewInterview = useCallback(() => {
-    createInterviewMutation.mutate({
-      category: selectedCategory.key,
-      max_question_count: questionCount,
-      mode: selectedInterviewType
-    });
-  }, [
-    selectedCategory,
-    questionCount,
-    selectedInterviewType,
-    createInterviewMutation
-  ]);
+  const handleNewInterview = useCallback(
+    (selectedQuestions: InterviewQuestion | null) => {
+      if (selectedQuestions) {
+        createCustomInterviewMutation.mutate({
+          rootQuestionId: selectedQuestions.id,
+          maxQuestionCount: questionCount,
+          mode: selectedInterviewType
+        });
+      } else {
+        createRandomInterviewMutation.mutate({
+          category: selectedCategory.key,
+          max_question_count: questionCount,
+          mode: selectedInterviewType
+        });
+      }
+    },
+    [
+      selectedCategory,
+      questionCount,
+      selectedInterviewType,
+      createCustomInterviewMutation,
+      createRandomInterviewMutation
+    ]
+  );
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
@@ -253,8 +274,15 @@ const CreateInterviewForm = ({
 
   const handleConfirmStart = useCallback(() => {
     closeModal();
-    handleNewInterview();
-  }, [closeModal, handleNewInterview]);
+    handleNewInterview(selectedQuestions);
+  }, [closeModal, handleNewInterview, selectedQuestions]);
+
+  const handleSelectQuestion = (question: InterviewQuestion) =>
+    setSelectedQuestions(question);
+
+  const isPending =
+    createCustomInterviewMutation.isPending ||
+    createRandomInterviewMutation.isPending;
 
   return (
     <form
@@ -321,24 +349,40 @@ const CreateInterviewForm = ({
           </div>
 
           {/* 폼 제출 버튼 */}
-          <div className="text-center flex flex-col items-center">
+          <div className="text-center flex flex-col items-center gap-6">
             <Button
-              type="submit"
-              disabled={createInterviewMutation.isPending}
+              type="button"
+              variant={"soft"}
+              disabled={isPending}
               size={"large"}
               className="font-semibold text-lg w-full"
+              onClick={openQuestionListModal}
             >
-              {createInterviewMutation.isPending ? (
+              <span>원하는 질문 선택해서 시작하기</span>
+            </Button>
+            <Button
+              type="submit"
+              disabled={isPending}
+              size={"large"}
+              className="font-semibold text-lg w-full"
+              variant="submit"
+            >
+              {isPending ? (
                 <span>면접 시작 중...</span>
               ) : (
-                <span>{selectedCategory.title} 면접 시작하기</span>
+                <span>랜덤 질문으로 시작하기</span>
               )}
             </Button>
             <p className="mt-4 text-sm text-text-description">
               선택한 카테고리의 {questionCount}개 문제로 면접을 진행합니다
             </p>
           </div>
-
+          <QuestionList
+            isOpen={isQuestionListOpen}
+            closeModal={closeQuestionListModal}
+            category={selectedCategory.key}
+            onSelectQuestion={handleSelectQuestion}
+          />
           {/* 면접 시작 확인 모달 */}
           <InterviewStartModal
             isOpen={isOpen}
