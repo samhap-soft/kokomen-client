@@ -231,7 +231,7 @@ export default function InterviewHistory() {
                   {interview.interview_state === "FINISHED" && (
                     <Link
                       href={`/members/interviews/${interview.interview_id}`}
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-text-light-solid bg-gradient-primary hover:bg-blue-100 transition-colors md:w-auto w-full justify-center"
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary text-primary-light md:w-auto w-full justify-center"
                     >
                       공개된 결과 보기
                     </Link>

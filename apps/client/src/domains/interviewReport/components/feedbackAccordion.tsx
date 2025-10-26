@@ -46,7 +46,7 @@ function FeedBackAccordionItem({
     >
       <Accordion.AccordionTrigger className="px-6 py-4 hover:bg-fill-secondary transition-colors duration-200">
         <div className="flex items-center gap-3 w-full">
-          <div className="flex items-center justify-center w-8 h-8 bg-primary-bg rounded-full">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full">
             <span className="text-sm font-semibold text-primary">
               {idx + 1}
             </span>
@@ -76,7 +76,7 @@ function FeedBackAccordionItem({
                 내 답변
               </h4>
             </div>
-            <div className="bg-primary-bg border border-primary-border rounded-xl p-4">
+            <div className="bg-primary-light border border-primary-border rounded-xl p-4">
               <p className="text-text-primary leading-relaxed">
                 {feedback.answer}
               </p>

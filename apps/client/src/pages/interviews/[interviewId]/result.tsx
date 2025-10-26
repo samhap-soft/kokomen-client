@@ -12,7 +12,7 @@ import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 import Header from "@/shared/header";
-import { Trophy, TrendingUp, TrendingDown, Home, Target } from "lucide-react";
+import { TrendingUp, TrendingDown, Target } from "lucide-react";
 import { withCheckInServer } from "@/utils/auth";
 import { getUserInfo } from "@/domains/auth/api";
 import { SEO } from "@/shared/seo";
@@ -27,10 +27,6 @@ export default function MyInterviewResultPage({
   const scoreDiff = report.user_cur_score - report.user_prev_score;
   const isScoreImproved = scoreDiff > 0;
 
-  const handleGoHome = () => {
-    navigate.push({ pathname: "/" });
-  };
-
   return (
     <>
       <SEO
@@ -41,18 +37,15 @@ export default function MyInterviewResultPage({
       <Layout>
         <Header user={userInfo} />
 
-        <main className="min-h-screen bg-gradient-to-br from-primary-bg via-bg-base to-primary-bg p-4 md:p-8">
+        <main className="min-h-screen p-4 md:p-8">
           <section className="max-w-4xl mx-auto space-y-8">
             {/* 헤더 섹션 */}
             <div className="text-center space-y-6">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-primary to-primary-active rounded-full mb-6 shadow-lg">
-                <Trophy className="w-10 h-10 text-text-light-solid" />
-              </div>
               <h1 className="text-4xl md:text-5xl font-bold text-text-heading">
                 면접 결과
               </h1>
               <p className="text-text-description text-lg max-w-2xl mx-auto">
-                면접을 완료하셨습니다! 성과를 확인하고 다음 단계로 나아가세요.
+                면접을 완료하셨습니다! 피드백을 보고 보완해보세요.
               </p>
             </div>
 
@@ -86,7 +79,7 @@ export default function MyInterviewResultPage({
                     <p className="text-sm text-text-description mb-3">
                       현재 점수
                     </p>
-                    <div className="text-5xl md:text-6xl font-bold text-primary">
+                    <div className="text-5xl md:text-6xl font-bold text-blue-6">
                       {report.user_cur_score}
                     </div>
                   </div>
@@ -135,7 +128,7 @@ export default function MyInterviewResultPage({
                           </div>
                           <Link
                             href={`/members/interviews/${reference.interview_id}`}
-                            className="text-primary text-sm hover:text-primary-hover transition-colors"
+                            className="bg-primary-light text-primary text-sm hover:text-primary-text-hover transition-colors"
                           >
                             자세히 보기 →
                           </Link>
@@ -154,12 +147,12 @@ export default function MyInterviewResultPage({
             <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
               <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
                 <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
-                  <div className="w-1 h-6 bg-primary rounded-full"></div>
+                  <div className="w-1 h-6 rounded-full"></div>
                   보완할 점
                 </h2>
               </div>
               <div className="p-6">
-                <div className="bg-primary-bg p-6 rounded-lg border border-primary-border">
+                <div className="p-6 rounded-lg">
                   <p className="text-text-primary leading-relaxed mb-4 text-base">
                     {report.total_feedback}
                   </p>
@@ -192,11 +185,19 @@ export default function MyInterviewResultPage({
             <div className="text-center pt-6">
               <Button
                 size="large"
-                onClick={handleGoHome}
-                className="bg-primary hover:bg-primary-hover text-text-light-solid px-8 py-3 rounded-lg transition-colors border-0"
+                onClick={() => navigate.push("/")}
+                variant={"soft"}
+                className="w-full"
               >
-                <Home className="w-5 h-5 mr-2" />
                 홈으로 돌아가기
+              </Button>
+              <Button
+                size="large"
+                onClick={() => navigate.push("/dashboard")}
+                variant={"primary"}
+                className="w-full"
+              >
+                대시보드로 이동
               </Button>
             </div>
           </section>
