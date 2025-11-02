@@ -1,4 +1,6 @@
 import { submitResumeEvaluation } from "@/domains/resume/api";
+import useExtendedRouter from "@/hooks/useExtendedRouter";
+// import { resumeEvaluationDemoResult } from "@/domains/resume/constants";
 import { withApiErrorCapture } from "@/utils/error";
 import { parsePdf } from "@/utils/pdf";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
@@ -11,7 +13,6 @@ import { Button, FileField, Input, useToast } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -57,7 +58,7 @@ export default function ResumeEvaluationForm({
       job_career: "0-1년"
     }
   });
-  const router = useRouter();
+  const router = useExtendedRouter();
   const mutation = useMutation<
     CamelCasedProperties<ResumeOutput>,
     Error,
@@ -70,7 +71,7 @@ export default function ResumeEvaluationForm({
     },
     onError: withApiErrorCapture((error) => {
       if (isAxiosError(error) && error.response?.status === 401) {
-        router.replace("/login?redirectTo=/resume/eval");
+        router.navigateToLogin();
         return;
       } else {
         toast({

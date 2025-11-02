@@ -7,12 +7,11 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { JSX, useEffect, useRef, useState } from "react";
 import { Button } from "@kokomen/ui";
 import { useLogout } from "@/hooks/useLogout";
-// import NotificationPanelIcon from "@/domains/notifications/components/notificationPanel";
 import { UserInfo } from "@kokomen/types";
+import useExtendedRouter from "@/hooks/useExtendedRouter";
 
 interface HeaderProps {
   user: UserInfo | null;
@@ -60,7 +59,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [desktopDropdownHeight, setDesktopDropdownHeight] = useState(0);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const router = useExtendedRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -228,7 +227,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
                   type="button"
                   variant="none"
                   name="login"
-                  onClick={() => router.push("/login")}
+                  onClick={() => router.navigateToLogin()}
                   className="flex items-center gap-3 w-full justify-start"
                 >
                   <div className="w-8 h-8 bg-primary-bg-light rounded-full flex items-center justify-center">
