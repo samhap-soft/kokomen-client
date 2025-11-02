@@ -15,13 +15,15 @@ import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
 import { Button } from "@kokomen/ui";
-import { UserInfo } from "@kokomen/types";
+import { CamelCasedProperties, Rank, UserInfo } from "@kokomen/types";
 import { Footer } from "@/shared/footer";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
+import { getRankList } from "@/domains/members/api";
 
 export default function InterviewMainPage({
   categories,
-  userInfo
+  userInfo,
+  rankList
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   useRouterPrefetch("/interviews");
   const router = useExtendedRouter();
@@ -117,7 +119,7 @@ export default function InterviewMainPage({
                 )}
               </div>
             </div>
-            <RankCard />
+            <RankCard rankList={rankList} />
           </aside>
         </main>
         <Footer />
@@ -132,17 +134,21 @@ export const getServerSideProps = async (
   GetServerSidePropsResult<{
     categories: Category[];
     userInfo: UserInfo | null;
+    rankList: CamelCasedProperties<Rank>[];
   }>
 > => {
   return withCheckInServer<{
     categories: Category[];
     userInfo: UserInfo | null;
+    rankList: CamelCasedProperties<Rank>[];
   }>(
     async () => {
-      const [categoriesResponse, userInfoResponse] = await Promise.allSettled([
-        getCategories(),
-        getUserInfo(context)
-      ]);
+      const [categoriesResponse, userInfoResponse, rankList] =
+        await Promise.allSettled([
+          getCategories(),
+          getUserInfo(context),
+          getRankList()
+        ]);
 
       if (categoriesResponse.status === "rejected") {
         return {
@@ -157,9 +163,15 @@ export const getServerSideProps = async (
         userInfoResponse.status === "fulfilled"
           ? userInfoResponse.value.data
           : null;
+      const rankListData =
+        rankList.status === "fulfilled" ? rankList.value : [];
 
       return {
-        data: { categories: categoryData, userInfo: userInfoData }
+        data: {
+          categories: categoryData,
+          userInfo: userInfoData,
+          rankList: rankListData
+        }
       };
     },
     {

@@ -15,10 +15,11 @@ const getRankList = async (
   page = 0,
   size = 10
 ): Promise<CamelCasedProperties<Rank>[]> => {
-  const response = await memberInstance.get("/members/ranking", {
-    params: { page, size }
-  });
-  return response.data;
+  return memberInstance
+    .get<Rank[]>("/members/ranking", {
+      params: { page, size }
+    })
+    .then((res) => res.data.map(mapToCamelCase));
 };
 
 const getMemberInterviews = async (
