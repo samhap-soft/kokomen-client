@@ -1,9 +1,6 @@
 import Header from "@/shared/header";
 import { getUserInfo } from "@/domains/auth/api";
-import {
-  ResumeSelectMenu3d,
-  ResumeSelectMenuNormal
-} from "@/domains/resume/components";
+import { ResumeSelectMenuNormal } from "@/domains/resume/components";
 import { UserInfo } from "@kokomen/types";
 import { ErrorBoundary } from "@sentry/nextjs";
 import {

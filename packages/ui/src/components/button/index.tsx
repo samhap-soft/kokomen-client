@@ -14,7 +14,7 @@ const buttonVariants = cva(
         default:
           "bg-bg-base text-text-label outline-border hover:text-primary-bg-hover hover:outline-primary-hover active:outline-primary-active active:text-primary-active outline-1 shadow-sm hover:shadow-md",
         primary:
-          "bg-primary text-primary-light hover:bg-orange-5 hover:shadow-lg transform hover:scale-105",
+          "bg-primary text-text-light-solid hover:bg-orange-5 hover:shadow-lg transform hover:scale-105",
         dashed:
           "text-primary-text outline-border-secondary hover:outline-primary-border-hover focus:outline-primary outline-dashed outline-2 hover:text-primary-hover bg-transparent",
         text: "text-text-primary hover:bg-bg-text-hover active:bg-bg-text-active bg-transparent",
