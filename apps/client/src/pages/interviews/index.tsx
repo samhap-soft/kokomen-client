@@ -15,16 +15,16 @@ import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
 import { Button } from "@kokomen/ui";
-import { useRouter } from "next/router";
 import { UserInfo } from "@kokomen/types";
 import { Footer } from "@/shared/footer";
+import useExtendedRouter from "@/hooks/useExtendedRouter";
 
 export default function InterviewMainPage({
   categories,
   userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   useRouterPrefetch("/interviews");
-  const router = useRouter();
+  const router = useExtendedRouter();
   return (
     <>
       <SEO
@@ -62,7 +62,7 @@ export default function InterviewMainPage({
                           variant="soft"
                           className="font-bold"
                           type="button"
-                          onClick={() => router.push("/login")}
+                          onClick={() => router.navigateToLogin()}
                         >
                           로그인
                         </Button>

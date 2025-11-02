@@ -155,7 +155,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [menuHeight, setMenuHeight] = useState(0);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const router = useExtendedRouter();
 
   useEffect(() => {
     if (mobileMenuRef.current) {
@@ -258,7 +258,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
 };
 
 const Header = ({ user }: HeaderProps): JSX.Element => {
-  const router = useRouter();
+  const router = useExtendedRouter();
 
   return (
     <header className="sticky top-0 z-50 bg-bg-base/95 backdrop-blur-xl border-b border-border shadow-sm">
