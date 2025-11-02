@@ -44,7 +44,10 @@ export const SEO = ({
         property="og:description"
         content={description ?? "개발자를 위한 AI 모의면접 서비스"}
       />
-      <meta property="og:image" content={image ?? "/og-main.png"} />
+      <meta
+        property="og:image"
+        content={image ? `og${image}` : "/og/main.png"}
+      />
       <meta
         name="og:url"
         content={`${process.env.NEXT_PUBLIC_BASE_URL}${pathname}`}
