@@ -1,4 +1,9 @@
-import { MemberInterview, MemberInterviewResult, Rank } from "@kokomen/types";
+import {
+  MemberInterview,
+  MemberInterviewResult,
+  Paginated,
+  Rank
+} from "@kokomen/types";
 import {
   CamelCasedProperties,
   mapToCamelCase
@@ -20,6 +25,17 @@ const getRankList = async (
       params: { page, size }
     })
     .then((res) => res.data.map(mapToCamelCase));
+};
+
+const getPaginatedRankList = async (
+  page = 0,
+  size = 10
+): Promise<CamelCasedProperties<Paginated<Rank[]>>> => {
+  return memberInstance
+    .get<Paginated<Rank[]>>("/members/v2/ranking", {
+      params: { page, size }
+    })
+    .then((res) => mapToCamelCase(res.data));
 };
 
 const getMemberInterviews = async (
@@ -73,6 +89,7 @@ const toggleMemberInterviewAnswerLike = async (
 
 export {
   getRankList,
+  getPaginatedRankList,
   getMemberInterviews,
   getMemberInterviewResult,
   toggleMemberInterviewLike,

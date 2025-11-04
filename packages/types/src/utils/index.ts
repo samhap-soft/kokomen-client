@@ -10,4 +10,11 @@ type CamelCasedProperties<T> = {
     : T[K]; // 기본 타입 -> 그대로 반환
 };
 
-export type { CamelCasedProperties };
+type Paginated<T> = {
+  data: T;
+  current_page: number;
+  total_pages: number;
+  has_next: boolean;
+};
+
+export type { CamelCasedProperties, Paginated };

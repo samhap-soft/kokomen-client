@@ -27,9 +27,16 @@ type HeaderNavigation = {
 const navigation = (isTestUser: boolean): HeaderNavigation[] => {
   return [
     { href: "/", label: "홈", current: true, featureFlag: true },
+
     {
       href: "/interviews",
       label: "모의 면접",
+      current: false,
+      featureFlag: true
+    },
+    {
+      href: "/rank",
+      label: "랭킹",
       current: false,
       featureFlag: true
     },
@@ -42,6 +49,12 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
     {
       href: "/resume",
       label: "이력서",
+      current: false,
+      featureFlag: true
+    },
+    {
+      href: "/recruit",
+      label: "채용 공고",
       current: false,
       featureFlag: true
     },
