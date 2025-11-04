@@ -9,6 +9,7 @@ import {
   TossPaymentsWidgets
 } from "@tosspayments/tosspayments-sdk";
 import { MessageCircleWarning } from "lucide-react";
+import Link from "next/link";
 
 export default function PurchaseSection({
   userInfo,
@@ -69,6 +70,17 @@ function SelectItem({
           <li>• 음성 면접은 질문당 2개가 부과돼요.</li>
           <li>• 토큰은 구매 후 즉시 적용돼요.</li>
           <li>• 토큰 구매 후 사용한 뒤에는 환불이 어려워요.</li>
+          <li>
+            •{" "}
+            <Link
+              target="_blank"
+              href="/terms/termsofuse#refund-policy"
+              className="text-blue-6 underline"
+            >
+              환불 규정
+            </Link>
+            을 확인해주세요.
+          </li>
         </ul>
       </div>
       <p className=" bg-primary-bg-light rounded-md p-4">
@@ -90,6 +102,9 @@ function SelectItem({
               }
             />
           ))}
+        <p className="text-sm text-text-label">
+          *위 상품의 최대 이용 기간은 1년입니다.
+        </p>
       </div>
     </section>
   );
