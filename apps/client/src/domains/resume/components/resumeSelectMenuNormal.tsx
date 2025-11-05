@@ -1,27 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@kokomen/ui";
-import { useRouter, useSearchParams } from "next/navigation";
-
-const menuItems: MenuItemProps[] = [
-  {
-    title: "이력서와 포트폴리오 평가하기",
-    description:
-      "기업의 공고와 직무를 고려해서 이력서와 포트폴리오를 분석하고 점수를 도출하고, 개선점을 제안해요.",
-    color: "blue",
-    link: "/resume/eval",
-    disabled: false
-  },
-  {
-    title: "이력서와 포트폴리오 기반 면접",
-    description:
-      "기업의 공고와 직무를 고려해서 이력서와 포트폴리오를 기반 면접을 진행해요.",
-    color: "green",
-    link: "/resume/interview",
-    disabled: true
-  }
-];
-
+import { Tooltip } from "@kokomen/ui";
 interface MenuItemProps {
   title: string;
   description: string;
@@ -40,7 +19,7 @@ const MenuItem = ({
   const colorClasses = {
     blue: {
       bg: "bg-blue-1 hover:bg-blue-2",
-      border: "border-blue-3 hover:border-blue-5"
+      border: "border-blue-3 hover:border-blue-5 active:border-blue-7"
     },
     green: {
       bg: "bg-green-1 hover:bg-green-2",
@@ -53,17 +32,16 @@ const MenuItem = ({
     <Link
       href={link}
       className={`
-        relative rounded-lg border-2 p-6 cursor-pointer flex-1
+         rounded-lg border-2 p-6 cursor-pointer
         ${colors.bg} ${colors.border}
         transition-all duration-300 ease-in-out
         hover:shadow-lg hover:scale-105
-        focus:outline-none focus:ring-2 focus:ring-primary
         text-left w-full justify-start
         ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}
       `}
       aria-disabled={disabled}
     >
-      <div className="flex flex-col justify-start align-start items-start space-y-4">
+      <div className="flex flex-col justify-start align-start items-start space-y-4 w-full">
         <div className="space-y-2">
           <h3 className="text-xl font-semibold text-text-heading">{title}</h3>
           <p className="text-sm text-text-secondary leading-relaxed">
@@ -75,29 +53,28 @@ const MenuItem = ({
   );
 };
 
-const SwitchViewButton = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const handleClick = () => {
-    const params = new URLSearchParams(searchParams);
-    params.set("view", "3d");
-    router.replace(`/resume?${params.toString()}`);
-  };
-  return (
-    <Button
-      variant="outline"
-      className="absolute top-4 left-4 z-10 px-4"
-      onClick={handleClick}
-    >
-      3D로 보기
-    </Button>
-  );
-};
+// const SwitchViewButton = () => {
+//   const searchParams = useSearchParams();
+//   const router = useRouter();
+//   const handleClick = () => {
+//     const params = new URLSearchParams(searchParams);
+//     params.set("view", "3d");
+//     router.replace(`/resume?${params.toString()}`);
+//   };
+//   return (
+//     <Button
+//       variant="outline"
+//       className="absolute top-4 left-4 z-10 px-4"
+//       onClick={handleClick}
+//     >
+//       3D로 보기
+//     </Button>
+//   );
+// };
 
 export default function ResumeSelectMenuNormal() {
   return (
     <div className="w-full flex items-center justify-center px-6 py-12">
-      <SwitchViewButton />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center">
         <Image
           src="/kokomenReport.png"
@@ -117,9 +94,33 @@ export default function ResumeSelectMenuNormal() {
           </div>
 
           <div className="flex flex-col gap-4">
-            {menuItems.map((item, index) => (
-              <MenuItem key={item.title + index} {...item} />
-            ))}
+            <div className="flex flex-col items-end justify-start gap-2">
+              <MenuItem
+                title="이력서와 포트폴리오 평가하기"
+                description="기업의 공고와 직무를 고려해서 이력서와 포트폴리오를 분석하고 점수를 도출하고, 개선점을 제안해요."
+                color="blue"
+                link="/resume/eval"
+                disabled={false}
+              />
+              <Link
+                href={`/resume/eval/demo`}
+                className="text-sm bg-primary text-text-light-solid px-4 py-2 font-bold rounded-md"
+              >
+                체험해보기
+              </Link>
+            </div>
+            <Tooltip className="w-full flex flex-col items-end justify-start gap-2">
+              <MenuItem
+                title="이력서와 포트폴리오 기반 면접"
+                description="기업의 공고와 직무를 고려해서 이력서와 포트폴리오를 기반 면접을 진행해요."
+                color="green"
+                link="/resume/interview"
+                disabled={true}
+              />
+              <Tooltip.Content placement="top">
+                곧 출시돼요! 조금만 기다려주세요 :)
+              </Tooltip.Content>
+            </Tooltip>
           </div>
         </div>
       </div>

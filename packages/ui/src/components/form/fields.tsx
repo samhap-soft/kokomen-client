@@ -2,19 +2,22 @@ import { CloudUpload } from "lucide-react";
 import { Button } from "../button/index.tsx";
 import { useRef, useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { cn } from "../../utils/index.ts";
 
 const FileField = ({
   register,
   label,
   required,
   error,
-  hint
+  hint,
+  disabled
 }: {
   register: UseFormRegisterReturn<string>;
   label: string;
   required?: boolean;
   error?: string;
   hint?: string;
+  disabled?: boolean;
 }) => {
   const [fileName, setFileName] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +34,12 @@ const FileField = ({
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-text-heading">
+      <label
+        className={cn(
+          "block text-sm font-medium text-text-heading",
+          disabled && "cursor-not-allowed"
+        )}
+      >
         {label} {required && <span className="text-error">*</span>}
       </label>
       <input
@@ -46,7 +54,11 @@ const FileField = ({
         variant={"none"}
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="w-full px-4 py-2.5 border border-border rounded-lg hover:bg-fill-secondary transition-colors text-left flex items-center justify-between group"
+        className={cn(
+          "w-full px-4 py-2.5 border border-border rounded-lg hover:bg-fill-secondary transition-colors text-left flex items-center justify-between group",
+          disabled && "cursor-not-allowed"
+        )}
+        disabled={disabled}
       >
         <span className={fileName ? "text-text-heading" : "text-text-tertiary"}>
           {fileName || "파일 선택하기"}

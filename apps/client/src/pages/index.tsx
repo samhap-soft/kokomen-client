@@ -15,6 +15,7 @@ import {
 import { Footer } from "@/shared/footer";
 import { motion } from "motion/react";
 import { ErrorBoundary } from "@sentry/nextjs";
+import { Tooltip } from "@kokomen/ui";
 
 const Robot = dynamic(() => import("@/domains/landing/components/Robot"), {
   ssr: false
@@ -66,9 +67,9 @@ export default function Home({
               </p>
               <div className={`mt-10 flex gap-4 justify-center`}>
                 {links.map((link) => (
-                  <div
+                  <Tooltip
                     key={link.href}
-                    className="relative flex flex-col items-center justify-center gap-2 group"
+                    className="relative flex flex-col items-center justify-center gap-2"
                   >
                     <Link
                       href={link.href}
@@ -83,10 +84,10 @@ export default function Home({
                       />
                     </Link>
                     <p className="font-bold text-sm">{link.title}</p>
-                    <p className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-[110%] bg-bg-spotlight text-white hidden group-hover:block w-[200px] text-center p-2 rounded-md text-sm ">
-                      {link.description}
-                    </p>
-                  </div>
+                    <Tooltip.Content placement="top">
+                      <p className="text-sm">{link.description}</p>
+                    </Tooltip.Content>
+                  </Tooltip>
                 ))}
               </div>
               <div className="w-full h-full">

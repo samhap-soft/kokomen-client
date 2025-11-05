@@ -228,11 +228,11 @@ export function InterviewAnswerForm({
               className={`absolute top-0 left-1/2 -translate-x-1/2 transition-all duration-300 ease-in-out overflow-hidden animate-fade-in-up`}
             >
               <div className="flex items-center justify-center">
-                <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-primary-bg to-primary-bg-hover rounded-full border border-primary-border shadow-lg">
+                <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-blue-4 to-blue-5 rounded-full">
                   <div className="flex space-x-1">
                     <LoadingCircles size="xs" />
                   </div>
-                  <span className="text-primary font-semibold text-sm tracking-wide">
+                  <span className="text-text-light-solid font-semibold text-sm tracking-wide">
                     🎤 면접관님이 듣고있어요!
                   </span>
                 </div>

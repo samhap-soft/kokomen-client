@@ -44,7 +44,10 @@ const QuestionCountSelector: MemoExoticComponent<
             -
           </Button>
           <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-xl">
-            <span className="text-3xl font-bold text-text-light-solid">
+            <span
+              className="text-3xl font-bold text-text-light-solid"
+              data-testid="question-count"
+            >
               {questionCount}
             </span>
           </div>
@@ -97,20 +100,13 @@ const InterviewTypeSelector: MemoExoticComponent<
           <Button
             type="button"
             aria-selected={selectedInterviewType === "VOICE"}
-            onClick={(e) => {
-              // handleInterviewTypeChange("VOICE");
-              e.preventDefault();
-            }}
-            className="py-6 group relative cursor-not-allowed"
+            onClick={() => handleInterviewTypeChange("VOICE")}
+            className="py-6 group relative"
             variant={selectedInterviewType === "VOICE" ? "primary" : "soft"}
           >
             <div className="flex flex-col items-center gap-2">
               <MicVocal className="w-6 h-6" />
               <span className="text-base font-medium">음성</span>
-            </div>
-            <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 pointer-events-none z-10">
-              잠깐 점검중에 있어요
-              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
             </div>
           </Button>
         </div>

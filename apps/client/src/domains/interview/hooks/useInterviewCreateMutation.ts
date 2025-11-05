@@ -1,17 +1,17 @@
-import { useRouter } from "next/router";
 import { useToast } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { startNewInterview } from "../api";
 import { captureFormSubmitEvent } from "@/utils/analytics";
 import { createCustomInterview } from "@/domains/interview/api/questions";
+import useExtendedRouter from "@/hooks/useExtendedRouter";
 
 const useInterviewCreateMutation = ({
   onMutate
 }: {
   onMutate?: () => void;
 }) => {
-  const router = useRouter();
+  const router = useExtendedRouter();
   const { error: errorToast } = useToast();
 
   const createRandomInterviewMutation = useMutation({
@@ -35,7 +35,7 @@ const useInterviewCreateMutation = ({
     onError: (error) => {
       if (isAxiosError(error)) {
         if (error.response?.status === 401) {
-          router.replace("/login");
+          router.navigateToLogin();
           return;
         }
         errorToast({
@@ -81,7 +81,7 @@ const useInterviewCreateMutation = ({
     onError: (error) => {
       if (isAxiosError(error)) {
         if (error.response?.status === 401) {
-          router.replace("/login");
+          router.navigateToLogin();
           return;
         }
       }

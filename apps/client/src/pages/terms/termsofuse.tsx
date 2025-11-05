@@ -27,7 +27,8 @@ export default function TermsOfUsePage({
             <div className="space-y-2">
               <p>
                 1. &quot;서비스&quot;란 회사가 제공하는 AI 기반 면접 연습 및
-                피드백 서비스를 의미합니다.
+                피드백 서비스, 이력서 및 포트폴리오 적합도 분석 및 면접, 랭킹
+                시스템 등을 의미합니다.
               </p>
               <p>
                 2. &quot;이용자&quot;란 본 약관에 따라 회사와 이용계약을
@@ -44,7 +45,7 @@ export default function TermsOfUsePage({
             <h2 className="text-xl font-semibold mb-4">제3조 (서비스 이용)</h2>
             <div className="space-y-2">
               <p>
-                1. 이용자는 카카오 계정을 통한 소셜 로그인으로 서비스를 이용할
+                1. 이용자는 소셜 로그인(카카오, 구글, 애플)으로 서비스를 이용할
                 수 있습니다.
               </p>
               <p>
@@ -106,7 +107,28 @@ export default function TermsOfUsePage({
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-4">제7조 (책임의 제한)</h2>
+            <h2 className="text-xl font-semibold mb-4" id="refund-policy">
+              제7조 (환불 규정)
+            </h2>
+            <div className="space-y-2">
+              <p>
+                1. 회원은 회사에 환불을 요구할 수 있습니다. 환불은 회사가
+                안내하는 정책 및 방법에 따라 진행됩니다.
+              </p>
+              <p>
+                2. 환불은 구매일로부터 서비스 제공 기한인 1년 이내에 요청할 수
+                있습니다.
+              </p>
+              <p>
+                3. 이용자는 구매한 재화의 일부를 사용한 이후에는 환불이
+                불가합니다. 단, 회사의 과실로 인해 서비스 제공이 불가능한
+                경우에는 환불이 가능합니다.
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-4">제8조 (책임의 제한)</h2>
             <p className="leading-relaxed">
               회사는 천재지변, 전쟁, 기간통신사업자의 서비스 중단 등
               불가항력적인 사유로 서비스를 제공할 수 없는 경우 책임을 지지
@@ -115,7 +137,7 @@ export default function TermsOfUsePage({
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-4">제8조 (약관의 변경)</h2>
+            <h2 className="text-xl font-semibold mb-4">제9조 (약관의 변경)</h2>
             <p className="leading-relaxed">
               회사는 필요한 경우 본 약관을 변경할 수 있으며, 변경된 약관은
               서비스 내 공지사항을 통해 공지합니다. 변경된 약관은 공지일로부터
@@ -125,7 +147,7 @@ export default function TermsOfUsePage({
 
           <section>
             <h2 className="text-xl font-semibold mb-4">
-              제9조 (준거법 및 관할법원)
+              제10조 (준거법 및 관할법원)
             </h2>
             <p className="leading-relaxed">
               본 약관은 대한민국 법률에 따라 해석되며, 서비스 이용으로 발생한

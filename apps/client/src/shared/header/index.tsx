@@ -7,12 +7,11 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { JSX, useEffect, useRef, useState } from "react";
 import { Button } from "@kokomen/ui";
 import { useLogout } from "@/hooks/useLogout";
-// import NotificationPanelIcon from "@/domains/notifications/components/notificationPanel";
 import { UserInfo } from "@kokomen/types";
+import useExtendedRouter from "@/hooks/useExtendedRouter";
 
 interface HeaderProps {
   user: UserInfo | null;
@@ -28,9 +27,16 @@ type HeaderNavigation = {
 const navigation = (isTestUser: boolean): HeaderNavigation[] => {
   return [
     { href: "/", label: "홈", current: true, featureFlag: true },
+
     {
       href: "/interviews",
       label: "모의 면접",
+      current: false,
+      featureFlag: true
+    },
+    {
+      href: "/rank",
+      label: "랭킹",
       current: false,
       featureFlag: true
     },
@@ -43,6 +49,12 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
     {
       href: "/resume",
       label: "이력서",
+      current: false,
+      featureFlag: true
+    },
+    {
+      href: "/recruit",
+      label: "채용 공고",
       current: false,
       featureFlag: true
     },
@@ -60,7 +72,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [desktopDropdownHeight, setDesktopDropdownHeight] = useState(0);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const router = useExtendedRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -156,7 +168,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [menuHeight, setMenuHeight] = useState(0);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const router = useExtendedRouter();
 
   useEffect(() => {
     if (mobileMenuRef.current) {
@@ -228,7 +240,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
                   type="button"
                   variant="none"
                   name="login"
-                  onClick={() => router.push("/login")}
+                  onClick={() => router.navigateToLogin()}
                   className="flex items-center gap-3 w-full justify-start"
                 >
                   <div className="w-8 h-8 bg-primary-bg-light rounded-full flex items-center justify-center">
@@ -259,7 +271,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
 };
 
 const Header = ({ user }: HeaderProps): JSX.Element => {
-  const router = useRouter();
+  const router = useExtendedRouter();
 
   return (
     <header className="sticky top-0 z-50 bg-bg-base/95 backdrop-blur-xl border-b border-border shadow-sm">

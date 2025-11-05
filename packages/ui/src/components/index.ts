@@ -13,4 +13,6 @@ export * from "./toast";
 export * from "./statusBadge";
 export * from "./marquee";
 export * from "./form";
+export * from "./range";
+export { default as Tooltip } from "./tooltip";
 export { default as Skeleton } from "./skeleton";

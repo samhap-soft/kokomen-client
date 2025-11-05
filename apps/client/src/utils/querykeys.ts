@@ -1,3 +1,5 @@
+import { RecruitFilterRequest } from "@kokomen/types";
+
 /* eslint-disable no-unused-vars */
 type QueryKey = readonly (string | number)[];
 
@@ -77,12 +79,35 @@ const purchaseKeys: QueryKeyFactory<PurchaseMethods> = {
   purchaseHistory: (): QueryKey => [...purchaseKeys.all, "history"] as const
 };
 
+type RecruitMethods = {
+  list: (filters: RecruitFilterRequest) => QueryKey;
+};
+const recruitKeys: QueryKeyFactory<RecruitMethods> = {
+  all: ["recruit"] as const,
+  list: (filters: RecruitFilterRequest): QueryKey =>
+    [
+      ...recruitKeys.all,
+      "list",
+      JSON.stringify({
+        region: [...filters.region].sort(),
+        employeeType: [...filters.employeeType].sort(),
+        education: [...filters.education].sort(),
+        employment: [...filters.employment].sort(),
+        deadlineType: [...filters.deadlineType].sort(),
+        careerMin: filters.careerMin,
+        careerMax: filters.careerMax
+      })
+    ] as const
+};
+
 export {
   interviewHistoryKeys,
   interviewKeys,
   memberKeys,
   purchaseKeys,
+  recruitKeys,
   type InterviewHistoryParams,
   type InterviewParams,
-  type MemberRankParams
+  type MemberRankParams,
+  type RecruitMethods
 };

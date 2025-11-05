@@ -44,7 +44,7 @@ export default function MemberInterviewResultPage({
         description={`${result.intervieweeNickname ?? "탈퇴한 사용자"}님은 ${result.feedbacks[0].question}에 대해 무슨 질문을 받았을까요? 면접 결과를 확인해보고 공부해보세요!`}
         robots="index, follow"
         pathname={`/members/interviews/${interviewId}`}
-        image="/og-report.png"
+        image="/interviewResult.png"
       />
       <Layout>
         <Header user={user} />
