@@ -18,7 +18,8 @@ export {
   mapToCamelCase,
   getEmotion,
   delay,
-  exponentialDelay
+  exponentialDelay,
+  ParamSerializer
 } from "./general";
 export {
   useCombinedRefs,

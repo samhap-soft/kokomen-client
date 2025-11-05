@@ -1,5 +1,5 @@
 import { ChevronDown, Check, Search } from "lucide-react";
-import { FC, useState, useRef, useEffect, useCallback } from "react";
+import { FC, useState, useRef, useEffect, useCallback, useMemo } from "react";
 
 interface SelectOption {
   value: string;
@@ -9,8 +9,8 @@ interface SelectOption {
 
 interface SelectProps {
   options: SelectOption[];
-  value?: string;
-  onChange?: (value: string) => void;
+  value?: string | string[];
+  onChange?: (value: string | string[]) => void;
   placeholder?: string;
   disabled?: boolean;
   searchable?: boolean;
@@ -19,6 +19,7 @@ interface SelectProps {
   errorMessage?: string;
   className?: string;
   "aria-label"?: string;
+  multiSelect?: boolean;
 }
 
 const Select: FC<SelectProps> = ({
@@ -32,7 +33,8 @@ const Select: FC<SelectProps> = ({
   error = false,
   errorMessage,
   className = "",
-  "aria-label": ariaLabel
+  "aria-label": ariaLabel,
+  multiSelect = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,7 +44,9 @@ const Select: FC<SelectProps> = ({
   const listRef = useRef<HTMLUListElement>(null);
 
   // 선택된 옵션 찾기
-  const selectedOption = options.find((option) => option.value === value);
+  const selectedOption = multiSelect
+    ? options.filter((option) => (value as string[]).includes(option.value))
+    : options.find((option) => option.value === value);
 
   // 검색 필터링된 옵션들
   const filteredOptions = searchable
@@ -50,6 +54,23 @@ const Select: FC<SelectProps> = ({
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : options;
+
+  const selectedOptionLabel = useMemo(() => {
+    if (selectedOption) {
+      if (Array.isArray(selectedOption)) {
+        if (selectedOption.length === 0) {
+          return placeholder;
+        } else if (selectedOption.length === 1) {
+          return selectedOption[0].label;
+        } else {
+          return `${selectedOption[0].label} 외 ${selectedOption.length - 1}개`;
+        }
+      } else {
+        return selectedOption.label ?? placeholder;
+      }
+    }
+    return placeholder;
+  }, [selectedOption, placeholder]);
 
   // 사이즈별 스타일 클래스
   const sizeClasses = {
@@ -73,9 +94,11 @@ const Select: FC<SelectProps> = ({
     (option: SelectOption) => {
       if (!option.disabled) {
         onChange?.(option.value);
-        setIsOpen(false);
-        setSearchTerm("");
-        setFocusedIndex(-1);
+        if (!multiSelect) {
+          setIsOpen(false);
+          setSearchTerm("");
+          setFocusedIndex(-1);
+        }
       }
     },
     [onChange]
@@ -180,15 +203,11 @@ const Select: FC<SelectProps> = ({
         aria-describedby={error && errorMessage ? "select-error" : undefined}
       >
         {/* 선택된 값 또는 플레이스홀더 */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex-1 min-w-0">
-            {selectedOption ? (
-              <span className="text-text-primary truncate">
-                {selectedOption.label}
-              </span>
-            ) : (
-              <span className="text-text-placeholder">{placeholder}</span>
-            )}
+            <span className="text-text-primary truncate">
+              {selectedOptionLabel}
+            </span>
           </div>
           <ChevronDown
             className={`
@@ -239,10 +258,11 @@ const Select: FC<SelectProps> = ({
                   key={option.value}
                   className={`
                     flex items-center justify-between px-4 py-2 cursor-pointer
-                    transition-colors duration-150
+                    transition-colors duration-150 active:bg-primary-light
                     ${index === focusedIndex ? "bg-primary-bg" : "hover:bg-fill-content"}
                     ${option.disabled ? "opacity-50 cursor-not-allowed" : ""}
-                    ${option.value === value ? "bg-primary-bg text-primary" : "text-text-primary"}
+                    ${option.value === value ? "bg-primary-bg text-primary-light hover:bg-primary-bg-hover" : "text-text-primary"}
+                    ${multiSelect && (value as string[]).includes(option.value) ? "bg-primary-bg text-primary-light hover:bg-primary-bg-hover" : "text-text-primary"}
                   `}
                   onClick={() => handleOptionSelect(option)}
                   onMouseDown={(e) => e.stopPropagation()}

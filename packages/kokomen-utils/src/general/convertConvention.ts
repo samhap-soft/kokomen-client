@@ -20,6 +20,14 @@ export function mapToCamelCase<T extends object>(
     return obj.map((item) => mapToCamelCase(item)) as CamelCasedProperties<T>;
   }
 
+  if (
+    typeof obj === "string" ||
+    typeof obj === "number" ||
+    typeof obj === "boolean"
+  ) {
+    return obj;
+  }
+
   // 객체면 키를 카멜케이스로 변환해서 리턴
   return Object.keys(obj).reduce((acc, key) => {
     const camelKey = key.replace(/_([a-z])/g, (_, letter) =>

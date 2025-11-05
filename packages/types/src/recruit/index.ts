@@ -3,18 +3,18 @@ import { CamelCasedProperties, Paginated } from "../utils";
 type RecruitFilters = {
   region: string[];
   // ['정규직', '계약직']
-  employee_type: string[];
+  employeeType: string[];
   // 학력
   education: string[];
   // ['백엔드', '프론트엔드']
   employment: string[];
   // ['상시채용', '정규채용']
-  deadline_type: string[];
+  deadlineType: string[];
 };
 
 interface RecruitFilterRequest extends RecruitFilters {
-  career_min: number | null;
-  career_max: number | null;
+  careerMin: number | null;
+  careerMax: number | null;
 }
 
 type RecruitItem = {
