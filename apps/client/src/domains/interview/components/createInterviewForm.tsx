@@ -44,7 +44,10 @@ const QuestionCountSelector: MemoExoticComponent<
             -
           </Button>
           <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-xl">
-            <span className="text-3xl font-bold text-text-light-solid">
+            <span
+              className="text-3xl font-bold text-text-light-solid"
+              data-testid="question-count"
+            >
               {questionCount}
             </span>
           </div>

@@ -40,7 +40,8 @@ describe("profile setting 렌더링 테스트", () => {
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,
-          rank: 1
+          rank: 1,
+          is_test_user: false
         }}
       />
     );
@@ -71,7 +72,8 @@ describe("profile setting 기능 테스트", () => {
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,
-          rank: 1
+          rank: 1,
+          is_test_user: false
         }}
       />
     );
@@ -107,7 +109,8 @@ describe("profile setting 기능 테스트", () => {
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,
-          rank: 1
+          rank: 1,
+          is_test_user: false
         }}
       />
     );
@@ -132,6 +135,7 @@ describe("profile setting 기능 테스트", () => {
           id: 1,
           nickname: "오상훈",
           score: 0,
+          is_test_user: false,
           token_count: 10,
           profile_completed: false,
           total_member_count: 10,

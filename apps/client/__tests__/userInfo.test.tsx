@@ -15,7 +15,8 @@ const mockUserInfo = {
   score: 100,
   total_member_count: 1000,
   token_count: 50,
-  rank: 10
+  rank: 10,
+  is_test_user: false
 };
 
 describe("ChangeNickname 컴포넌트 테스트", () => {

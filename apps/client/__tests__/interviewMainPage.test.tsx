@@ -4,31 +4,32 @@ import { renderWithProviders } from "@/utils/test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { server } from "@/mocks";
 import { delay, http, HttpResponse } from "msw";
+import { CamelCasedProperties, Rank } from "@kokomen/types";
 
-const mockRankList = [
+const mockRankList: CamelCasedProperties<Rank>[] = [
   {
     id: 1,
     nickname: "test1",
     score: 100,
-    finished_interview_count: 10
+    finishedInterviewCount: 10
   },
   {
     id: 2,
     nickname: "test2",
     score: 99,
-    finished_interview_count: 10
+    finishedInterviewCount: 10
   },
   {
     id: 3,
     nickname: "test3",
     score: 98,
-    finished_interview_count: 10
+    finishedInterviewCount: 10
   },
   {
     id: 4,
     nickname: "test4",
     score: 97,
-    finished_interview_count: 10
+    finishedInterviewCount: 10
   }
 ];
 
@@ -44,6 +45,7 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
     );
     renderWithProviders(
       <InterviewMainPage
+        rankList={mockRankList}
         categories={[
           {
             key: "test",
@@ -61,17 +63,10 @@ describe("면접 메인 페이지 렌더링 테스트", () => {
 });
 
 describe("면접 메인 페이지 버튼 테스트", () => {
-  it("면접 시작 버튼이 활성화되어 있는지 테스트", () => {
-    server.use(
-      http.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/members/ranking`,
-        async () => {
-          return HttpResponse.json(mockRankList, { status: 200 });
-        }
-      )
-    );
+  it("면접 시작 버튼이 활성화되어 있는지 테스트", async () => {
     renderWithProviders(
       <InterviewMainPage
+        rankList={mockRankList}
         categories={[
           {
             key: "test",
@@ -88,15 +83,15 @@ describe("면접 메인 페이지 버튼 테스트", () => {
 
     fireEvent.click(plusButton);
 
-    expect(screen.getByText("4")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("4");
 
     fireEvent.click(plusButton);
 
-    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("5");
 
     fireEvent.click(plusButton);
 
-    expect(screen.getByText("6")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("6");
 
     const minusButton = screen.getByRole("button", { name: "-" });
 
@@ -104,24 +99,24 @@ describe("면접 메인 페이지 버튼 테스트", () => {
 
     fireEvent.click(minusButton);
 
-    expect(screen.getByText("5")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("5");
 
     fireEvent.click(minusButton);
 
-    expect(screen.getByText("4")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("4");
 
     fireEvent.click(minusButton);
 
-    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("3");
 
     //최소 문제 개수 제한 테스트
     fireEvent.click(minusButton);
 
-    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("3");
 
     fireEvent.click(minusButton);
 
-    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.getByTestId("question-count")).toHaveTextContent("3");
   });
 });
 
@@ -164,6 +159,7 @@ describe("면접 메인 페이지 API 테스트", () => {
             image_url: "https://test.com/test.png"
           }
         ]}
+        rankList={mockRankList}
         userInfo={null}
       />
     );
@@ -194,6 +190,7 @@ describe("면접 메인 페이지 API 테스트", () => {
 
     renderWithProviders(
       <InterviewMainPage
+        rankList={mockRankList}
         categories={[
           {
             key: "test",
