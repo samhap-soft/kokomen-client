@@ -42,6 +42,12 @@ export const Footer = (): JSX.Element => {
                     </span>
                     <span className="ml-4">281-01-02657</span>
                   </p>
+                  <p className="flex">
+                    <span className="text-text-secondary min-w-[100px]">
+                      전화번호
+                    </span>
+                    <span className="ml-4">010-3496-2045</span>
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <p className="flex">
@@ -60,7 +66,7 @@ export const Footer = (): JSX.Element => {
                   </p>
                   <p className="flex">
                     <span className="text-text-secondary min-w-[100px]">
-                      주소
+                      사업장 주소
                     </span>
                     <span className="ml-4">서울특별시 동대문구 회기로 30</span>
                   </p>

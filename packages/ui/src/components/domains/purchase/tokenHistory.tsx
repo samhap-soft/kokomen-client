@@ -16,7 +16,7 @@ export default function TokenHistory({
   return (
     <div className="flex flex-col sm:flex-row sm:items-center items-start justify-between border-b border-border p-4">
       <div className="flex items-center gap-2">
-        <div className="w-10 h-10 border border-primary-border bg-primary-bg rounded-full flex justify-center items-center">
+        <div className="w-10 h-10 border border-primary-border bg-primary-bg-light rounded-full flex justify-center items-center">
           <Coins className="w-6 h-6 text-primary" />
         </div>
         <div className="text-start">
