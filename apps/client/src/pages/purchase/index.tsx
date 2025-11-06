@@ -11,6 +11,7 @@ import { getProducts } from "@/domains/purchase/api";
 import { useSearchParams } from "next/navigation";
 import { JSX } from "react";
 import { motion } from "motion/react";
+import { SEO } from "@/shared/seo";
 
 const sections = [
   {
@@ -45,40 +46,48 @@ export default function PurchasePage({
   };
 
   return (
-    <main className="min-h-screen">
-      <Header user={userInfo} />
-      <div className="container mx-auto px-6 pt-6">
-        <div className="relative flex gap-4 border-b border-border mb-6">
-          {sections.map((section) => (
-            <Link
-              key={section.param}
-              href={`/purchase?section=${section.param}`}
-              className={`relative pb-2 px-4 transition-colors ${
-                currentSection === section.param
-                  ? "text-primary font-medium"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {section.label}
-              {currentSection === section.param && (
-                <motion.div
-                  layoutId="underline"
-                  className="absolute left-0 right-0 bottom-[-1px] h-[2px] bg-primary"
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 30
-                  }}
-                />
-              )}
-            </Link>
-          ))}
+    <>
+      <SEO
+        title="토큰 구매"
+        description="토큰을 구매하고 서비스를 활용해보세요."
+        image="/purchase.png"
+        robots="index, nofollow"
+      />
+      <main className="min-h-screen">
+        <Header user={userInfo} />
+        <div className="container mx-auto px-6 pt-6">
+          <div className="relative flex gap-4 border-b border-border mb-6">
+            {sections.map((section) => (
+              <Link
+                key={section.param}
+                href={`/purchase?section=${section.param}`}
+                className={`relative pb-2 px-4 transition-colors ${
+                  currentSection === section.param
+                    ? "text-primary font-medium"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {section.label}
+                {currentSection === section.param && (
+                  <motion.div
+                    layoutId="underline"
+                    className="absolute left-0 right-0 bottom-[-1px] h-[2px] bg-primary"
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30
+                    }}
+                  />
+                )}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
-      {renderSection()}
-      <PurchaseSuccessModal />
-      <Footer />
-    </main>
+        {renderSection()}
+        <PurchaseSuccessModal />
+        <Footer />
+      </main>
+    </>
   );
 }
 
