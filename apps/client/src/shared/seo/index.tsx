@@ -5,9 +5,9 @@ type SEOprops = {
   title?: string;
   description?: string;
   image?: string;
-  pathname?: string;
+  pathname: string;
   children?: ReactNode;
-  robots?:
+  robots:
     | "noindex"
     | "index"
     | "noindex, nofollow"

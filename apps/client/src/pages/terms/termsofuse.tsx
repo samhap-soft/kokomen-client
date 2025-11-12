@@ -108,27 +108,56 @@ export default function TermsOfUsePage({
 
           <section>
             <h2 className="text-xl font-semibold mb-4" id="refund-policy">
-              제7조 (환불 규정)
+              제7조 (토큰의 결제)
             </h2>
             <div className="space-y-2">
+              <p>1. 토큰 구매 이후 환불은 결제가 되었던 수단으로 진행됩니다.</p>
+              <p>2. 구매한 토큰은 회원간 양도가 불가합니다.</p>
               <p>
-                1. 회원은 회사에 환불을 요구할 수 있습니다. 환불은 회사가
-                안내하는 정책 및 방법에 따라 진행됩니다.
-              </p>
-              <p>
-                2. 환불은 구매일로부터 서비스 제공 기한인 1년 이내에 요청할 수
-                있습니다.
-              </p>
-              <p>
-                3. 이용자는 구매한 재화의 일부를 사용한 이후에는 환불이
-                불가합니다. 단, 회사의 과실로 인해 서비스 제공이 불가능한
-                경우에는 환불이 가능합니다.
+                3. 구매한 토큰을 사용 및 취소/환불할 수 있는 기한은 1년입니다.
               </p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-4">제8조 (책임의 제한)</h2>
+            <h2 className="text-xl font-semibold mb-4" id="refund-policy">
+              제8조 (환불 규정)
+            </h2>
+            <div className="space-y-2">
+              <p>
+                1. 회원은 회사에 환불을 요구할 수 있습니다. 환불은 회사가
+                안내하는 정책 및 방법에 따라 진행됩니다.
+                <ol className="ml-4">
+                  <li>
+                    {" "}
+                    - 토큰을 구입한 후, 결제된 토큰의 일부를 사용한 경우 환불이
+                    불가합니다.
+                  </li>
+                  <li>
+                    {" "}
+                    - 회사의 귀책 사유로 인해 결제 오류가 발생한 경우, 결제에
+                    대한 취소 및 환불을 요구할 수 있습니다.
+                  </li>
+                  <li>
+                    {" "}
+                    - 회사의 귀책 사유로 인해 서비스가 영구히 중단되었을 경우,
+                    결제에 대한 취소 및 환불을 요구할 수 있습니다.
+                  </li>
+                  <li>
+                    {" "}
+                    - 일시적인 서비스 중단의 경우에는 환불이 불가능합니다.
+                  </li>
+                </ol>
+              </p>
+              <p>
+                2. 환불은 구매일로부터 서비스 제공 기한인 1년 이내에 요청할 수
+                있습니다.
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-4">제9조 (책임의 제한)</h2>
             <p className="leading-relaxed">
               회사는 천재지변, 전쟁, 기간통신사업자의 서비스 중단 등
               불가항력적인 사유로 서비스를 제공할 수 없는 경우 책임을 지지
@@ -137,7 +166,7 @@ export default function TermsOfUsePage({
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-4">제9조 (약관의 변경)</h2>
+            <h2 className="text-xl font-semibold mb-4">제10조 (약관의 변경)</h2>
             <p className="leading-relaxed">
               회사는 필요한 경우 본 약관을 변경할 수 있으며, 변경된 약관은
               서비스 내 공지사항을 통해 공지합니다. 변경된 약관은 공지일로부터
@@ -147,7 +176,7 @@ export default function TermsOfUsePage({
 
           <section>
             <h2 className="text-xl font-semibold mb-4">
-              제10조 (준거법 및 관할법원)
+              제11조 (준거법 및 관할법원)
             </h2>
             <p className="leading-relaxed">
               본 약관은 대한민국 법률에 따라 해석되며, 서비스 이용으로 발생한

@@ -33,7 +33,8 @@ export default function InterviewMainPage({
         title="모의 면접 시작하기"
         description="운영체제, 데이터베이스, 자료구조, 알고리즘 등 개발자에게 필요한 여러 분야에 대해 모의 면접을 보고 연습해보세요!"
         robots="index, follow"
-        image="/report.png"
+        image="/interview.png"
+        pathname="/interviews"
       >
         <link rel="preload" href="/kokomenReport.png" as="image" />
       </SEO>
