@@ -54,7 +54,7 @@ export async function submitInterviewAnswerV2({
   return answerServerInstance.post(
     `/interviews/${interviewId}/questions/${questionId}/answers`,
     { answer, mode },
-    { timeout: 2000 }
+    { timeout: 10000 }
   );
 }
 
