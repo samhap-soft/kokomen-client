@@ -30,7 +30,10 @@ export default function RankPage({
         description="모의 면접 랭킹을 확인해보고, 상위 랭커들의 면접을 보며 내 면접을 보완해 보세요."
         image="/ranking.png"
         robots="index, follow"
-      />
+        pathname="/rank"
+      >
+        <link rel="canonical" href="https://kokomen.kr/rank"></link>
+      </SEO>
       <main className="min-h-screen">
         <Header user={userInfo} />
         <div className="container mx-auto px-6 pt-6 pb-12">
@@ -128,7 +131,6 @@ export default function RankPage({
                 currentPage={rankList.currentPage}
                 totalPages={rankList.totalPages}
                 hasNext={rankList.hasNext}
-                totalRankingCount={rankList.totalRankingCount}
                 options={{}}
                 basePath="rank"
               />
@@ -168,7 +170,6 @@ export const getServerSideProps = async (
             ? rankListResponse.value
             : {
                 currentPage: 0,
-                totalRankingCount: 0,
                 totalPages: 0,
                 hasNext: false,
                 data: []
@@ -197,7 +198,6 @@ export const getServerSideProps = async (
             ? rankListResponse.value
             : {
                 currentPage: 0,
-                totalRankingCount: 0,
                 totalPages: 0,
                 hasNext: false,
                 data: []

@@ -24,7 +24,11 @@ export default function Dashboard({
 
   return (
     <>
-      <SEO title="대시보드" robots="noindex, nofollow, noarchive" />
+      <SEO
+        title="대시보드"
+        robots="noindex, nofollow, noarchive"
+        pathname="/dashboard"
+      />
 
       <main className="min-h-screen bg-bg-elevated">
         <Header user={userInfo} />

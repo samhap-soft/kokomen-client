@@ -52,6 +52,7 @@ export default function PurchasePage({
         description="토큰을 구매하고 서비스를 활용해보세요."
         image="/purchase.png"
         robots="index, nofollow"
+        pathname="/purchase"
       />
       <main className="min-h-screen">
         <Header user={userInfo} />
