@@ -114,7 +114,11 @@ export default function InterviewPage({
   });
 
   // 타입 안전한 방식으로 현재 질문 가져오기
-  const currentQuestion = data ? getCurrentQuestion(data) : "";
+  const currentQuestion = data
+    ? data.interview_state !== "FINISHED"
+      ? getCurrentQuestion(data)
+      : "면접이 종료되었습니다. 고생하셨습니다."
+    : "";
 
   //기존 면접 정보 업데이트
   const updateInterviewData = (updates: Partial<Interview>) => {
@@ -138,6 +142,7 @@ export default function InterviewPage({
         title="모의 면접"
         description="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
         robots="noindex, nofollow, noarchive"
+        pathname={`/interviews/${interviewId}`}
       >
         <link rel="preload" as="image" href="/interviewBg.jpg" />
       </SEO>
