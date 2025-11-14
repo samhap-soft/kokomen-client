@@ -36,6 +36,7 @@ RUN yarn install
 WORKDIR /app/apps/client
 
 RUN yarn types:build
+RUN yarn sitemap
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
 

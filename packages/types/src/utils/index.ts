@@ -17,4 +17,18 @@ type Paginated<T> = {
   has_next: boolean;
 };
 
-export type { CamelCasedProperties, Paginated };
+type SitemapField = {
+  loc: string;
+  lastmod: string;
+  changefreq?:
+    | "always"
+    | "hourly"
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "yearly"
+    | "never";
+  priority?: number;
+};
+
+export type { CamelCasedProperties, Paginated, SitemapField };

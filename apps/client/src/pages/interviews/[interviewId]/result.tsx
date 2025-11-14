@@ -182,7 +182,7 @@ export default function MyInterviewResultPage({
             </section>
 
             {/* 홈으로 버튼 */}
-            <div className="text-center pt-6">
+            <div className="text-center pt-6 flex flex-col gap-4">
               <Button
                 size="large"
                 onClick={() => navigate.push("/")}
