@@ -14,14 +14,15 @@ services:
       DATABASE_DATABASE: kokomen-dev
       REDIS_HOST: ${REDIS_HOST_DEV}
       REDIS_PORT: 6379
-      PORT: 3000
+      PORT: 3001
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ap-northeast-2
       AWS_BEDROCK_RESUME_EVALUATION_FLOW_ID: ${AWS_BEDROCK_RESUME_EVALUATION_FLOW_ID}
       AWS_BEDROCK_RESUME_EVALUATION_FLOW_ALIAS_ID: ${AWS_BEDROCK_RESUME_EVALUATION_FLOW_ALIAS_ID}
     container_name: kokomen-nest-server-dev
+    networks:
+      - dev-kokomen-net
     restart: on-failure:3
     ports:
-      - "3000:3000"
       - "3001:3001"
