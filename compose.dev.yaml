@@ -46,3 +46,7 @@ services:
     restart: always
     networks:
       - dev-kokomen-net
+networks:
+  dev-kokomen-net:
+    external: true
+    driver: bridge
