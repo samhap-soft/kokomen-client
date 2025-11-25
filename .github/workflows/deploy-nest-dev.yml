@@ -34,5 +34,6 @@ jobs:
           sudo chmod 666 /var/run/docker.sock 
           cd /home/ubuntu/org-dev-runner/_work/kokomen-client/kokomen-client
           yarn types:build
+          docker system prune -a
           docker compose -f ./compose.server.dev.yaml down || true
           docker compose -f ./compose.server.dev.yaml up -d --build
