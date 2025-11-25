@@ -4,11 +4,10 @@ on:
   push:
     branches: [main]
 
-
 jobs:
   deploy:
     name: Deploy to EC2
-    runs-on: [self-hosted, client-prod-a]
+    runs-on: [self-hosted, client-prod]
 
     steps:
       - name: Checkout source code
