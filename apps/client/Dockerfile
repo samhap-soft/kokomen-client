@@ -45,6 +45,7 @@ COPY --from=builder /app/package.json ./package.json
 
 # 꼬꼬면 클라이언트 워크스페이스 폴더와 그 결과물을 원래 위치에 복사
 COPY --from=builder /app/apps/client /app/apps/client
+RUN corepack enable
 
 EXPOSE 3000
 
