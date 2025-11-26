@@ -1,8 +1,8 @@
 services:
   kokomen-nest-server-dev:
     build:
-      context: .
-      dockerfile: ./apps/kokomen-server/local.Dockerfile
+      context: ../../
+      dockerfile: ../../apps/kokomen-server/local.Dockerfile
     container_name: kokomen-nest-server-dev
     volumes:
       # 소스 코드만 마운트 (node_modules, .yarn 제외)
