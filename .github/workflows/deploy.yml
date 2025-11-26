@@ -108,16 +108,16 @@ jobs:
         continue-on-error: true
       - name: Clean up previous stack
         run: |
-          docker compose --env-file .env -f compose.yaml down --remove-orphans || true
+          docker compose --env-file .env -f ./docker/client/compose.yaml down --remove-orphans || true
           docker system prune -af --volumes || true
 
       - name: Run Docker Compose
         run: |
-          docker compose --env-file .env -f compose.yaml up -d --pull always
+          docker compose --env-file .env -f ./docker/client/compose.yaml up -d --pull always
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
       - name: Deployment summary
         run: |
           echo "🚀 Deployment completed"
-          docker compose --env-file .env -f compose.yaml ps
+          docker compose --env-file .env -f ./docker/client/compose.yaml ps
