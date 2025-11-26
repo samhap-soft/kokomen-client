@@ -27,7 +27,6 @@ const nextConfig: NextConfig = {
   },
   productionBrowserSourceMaps: false,
   experimental: {
-    webpackMemoryOptimizations: true,
     webpackBuildWorker: true,
     preloadEntriesOnStart: true,
     urlImports: ["https://cdn.jsdelivr.net/"]
