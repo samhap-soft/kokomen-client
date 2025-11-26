@@ -66,6 +66,7 @@ jobs:
 
   deploy-to-ec2:
     name: Deploy to EC2
+    needs: build-and-push
     runs-on: [self-hosted, org, dev, new]
     steps:
       - name: create .env file
