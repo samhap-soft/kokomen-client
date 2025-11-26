@@ -100,13 +100,13 @@ jobs:
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/kokomen-client:development
           echo "✅ Docker image pulled successfully!"
-          - name: Stop and remove existing container
-          run: |
-            echo "Stopping existing containers..."
-            docker stop kokomen-client || true
-            docker rm kokomen-client || true
-            echo "✅ Old container removed"
-          continue-on-error: true
+      - name: Stop and remove existing container
+        run: |
+          echo "Stopping existing containers..."
+          docker stop kokomen-client || true
+          docker rm kokomen-client || true
+          echo "✅ Old container removed"
+        continue-on-error: true
       - name: Clean up previous stack
         run: |
           docker compose --env-file .env -f compose.dev.yaml down --remove-orphans || true
