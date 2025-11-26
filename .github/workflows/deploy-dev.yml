@@ -71,7 +71,6 @@ jobs:
     steps:
       - name: create .env file
         run: |
-          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env 
           echo "NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}" > .env
           echo "NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}" >> .env
           echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> .env
@@ -115,6 +114,8 @@ jobs:
       - name: Run Docker Compose
         run: |
           docker compose --env-file .env -f compose.dev.yaml up -d --pull always
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
       - name: Deployment summary
         run: |
