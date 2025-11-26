@@ -69,6 +69,8 @@ jobs:
     needs: build-and-push
     runs-on: [self-hosted, org, dev, new]
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
       - name: create .env file
         run: |
           echo "NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}" > .env
