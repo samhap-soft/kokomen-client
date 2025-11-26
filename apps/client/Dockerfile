@@ -4,15 +4,17 @@ FROM node:lts-alpine AS builder
 WORKDIR /app
 
 COPY .yarnrc.yml package.json yarn.lock ./
+COPY ./.yarn ./.yarn
 
 COPY .pnp.cjs .pnp.cjs
 COPY .pnp.loader.mjs .pnp.loader.mjs
+COPY tsconfig.base.json tsconfig.base.json
 
 COPY ./apps/client ./apps/client
 COPY ./packages ./packages
 
 RUN corepack enable
-RUN yarn workspaces focus @kokomen/client --production
+RUN yarn install
 
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_API_BASE_URL
@@ -27,7 +29,7 @@ ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
 ARG SENTRY_AUTH_TOKEN
 ARG NODE_ENV
 
-RUN yarn client:build 
+RUN yarn workspace @kokomen/client build
 
 # 최종 실행 이미지
 FROM node:lts-alpine AS runner
