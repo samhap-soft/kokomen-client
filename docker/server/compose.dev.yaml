@@ -2,7 +2,7 @@ services:
   kokomen-nest-server-dev:
     build:
       context: ../../
-      dockerfile: ../../apps/kokomen-server/Dockerfile
+      dockerfile: ./apps/kokomen-server/Dockerfile
     environment:
       TZ: Asia/Seoul
       NODE_ENV: development
