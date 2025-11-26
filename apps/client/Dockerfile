@@ -1,5 +1,5 @@
 # 빌드 단계
-FROM node:lts-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -32,7 +32,7 @@ ARG NODE_ENV
 RUN yarn workspace @kokomen/client build
 
 # 최종 실행 이미지
-FROM node:lts-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 # 실행에 필수적인 Yarn PnP 파일들 복사
@@ -46,7 +46,6 @@ COPY --from=builder /app/package.json ./package.json
 # 꼬꼬면 클라이언트 워크스페이스 폴더와 그 결과물을 원래 위치에 복사
 COPY --from=builder /app/apps/client /app/apps/client
 RUN corepack enable
-
 EXPOSE 3000
 
 CMD ["yarn", "client:prod"]
