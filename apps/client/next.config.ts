@@ -21,6 +21,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "d2ftfzru2cd49g.cloudfront.net"
+      },
+      {
+        protocol: "https",
+        hostname: "dhtg8wzvkbfxr.cloudfront.net"
       }
     ],
     minimumCacheTTL: 31536000
