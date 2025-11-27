@@ -5,34 +5,121 @@ on:
     branches: [development]
 
 jobs:
-  deploy:
-    name: Deploy to EC2
+  build-and-push:
+    name: Build and Push to Docker Hub
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{secrets.DOCKER_USERNAME}}/kokomen-client
+          tags: |
+            type=raw,value=latest
+            type=raw,value=development
 
-      - name: Decode EC2 private key
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          file: ./apps/client/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client:buildcache,mode=max
+          build-args: |
+            NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
+            NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            NEXT_PUBLIC_CDN_BASE_URL=${{ secrets.DEV_CDN_BASE_URL }}
+            NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_DEV }}
+            NODE_ENV=production
+            NEXT_PUBLIC_BASE_URL=https://dev.kokomen.kr
+            NEXT_PUBLIC_API_BASE_URL=https://api-dev.kokomen.kr/api/v1
+            NEXT_PUBLIC_V2_API_BASE_URL=https://api-dev.kokomen.kr/api/v2
+            NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api-dev.kokomen.kr/api/v1
+            NEXT_PUBLIC_V3_API_BASE_URL=https://api-dev.kokomen.kr/api/v3
+            NEXT_PUBLIC_GRAPHQL_URL=https://api-dev.kokomen.kr/api/v3/graphql
+      - name: Build summary
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > private_key.pem
-          chmod 600 private_key.pem
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Docker image built and pushed successfully!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "🏷️  Tags:"
+          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n'
+          echo ""
+          echo "📦 Image: ${{ secrets.DOCKER_USERNAME }}/kokomen-client"
+          echo "🔀 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-      - name: Copy project to EC2
+  deploy-to-ec2:
+    name: Deploy to EC2
+    needs: build-and-push
+    runs-on: [self-hosted, org, dev, new]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: create .env file
         run: |
-          rsync -az --delete -e "ssh -i private_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/kokomen
+          echo "NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}" > .env
+          echo "NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}" >> .env
+          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> .env
+          echo "NEXT_PUBLIC_CDN_BASE_URL=${{ secrets.DEV_CDN_BASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_DEV }}" >> .env
+          echo "NODE_ENV=production" >> .env
+          echo "NEXT_PUBLIC_BASE_URL=https://dev.kokomen.kr" >> .env
+          echo "NEXT_PUBLIC_API_BASE_URL=https://api-dev.kokomen.kr/api/v1" >> .env
+          echo "NEXT_PUBLIC_V2_API_BASE_URL=https://api-dev.kokomen.kr/api/v2" >> .env
+          echo "NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api-dev.kokomen.kr/api/v1" >> .env
+          echo "NEXT_PUBLIC_V3_API_BASE_URL=https://api-dev.kokomen.kr/api/v3" >> .env
+          echo "NEXT_PUBLIC_GRAPHQL_URL=https://api-dev.kokomen.kr/api/v3/graphql" >> .env
 
-      - name: Run Docker Compose on EC2
+          # Security: Restrict .env permissions (readable only by owner)
+          chmod 600 .env
+
+          echo "✅ .env file created with secure permissions (600)"
+
+      - name: login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Pull Docker image
         run: |
-          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            export NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
-            export NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
-            export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-            export DEV_CDN_BASE_URL=${{ secrets.DEV_CDN_BASE_URL }}
-            export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_DEV }}
+          docker pull ${{ secrets.DOCKER_USERNAME }}/kokomen-client:development
+          echo "✅ Docker image pulled successfully!"
+      - name: Stop and remove existing container
+        run: |
+          echo "Stopping existing containers..."
+          docker stop kokomen-client || true
+          docker rm kokomen-client || true
+          echo "✅ Old container removed"
+        continue-on-error: true
+      - name: Clean up previous stack
+        run: |
+          docker compose --env-file .env -f ./docker/client/compose.dev.yaml down --remove-orphans || true
+          docker system prune -af --volumes || true
 
-            cd kokomen
-            docker system prune -f
-            docker compose -f compose.dev.yaml down || true
-            docker compose -f compose.dev.yaml up -d --build
-          EOF
+      - name: Run Docker Compose
+        run: |
+          docker compose --env-file .env -f ./docker/client/compose.dev.yaml up -d --pull always
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+      - name: Deployment summary
+        run: |
+          echo "🚀 Deployment completed"
+          docker compose --env-file .env -f ./docker/client/compose.dev.yaml ps

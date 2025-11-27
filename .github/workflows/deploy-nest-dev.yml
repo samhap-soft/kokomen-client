@@ -7,7 +7,7 @@ on:
 jobs:
   build-and-deploy:
     name: Build and Deploy to EC2
-    runs-on: [self-hosted, nest-dev]
+    runs-on: [self-hosted, org, dev, new]
 
     steps:
       - name: Checkout source code
@@ -32,8 +32,8 @@ jobs:
         run: |
           cd /home/ubuntu
           sudo chmod 666 /var/run/docker.sock 
-          cd /home/ubuntu/actions-runner/_work/kokomen-client/kokomen-client
+          cd /home/ubuntu/org-dev-runner/_work/kokomen-client/kokomen-client
           yarn types:build
-          docker system prune -f
-          docker compose -f ./compose.server.dev.yaml down || true
-          docker compose -f ./compose.server.dev.yaml up -d --build
+          docker system prune -a
+          docker compose -f ./docker/server/compose.dev.yaml down || true
+          docker compose -f ./docker/server/compose.dev.yaml up -d --build

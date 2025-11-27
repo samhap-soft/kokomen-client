@@ -33,6 +33,7 @@ export default function ResumeEvalPage({
         description="이력서와 포트폴리오가 채용공고와 직무에 얼마나 적합한지 평가해보세요."
         image="/resume.png"
         robots="index, follow"
+        pathname="/resume/eval"
       />
       <main className="min-h-screen">
         <Header user={userInfo} />

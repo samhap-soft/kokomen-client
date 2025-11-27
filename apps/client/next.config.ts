@@ -21,13 +21,16 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "d2ftfzru2cd49g.cloudfront.net"
+      },
+      {
+        protocol: "https",
+        hostname: "dhtg8wzvkbfxr.cloudfront.net"
       }
     ],
     minimumCacheTTL: 31536000
   },
   productionBrowserSourceMaps: false,
   experimental: {
-    webpackMemoryOptimizations: true,
     webpackBuildWorker: true,
     preloadEntriesOnStart: true,
     urlImports: ["https://cdn.jsdelivr.net/"]

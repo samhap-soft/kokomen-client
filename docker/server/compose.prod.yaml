@@ -1,7 +1,7 @@
 services:
   kokomen-nest-server-prod:
     build:
-      context: .
+      context: ../../
       dockerfile: ./apps/kokomen-server/Dockerfile
     container_name: kokomen-nest-server-prod
     ports:

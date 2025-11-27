@@ -1,34 +1,125 @@
-name: Deployment (Prod)
+name: Deployment (Dev)
 
 on:
   push:
     branches: [main]
 
-
 jobs:
-  deploy:
-    name: Deploy to EC2
-    runs-on: [self-hosted, client-prod-a]
+  build-and-push:
+    name: Build and Push to Docker Hub
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: install dependencies
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{secrets.DOCKER_USERNAME}}/kokomen-client-prod
+          tags: |
+            type=raw,value=latest
+            type=raw,value=production
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          file: ./apps/client/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:buildcache,mode=max
+          build-args: |
+            NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
+            NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            NEXT_PUBLIC_CDN_BASE_URL=${{ secrets.PROD_CDN_BASE_URL }}
+            NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_PROD }}
+            NODE_ENV=production
+            NEXT_PUBLIC_BASE_URL=https://kokomen.kr
+            NEXT_PUBLIC_API_BASE_URL=https://api.kokomen.kr/api/v1
+            NEXT_PUBLIC_V2_API_BASE_URL=https://api.kokomen.kr/api/v2
+            NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api.kokomen.kr/api/v1
+            NEXT_PUBLIC_V3_API_BASE_URL=https://api.kokomen.kr/api/v3
+            NEXT_PUBLIC_GRAPHQL_URL=https://api.kokomen.kr/api/v3/graphql
+      - name: Build summary
         run: |
-          corepack enable
-          yarn set version berry
-          yarn install
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ Docker image built and pushed successfully!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "🏷️  Tags:"
+          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n'
+          echo ""
+          echo "📦 Image: ${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod"
+          echo "🔀 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+  deploy-to-ec2:
+    name: Deploy to EC2
+    needs: build-and-push
+    runs-on: [self-hosted, client-prod]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: create .env file
+        run: |
+          echo "NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}" > .env
+          echo "NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}" >> .env
+          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> .env
+          echo "NEXT_PUBLIC_CDN_BASE_URL=${{ secrets.PROD_CDN_BASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_PROD }}" >> .env
+          echo "NODE_ENV=production" >> .env
+          echo "NEXT_PUBLIC_BASE_URL=https://kokomen.kr" >> .env
+          echo "NEXT_PUBLIC_API_BASE_URL=https://api.kokomen.kr/api/v1" >> .env
+          echo "NEXT_PUBLIC_V2_API_BASE_URL=https://api.kokomen.kr/api/v2" >> .env
+          echo "NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api.kokomen.kr/api/v1" >> .env
+          echo "NEXT_PUBLIC_V3_API_BASE_URL=https://api.kokomen.kr/api/v3" >> .env
+          echo "NEXT_PUBLIC_GRAPHQL_URL=https://api.kokomen.kr/api/v3/graphql" >> .env
+
+          # Security: Restrict .env permissions (readable only by owner)
+          chmod 600 .env
+
+          echo "✅ .env file created with secure permissions (600)"
+
+      - name: login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Pull Docker image
+        run: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:production
+          echo "✅ Docker image pulled successfully!"
+      - name: Stop and remove existing container
+        run: |
+          echo "Stopping existing containers..."
+          docker stop kokomen-client || true
+          docker rm kokomen-client || true
+          echo "✅ Old container removed"
+        continue-on-error: true
+      - name: Clean up previous stack
+        run: |
+          docker compose --env-file .env -f ./docker/client/compose.yaml down --remove-orphans || true
+          docker system prune -af --volumes || true
 
       - name: Run Docker Compose
-        env:
-          NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
-          NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          PROD_CDN_BASE_URL: ${{ secrets.PROD_CDN_BASE_URL }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID_PROD }}
-
         run: |
-          yarn types:build
-          docker system prune -f
-          docker compose -f compose.yaml down || true
-          docker compose -f compose.yaml up -d --build
+          docker compose --env-file .env -f ./docker/client/compose.yaml up -d --pull always
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+      - name: Deployment summary
+        run: |
+          echo "🚀 Deployment completed"
+          docker compose --env-file .env -f ./docker/client/compose.yaml ps

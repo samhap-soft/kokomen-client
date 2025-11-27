@@ -8,8 +8,6 @@ COPY . .
 
 RUN yarn install
 
-WORKDIR /app/apps/kokomen-server
-
 RUN yarn types:build
 
 WORKDIR /app

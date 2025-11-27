@@ -39,5 +39,5 @@ jobs:
           cd /home/ubuntu/actions-runner/_work/kokomen-client/kokomen-client
           yarn types:build
           docker system prune -f
-          docker compose -f ./compose.server.prod.yaml down || true
-          docker compose -f ./compose.server.prod.yaml up -d --build
+          docker compose -f ./docker/server/compose.prod.yaml down || true
+          docker compose -f ./docker/server/compose.prod.yaml up -d --build

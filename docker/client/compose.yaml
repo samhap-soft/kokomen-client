@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  client:
+    image: ${DOCKER_USERNAME}/kokomen-client-prod:production
+    container_name: kokomen-client
+    expose:
+      - "3000"
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    container_name: kokomen-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../../nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot
+    depends_on:
+      - client
+    restart: always

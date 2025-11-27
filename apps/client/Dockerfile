@@ -1,44 +1,54 @@
+# ✅ 빌드 단계
 FROM node:22-alpine AS builder
-
-ENV NODE_ENV=production
 
 WORKDIR /app
 
-RUN corepack enable
+COPY .yarnrc.yml package.json yarn.lock ./
+COPY .yarn .yarn
+COPY .pnp.cjs .pnp.cjs
+COPY .pnp.loader.mjs .pnp.loader.mjs
+COPY tsconfig.base.json tsconfig.base.json
 
-COPY . .
+COPY apps apps
+COPY packages packages
+
+RUN corepack enable
+RUN yarn install --immutable
 
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_API_BASE_URL
-ARG NEXT_PUBLIC_POSTHOG_KEY
-ARG NEXT_PUBLIC_POSTHOG_HOST
-ARG SENTRY_AUTH_TOKEN
-ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
-ARG NEXT_PUBLIC_CDN_BASE_URL
 ARG NEXT_PUBLIC_V2_API_BASE_URL
+ARG NEXT_PUBLIC_NOTIFICATION_API_BASE_URL
 ARG NEXT_PUBLIC_V3_API_BASE_URL
 ARG NEXT_PUBLIC_GRAPHQL_URL
-ARG NEXT_PUBLIC_NOTIFICATION_API_BASE_URL
-ENV NEXT_PUBLIC_V2_API_BASE_URL=$NEXT_PUBLIC_V2_API_BASE_URL
-ENV NEXT_PUBLIC_V3_API_BASE_URL=$NEXT_PUBLIC_V3_API_BASE_URL
-ENV NEXT_PUBLIC_GRAPHQL_URL=$NEXT_PUBLIC_GRAPHQL_URL
-ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_POSTHOG_KEY=$NEXT_PUBLIC_POSTHOG_KEY
-ENV NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST
-ENV NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=$NEXT_PUBLIC_NOTIFICATION_API_BASE_URL
-ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
-ENV NEXT_PUBLIC_CDN_BASE_URL=$NEXT_PUBLIC_CDN_BASE_URL
-ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ARG NEXT_PUBLIC_POSTHOG_KEY
+ARG NEXT_PUBLIC_POSTHOG_HOST
+ARG NEXT_PUBLIC_CDN_BASE_URL
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ARG SENTRY_AUTH_TOKEN
+ARG NODE_ENV
 
-RUN yarn install
+RUN yarn workspace @kokomen/client build
 
-WORKDIR /app/apps/client
 
-RUN yarn types:build
-
-RUN NODE_OPTIONS="--max-old-space-size=4096" yarn build
-RUN yarn sitemap
+# ✅ 실행(런타임) 단계
+FROM node:22-alpine AS runner
 
 WORKDIR /app
-CMD ["yarn", "client:prod"]
+RUN corepack enable
+
+# ✅ Yarn PnP 환경 그대로 가져오기
+COPY --from=builder /app/.yarn .yarn
+COPY --from=builder /app/.pnp.cjs .pnp.cjs
+COPY --from=builder /app/.pnp.loader.mjs .pnp.loader.mjs
+COPY --from=builder /app/yarn.lock yarn.lock
+COPY --from=builder /app/package.json package.json
+
+# ✅ monorepo workspace도 가져와야 PnP dependency graph 유지됨
+COPY --from=builder /app/apps apps
+COPY --from=builder /app/packages packages
+
+EXPOSE 3000
+
+# ✅ Next.js 일반 실행
+CMD ["yarn", "workspace", "@kokomen/client", "start"]
