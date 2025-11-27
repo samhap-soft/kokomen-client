@@ -15,8 +15,8 @@ jobs:
 
       - name: install dependencies
         run: |
-          corepack enable
-          yarn install
+          sudo corepack enable
+          sudo yarn install
 
       - name: Run Docker Compose on ${{ matrix.server }}
         env:
