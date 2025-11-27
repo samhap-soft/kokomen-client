@@ -7,11 +7,7 @@ on:
 jobs:
   build-and-deploy:
     name: Build and Deploy to EC2
-    runs-on: [self-hosted, "${{ matrix.server }}"]
-    strategy:
-      max-parallel: 1 # 순차 배포
-      matrix:
-        server: [nest-prod-a, nest-prod-b]
+    runs-on: [self-hosted, ocr]
 
     steps:
       - name: Checkout source code
