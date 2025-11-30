@@ -42,7 +42,7 @@ export default function Home({
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   return (
     <>
-      <SEO robots="index, follow" />
+      <SEO robots="index, follow" pathname="/" />
       <main className="min-h-screen">
         <Header user={user} />
         <section className="relative overflow-hidden pt-16 sm:pt-20 lg:pt-32">
