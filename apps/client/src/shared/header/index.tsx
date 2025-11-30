@@ -52,12 +52,12 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
       current: false,
       featureFlag: true
     },
-    {
-      href: "/recruit",
-      label: "채용 공고",
-      current: false,
-      featureFlag: true
-    },
+    // {
+    //   href: "/recruit",
+    //   label: "채용 공고",
+    //   current: false,
+    //   featureFlag: true
+    // },
     {
       href: "/purchase",
       label: "토큰 구매",
