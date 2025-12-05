@@ -2,7 +2,7 @@ name: Deployment Nestjs server (Prod)
 
 on:
   push:
-    branches: [main]
+    branches: [main-disabled-temporarily]
 
 jobs:
   build-and-deploy:
