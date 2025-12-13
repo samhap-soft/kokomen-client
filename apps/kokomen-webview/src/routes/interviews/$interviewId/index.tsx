@@ -19,7 +19,7 @@ import { InterviewAnswerForm } from "@/domains/interviews/components/interviewAn
 import { InterviewQuestion, InterviewSideBar } from "@kokomen/ui/domains";
 import InterviewFinishModal from "@/domains/interviews/components/interviewFinishModal";
 import InterviewStartModal from "@/domains/interviews/components/interviewStartModal";
-import interviewEventHelpers from "@/domains/interviews/lib/interviewEventHelpers";
+import { publishInterviewEvent } from "@/domains/interviews/lib/interviewEventHelpers";
 
 // eslint-disable-next-line @rushstack/typedef-var
 export const Route = createFileRoute("/interviews/$interviewId/")({
@@ -118,13 +118,13 @@ function RouteComponent(): ReactNode {
     onPlayEnd: () => {
       setIsSpeaking(false);
       if (mode === "VOICE") {
-        interviewEventHelpers.startVoiceRecognition();
+        publishInterviewEvent("interview:startVoiceRecognition");
       }
     },
     onPlayStart: () => {
       setIsSpeaking(true);
       if (mode === "VOICE") {
-        interviewEventHelpers.stopVoiceRecognition();
+        publishInterviewEvent("interview:stopVoiceRecognition");
       }
     }
   });

@@ -8,7 +8,6 @@ import {
   InterviewAnswerForm as InterviewAnswerFormType
 } from "@kokomen/types";
 import { useSpeechRecognitionWithEvents } from "@/domains/interview/hooks/useSpeechRecognitionWithEvents";
-import { interviewEventHelpers } from "@/domains/interview/utils/interviewEventEmitter";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { captureFormSubmitEvent } from "@/utils/analytics";
 import { Button, LoadingCircles, Textarea } from "@kokomen/ui";
@@ -16,6 +15,7 @@ import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
+import { publishInterviewEvent } from "@/domains/interview/utils/interviewEventEmitter";
 
 type InterviewInputProps = Pick<
   Interview,
@@ -85,7 +85,7 @@ export function InterviewAnswerForm({
       );
     },
     onMutate: (data) => {
-      interviewEventHelpers.stopVoiceRecognition();
+      publishInterviewEvent("stopVoiceRecognition");
       captureFormSubmitEvent({
         name: "submitInterviewAnswer",
         properties: {
@@ -294,7 +294,7 @@ function VoiceInputButton({
         name="interview-voice-stop"
         variant={"glass"}
         className="flex items-center gap-2 text-text-tertiary"
-        onClick={interviewEventHelpers.stopVoiceRecognition}
+        onClick={() => publishInterviewEvent("stopVoiceRecognition")}
         disabled={disabled}
       >
         <CircleStop
@@ -313,7 +313,7 @@ function VoiceInputButton({
       name="interview-voice-start"
       variant={"glass"}
       className="flex items-center gap-2 text-text-tertiary"
-      onClick={interviewEventHelpers.startVoiceRecognition}
+      onClick={() => publishInterviewEvent("startVoiceRecognition")}
       disabled={disabled}
     >
       <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />

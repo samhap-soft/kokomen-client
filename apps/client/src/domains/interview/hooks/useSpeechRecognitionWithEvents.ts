@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   useInterviewEvent,
-  interviewEventHelpers
+  publishInterviewEvent
 } from "@/domains/interview/utils/interviewEventEmitter";
 import { InterviewMode } from "@kokomen/types";
 
@@ -57,20 +57,20 @@ export const useSpeechRecognitionWithEvents = ({
   const handleSpeechStart = useCallback((): void => {
     setIsListening(true);
     setError(null);
-    interviewEventHelpers.notifyVoiceStarted();
+    publishInterviewEvent("interview:voiceRecognitionStarted");
   }, []);
 
   const handleSpeechEnd = useCallback((): void => {
     setIsListening(false);
-    interviewEventHelpers.notifyVoiceStopped();
+    publishInterviewEvent("interview:voiceRecognitionStopped");
 
     if (result.current[resultPointer.current] === "") {
       return;
     }
     if (mode === "VOICE") {
-      interviewEventHelpers.stopVoiceRecognition();
+      publishInterviewEvent("interview:stopVoiceRecognition");
       setTimeout(() => {
-        interviewEventHelpers.startVoiceRecognition();
+        publishInterviewEvent("interview:startVoiceRecognition");
       }, 500);
     }
     resultPointer.current++;
@@ -89,7 +89,9 @@ export const useSpeechRecognitionWithEvents = ({
       result.current[resultPointer.current] = resultString;
       const fullResult = result.current.join(" ");
       onSpeechEnd(fullResult);
-      interviewEventHelpers.sendVoiceResult(fullResult);
+      publishInterviewEvent("interview:voiceRecognitionResult", {
+        text: fullResult
+      });
     },
     [onSpeechEnd, enabled]
   );
@@ -122,11 +124,13 @@ export const useSpeechRecognitionWithEvents = ({
       }
       setError(errorMessage);
 
-      interviewEventHelpers.notifyVoiceError(errorMessage);
+      publishInterviewEvent("interview:voiceRecognitionError", {
+        error: errorMessage
+      });
       if (mode === "VOICE") {
-        interviewEventHelpers.stopVoiceRecognition();
+        publishInterviewEvent("interview:stopVoiceRecognition");
         setTimeout(() => {
-          interviewEventHelpers.startVoiceRecognition();
+          publishInterviewEvent("interview:startVoiceRecognition");
         }, 2000);
       }
       setTimeout(() => {
@@ -187,7 +191,9 @@ export const useSpeechRecognitionWithEvents = ({
     if (!isSupported) {
       const errorMsg = "음성 인식이 지원되지 않습니다.";
       setError(errorMsg);
-      interviewEventHelpers.notifyVoiceError(errorMsg);
+      publishInterviewEvent("interview:voiceRecognitionError", {
+        error: errorMsg
+      });
       return;
     }
 
@@ -204,7 +210,9 @@ export const useSpeechRecognitionWithEvents = ({
     } catch (error) {
       const errorMsg = "음성 인식을 시작할 수 없습니다.";
       setError(errorMsg);
-      interviewEventHelpers.notifyVoiceError(errorMsg);
+      publishInterviewEvent("interview:voiceRecognitionError", {
+        error: errorMsg
+      });
     }
   }, [isSupported, createSpeechRecognition, detachEventListeners]);
 
@@ -226,7 +234,7 @@ export const useSpeechRecognitionWithEvents = ({
 
   // 이벤트 구독 - 음성 인식 시작 요청
   useInterviewEvent(
-    "startVoiceRecognition",
+    "interview:startVoiceRecognition",
     () => {
       startListening();
     },
@@ -235,7 +243,7 @@ export const useSpeechRecognitionWithEvents = ({
 
   // 이벤트 구독 - 음성 인식 중지 요청
   useInterviewEvent(
-    "stopVoiceRecognition",
+    "interview:stopVoiceRecognition",
     () => {
       stopListening();
     },
@@ -251,7 +259,9 @@ export const useSpeechRecognitionWithEvents = ({
       setIsSupported(false);
       const errorMsg = "이 브라우저는 음성 인식을 지원하지 않습니다.";
       setError(errorMsg);
-      interviewEventHelpers.notifyVoiceError(errorMsg);
+      publishInterviewEvent("interview:voiceRecognitionError", {
+        error: errorMsg
+      });
       return;
     }
 

@@ -23,7 +23,7 @@ import {
 } from "@/domains/interviews/api/interviewAnswer";
 import useSpeechRecognition from "@/domains/interviews/hooks/useSpeechRecognition";
 import { captureFormSubmitEvent } from "@/utils/analytics";
-import interviewEventHelpers from "@/domains/interviews/lib/interviewEventHelpers";
+import { publishInterviewEvent } from "@/domains/interviews/lib/interviewEventHelpers";
 
 type InterviewInputProps = Pick<
   CamelCasedProperties<Interview>,
@@ -105,7 +105,7 @@ export function InterviewAnswerForm({
         }
       });
       if (mode === "VOICE") {
-        interviewEventHelpers.stopVoiceRecognition();
+        publishInterviewEvent("interview:stopVoiceRecognition");
       }
       const previousMessage = {
         prevMessage: curQuestion,
