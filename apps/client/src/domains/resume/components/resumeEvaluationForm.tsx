@@ -1,8 +1,11 @@
-import { submitResumeEvaluation } from "@/domains/resume/api";
+import {
+  getResumeEvaluationState,
+  submitResumeEvaluation
+} from "@/domains/resume/api";
+import { ArchiveButton } from "@/domains/resume/components/resumeArchiveButton";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
 // import { resumeEvaluationDemoResult } from "@/domains/resume/constants";
 import { withApiErrorCapture } from "@/utils/error";
-import { parsePdf } from "@/utils/pdf";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import {
   CamelCasedProperties,
@@ -48,7 +51,7 @@ export default function ResumeEvaluationForm({
   setResult
 }: {
   setResult: Dispatch<
-    SetStateAction<CamelCasedProperties<ResumeOutput> | null>
+    SetStateAction<CamelCasedProperties<ResumeOutput["result"]> | null>
   >;
 }) {
   const { toast } = useToast();
@@ -60,11 +63,15 @@ export default function ResumeEvaluationForm({
   });
   const router = useExtendedRouter();
   const mutation = useMutation<
-    CamelCasedProperties<ResumeOutput>,
+    CamelCasedProperties<ResumeOutput["result"]>,
     Error,
     ResumeInput
   >({
-    mutationFn: (data) => submitResumeEvaluation(data),
+    mutationFn: async (data) => {
+      const submitResponse = await submitResumeEvaluation(data);
+      const res = await getResumeEvaluationState(submitResponse.evaluationId);
+      return res.result;
+    },
     onSuccess: (data) => {
       form.reset();
       setResult(data);
@@ -88,26 +95,16 @@ export default function ResumeEvaluationForm({
   async function onSubmit(data: ResumeEvalFormFields) {
     try {
       setIsParsing(true);
-      let resume = "";
-      let portfolio = "";
-      if (data.portfolio && data.portfolio?.length > 0) {
-        const parsedFiles = await parsePdf([
-          data.resume[0],
-          data.portfolio[0]
-        ] as File[]);
-        resume = parsedFiles[0];
-        portfolio = parsedFiles[1];
-      } else {
-        resume = await parsePdf(data.resume[0] as File);
+      const formData = new FormData();
+      formData.append("resume", data.resume.item(0) as File);
+      if (data.portfolio?.length) {
+        formData.append("portfolio", data.portfolio.item(0) as File);
       }
+      formData.append("job_position", data.job_position);
+      formData.append("job_description", data.job_description || "");
+      formData.append("job_career", data.job_career);
 
-      mutation.mutate({
-        resume: resume,
-        portfolio: portfolio,
-        job_position: data.job_position,
-        job_description: data.job_description || "",
-        job_career: data.job_career
-      });
+      mutation.mutate(formData as unknown as ResumeInput);
     } catch (error) {
       console.log(error);
     } finally {
@@ -130,13 +127,16 @@ export default function ResumeEvaluationForm({
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
-            <FileField
-              label="이력서"
-              required
-              register={form.register("resume")}
-              error={form.formState.errors.resume?.message}
-              hint="PDF 파일만 업로드 가능합니다"
-            />
+            <div className="flex items-center gap-2">
+              <FileField
+                label="이력서"
+                required
+                register={form.register("resume")}
+                error={form.formState.errors.resume?.message}
+                hint="PDF 파일만 업로드 가능합니다"
+              />
+              <ArchiveButton onClickResume={() => {}} />
+            </div>
 
             <FileField
               label="포트폴리오"

@@ -23,8 +23,9 @@ const ResumeEvalForm = dynamic(
 export default function ResumeEvalPage({
   userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [result, setResult] =
-    useState<CamelCasedProperties<ResumeOutput> | null>(null);
+  const [result, setResult] = useState<CamelCasedProperties<
+    CamelCasedProperties<ResumeOutput["result"]>
+  > | null>(null);
 
   return (
     <>

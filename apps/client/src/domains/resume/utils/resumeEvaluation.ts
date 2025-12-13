@@ -16,7 +16,9 @@ export const resumeEvaluation = (score: number) => {
 };
 
 export const parseResumeEvaluationCategoryData = (
-  resumeAnalysisResult: CamelCasedProperties<ResumeOutput>
+  resumeAnalysisResult: CamelCasedProperties<
+    CamelCasedProperties<ResumeOutput["result"]>
+  >
 ): {
   key: string;
   label: string;

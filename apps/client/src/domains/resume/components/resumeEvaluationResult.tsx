@@ -20,7 +20,7 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 export default function ResumeEvaluationResult({
   result
 }: {
-  result: CamelCasedProperties<ResumeOutput>;
+  result: CamelCasedProperties<CamelCasedProperties<ResumeOutput["result"]>>;
 }) {
   const categoryData = parseResumeEvaluationCategoryData(result);
 
