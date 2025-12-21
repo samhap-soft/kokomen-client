@@ -1,4 +1,7 @@
-import { CamelCasedProperties, ResumeOutput } from "@kokomen/types";
+import {
+  CamelCasedProperties,
+  ResumeEvaluationResult as ResumeEvaluationResultType
+} from "@kokomen/types";
 import { motion } from "motion/react";
 import {
   Chart as ChartJS,
@@ -18,11 +21,11 @@ import { Check } from "lucide-react";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function ResumeEvaluationResult({
-  result
+  report
 }: {
-  result: CamelCasedProperties<CamelCasedProperties<ResumeOutput["result"]>>;
+  report: CamelCasedProperties<ResumeEvaluationResultType>;
 }) {
-  const categoryData = parseResumeEvaluationCategoryData(result);
+  const categoryData = parseResumeEvaluationCategoryData(report.result);
 
   return (
     <motion.section
@@ -41,7 +44,7 @@ export default function ResumeEvaluationResult({
           <p className="text-lg text-text-secondary">
             총점:{" "}
             <span className="text-2xl font-bold text-primary">
-              {result.totalScore}
+              {report.result.totalScore}
             </span>
             점
           </p>
@@ -157,7 +160,7 @@ export default function ResumeEvaluationResult({
               종합 피드백
             </h2>
             <p className="text-text-secondary whitespace-pre-line leading-relaxed">
-              {result.totalFeedback}
+              {report.result.totalFeedback}
             </p>
           </div>
         </div>

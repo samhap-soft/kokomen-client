@@ -94,7 +94,7 @@ const toastVariants = cva(
           "border-error-border bg-error-bg text-error-text shadow-box-shadow",
         warning:
           "border-warning-border bg-warning-bg text-warning-text shadow-box-shadow",
-        info: "border-info-border bg-info-bg text-info-text shadow-box-shadow"
+        info: "border-info-border text-info-text shadow-box-shadow bg-white"
       }
     },
     defaultVariants: {

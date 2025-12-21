@@ -6,6 +6,7 @@ import { Toaster } from "@kokomen/ui";
 import { ErrorBoundary } from "@sentry/nextjs";
 import ErrorFallback from "@/shared/errorFallback";
 import FeedbackButton from "@/shared/feedbackButton";
+import ResumeStoreProvider from "@/domains/resume/context/resumeStore";
 
 const queryClient: QueryClient = new QueryClient();
 
@@ -15,8 +16,10 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary fallback={<ErrorFallback />}>
         <Toaster>
-          <Component {...pageProps} />
-          <FeedbackButton />
+          <ResumeStoreProvider>
+            <Component {...pageProps} />
+            <FeedbackButton />
+          </ResumeStoreProvider>
         </Toaster>
       </ErrorBoundary>
     </QueryClientProvider>

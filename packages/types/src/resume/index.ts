@@ -5,7 +5,9 @@ type ArchivedResumeAndPortfolio = {
   created_at: string;
 };
 
-type ResumeInput = {
+type ResumeInput = ResumeInputWithNewFile | ResumeInputWithArchivedFile;
+
+type ResumeInputWithNewFile = {
   resume: File;
   portfolio?: File;
   job_position: string;
@@ -13,8 +15,19 @@ type ResumeInput = {
   job_career: string;
 };
 
+type ResumeInputWithArchivedFile = {
+  resume_id: string;
+  portfolio_id?: string;
+  job_position: string;
+  job_description?: string;
+  job_career: string;
+};
+
 type ResumePending = {
   state: "PENDING";
+};
+type ResumeFailed = {
+  state: "FAILED";
 };
 type ResumeOutput = {
   state: "COMPLETED";
@@ -49,9 +62,28 @@ type ResumeOutput = {
   };
 };
 
+type ResumeEvaluationResult = {
+  id: number;
+  resume: {
+    id: number;
+    title: string;
+  };
+  portfolio: {
+    id: number;
+    title: string;
+  };
+  job_position: string;
+  job_description: string;
+  job_career: string;
+  result: ResumeOutput["result"];
+};
 export type {
   ResumeInput,
   ResumeOutput,
   ArchivedResumeAndPortfolio,
-  ResumePending
+  ResumePending,
+  ResumeInputWithArchivedFile,
+  ResumeInputWithNewFile,
+  ResumeFailed,
+  ResumeEvaluationResult
 };

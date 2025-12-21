@@ -1,6 +1,6 @@
 interface ReportEventPayloads {
-  "report:submitted": { report_id: string };
-  "report:created": { report_id: string };
+  "report:submitted": { evaluation_id: string };
+  "report:created": undefined;
   "report:updated": undefined;
   "report:error": { error: string };
 }

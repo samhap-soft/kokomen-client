@@ -10,7 +10,8 @@ const FileField = ({
   required,
   error,
   hint,
-  disabled
+  disabled,
+  displayName
 }: {
   register: UseFormRegisterReturn<string>;
   label: string;
@@ -18,6 +19,7 @@ const FileField = ({
   error?: string;
   hint?: string;
   disabled?: boolean;
+  displayName?: string;
 }) => {
   const [fileName, setFileName] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +63,7 @@ const FileField = ({
         disabled={disabled}
       >
         <span className={fileName ? "text-text-heading" : "text-text-tertiary"}>
-          {fileName || "파일 선택하기"}
+          {displayName || fileName || "파일 선택하기"}
         </span>
         <CloudUpload className="w-5 h-5 text-text-tertiary group-hover:text-text-secondary transition-colors" />
       </Button>

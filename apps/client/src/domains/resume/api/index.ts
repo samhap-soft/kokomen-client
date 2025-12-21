@@ -1,7 +1,13 @@
 import { mapToCamelCase } from "@/utils/convertConvention";
-import { ResumeInput, ResumeOutput, ResumePending } from "@kokomen/types";
+import {
+  ResumeEvaluationResult,
+  ResumeFailed,
+  ResumeOutput,
+  ResumePending
+} from "@kokomen/types";
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { delay, exponentialDelay } from "@kokomen/utils";
+import { GetServerSidePropsContext } from "next";
 
 // 요청별 재시도 상태를 관리하는 Map
 const retryStateMap = new Map<string, number>();
@@ -57,7 +63,7 @@ resumeServerInstance.interceptors.response.use(
   }
 );
 
-function submitResumeEvaluation(data: ResumeInput) {
+function submitResumeEvaluation(data: FormData) {
   return resumeServerInstance
     .post<{ evaluation_id: string }>("/evaluations", data)
     .then((res) => res.data)
@@ -71,7 +77,7 @@ const resumePollingServerInstance = axios.create({
 
 // 폴링에 대한 요청 완료시
 const onFullFilledPolling = async (
-  response: AxiosResponse<ResumeOutput | ResumePending>
+  response: AxiosResponse<ResumeOutput | ResumePending | ResumeFailed>
 ) => {
   const requestId = createRequestId(response.config);
 
@@ -79,6 +85,9 @@ const onFullFilledPolling = async (
     resetRetryCount(requestId);
     return response;
   }
+
+  if (response.data.state === "FAILED")
+    return Promise.reject("이력서 평가 중 오류가 발생했어요");
 
   const retryCount = incrementRetryCount(requestId);
   const maxRetries = 50;
@@ -119,4 +128,28 @@ function getResumeEvaluationState(evaluationId: string) {
     .then((res) => res.data)
     .then(mapToCamelCase);
 }
-export { submitResumeEvaluation, getResumeEvaluationState };
+
+const resumeResultServerInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/resumes/evaluations",
+  withCredentials: true
+});
+
+function getResumeEvaluationResult(
+  evaluationId: string,
+  context: GetServerSidePropsContext
+) {
+  return resumeResultServerInstance
+    .get<ResumeEvaluationResult>(`/${evaluationId}`, {
+      headers: {
+        Cookie: context.req.headers.cookie
+      }
+    })
+    .then((res) => res.data)
+    .then(mapToCamelCase);
+}
+export {
+  submitResumeEvaluation,
+  getResumeEvaluationState,
+  getResumeEvaluationResult
+};
+export * from "./archive";

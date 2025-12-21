@@ -100,14 +100,25 @@ const recruitKeys: QueryKeyFactory<RecruitMethods> = {
     ] as const
 };
 
+type ArchiveMethods = {
+  resumes: (type?: "ALL" | "RESUME" | "PORTFOLIO") => QueryKey;
+};
+const archiveKeys: QueryKeyFactory<ArchiveMethods> = {
+  all: ["archive"] as const,
+  resumes: (type?: "ALL" | "RESUME" | "PORTFOLIO"): QueryKey =>
+    [...archiveKeys.all, "resumes", type ?? "ALL"] as const
+};
+
 export {
   interviewHistoryKeys,
   interviewKeys,
   memberKeys,
+  archiveKeys,
   purchaseKeys,
   recruitKeys,
   type InterviewHistoryParams,
   type InterviewParams,
   type MemberRankParams,
-  type RecruitMethods
+  type RecruitMethods,
+  type ArchiveMethods
 };

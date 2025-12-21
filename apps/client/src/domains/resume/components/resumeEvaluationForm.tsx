@@ -1,59 +1,39 @@
-import {
-  getResumeEvaluationState,
-  submitResumeEvaluation
-} from "@/domains/resume/api";
+import { submitResumeEvaluation } from "@/domains/resume/api";
 import { ArchiveButton } from "@/domains/resume/components/resumeArchiveButton";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
-// import { resumeEvaluationDemoResult } from "@/domains/resume/constants";
 import { withApiErrorCapture } from "@/utils/error";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
-import {
-  CamelCasedProperties,
-  ResumeInput,
-  ResumeOutput
-} from "@kokomen/types";
+import { generateFormData } from "@kokomen/utils";
+import { CamelCasedProperties, UserInfo } from "@kokomen/types";
 import { Button, FileField, Input, useToast } from "@kokomen/ui";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import Image from "next/image";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-
-const ResumeEvaluationLoading = () => (
-  <div className="fixed inset-0 w-full flex items-center justify-center flex-col gap-8 bg-black/50">
-    <Image
-      src="/kokomenReport.png"
-      alt="kokomenReport"
-      width={300}
-      height={300}
-    />
-    <div className="text-lg space-y-2 text-text-light-solid text-center">
-      <p>보고서를 생성하는 중이에요. 잠시만 기다려주세요.</p>
-      <p>최대 1분까지 소요될 수 있어요</p>
-    </div>
-  </div>
-);
+import { archiveKeys } from "@/utils/querykeys";
+import { publishReportEvent } from "@/domains/resume/utils/reportEventEmitter";
 
 const jobCareers = ["0-1년", "1-3년", "3-5년", "5-10년", "10년 이상"];
-const resumeEvalFormFields = z.object({
-  resume: z.instanceof(FileList).refine((fileList) => fileList.length > 0, {
-    message: "이력서를 업로드해주세요"
-  }),
-  portfolio: z.instanceof(FileList).optional(),
-  job_position: z.string().nonempty({ message: "지원 직무를 입력해주세요" }),
-  job_description: z.string().optional(),
-  job_career: z.enum(jobCareers as [string, ...string[]]).default("0-1년")
-});
+const resumeEvalFormFields = z
+  .object({
+    resume: z.instanceof(FileList),
+    resume_id: z.string().optional(),
+    portfolio: z.instanceof(FileList),
+    portfolio_id: z.string().optional(),
+    job_position: z.string().nonempty({ message: "지원 직무를 입력해주세요" }),
+    job_description: z.string().optional(),
+    job_career: z.enum(jobCareers as [string, ...string[]]).default("0-1년")
+  })
+  .refine((data) => data.resume_id || data.resume.length > 0, {
+    message: "이력서를 선택해주세요"
+  })
+  .refine((data) => data.portfolio_id || data.portfolio, {
+    message: "포트폴리오를 선택해주세요"
+  });
 type ResumeEvalFormFields = z.infer<typeof resumeEvalFormFields>;
 
-export default function ResumeEvaluationForm({
-  setResult
-}: {
-  setResult: Dispatch<
-    SetStateAction<CamelCasedProperties<ResumeOutput["result"]> | null>
-  >;
-}) {
+export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
   const { toast } = useToast();
   const form = useForm<ResumeEvalFormFields>({
     resolver: standardSchemaResolver(resumeEvalFormFields),
@@ -61,20 +41,48 @@ export default function ResumeEvaluationForm({
       job_career: "0-1년"
     }
   });
+  const [displayName, setDisplayName] = useState<{
+    resume: string;
+    portfolio: string;
+  }>({ resume: "", portfolio: "" });
+
+  useEffect(() => {
+    if (
+      form.getValues("resume") instanceof FileList &&
+      form.getValues("resume").length > 0
+    ) {
+      setDisplayName({ ...displayName, resume: "" });
+      form.setValue("resume_id", undefined);
+    }
+    if (
+      form.getValues("portfolio") instanceof FileList &&
+      form.getValues("portfolio").length > 0
+    ) {
+      setDisplayName({ ...displayName, portfolio: "" });
+      form.setValue("portfolio_id", undefined);
+    }
+  }, [form.watch("resume_id"), form.watch("portfolio_id")]);
+
+  const queryClient = useQueryClient();
   const router = useExtendedRouter();
   const mutation = useMutation<
-    CamelCasedProperties<ResumeOutput["result"]>,
+    CamelCasedProperties<{ evaluation_id: string }>,
     Error,
-    ResumeInput
+    FormData
   >({
-    mutationFn: async (data) => {
-      const submitResponse = await submitResumeEvaluation(data);
-      const res = await getResumeEvaluationState(submitResponse.evaluationId);
-      return res.result;
-    },
+    mutationFn: submitResumeEvaluation,
     onSuccess: (data) => {
-      form.reset();
-      setResult(data);
+      queryClient.invalidateQueries({ queryKey: archiveKeys.resumes("ALL") });
+      publishReportEvent("report:submitted", {
+        evaluation_id: data.evaluationId
+      });
+      toast({
+        title: "이력서 분석 중입니다. 잠시 후 평가 결과를 알려드려요",
+        variant: "info"
+      });
+      router.replace({
+        pathname: "/resume"
+      });
     },
     onError: withApiErrorCapture((error) => {
       if (isAxiosError(error) && error.response?.status === 401) {
@@ -95,16 +103,8 @@ export default function ResumeEvaluationForm({
   async function onSubmit(data: ResumeEvalFormFields) {
     try {
       setIsParsing(true);
-      const formData = new FormData();
-      formData.append("resume", data.resume.item(0) as File);
-      if (data.portfolio?.length) {
-        formData.append("portfolio", data.portfolio.item(0) as File);
-      }
-      formData.append("job_position", data.job_position);
-      formData.append("job_description", data.job_description || "");
-      formData.append("job_career", data.job_career);
-
-      mutation.mutate(formData as unknown as ResumeInput);
+      const formData = generateFormData(data);
+      mutation.mutate(formData);
     } catch (error) {
       console.log(error);
     } finally {
@@ -134,14 +134,39 @@ export default function ResumeEvaluationForm({
                 register={form.register("resume")}
                 error={form.formState.errors.resume?.message}
                 hint="PDF 파일만 업로드 가능합니다"
+                displayName={displayName.resume}
               />
-              <ArchiveButton onClickResume={() => {}} />
+              <ArchiveButton
+                onClickResume={(data: {
+                  resume_id?: string;
+                  resume_name?: string;
+                  portfolio_id?: string;
+                  portfolio_name?: string;
+                }) => {
+                  if (data.resume_id) {
+                    form.setValue("resume_id", data.resume_id);
+                    setDisplayName({
+                      ...displayName,
+                      resume: data.resume_name || ""
+                    });
+                  }
+                  if (data.portfolio_id) {
+                    form.setValue("portfolio_id", data.portfolio_id);
+                    setDisplayName({
+                      ...displayName,
+                      portfolio: data.portfolio_name || ""
+                    });
+                  }
+                }}
+                isLoggedIn={user !== null}
+              />
             </div>
 
             <FileField
               label="포트폴리오"
               register={form.register("portfolio")}
               hint="선택사항입니다"
+              displayName={displayName.portfolio}
             />
 
             <div className="space-y-2">
@@ -216,7 +241,6 @@ export default function ResumeEvaluationForm({
           </Button>
         </form>
       </div>
-      {isPending && <ResumeEvaluationLoading />}
     </div>
   );
 }
