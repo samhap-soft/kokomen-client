@@ -17,20 +17,31 @@ import { publishReportEvent } from "@/domains/resume/utils/reportEventEmitter";
 const jobCareers = ["0-1년", "1-3년", "3-5년", "5-10년", "10년 이상"];
 const resumeEvalFormFields = z
   .object({
-    resume: z.instanceof(FileList),
+    // FileList를 직접 받거나, 이미 업로드된 경우를 위해 optional 처리
+    resume: z.instanceof(FileList).optional(),
     resume_id: z.string().optional(),
-    portfolio: z.instanceof(FileList),
+
+    portfolio: z.instanceof(FileList).optional(),
     portfolio_id: z.string().optional(),
-    job_position: z.string().nonempty({ message: "지원 직무를 입력해주세요" }),
+
+    job_position: z.string().min(1, { message: "지원 직무를 입력해주세요" }),
     job_description: z.string().optional(),
     job_career: z.enum(jobCareers as [string, ...string[]]).default("0-1년")
   })
-  .refine((data) => data.resume_id || data.resume.length > 0, {
-    message: "이력서를 선택해주세요"
+  // 1. 이력서 검증: ID가 있거나, 파일이 선택되었거나
+  .refine((data) => data.resume_id || (data.resume && data.resume.length > 0), {
+    message: "이력서를 선택해주세요",
+    path: ["resume"] // 에러 메시지를 표시할 필드 위치
   })
-  .refine((data) => data.portfolio_id || data.portfolio, {
-    message: "포트폴리오를 선택해주세요"
-  });
+  // 2. 포트폴리오 검증: ID가 있거나, 파일이 선택되었거나
+  .refine(
+    (data) =>
+      data.portfolio_id || (data.portfolio && data.portfolio.length > 0),
+    {
+      message: "포트폴리오를 선택해주세요",
+      path: ["portfolio"]
+    }
+  );
 type ResumeEvalFormFields = z.infer<typeof resumeEvalFormFields>;
 
 export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
@@ -47,19 +58,15 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
   }>({ resume: "", portfolio: "" });
 
   useEffect(() => {
-    if (
-      form.getValues("resume") instanceof FileList &&
-      form.getValues("resume").length > 0
-    ) {
+    const resume = form.getValues("resume");
+    const portfolio = form.getValues("portfolio");
+    if (resume instanceof FileList && resume.length > 0) {
       setDisplayName({ ...displayName, resume: "" });
-      form.setValue("resume_id", undefined);
+      form.setValue("resume_id", "");
     }
-    if (
-      form.getValues("portfolio") instanceof FileList &&
-      form.getValues("portfolio").length > 0
-    ) {
+    if (portfolio instanceof FileList && portfolio.length > 0) {
       setDisplayName({ ...displayName, portfolio: "" });
-      form.setValue("portfolio_id", undefined);
+      form.setValue("portfolio_id", "");
     }
   }, [form.watch("resume_id"), form.watch("portfolio_id")]);
 
@@ -111,6 +118,27 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
       setIsParsing(false);
     }
   }
+  const onclickArchiveButton = (data: {
+    resume_id?: string;
+    resume_name?: string;
+    portfolio_id?: string;
+    portfolio_name?: string;
+  }) => {
+    if (data.resume_id) {
+      form.setValue("resume_id", data.resume_id);
+      setDisplayName({
+        ...displayName,
+        resume: data.resume_name || ""
+      });
+    }
+    if (data.portfolio_id) {
+      form.setValue("portfolio_id", data.portfolio_id);
+      setDisplayName({
+        ...displayName,
+        portfolio: data.portfolio_name || ""
+      });
+    }
+  };
 
   const isPending = isParsing || mutation.isPending;
 
@@ -137,37 +165,25 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
                 displayName={displayName.resume}
               />
               <ArchiveButton
-                onClickResume={(data: {
-                  resume_id?: string;
-                  resume_name?: string;
-                  portfolio_id?: string;
-                  portfolio_name?: string;
-                }) => {
-                  if (data.resume_id) {
-                    form.setValue("resume_id", data.resume_id);
-                    setDisplayName({
-                      ...displayName,
-                      resume: data.resume_name || ""
-                    });
-                  }
-                  if (data.portfolio_id) {
-                    form.setValue("portfolio_id", data.portfolio_id);
-                    setDisplayName({
-                      ...displayName,
-                      portfolio: data.portfolio_name || ""
-                    });
-                  }
-                }}
+                type="RESUME"
+                onClickResume={onclickArchiveButton}
                 isLoggedIn={user !== null}
               />
             </div>
 
-            <FileField
-              label="포트폴리오"
-              register={form.register("portfolio")}
-              hint="선택사항입니다"
-              displayName={displayName.portfolio}
-            />
+            <div className="flex items-center gap-2">
+              <FileField
+                label="포트폴리오"
+                register={form.register("portfolio")}
+                hint="선택사항입니다"
+                displayName={displayName.portfolio}
+              />
+              <ArchiveButton
+                type="PORTFOLIO"
+                onClickResume={onclickArchiveButton}
+                isLoggedIn={user !== null}
+              />
+            </div>
 
             <div className="space-y-2">
               <label

@@ -11,9 +11,11 @@ import { archiveKeys } from "@/utils/querykeys";
 import { getArchivedResumes } from "@/domains/resume/api";
 
 function ArchiveButton({
+  type = "ALL",
   onClickResume,
   isLoggedIn
 }: {
+  type: "ALL" | "RESUME" | "PORTFOLIO";
   // eslint-disable-next-line no-unused-vars
   onClickResume: (data: {
     resume_id?: string;
@@ -49,6 +51,7 @@ function ArchiveButton({
               </p>
             </div>
             <ArchiveList
+              type={type}
               isLoggedIn={isLoggedIn}
               onClickResume={onClickResume}
               closeSidebar={closeSidebar}
@@ -78,7 +81,7 @@ function ArchiveItem({
   );
 }
 
-function ArchiveListEmpty({ type }: { type: "RESUME" | "PORTFOLIO" }) {
+function ArchiveListEmpty({ type }: { type: "ALL" | "RESUME" | "PORTFOLIO" }) {
   return (
     <div className="flex flex-col gap-2 border border-border rounded-lg p-4 justify-center items-center">
       <PackageOpen size={24} className="text-text-secondary" />
@@ -90,10 +93,12 @@ function ArchiveListEmpty({ type }: { type: "RESUME" | "PORTFOLIO" }) {
 }
 
 function ArchiveList({
+  type = "ALL",
   isLoggedIn,
   onClickResume,
   closeSidebar
 }: {
+  type: "ALL" | "RESUME" | "PORTFOLIO";
   isLoggedIn: boolean;
   // eslint-disable-next-line no-unused-vars
   onClickResume: (data: {
@@ -105,48 +110,64 @@ function ArchiveList({
   closeSidebar: () => void;
 }) {
   const { data } = useQuery({
-    queryKey: archiveKeys.resumes("RESUME"),
-    queryFn: () => getArchivedResumes(),
+    queryKey: archiveKeys.resumes(type),
+    queryFn: () => getArchivedResumes(type),
     enabled: isLoggedIn,
     select: (data) => data,
     staleTime: 1000 * 60 * 60,
     gcTime: 1000 * 60 * 5
   });
+  const list =
+    type === "ALL"
+      ? data?.resumes
+      : type === "RESUME"
+        ? data?.resumes
+        : data?.portfolios;
+
+  const onclickArchivedItem = (
+    type: "RESUME" | "PORTFOLIO",
+    item: CamelCasedProperties<ArchivedResumeAndPortfolio>
+  ) => {
+    if (type === "RESUME") {
+      onClickResume({
+        resume_id: item.id.toString(),
+        resume_name: item.title
+      });
+    } else if (type === "PORTFOLIO") {
+      onClickResume({
+        portfolio_id: item.id.toString(),
+        portfolio_name: item.title
+      });
+    }
+  };
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold">이력서</h2>
-        {data?.resumes.map((item) => (
+        <h2 className="text-lg font-bold">
+          {type === "ALL"
+            ? "이력서"
+            : type === "RESUME"
+              ? "이력서"
+              : "포트폴리오"}
+        </h2>
+        {list?.map((item) => (
           <ArchiveItem
             key={item.id}
             {...item}
             onClick={() => {
-              onClickResume({
-                resume_id: item.id.toString(),
-                resume_name: item.title
-              });
+              onclickArchivedItem(
+                type === "ALL"
+                  ? "RESUME"
+                  : type === "RESUME"
+                    ? "RESUME"
+                    : "PORTFOLIO",
+                item
+              );
               closeSidebar();
             }}
           />
         ))}
-        {data?.resumes.length === 0 && <ArchiveListEmpty type="RESUME" />}
-      </div>
-      <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold">포트폴리오</h2>
-        {data?.portfolios.map((item) => (
-          <ArchiveItem
-            key={item.id}
-            {...item}
-            onClick={() => {
-              onClickResume({
-                portfolio_id: item.id.toString(),
-                portfolio_name: item.title
-              });
-              closeSidebar();
-            }}
-          />
-        ))}
-        {data?.portfolios.length === 0 && <ArchiveListEmpty type="PORTFOLIO" />}
+        {list?.length === 0 && <ArchiveListEmpty type={type} />}
       </div>
     </div>
   );
