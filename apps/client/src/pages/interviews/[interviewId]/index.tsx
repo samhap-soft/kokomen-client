@@ -3,7 +3,7 @@ import { InterviewAnswerForm } from "@/domains/interview/components/interviewAns
 import { InterviewSideBar } from "@kokomen/ui/domains";
 import { useModal } from "@kokomen/utils";
 import {
-  interviewEventHelpers,
+  publishInterviewEvent,
   useInterviewEvent
 } from "@/domains/interview/utils/interviewEventEmitter";
 import React, { JSX, useState } from "react";
@@ -99,17 +99,17 @@ export default function InterviewPage({
     onPlayEnd: () => {
       setIsSpeaking(false);
       if (mode === "VOICE") {
-        interviewEventHelpers.startVoiceRecognition();
+        publishInterviewEvent("interview:startVoiceRecognition");
       }
     },
     onPlayStart: () => {
       setIsSpeaking(true);
     }
   });
-  useInterviewEvent("voiceRecognitionStarted", () => {
+  useInterviewEvent("interview:voiceRecognitionStarted", () => {
     setIsListening(true);
   });
-  useInterviewEvent("voiceRecognitionStopped", () => {
+  useInterviewEvent("interview:voiceRecognitionStopped", () => {
     setIsListening(false);
   });
 

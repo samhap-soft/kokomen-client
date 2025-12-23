@@ -6,11 +6,9 @@ import {
   InferGetServerSidePropsType
 } from "next";
 import { Footer } from "@/shared/footer";
-import { CamelCasedProperties, ResumeOutput, UserInfo } from "@kokomen/types";
+import { UserInfo } from "@kokomen/types";
 import { SEO } from "@/shared/seo";
 import dynamic from "next/dynamic";
-import { useState } from "react";
-import { ResumeEvaluationResult } from "@/domains/resume/components";
 import { AxiosError } from "axios";
 
 const ResumeEvalForm = dynamic(
@@ -23,9 +21,6 @@ const ResumeEvalForm = dynamic(
 export default function ResumeEvalPage({
   userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const [result, setResult] =
-    useState<CamelCasedProperties<ResumeOutput> | null>(null);
-
   return (
     <>
       <SEO
@@ -39,11 +34,7 @@ export default function ResumeEvalPage({
         <Header user={userInfo} />
         <div className="container mx-auto px-6 pt-6">
           <div className="relative flex gap-4 border-b border-border mb-6">
-            {result ? (
-              <ResumeEvaluationResult result={result} />
-            ) : (
-              <ResumeEvalForm setResult={setResult} />
-            )}
+            <ResumeEvalForm user={userInfo as UserInfo} />
           </div>
         </div>
         <Footer />
