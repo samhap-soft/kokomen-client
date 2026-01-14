@@ -1,6 +1,8 @@
-import { ResumeOutput } from "@kokomen/types";
 import { Dispatch, SetStateAction } from "react";
-import { CamelCasedProperties } from "@kokomen/types";
+import {
+  CamelCasedProperties,
+  ResumeEvaluationResult as ResumeEvaluationResultType
+} from "@kokomen/types";
 import { resumeEvaluationDemoResult } from "@/domains/resume/constants";
 import { Button, Input } from "@kokomen/ui";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
@@ -22,7 +24,7 @@ export default function ResumeEvaluationDemoForm({
   setResult
 }: {
   setResult: Dispatch<
-    SetStateAction<CamelCasedProperties<ResumeOutput> | null>
+    SetStateAction<CamelCasedProperties<ResumeEvaluationResultType> | null>
   >;
 }) {
   const onClickSubmit = () => {
