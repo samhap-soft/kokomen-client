@@ -32,16 +32,7 @@ const resumeEvalFormFields = z
   .refine((data) => data.resume_id || (data.resume && data.resume.length > 0), {
     message: "이력서를 선택해주세요",
     path: ["resume"] // 에러 메시지를 표시할 필드 위치
-  })
-  // 2. 포트폴리오 검증: ID가 있거나, 파일이 선택되었거나
-  .refine(
-    (data) =>
-      data.portfolio_id || (data.portfolio && data.portfolio.length > 0),
-    {
-      message: "포트폴리오를 선택해주세요",
-      path: ["portfolio"]
-    }
-  );
+  });
 type ResumeEvalFormFields = z.infer<typeof resumeEvalFormFields>;
 
 export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {

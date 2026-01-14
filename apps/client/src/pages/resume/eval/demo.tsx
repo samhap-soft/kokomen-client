@@ -6,7 +6,11 @@ import {
   InferGetServerSidePropsType
 } from "next";
 import { Footer } from "@/shared/footer";
-import { CamelCasedProperties, ResumeOutput, UserInfo } from "@kokomen/types";
+import {
+  CamelCasedProperties,
+  ResumeEvaluationResult as ResumeEvaluationResultType,
+  UserInfo
+} from "@kokomen/types";
 import { SEO } from "@/shared/seo";
 import dynamic from "next/dynamic";
 import { useState } from "react";
@@ -25,12 +29,13 @@ export default function ResumeEvalDemoPage({
   userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [result, setResult] =
-    useState<CamelCasedProperties<ResumeOutput> | null>(null);
+    useState<CamelCasedProperties<ResumeEvaluationResultType> | null>(null);
 
   return (
     <>
       <SEO
-        title="이력서 평가"
+        title="이력서 평가 데모"
+        pathname="/resume/eval/demo"
         description="이력서와 포트폴리오가 채용공고와 직무에 얼마나 적합한지 평가해보세요."
         image="/resume.png"
         robots="index, follow"
@@ -53,7 +58,7 @@ export default function ResumeEvalDemoPage({
               </Link>
             </div>
             {result ? (
-              <ResumeEvaluationResult result={result} />
+              <ResumeEvaluationResult report={result} />
             ) : (
               <ResumeEvalForm setResult={setResult} />
             )}
