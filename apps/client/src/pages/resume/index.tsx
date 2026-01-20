@@ -22,6 +22,7 @@ export default function ResumePage({
         description="내 이력서는 채용 공고에 얼마나 적합할까? 지금 꼬꼬면에서 이력서와 포트폴리오가 채용 공고에 얼마나 적합한지 평가해보세요."
         image="/resume.png"
         robots="index, follow"
+        pathname="/resume"
       />
       <main className="min-h-screen">
         <Header user={userInfo} />

@@ -1,10 +1,12 @@
 import { mapToCamelCase } from "@/utils/convertConvention";
 import {
-  ResumeEvaluationResult,
-  ResumeFailed,
-  ResumeOutput,
-  ResumePending,
-  ResumeEvaluationsResponse,
+  ResumeInterviewPending,
+  ResumeInterviewFailed,
+  ResumeBasedInterviewQuestion,
+  ResumeInterviewSuccess,
+  Interview,
+  InterviewMode,
+  ResumeBasedInterviewGenerationsResponse,
   CamelCasedProperties
 } from "@kokomen/types";
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
@@ -37,11 +39,11 @@ const resetRetryCount = (requestId: string): void => {
 };
 
 // 이력서 제출 부분
-const resumeServerInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/resumes",
+const resumeBasedInterviewServerInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/interviews/resume-based",
   withCredentials: true
 });
-resumeServerInstance.interceptors.response.use(
+resumeBasedInterviewServerInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     // 성공 시 해당 요청의 retry 상태 정리
     const requestId = createRequestId(response.config);
@@ -61,27 +63,35 @@ resumeServerInstance.interceptors.response.use(
     }
 
     await exponentialDelay(retryCount);
-    return resumeServerInstance.request(error.config as AxiosRequestConfig);
+    return resumeBasedInterviewServerInstance.request(
+      error.config as AxiosRequestConfig
+    );
   }
 );
 
-function submitResumeEvaluation(data: FormData) {
-  return resumeServerInstance
-    .post<{ evaluation_id: string }>("/evaluations", data)
+function generateResumeBasedInterviewQuestion(data: FormData) {
+  return resumeBasedInterviewServerInstance
+    .post<{ resume_based_interview_result_id: number }>(
+      "/questions/generate",
+      data
+    )
     .then((res) => res.data)
     .then(mapToCamelCase);
 }
 
-const resumePollingServerInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/resumes/evaluations",
+const resumeBasedInterviewQuestionPollingServerInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/interviews/resume-based",
   withCredentials: true
 });
 
 // 폴링에 대한 요청 완료시
 const onFullFilledPolling = async (
-  response: AxiosResponse<ResumeOutput | ResumePending | ResumeFailed>
+  response: AxiosResponse<
+    ResumeInterviewSuccess | ResumeInterviewPending | ResumeInterviewFailed
+  >
 ) => {
   const requestId = createRequestId(response.config);
+  console.log(response.data);
 
   if (response.data.state === "COMPLETED") {
     resetRetryCount(requestId);
@@ -100,7 +110,9 @@ const onFullFilledPolling = async (
   }
 
   await delay(1000);
-  return resumePollingServerInstance.request(response.config);
+  return resumeBasedInterviewQuestionPollingServerInstance.request(
+    response.config
+  );
 };
 
 // 폴링 에러 처리 함수
@@ -115,33 +127,37 @@ const onRejectedPolling = async (error: AxiosError) => {
   }
 
   await exponentialDelay(retryCount);
-  return resumeServerInstance.request(error.config as AxiosRequestConfig);
+  return resumeBasedInterviewQuestionPollingServerInstance.request(
+    error.config as AxiosRequestConfig
+  );
 };
 
 // 인터뷰 면접 답변 폴링을 위한 서버 인스턴스
-resumePollingServerInstance.interceptors.response.use(
+resumeBasedInterviewQuestionPollingServerInstance.interceptors.response.use(
   onFullFilledPolling,
   onRejectedPolling
 );
 
-function getResumeEvaluationState(evaluationId: string) {
-  return resumePollingServerInstance
-    .get<ResumeOutput>(`/${evaluationId}/state`)
+function checkResumeBasedInterviewQuestion(
+  resumeBasedInterviewQuestionId: number
+) {
+  return resumeBasedInterviewQuestionPollingServerInstance
+    .get(`/${resumeBasedInterviewQuestionId}/check`)
     .then((res) => res.data)
     .then(mapToCamelCase);
 }
 
-const resumeResultServerInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/resumes/evaluations",
+const resumeBasedInterviewResultServerInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/interviews/resume-based",
   withCredentials: true
 });
 
-function getResumeEvaluationResult(
-  evaluationId: string,
+function getResumeInterviewResult(
+  resumeBasedInterviewResultId: number,
   context: GetServerSidePropsContext
 ) {
-  return resumeResultServerInstance
-    .get<ResumeEvaluationResult>(`/${evaluationId}`, {
+  return resumeBasedInterviewResultServerInstance
+    .get<ResumeBasedInterviewQuestion[]>(`/${resumeBasedInterviewResultId}`, {
       headers: {
         Cookie: context.req.headers.cookie
       }
@@ -150,37 +166,64 @@ function getResumeEvaluationResult(
     .then(mapToCamelCase);
 }
 
-function getResumeEvaluations(
+function getResumeBasedInterviewGenerations(
   page: number = 0,
-  size: number = 20,
   context?: GetServerSidePropsContext
-): Promise<CamelCasedProperties<ResumeEvaluationsResponse>> {
+): Promise<CamelCasedProperties<ResumeBasedInterviewGenerationsResponse>> {
   const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/resumes/evaluations",
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/interviews/resume-based",
     withCredentials: true
   });
 
   return instance
-    .get<CamelCasedProperties<ResumeEvaluationsResponse>>("", {
-      params: {
-        page,
-        size
-      },
-      headers: context
-        ? {
-            Cookie: context.req.headers.cookie
-          }
-        : undefined
-    })
-    .then((res) => res.data)
-    .then(mapToCamelCase);
+    .get<CamelCasedProperties<ResumeBasedInterviewGenerationsResponse>>(
+      "/questions/generations",
+      {
+        params: {
+          page
+        },
+        headers: context
+          ? {
+              Cookie: context.req.headers.cookie
+            }
+          : undefined
+      }
+    )
+    .then((res) => res.data);
+}
+
+const resumeBasedInterviewCreateInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  withCredentials: true
+});
+
+function createResumeBasedInterview({
+  resumeBasedInterviewResultId,
+  generatedQuestionId,
+  maxQuestionCount,
+  mode
+}: {
+  resumeBasedInterviewResultId: number;
+  generatedQuestionId: number;
+  maxQuestionCount: number;
+  mode: InterviewMode;
+}): Promise<Interview> {
+  return resumeBasedInterviewCreateInstance
+    .post<Interview>(
+      `/interviews/resume-based/${resumeBasedInterviewResultId}`,
+      {
+        generated_question_id: generatedQuestionId,
+        max_question_count: maxQuestionCount,
+        mode
+      }
+    )
+    .then((res) => res.data);
 }
 
 export {
-  submitResumeEvaluation,
-  getResumeEvaluationState,
-  getResumeEvaluationResult,
-  getResumeEvaluations
+  generateResumeBasedInterviewQuestion,
+  checkResumeBasedInterviewQuestion,
+  getResumeInterviewResult,
+  createResumeBasedInterview,
+  getResumeBasedInterviewGenerations
 };
-export * from "./archive";
-export * from "./resumeBasedInterview";
