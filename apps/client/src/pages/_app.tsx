@@ -7,6 +7,7 @@ import { ErrorBoundary } from "@sentry/nextjs";
 import ErrorFallback from "@/shared/errorFallback";
 import FeedbackButton from "@/shared/feedbackButton";
 import ResumeStoreProvider from "@/domains/resume/context/resumeStore";
+import ResumeBasedInterviewStoreProvider from "@/domains/resume/context/resumeBasedInterviewStore";
 
 const queryClient: QueryClient = new QueryClient();
 
@@ -17,8 +18,10 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
       <ErrorBoundary fallback={<ErrorFallback />}>
         <Toaster>
           <ResumeStoreProvider>
-            <Component {...pageProps} />
-            <FeedbackButton />
+            <ResumeBasedInterviewStoreProvider>
+              <Component {...pageProps} />
+              <FeedbackButton />
+            </ResumeBasedInterviewStoreProvider>
           </ResumeStoreProvider>
         </Toaster>
       </ErrorBoundary>

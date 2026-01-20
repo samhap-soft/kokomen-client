@@ -2,11 +2,18 @@ import { useState } from "react";
 import InterviewHistory from "./interviewHistory";
 import ChangeNickname from "@/domains/dashboard/components/changeNickname";
 import Withdrawal from "@/domains/dashboard/components/withDrawl";
+import ResumeBasedInterviewHistory from "@/domains/resume/components/resumeBasedInterviewHistory";
+import ResumeEvaluationHistory from "@/domains/resume/components/resumeEvaluationHistory";
 import { UserInfo } from "@kokomen/types";
 import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
-type Section = "interview" | "changeNickname" | "withdrawal";
+type Section =
+  | "interview"
+  | "resumeBasedInterview"
+  | "resumeEvaluation"
+  | "changeNickname"
+  | "withdrawal";
 
 interface SelectSectionProps {
   userInfo: UserInfo;
@@ -16,6 +23,14 @@ const interviewSections: { label: string; value: Section }[] = [
   {
     label: "면접 기록",
     value: "interview"
+  },
+  {
+    label: "이력서 기반 면접 질문",
+    value: "resumeBasedInterview"
+  },
+  {
+    label: "이력서 평가 결과",
+    value: "resumeEvaluation"
   }
 ];
 
@@ -121,6 +136,10 @@ function SelectedSection({
   switch (section) {
     case "interview":
       return <InterviewHistory />;
+    case "resumeBasedInterview":
+      return <ResumeBasedInterviewHistory />;
+    case "resumeEvaluation":
+      return <ResumeEvaluationHistory />;
     case "changeNickname":
       return <ChangeNickname userInfo={userInfo} />;
     case "withdrawal":

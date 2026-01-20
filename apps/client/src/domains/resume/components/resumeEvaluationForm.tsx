@@ -15,13 +15,22 @@ import { archiveKeys } from "@/utils/querykeys";
 import { publishReportEvent } from "@/domains/resume/utils/reportEventEmitter";
 
 const jobCareers = ["0-1년", "1-3년", "3-5년", "5-10년", "10년 이상"];
+
+// SSR 환경에서 FileList가 정의되지 않을 수 있으므로 custom 검증 사용
+const fileListSchema: z.ZodTypeAny =
+  typeof FileList !== "undefined"
+    ? z.instanceof(FileList)
+    : z.custom<FileList>((val): val is FileList => {
+        return typeof FileList !== "undefined" && val instanceof FileList;
+      });
+
 const resumeEvalFormFields = z
   .object({
     // FileList를 직접 받거나, 이미 업로드된 경우를 위해 optional 처리
-    resume: z.instanceof(FileList).optional(),
+    resume: fileListSchema.optional(),
     resume_id: z.string().optional(),
 
-    portfolio: z.instanceof(FileList).optional(),
+    portfolio: fileListSchema.optional(),
     portfolio_id: z.string().optional(),
 
     job_position: z.string().min(1, { message: "지원 직무를 입력해주세요" }),
