@@ -189,7 +189,8 @@ function getResumeBasedInterviewGenerations(
           : undefined
       }
     )
-    .then((res) => res.data);
+    .then((res) => res.data)
+    .then(mapToCamelCase);
 }
 
 const resumeBasedInterviewCreateInstance = axios.create({

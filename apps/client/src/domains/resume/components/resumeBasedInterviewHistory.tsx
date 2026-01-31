@@ -2,32 +2,50 @@ import { getResumeBasedInterviewGenerations } from "@/domains/resume/api/resumeB
 import { ResumeBasedInterviewGenerationsResponse } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { resumeBasedInterviewKeys } from "@/utils/querykeys";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteObserver } from "@kokomen/utils";
+import { useRef, JSX } from "react";
 import {
   Calendar,
   FileText,
   ExternalLink,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Loader2
 } from "lucide-react";
 import Link from "next/link";
-import PaginationButtons from "@/shared/paginationButtons";
 import { formatDate } from "@/utils/date";
 
-export default function ResumeBasedInterviewHistory() {
-  const router = useRouter();
-  const page = Number(router.query.page) || 0;
-
-  const { data, isLoading, isError } = useQuery<
+export default function ResumeBasedInterviewHistory(): JSX.Element {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError
+  } = useInfiniteQuery<
     CamelCasedProperties<ResumeBasedInterviewGenerationsResponse>
   >({
-    queryKey: resumeBasedInterviewKeys.generations(page),
-    queryFn: () => getResumeBasedInterviewGenerations(page)
+    queryKey: resumeBasedInterviewKeys.infinite(),
+    queryFn: ({ pageParam = 0 }) =>
+      getResumeBasedInterviewGenerations(pageParam as number),
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasNext ? lastPage.currentPage + 1 : undefined;
+    },
+    initialPageParam: 0
   });
 
-  const getStateBadge = (state: string) => {
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useInfiniteObserver(loadMoreRef, () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  });
+
+  const getStateBadge = (state: string): JSX.Element | null => {
     switch (state) {
       case "COMPLETED":
         return (
@@ -102,7 +120,7 @@ export default function ResumeBasedInterviewHistory() {
     );
   }
 
-  const generations = data.data || [];
+  const generations = data.pages.flatMap((page) => page.data || []);
 
   return (
     <div className="flex-1">
@@ -200,14 +218,17 @@ export default function ResumeBasedInterviewHistory() {
             </div>
           ))}
 
-          {data.totalPages > 1 && (
-            <PaginationButtons
-              totalPages={data.totalPages}
-              currentPage={data.currentPage}
-              basePath="dashboard"
-              options={{}}
-              hasNext={data.hasNext}
-            />
+          {hasNextPage && (
+            <div ref={loadMoreRef} className="flex justify-center py-8">
+              {isFetchingNextPage ? (
+                <div className="flex items-center gap-2 text-text-secondary">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>더 불러오는 중...</span>
+                </div>
+              ) : (
+                <div className="h-4" />
+              )}
+            </div>
           )}
         </div>
       )}

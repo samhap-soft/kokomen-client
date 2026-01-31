@@ -111,11 +111,14 @@ const archiveKeys: QueryKeyFactory<ArchiveMethods> = {
 
 type ResumeBasedInterviewMethods = {
   generations: (page?: number) => QueryKey;
+  infinite: () => QueryKey;
 };
 const resumeBasedInterviewKeys: QueryKeyFactory<ResumeBasedInterviewMethods> = {
   all: ["resumeBasedInterview"] as const,
   generations: (page: number = 0): QueryKey =>
-    [...resumeBasedInterviewKeys.all, "generations", page] as const
+    [...resumeBasedInterviewKeys.all, "generations", page] as const,
+  infinite: (): QueryKey =>
+    [...resumeBasedInterviewKeys.all, "infinite"] as const
 };
 
 type ResumeEvaluationMethods = {
