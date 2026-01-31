@@ -1,6 +1,5 @@
 import Header from "@/shared/header";
 import { getUserInfo } from "@/domains/auth/api";
-import { ResumeSelectMenuNormal } from "@/domains/resume/components";
 import { UserInfo } from "@kokomen/types";
 import { ErrorBoundary } from "@sentry/nextjs";
 import {
@@ -11,25 +10,26 @@ import {
 import { Footer } from "@/shared/footer";
 import { AxiosError } from "axios";
 import { SEO } from "@/shared/seo";
+import ResumeBasedInterviewForm from "@/domains/resume/components/resumeBasedInterviewForm";
 
-export default function ResumePage({
+export default function ResumeInterviewCreatePage({
   userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
       <SEO
-        title="이력서"
-        description="내 이력서는 채용 공고에 얼마나 적합할까? 지금 꼬꼬면에서 이력서와 포트폴리오가 채용 공고에 얼마나 적합한지 평가해보세요."
-        image="/resume.png"
+        title="이력서 기반 면접 시작하기"
+        description="내 이력서에서 어떤 질문을 받을까요? 이력서 기반 면접을 시작해보세요."
+        image="/resume-interview.png"
         robots="index, follow"
-        pathname="/resume"
+        pathname="/resume/interview"
       />
       <main className="min-h-screen">
         <Header user={userInfo} />
         <div className="container mx-auto px-6 pt-6">
           <div className="relative flex gap-4 border-b border-border mb-6">
             <ErrorBoundary>
-              <ResumeSelectMenuNormal />
+              <ResumeBasedInterviewForm user={userInfo as UserInfo} />
             </ErrorBoundary>
           </div>
         </div>

@@ -156,3 +156,4 @@ export type {
   AnswerScore,
   InterviewQuestion
 };
+export * from "./resumeBasedInterview";

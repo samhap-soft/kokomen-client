@@ -2,11 +2,20 @@ import { useState } from "react";
 import InterviewHistory from "./interviewHistory";
 import ChangeNickname from "@/domains/dashboard/components/changeNickname";
 import Withdrawal from "@/domains/dashboard/components/withDrawl";
+import ResumeBasedInterviewHistory from "@/domains/resume/components/resumeBasedInterviewHistory";
+import ResumeEvaluationHistory from "@/domains/resume/components/resumeEvaluationHistory";
+import ArchivePreview from "@/domains/resume/components/archivePreview";
 import { UserInfo } from "@kokomen/types";
 import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
-type Section = "interview" | "changeNickname" | "withdrawal";
+type Section =
+  | "interview"
+  | "resumeBasedInterview"
+  | "resumeEvaluation"
+  | "archive"
+  | "changeNickname"
+  | "withdrawal";
 
 interface SelectSectionProps {
   userInfo: UserInfo;
@@ -16,6 +25,21 @@ const interviewSections: { label: string; value: Section }[] = [
   {
     label: "면접 기록",
     value: "interview"
+  },
+  {
+    label: "이력서 기반 면접 질문",
+    value: "resumeBasedInterview"
+  },
+  {
+    label: "이력서 평가 결과",
+    value: "resumeEvaluation"
+  }
+];
+
+const archiveSections: { label: string; value: Section }[] = [
+  {
+    label: "아카이브",
+    value: "archive"
   }
 ];
 
@@ -47,6 +71,23 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             <p className="text-sm font-medium text-text-secondary">면접</p>
             {/* 면접 기록 탭 */}
             {interviewSections.map((sec) => (
+              <Button
+                variant={"link"}
+                className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
+                  sec.value === section
+                    ? "bg-primary-bg-light text-primary border border-primary-border"
+                    : "text-text-primary hover:bg-primary-bg-light hover:text-primary"
+                }`}
+                key={sec.value}
+                onClick={() => handleTabClick(sec.value as Section)}
+              >
+                {sec.label}
+              </Button>
+            ))}
+            <hr className="my-4 border-t border-border-secondary" />
+
+            <p className="text-sm font-medium text-text-secondary">아카이브</p>
+            {archiveSections.map((sec) => (
               <Button
                 variant={"link"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
@@ -121,6 +162,12 @@ function SelectedSection({
   switch (section) {
     case "interview":
       return <InterviewHistory />;
+    case "resumeBasedInterview":
+      return <ResumeBasedInterviewHistory />;
+    case "resumeEvaluation":
+      return <ResumeEvaluationHistory />;
+    case "archive":
+      return <ArchivePreview />;
     case "changeNickname":
       return <ChangeNickname userInfo={userInfo} />;
     case "withdrawal":

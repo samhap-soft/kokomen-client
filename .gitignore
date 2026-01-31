@@ -18,3 +18,4 @@ node_modules/
 *.crt
 robots.txt
 sitemap.xml
+sitemap-*.xml

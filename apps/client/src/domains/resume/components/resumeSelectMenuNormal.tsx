@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Tooltip } from "@kokomen/ui";
 interface MenuItemProps {
   title: string;
   description: string;
@@ -109,18 +108,21 @@ export default function ResumeSelectMenuNormal() {
                 체험해보기
               </Link>
             </div>
-            <Tooltip className="w-full flex flex-col items-end justify-start gap-2">
+            <div className="flex flex-col items-end justify-start gap-2">
               <MenuItem
                 title="이력서와 포트폴리오 기반 면접"
                 description="기업의 공고와 직무를 고려해서 이력서와 포트폴리오를 기반 면접을 진행해요."
                 color="green"
                 link="/resume/interview"
-                disabled={true}
+                disabled={false}
               />
-              <Tooltip.Content placement="top">
-                곧 출시돼요! 조금만 기다려주세요 :)
-              </Tooltip.Content>
-            </Tooltip>
+              <Link
+                href={`/resume/interview/demo`}
+                className="text-sm bg-primary text-text-light-solid px-4 py-2 font-bold rounded-md"
+              >
+                체험해보기
+              </Link>
+            </div>
           </div>
         </div>
       </div>

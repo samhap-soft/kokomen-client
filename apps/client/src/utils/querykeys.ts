@@ -109,6 +109,27 @@ const archiveKeys: QueryKeyFactory<ArchiveMethods> = {
     [...archiveKeys.all, "resumes", type ?? "ALL"] as const
 };
 
+type ResumeBasedInterviewMethods = {
+  generations: (page?: number) => QueryKey;
+  infinite: () => QueryKey;
+};
+const resumeBasedInterviewKeys: QueryKeyFactory<ResumeBasedInterviewMethods> = {
+  all: ["resumeBasedInterview"] as const,
+  generations: (page: number = 0): QueryKey =>
+    [...resumeBasedInterviewKeys.all, "generations", page] as const,
+  infinite: (): QueryKey =>
+    [...resumeBasedInterviewKeys.all, "infinite"] as const
+};
+
+type ResumeEvaluationMethods = {
+  history: (page?: number, size?: number) => QueryKey;
+};
+const resumeEvaluationKeys: QueryKeyFactory<ResumeEvaluationMethods> = {
+  all: ["resumeEvaluation"] as const,
+  history: (page: number = 0, size: number = 20): QueryKey =>
+    [...resumeEvaluationKeys.all, "history", page, size] as const
+};
+
 export {
   interviewHistoryKeys,
   interviewKeys,
@@ -116,9 +137,13 @@ export {
   archiveKeys,
   purchaseKeys,
   recruitKeys,
+  resumeBasedInterviewKeys,
+  resumeEvaluationKeys,
   type InterviewHistoryParams,
   type InterviewParams,
   type MemberRankParams,
   type RecruitMethods,
-  type ArchiveMethods
+  type ArchiveMethods,
+  type ResumeBasedInterviewMethods,
+  type ResumeEvaluationMethods
 };

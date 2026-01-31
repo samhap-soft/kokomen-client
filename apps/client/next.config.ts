@@ -34,6 +34,17 @@ const nextConfig: NextConfig = {
     webpackBuildWorker: true,
     preloadEntriesOnStart: true,
     urlImports: ["https://cdn.jsdelivr.net/"]
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      canvas: false
+    };
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      canvas: false
+    };
+    return config
   }
 };
 

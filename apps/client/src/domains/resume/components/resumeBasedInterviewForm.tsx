@@ -1,18 +1,17 @@
-import { submitResumeEvaluation } from "@/domains/resume/api";
+import { generateResumeBasedInterviewQuestion } from "@/domains/resume/api";
 import { ArchiveButton } from "@/domains/resume/components/resumeArchiveButton";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
 import { withApiErrorCapture } from "@/utils/error";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { generateFormData } from "@kokomen/utils";
 import { CamelCasedProperties, UserInfo } from "@kokomen/types";
-import { Button, FileField, Input, useToast } from "@kokomen/ui";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button, FileField, useToast } from "@kokomen/ui";
+import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { archiveKeys } from "@/utils/querykeys";
-import { publishReportEvent } from "@/domains/resume/utils/reportEventEmitter";
+import { publishResumeBasedInterviewEvent } from "@/domains/resume/utils/resumeInterviewEventEmitter";
 
 const jobCareers = ["0-1년", "1-3년", "3-5년", "5-10년", "10년 이상"];
 
@@ -24,7 +23,7 @@ const fileListSchema: z.ZodTypeAny =
         return typeof FileList !== "undefined" && val instanceof FileList;
       });
 
-const resumeEvalFormFields = z
+const resumeBasedInterviewFormFields = z
   .object({
     // FileList를 직접 받거나, 이미 업로드된 경우를 위해 optional 처리
     resume: fileListSchema.optional(),
@@ -33,8 +32,6 @@ const resumeEvalFormFields = z
     portfolio: fileListSchema.optional(),
     portfolio_id: z.string().optional(),
 
-    job_position: z.string().min(1, { message: "지원 직무를 입력해주세요" }),
-    job_description: z.string().optional(),
     job_career: z.enum(jobCareers as [string, ...string[]]).default("0-1년")
   })
   // 1. 이력서 검증: ID가 있거나, 파일이 선택되었거나
@@ -42,12 +39,14 @@ const resumeEvalFormFields = z
     message: "이력서를 선택해주세요",
     path: ["resume"] // 에러 메시지를 표시할 필드 위치
   });
-type ResumeEvalFormFields = z.infer<typeof resumeEvalFormFields>;
+type ResumeBasedInterviewFormFields = z.infer<
+  typeof resumeBasedInterviewFormFields
+>;
 
-export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
+export default function ResumeBasedInterviewForm({ user }: { user: UserInfo }) {
   const { toast } = useToast();
-  const form = useForm<ResumeEvalFormFields>({
-    resolver: standardSchemaResolver(resumeEvalFormFields),
+  const form = useForm<ResumeBasedInterviewFormFields>({
+    resolver: standardSchemaResolver(resumeBasedInterviewFormFields),
     defaultValues: {
       job_career: "0-1년"
     }
@@ -70,18 +69,16 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
     }
   }, [form.watch("resume_id"), form.watch("portfolio_id")]);
 
-  const queryClient = useQueryClient();
   const router = useExtendedRouter();
   const mutation = useMutation<
-    CamelCasedProperties<{ evaluation_id: string }>,
+    CamelCasedProperties<{ resume_based_interview_result_id: number }>,
     Error,
     FormData
   >({
-    mutationFn: submitResumeEvaluation,
+    mutationFn: generateResumeBasedInterviewQuestion,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: archiveKeys.resumes("ALL") });
-      publishReportEvent("report:submitted", {
-        evaluation_id: data.evaluationId
+      publishResumeBasedInterviewEvent("resumeBasedInterview:submitted", {
+        resume_based_interview_result_id: data.resumeBasedInterviewResultId
       });
       toast({
         title: "이력서 분석 중입니다. 잠시 후 평가 결과를 알려드려요",
@@ -107,7 +104,7 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
   });
   const [isParsing, setIsParsing] = useState(false);
 
-  async function onSubmit(data: ResumeEvalFormFields) {
+  async function onSubmit(data: ResumeBasedInterviewFormFields) {
     try {
       setIsParsing(true);
       const formData = generateFormData(data);
@@ -185,26 +182,6 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
               />
             </div>
 
-            <div className="space-y-2">
-              <label
-                className="block text-sm font-medium text-text-heading"
-                htmlFor="job_position"
-              >
-                지원 직무 <span className="text-error">*</span>
-              </label>
-              <Input
-                type="text"
-                placeholder="예: 프론트엔드 개발자"
-                {...form.register("job_position")}
-                className="w-full"
-              />
-              {form.formState.errors.job_position && (
-                <p className="text-xs text-error">
-                  {form.formState.errors.job_position.message}
-                </p>
-              )}
-            </div>
-
             <div>
               <label
                 className="block text-sm font-medium text-text-heading"
@@ -232,20 +209,6 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
                 ))}
               </div>
             </div>
-
-            <div className="space-y-2">
-              <label
-                className="block text-sm font-medium text-text-heading"
-                htmlFor="job_description"
-              >
-                채용 공고
-              </label>
-              <textarea
-                placeholder="채용 공고의 직무 설명을 입력해주세요"
-                {...form.register("job_description")}
-                className="w-full min-h-32 px-3 py-2 border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
           </div>
           <Button
             type="submit"
@@ -253,7 +216,7 @@ export default function ResumeEvaluationForm({ user }: { user: UserInfo }) {
             className="w-full"
             disabled={isPending}
           >
-            이력서 분석하고 평가하기
+            이력서 분석하고 면접 질문 생성하기
           </Button>
         </form>
       </div>

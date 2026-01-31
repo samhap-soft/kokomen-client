@@ -173,7 +173,9 @@ export const getServerSideProps = async (
   ]);
 
   if (interviewResult.status === "rejected") {
-    return { redirect: { destination: "/error", permanent: false } };
+    // 크롤러가 인덱싱할 수 있도록 redirect 대신 notFound 반환
+    // API가 인증 없이 접근 가능하도록 서버 측 수정이 필요할 수 있음
+    return { notFound: true };
   }
 
   const result = interviewResult.value;

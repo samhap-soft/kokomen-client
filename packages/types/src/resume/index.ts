@@ -77,6 +77,24 @@ type ResumeEvaluationResult = {
   job_career: string;
   result: ResumeOutput["result"];
 };
+
+type ResumeEvaluationHistoryItem = {
+  id: number;
+  state: "PENDING" | "COMPLETED" | "FAILED";
+  job_position: string;
+  job_career: string;
+  total_score: number;
+  created_at: string;
+};
+
+type ResumeEvaluationsResponse = {
+  evaluations: ResumeEvaluationHistoryItem[];
+  current_page: number;
+  total_resume_evaluation_count: number;
+  total_pages: number;
+  has_next: boolean;
+};
+
 export type {
   ResumeInput,
   ResumeOutput,
@@ -85,5 +103,7 @@ export type {
   ResumeInputWithArchivedFile,
   ResumeInputWithNewFile,
   ResumeFailed,
-  ResumeEvaluationResult
+  ResumeEvaluationResult,
+  ResumeEvaluationHistoryItem,
+  ResumeEvaluationsResponse
 };
