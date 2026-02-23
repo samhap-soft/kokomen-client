@@ -78,6 +78,7 @@ jobs:
           echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> .env
           echo "NEXT_PUBLIC_CDN_BASE_URL=${{ secrets.DEV_CDN_BASE_URL }}" >> .env
           echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_DEV }}" >> .env
+          echo "NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY=${{ secrets.TOSS_PAYMENTS_CLIENT_KEY_DEV }}" >> .env
           echo "NODE_ENV=production" >> .env
           echo "NEXT_PUBLIC_BASE_URL=https://dev.kokomen.kr" >> .env
           echo "NEXT_PUBLIC_API_BASE_URL=https://api-dev.kokomen.kr/api/v1" >> .env
