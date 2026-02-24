@@ -43,6 +43,7 @@ jobs:
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
             NEXT_PUBLIC_CDN_BASE_URL=${{ secrets.PROD_CDN_BASE_URL }}
             NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID_PROD }}
+            NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY=${{ secrets.TOSS_PAYMENTS_CLIENT_KEY_PROD }}
             NODE_ENV=production
             NEXT_PUBLIC_BASE_URL=https://kokomen.kr
             NEXT_PUBLIC_API_BASE_URL=https://api.kokomen.kr/api/v1
