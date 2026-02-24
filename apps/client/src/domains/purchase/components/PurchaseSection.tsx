@@ -122,6 +122,7 @@ function PurchaseMode({
   const tossPaymentsWidgets = useRef<TossPaymentsWidgets | null>(null);
   useEffect(() => {
     const fetchTossPayments = async () => {
+      console.log(process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY);
       const tossPayments = await loadTossPayments(
         (process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY as string) || ""
       );
