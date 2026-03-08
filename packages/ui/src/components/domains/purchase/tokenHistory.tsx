@@ -21,9 +21,7 @@ export default function TokenHistory({
         </div>
         <div className="text-start">
           <div className="text-lg font-bold">{orderName}</div>
-          <span>
-            {remainingCount ? `${remainingCount}개 사용가능` : "사용완료"}
-          </span>
+          <span>{state}</span>
         </div>
       </div>
       <div className="flex gap-4 text-text-description items-center">
