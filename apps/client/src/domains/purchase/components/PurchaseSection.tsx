@@ -123,7 +123,7 @@ function PurchaseMode({
   useEffect(() => {
     const fetchTossPayments = async () => {
       const tossPayments = await loadTossPayments(
-        "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"
+        (process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY as string) || ""
       );
       const widgets = tossPayments.widgets({
         customerKey: ANONYMOUS

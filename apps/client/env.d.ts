@@ -13,5 +13,6 @@ declare const process: {
     NEXT_PUBLIC_V3_API_BASE_URL: string;
     NEXT_PUBLIC_CDN_BASE_URL: string;
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: string;
+    NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY: string;
   };
 };
