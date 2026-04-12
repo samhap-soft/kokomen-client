@@ -197,7 +197,7 @@ export default function MyInterviewResultPage({
                 variant={"primary"}
                 className="w-full"
               >
-                대시보드로 이동
+                마이페이지로 이동
               </Button>
             </div>
           </section>

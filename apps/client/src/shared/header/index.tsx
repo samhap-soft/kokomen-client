@@ -42,7 +42,7 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
     },
     {
       href: "/dashboard",
-      label: "대시보드",
+      label: "마이페이지",
       current: false,
       featureFlag: true
     },
@@ -152,7 +152,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
               className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-bg-hover transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
             >
               <LayoutDashboard className="w-4 h-4" />
-              대시보드
+              마이페이지
             </Button>
             <Button
               variant="none"

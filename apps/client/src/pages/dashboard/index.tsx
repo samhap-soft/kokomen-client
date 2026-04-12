@@ -25,7 +25,7 @@ export default function Dashboard({
   return (
     <>
       <SEO
-        title="대시보드"
+        title="마이페이지"
         robots="noindex, nofollow, noarchive"
         pathname="/dashboard"
       />
