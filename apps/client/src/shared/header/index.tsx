@@ -63,6 +63,12 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
       label: "토큰 구매",
       current: false,
       featureFlag: true
+    },
+    {
+      href: "/admin",
+      label: "관리자",
+      current: false,
+      featureFlag: true
     }
   ];
 };

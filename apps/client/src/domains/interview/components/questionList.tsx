@@ -1,4 +1,5 @@
 import { getQuestions } from "@/domains/interview/api/questions";
+import { interviewQuestionKeys } from "@/utils/querykeys";
 import { Button, Modal, RoundSpinner } from "@kokomen/ui";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
@@ -61,7 +62,7 @@ function QuestionListContent({
   onSelectQuestion: (question: InterviewQuestion) => void;
 }) {
   const { data: questions } = useSuspenseQuery({
-    queryKey: ["questions", category],
+    queryKey: interviewQuestionKeys.byCategory(category),
     queryFn: () => getQuestions(category),
     retry: true,
     retryOnMount: true,

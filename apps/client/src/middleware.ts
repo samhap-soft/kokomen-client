@@ -2,7 +2,7 @@ import { NextConfig } from "next";
 
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED_PATHS: Array<string> = ["/interviews/", "/dashboard"];
+const PROTECTED_PATHS: Array<string> = ["/interviews/", "/dashboard", "/admin"];
 
 // 경로 체크 함수들
 function isProtectedPath(pathname: string): boolean {
@@ -37,6 +37,14 @@ export function middleware(request: NextRequest): NextResponse {
     if (!sessionId) {
       return NextResponse.redirect(new URL(getLoginUrl(request)));
     }
+
+    // TODO: admin 전용 체크 (서버에서 is_admin API 구현 후 활성화)
+    // if (pathname.startsWith("/admin")) {
+    //   const isAdmin = await checkIsAdmin(sessionId);
+    //   if (!isAdmin) {
+    //     return NextResponse.redirect(new URL("/dashboard", request.url));
+    //   }
+    // }
 
     return NextResponse.next();
   }
