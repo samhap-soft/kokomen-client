@@ -2,7 +2,7 @@ import { Interview, InterviewMode, InterviewQuestion } from "@kokomen/types";
 import axios, { AxiosInstance } from "axios";
 
 const questionApiInstance: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
+  baseURL: process.env.NEXT_PUBLIC_V3_API_BASE_URL
 });
 
 export const getQuestions = async (

@@ -10,11 +10,18 @@ import {
 import { useSpeechRecognitionWithEvents } from "@/domains/interview/hooks/useSpeechRecognitionWithEvents";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { captureFormSubmitEvent } from "@/utils/analytics";
-import { Button, LoadingCircles, Textarea } from "@kokomen/ui";
+import { Button, LoadingCircles, Textarea, useToast } from "@kokomen/ui";
 import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
-import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
+import React, {
+  JSX,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from "react";
 import { publishInterviewEvent } from "@/domains/interview/utils/interviewEventEmitter";
 
 type InterviewInputProps = Pick<
@@ -54,6 +61,8 @@ export function InterviewAnswerForm({
 }: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const { info: infoToast } = useToast();
+  const delayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateInterviewInput = useCallback(
     (result: string) => {
@@ -67,9 +76,20 @@ export function InterviewAnswerForm({
     [setInterviewInput, isInterviewStarted]
   );
 
+  const handleContextLost = useCallback(() => {
+    setInterviewInput("");
+    infoToast({
+      description:
+        "면접관이 맥락을 놓쳤습니다. 텀을 들이지 말고 설명해 보세요.",
+      duration: 5000,
+      position: "top-center"
+    });
+  }, [infoToast]);
+
   const { isListening: isVoiceListening, error: voiceError } =
     useSpeechRecognitionWithEvents({
       onSpeechEnd: updateInterviewInput,
+      onContextLost: handleContextLost,
       enabled: isInterviewStarted,
       mode: mode
     });
@@ -85,7 +105,17 @@ export function InterviewAnswerForm({
       );
     },
     onMutate: (data) => {
-      publishInterviewEvent("stopVoiceRecognition");
+      if (delayTimerRef.current) clearTimeout(delayTimerRef.current);
+      delayTimerRef.current = setTimeout(() => {
+        infoToast({
+          title: "면접관이 답변을 분석 중이에요",
+          description: "잠시만 기다려주세요. 곧 다음 질문이 준비됩니다.",
+          duration: 5000,
+          position: "top-center"
+        });
+      }, 5000);
+
+      publishInterviewEvent("interview:stopVoiceRecognition");
       captureFormSubmitEvent({
         name: "submitInterviewAnswer",
         properties: {
@@ -114,6 +144,10 @@ export function InterviewAnswerForm({
       };
     },
     onSuccess: (data) => {
+      if (delayTimerRef.current) {
+        clearTimeout(delayTimerRef.current);
+        delayTimerRef.current = null;
+      }
       if (data.interviewState === "FINISHED") {
         updateInterviewData({
           interview_state: "FINISHED",
@@ -138,6 +172,10 @@ export function InterviewAnswerForm({
       }
     },
     onError: (_, __, context) => {
+      if (delayTimerRef.current) {
+        clearTimeout(delayTimerRef.current);
+        delayTimerRef.current = null;
+      }
       updateInterviewData({
         cur_question: SUBMIT_FAILED_MESSAGE,
         prev_questions_and_answers: [
@@ -158,6 +196,14 @@ export function InterviewAnswerForm({
     },
     retry: false
   });
+
+  useEffect(() => {
+    return () => {
+      if (delayTimerRef.current) {
+        clearTimeout(delayTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleSubmit = (
     e: React.FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
@@ -294,7 +340,7 @@ function VoiceInputButton({
         name="interview-voice-stop"
         variant={"glass"}
         className="flex items-center gap-2 text-text-tertiary"
-        onClick={() => publishInterviewEvent("stopVoiceRecognition")}
+        onClick={() => publishInterviewEvent("interview:stopVoiceRecognition")}
         disabled={disabled}
       >
         <CircleStop
@@ -313,7 +359,7 @@ function VoiceInputButton({
       name="interview-voice-start"
       variant={"glass"}
       className="flex items-center gap-2 text-text-tertiary"
-      onClick={() => publishInterviewEvent("startVoiceRecognition")}
+      onClick={() => publishInterviewEvent("interview:startVoiceRecognition")}
       disabled={disabled}
     >
       <Mic className={`${isVoiceListening ? "animate-pulse" : ""}`} />

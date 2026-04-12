@@ -3,9 +3,33 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from "lucide-react";
 import { cn } from "../../utils/index.ts";
 
+// Toast Position
+type ToastPosition =
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-center"
+  | "bottom-right";
+
+const positionClasses: Record<ToastPosition, string> = {
+  "top-left":
+    "fixed top-4 left-4 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 sm:max-w-[420px]",
+  "top-center":
+    "fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 sm:max-w-[420px]",
+  "top-right":
+    "fixed top-4 right-4 z-[100] flex max-h-screen w-full flex-col gap-2 p-4 sm:max-w-[420px]",
+  "bottom-left":
+    "fixed bottom-4 left-4 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px]",
+  "bottom-center":
+    "fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px]",
+  "bottom-right":
+    "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px]"
+};
+
 // Toast Provider - Context를 제공하는 컴포넌트
 interface ToastContextType {
-  addToast: (toast: ToastProps) => void;
+  addToast: (toast: ToastProps) => string;
   removeToast: (id: string) => void;
   toasts: ToastProps[];
 }
@@ -23,7 +47,7 @@ function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const addToast = React.useCallback(
     (toast: ToastProps) => {
-      const id = Math.random().toString(36).substring(2, 15);
+      const id = toast.id || Math.random().toString(36).substring(2, 15);
       const newToast = { ...toast, id, isVisible: true };
 
       setToasts((prev) => [newToast, ...prev.slice(0, 4)]); // 최대 5개까지만 표시
@@ -34,6 +58,8 @@ function ToastProvider({ children }: { children: React.ReactNode }) {
           removeToast(id);
         }, toast.duration || 5000);
       }
+
+      return id;
     },
     [removeToast]
   );
@@ -60,16 +86,18 @@ function useToastContext() {
   return context;
 }
 
-interface ToastViewportProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface ToastViewportProps extends React.HTMLAttributes<HTMLDivElement> {
+  position?: ToastPosition;
+}
 
 const ToastViewport = React.forwardRef<HTMLDivElement, ToastViewportProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, position = "top-center", ...props }, ref) => {
     const { toasts } = useToastContext();
     return (
       <div
         ref={ref}
         className={cn(
-          "fixed bottom-4 right-4 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:max-w-[420px] ",
+          positionClasses[position],
           toasts.length === 0 && "hidden",
           className
         )}
@@ -113,7 +141,17 @@ interface ToastProps extends VariantProps<typeof toastVariants> {
   isVisible?: boolean;
   onClose?: () => void;
   className?: string;
+  position?: ToastPosition;
 }
+
+const getSlideDirection = (position: ToastPosition = "top-center") => {
+  const isBottom = position.startsWith("bottom");
+  if (position.includes("left"))
+    return isBottom ? "translateY(100%)" : "translateY(-100%)";
+  if (position.includes("center"))
+    return isBottom ? "translateY(20px)" : "translateY(-20px)";
+  return isBottom ? "translateY(100%)" : "translateY(-100%)";
+};
 
 const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   (
@@ -125,6 +163,7 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       action,
       onClose,
       isVisible = true,
+      position = "bottom-right",
       ...props
     },
     ref
@@ -177,8 +216,8 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         className={cn(toastVariants({ variant }), className)}
         style={{
           transform: isEntering
-            ? "translateX(100%) scale(0.95)"
-            : "translateX(0) scale(1)",
+            ? `${getSlideDirection(position)} scale(0.95)`
+            : "translate(0) scale(1)",
           opacity: isEntering || isExiting ? 0 : 1
         }}
         {...props}
@@ -274,16 +313,32 @@ ToastDescription.displayName = "ToastDescription";
 const ToastContainer = () => {
   const { toasts, removeToast } = useToastContext();
 
+  const groupedByPosition = toasts.reduce<Record<ToastPosition, ToastProps[]>>(
+    (acc, toast) => {
+      const pos = toast.position || "top-center";
+      if (!acc[pos]) acc[pos] = [];
+      acc[pos].push(toast);
+      return acc;
+    },
+    {} as Record<ToastPosition, ToastProps[]>
+  );
+
   return (
-    <ToastViewport>
-      {toasts.map((toast) => (
-        <Toast
-          key={toast.id}
-          {...toast}
-          onClose={() => removeToast(toast.id!)}
-        />
+    <>
+      {(
+        Object.entries(groupedByPosition) as [ToastPosition, ToastProps[]][]
+      ).map(([position, positionToasts]) => (
+        <ToastViewport key={position} position={position}>
+          {positionToasts.map((toast) => (
+            <Toast
+              key={toast.id}
+              {...toast}
+              onClose={() => removeToast(toast.id!)}
+            />
+          ))}
+        </ToastViewport>
       ))}
-    </ToastViewport>
+    </>
   );
 };
 interface ToasterProps {
@@ -306,6 +361,7 @@ interface ToastOptions {
   action?: React.ReactNode;
   duration?: number;
   variant?: "default" | "success" | "error" | "warning" | "info";
+  position?: ToastPosition;
 }
 
 function useToast() {
@@ -313,13 +369,7 @@ function useToast() {
 
   const toast = React.useCallback(
     (options: ToastOptions) => {
-      const id = Math.random().toString(36).substring(2, 15);
-
-      addToast({
-        ...options,
-        id,
-        onClose: () => removeToast(id)
-      });
+      const id = addToast(options);
 
       return {
         id,
@@ -370,6 +420,7 @@ function useToast() {
 
 // 타입 내보내기
 export type {
+  ToastPosition,
   ToastProps,
   ToastActionProps,
   ToastCloseProps,

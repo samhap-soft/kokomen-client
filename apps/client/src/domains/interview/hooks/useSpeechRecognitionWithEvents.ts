@@ -25,6 +25,7 @@ type SpeechRecognitionType =
 interface UseSpeechRecognitionProps {
   // eslint-disable-next-line no-unused-vars
   onSpeechEnd: (result: string) => void;
+  onContextLost?: () => void;
   enabled?: boolean;
   options?: UseSpeechRecognitionOptions;
   mode: InterviewMode;
@@ -32,6 +33,7 @@ interface UseSpeechRecognitionProps {
 
 export const useSpeechRecognitionWithEvents = ({
   onSpeechEnd,
+  onContextLost,
   mode,
   enabled = true,
   options = {}
@@ -68,13 +70,18 @@ export const useSpeechRecognitionWithEvents = ({
       return;
     }
     if (mode === "VOICE") {
+      const accumulatedText = result.current.join(" ").trim();
+      if (accumulatedText.length > 0 && onContextLost) {
+        onContextLost();
+      }
+
       publishInterviewEvent("interview:stopVoiceRecognition");
       setTimeout(() => {
         publishInterviewEvent("interview:startVoiceRecognition");
       }, 500);
     }
     resultPointer.current++;
-  }, []);
+  }, [mode, onContextLost]);
 
   const handleSpeechResult = useCallback(
     // eslint-disable-next-line no-undef
