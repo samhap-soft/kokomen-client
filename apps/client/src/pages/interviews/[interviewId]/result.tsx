@@ -169,8 +169,8 @@ export default function MyInterviewResultPage({
             </section>
 
             {/* 피드백 섹션 */}
-            <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
-              <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
+            <section className="bg-bg-elevated rounded-2xl border border-border">
+              <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary rounded-t-2xl">
                 <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
                   <div className="w-1 h-6 bg-success rounded-full"></div>각
                   항목별 피드백
