@@ -24,7 +24,7 @@ type HeaderNavigation = {
   featureFlag: boolean;
 };
 // eslint-disable-next-line no-unused-vars
-const navigation = (isTestUser: boolean): HeaderNavigation[] => {
+const navigation = (isAdmin: boolean | undefined): HeaderNavigation[] => {
   return [
     { href: "/", label: "홈", current: true, featureFlag: true },
 
@@ -64,12 +64,16 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
       current: false,
       featureFlag: true
     },
-    {
-      href: "/admin",
-      label: "관리자",
-      current: false,
-      featureFlag: true
-    }
+    ...(isAdmin
+      ? [
+          {
+            href: "/admin",
+            label: "관리자",
+            current: false,
+            featureFlag: true
+          }
+        ]
+      : [])
   ];
 };
 
@@ -206,7 +210,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
         }}
       >
         <nav className="flex flex-col space-y-2">
-          {navigation(user?.is_test_user || false).map((item) => {
+          {navigation(user?.is_admin || false).map((item) => {
             const isActive = router.pathname === item.href;
 
             return (
@@ -299,7 +303,7 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
               />
             </Link>
             <nav className="hidden md:flex items-center space-x-1">
-              {navigation(user?.is_test_user || false).map((item) => {
+              {navigation(user?.is_admin || false).map((item) => {
                 const isActive = router.pathname === item.href;
                 if (!item.featureFlag) return null;
                 return (

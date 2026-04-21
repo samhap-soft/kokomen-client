@@ -1,5 +1,7 @@
 import { isAxiosError } from "axios";
 import { GetServerSidePropsResult, GetServerSidePropsContext } from "next";
+import { getUserInfo } from "@/domains/auth/api";
+import { UserInfo } from "@kokomen/types";
 
 const LOGIN_PATH: string = "/login";
 export async function withCheckInServer<T>(
@@ -39,13 +41,13 @@ export async function withCheckInServer<T>(
     // AxiosResponse 형태인 경우 (data 속성이 있는 경우)
     if (response && typeof response === "object" && "data" in response) {
       return {
-        props: response.data as T,
+        props: response.data as T
       };
     }
 
     // 직접 T 타입인 경우
     return {
-      props: response as T,
+      props: response as T
     };
   } catch (error) {
     if (isAxiosError(error)) {
@@ -58,28 +60,28 @@ export async function withCheckInServer<T>(
             return {
               redirect: {
                 destination: `${LOGIN_PATH}?redirectTo=${options?.redirectPathWhenUnauthorized}`,
-                permanent: false,
-              },
+                permanent: false
+              }
             };
           } else {
             return {
               redirect: {
                 destination: LOGIN_PATH,
-                permanent: false,
-              },
+                permanent: false
+              }
             };
           }
         case 404:
           return {
-            notFound: true,
+            notFound: true
           };
 
         case 500:
           return {
             redirect: {
               destination: "/500",
-              permanent: false,
-            },
+              permanent: false
+            }
           };
       }
     }
@@ -93,10 +95,48 @@ export async function withCheckInServer<T>(
     return {
       redirect: {
         destination: "/500",
-        permanent: false,
-      },
+        permanent: false
+      }
     };
   }
+}
+
+export async function withAdminCheck<T>(
+  context: GetServerSidePropsContext,
+  fetchCall: (
+    // eslint-disable-next-line no-unused-vars
+    userInfo?: UserInfo
+  ) => Promise<GetServerSidePropsResult<T> | { data: T }>
+): Promise<GetServerSidePropsResult<T>> {
+  return withCheckInServer(
+    async () => {
+      try {
+        const userInfo = await getUserInfo(context);
+
+        if (!userInfo.data.is_admin) {
+          return {
+            redirect: {
+              destination: "/",
+              permanent: false
+            }
+          };
+        }
+
+        return fetchCall(userInfo.data);
+      } catch (error) {
+        if (isAxiosError(error) && error.response?.status === 401) {
+          return {
+            redirect: {
+              destination: "/",
+              permanent: false
+            }
+          };
+        }
+        return fetchCall();
+      }
+    },
+    { context, redirectPathWhenUnauthorized: context.resolvedUrl }
+  );
 }
 
 export function eraseAuthCookie(context: GetServerSidePropsContext) {

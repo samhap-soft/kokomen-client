@@ -7,7 +7,8 @@ import axios, { AxiosInstance } from "axios";
 import { mapToCamelCase } from "@kokomen/utils";
 
 const adminApiInstance: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  withCredentials: true
 });
 
 export const getAdminQuestions = async (
@@ -30,7 +31,7 @@ export const getAdminPayments = async (
 
 export const cancelAdminPayment = async (paymentId: number): Promise<void> => {
   return adminApiInstance
-    .post(`/admin/payments/${paymentId}/cancel`)
+    .post(`/admin/payments/${paymentId}/cancel`, { cancel_reason: "고객 요청" })
     .then((res) => res.data);
 };
 

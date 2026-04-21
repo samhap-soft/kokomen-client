@@ -1,7 +1,6 @@
-import { getUserInfo } from "@/domains/auth/api";
 import AdminLayout from "@/domains/admin/components/adminLayout";
 import AdminPaymentHistorySection from "@/domains/admin/components/paymentHistory/adminPaymentHistorySection";
-import { withCheckInServer } from "@/utils/auth";
+import { withAdminCheck } from "@/utils/auth";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
@@ -23,15 +22,7 @@ export default function AdminPayments({
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<{ userInfo: UserInfo }>> => {
-  return withCheckInServer(
-    async () => {
-      const userInfo = await getUserInfo(context);
-      return {
-        data: {
-          userInfo: userInfo.data
-        }
-      };
-    },
-    { context, redirectPathWhenUnauthorized: "/admin/payments" }
-  );
+  return withAdminCheck(context, async (userInfo) => {
+    return { data: { userInfo: userInfo as UserInfo } };
+  });
 };
