@@ -50,10 +50,7 @@ const PaymentCard = ({
   onCancel: (payment: AdminPayment) => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const tossStatus = tossStatusLabel[payment.result.tosspaymentsStatus] ?? {
-    text: payment.result.tosspaymentsStatus,
-    className: "text-gray-600 bg-gray-50"
-  };
+  const tossStatus = payment.state;
   const isCanceled = payment.result.canceledAt || payment.result.cancelReason;
 
   return (
@@ -72,7 +69,7 @@ const PaymentCard = ({
               <span
                 className={`shrink-0 inline-block px-1.5 py-0.5 rounded text-xs font-medium ${tossStatus.className}`}
               >
-                {tossStatus.text}
+                {tossStatus}
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500">
