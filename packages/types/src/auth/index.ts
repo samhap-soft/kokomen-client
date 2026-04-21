@@ -2,6 +2,7 @@ interface User {
   id: number;
   nickname: string;
   profile_completed: boolean;
+  is_admin?: boolean;
 }
 
 interface UserInfo extends User {

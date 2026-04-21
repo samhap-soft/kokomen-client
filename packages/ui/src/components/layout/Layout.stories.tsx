@@ -56,7 +56,7 @@ export const WithSidebar: Story = {
           <h2 className="text-lg font-semibold mb-4">사이드바</h2>
           <nav className="space-y-2">
             <a href="#" className="block p-2 hover:bg-gray-700 rounded">
-              대시보드
+              마이페이지
             </a>
             <a href="#" className="block p-2 hover:bg-gray-700 rounded">
               사용자
@@ -103,7 +103,7 @@ export const ComplexLayout: Story = {
             <h2 className="text-lg font-semibold mb-4">사이드바</h2>
             <nav className="space-y-2">
               <a href="#" className="block p-2 hover:bg-gray-200 rounded">
-                대시보드
+                마이페이지
               </a>
               <a href="#" className="block p-2 hover:bg-gray-200 rounded">
                 사용자 관리

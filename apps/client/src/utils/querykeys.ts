@@ -45,6 +45,16 @@ const interviewKeys: QueryKeyFactory<InterviewMethods> = {
     [...interviewKeys.all, id, questionId] as const
 };
 
+// 인터뷰 루트 질문 관련 도메인
+type InterviewQuestionMethods = {
+  byCategory: (category: string) => QueryKey;
+};
+const interviewQuestionKeys: QueryKeyFactory<InterviewQuestionMethods> = {
+  all: ["interviewQuestions"] as const,
+  byCategory: (category: string): QueryKey =>
+    [...interviewQuestionKeys.all, category] as const
+};
+
 // 멤버 관련 도메인
 interface MemberRankParams {
   page: number;
@@ -130,20 +140,46 @@ const resumeEvaluationKeys: QueryKeyFactory<ResumeEvaluationMethods> = {
     [...resumeEvaluationKeys.all, "history", page, size] as const
 };
 
+// 관리자 결제 관련 도메인
+type AdminPaymentMethods = {
+  list: (page?: number) => QueryKey;
+};
+const adminPaymentKeys: QueryKeyFactory<AdminPaymentMethods> = {
+  all: ["adminPayments"] as const,
+  list: (page: number = 0): QueryKey =>
+    [...adminPaymentKeys.all, "list", page] as const
+};
+
+// 관리자 질문 관련 도메인
+type AdminQuestionMethods = {
+  byCategory: (category: string) => QueryKey;
+};
+const adminQuestionKeys: QueryKeyFactory<AdminQuestionMethods> = {
+  all: ["adminQuestions"] as const,
+  byCategory: (category: string): QueryKey =>
+    [...adminQuestionKeys.all, category] as const
+};
+
 export {
   interviewHistoryKeys,
   interviewKeys,
+  interviewQuestionKeys,
   memberKeys,
   archiveKeys,
   purchaseKeys,
   recruitKeys,
   resumeBasedInterviewKeys,
   resumeEvaluationKeys,
+  adminQuestionKeys,
+  adminPaymentKeys,
   type InterviewHistoryParams,
   type InterviewParams,
   type MemberRankParams,
   type RecruitMethods,
   type ArchiveMethods,
   type ResumeBasedInterviewMethods,
-  type ResumeEvaluationMethods
+  type ResumeEvaluationMethods,
+  type AdminQuestionMethods,
+  type AdminPaymentMethods,
+  type InterviewQuestionMethods
 };

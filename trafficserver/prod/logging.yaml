@@ -1,0 +1,8 @@
+logging:
+  formats:
+    - name: main
+      format: '%<chi> - %<caun> [%<cqtd>:%<cqtt>] "%<cqhm> %<cqup> %<cqpv>" %<pssc> %<pscl> "%<{Referer}cqh>" "%<{User-Agent}cqh>" "%<{X-Forwarded-For}cqh>"'
+  logs:
+    - filename: access
+      format: main
+      mode: ascii

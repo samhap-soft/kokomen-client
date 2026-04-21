@@ -24,7 +24,7 @@ type HeaderNavigation = {
   featureFlag: boolean;
 };
 // eslint-disable-next-line no-unused-vars
-const navigation = (isTestUser: boolean): HeaderNavigation[] => {
+const navigation = (isAdmin: boolean | undefined): HeaderNavigation[] => {
   return [
     { href: "/", label: "홈", current: true, featureFlag: true },
 
@@ -42,7 +42,7 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
     },
     {
       href: "/dashboard",
-      label: "대시보드",
+      label: "마이페이지",
       current: false,
       featureFlag: true
     },
@@ -63,7 +63,17 @@ const navigation = (isTestUser: boolean): HeaderNavigation[] => {
       label: "토큰 구매",
       current: false,
       featureFlag: true
-    }
+    },
+    ...(isAdmin
+      ? [
+          {
+            href: "/admin",
+            label: "관리자",
+            current: false,
+            featureFlag: true
+          }
+        ]
+      : [])
   ];
 };
 
@@ -146,7 +156,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
               className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-bg-hover transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
             >
               <LayoutDashboard className="w-4 h-4" />
-              대시보드
+              마이페이지
             </Button>
             <Button
               variant="none"
@@ -200,7 +210,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
         }}
       >
         <nav className="flex flex-col space-y-2">
-          {navigation(user?.is_test_user || false).map((item) => {
+          {navigation(user?.is_admin || false).map((item) => {
             const isActive = router.pathname === item.href;
 
             return (
@@ -293,7 +303,7 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
               />
             </Link>
             <nav className="hidden md:flex items-center space-x-1">
-              {navigation(user?.is_test_user || false).map((item) => {
+              {navigation(user?.is_admin || false).map((item) => {
                 const isActive = router.pathname === item.href;
                 if (!item.featureFlag) return null;
                 return (

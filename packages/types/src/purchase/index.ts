@@ -46,6 +46,42 @@ type PurchaseSuccessQuery = {
   amount: number;
 };
 
+type AdminPaymentResult = {
+  method: string;
+  balanceAmount: number;
+  tosspaymentsStatus: string;
+  requestedAt: string;
+  approvedAt: string;
+  cancelReason: string | null;
+  canceledAt: string | null;
+  cancelStatus: string | null;
+  receiptUrl: string | null;
+  easyPayProvider: string | null;
+};
+
+type AdminPayment = {
+  id: number;
+  paymentKey: string;
+  memberId: number;
+  orderId: string;
+  orderName: string;
+  totalAmount: number;
+  metadata: string;
+  state: string;
+  serviceType: string;
+  createdAt: string;
+  updatedAt: string;
+  result: AdminPaymentResult;
+};
+
+type AdminPaymentPageResponse = {
+  data: AdminPayment[];
+  currentPage: number;
+  totalCount: number;
+  totalPages: number;
+  hasNext: boolean;
+};
+
 export type {
   Purchase,
   Product,
@@ -54,5 +90,8 @@ export type {
   Refund,
   PurchaseError,
   PurchaseSuccessQuery,
-  RefundCode
+  RefundCode,
+  AdminPayment,
+  AdminPaymentResult,
+  AdminPaymentPageResponse
 };

@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { cn } from "../../utils/index.ts";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const FileField = ({
   register,
   label,

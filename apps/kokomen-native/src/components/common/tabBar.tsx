@@ -13,7 +13,7 @@ const TabBarIcons: Record<string, { icon: keyof typeof icons; label: string }> =
     },
     Dashboard: {
       icon: "ChartColumnBig",
-      label: "대시보드",
+      label: "마이페이지",
     },
   };
 
