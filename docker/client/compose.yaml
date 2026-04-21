@@ -26,7 +26,16 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ../../trafficserver/prod:/opt/etc/trafficserver
+      # 커스텀 설정 파일만 개별 마운트 (ATS 기본 파일 유지)
+      - ../../trafficserver/prod/records.yaml:/opt/etc/trafficserver/records.yaml:ro
+      - ../../trafficserver/prod/remap.config:/opt/etc/trafficserver/remap.config
+      - ../../trafficserver/prod/ssl_multicert.config:/opt/etc/trafficserver/ssl_multicert.config:ro
+      - ../../trafficserver/prod/ip_allow.yaml:/opt/etc/trafficserver/ip_allow.yaml:ro
+      - ../../trafficserver/prod/logging.yaml:/opt/etc/trafficserver/logging.yaml:ro
+      - ../../trafficserver/prod/plugin.config:/opt/etc/trafficserver/plugin.config:ro
+      - ../../trafficserver/prod/storage.config:/opt/etc/trafficserver/storage.config:ro
+      - ../../trafficserver/prod/header_rewrite:/opt/etc/trafficserver/header_rewrite:ro
+      # Let's Encrypt 인증서
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/certbot:/var/www/certbot
     restart: always
