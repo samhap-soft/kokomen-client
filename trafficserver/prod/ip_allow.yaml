@@ -1,0 +1,5 @@
+ip_allow:
+  - apply: in
+    ip_addrs: 0.0.0.0/0
+    action: set_allow
+    methods: ALL

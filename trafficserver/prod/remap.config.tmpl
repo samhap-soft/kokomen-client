@@ -1,0 +1,8 @@
+# HTTP -> HTTPS 리다이렉트
+redirect http://kokomen.kr/ https://kokomen.kr/
+
+# 프론트엔드: kokomen.kr -> CLIENT_BACKEND:3000
+map https://kokomen.kr/ http://CLIENT_BACKEND:3000/ \
+  @plugin=header_rewrite.so @pparam=/opt/etc/trafficserver/header_rewrite/security-headers.conf \
+  @plugin=header_rewrite.so @pparam=/opt/etc/trafficserver/header_rewrite/proxy-headers.conf
+reverse_map http://CLIENT_BACKEND:3000/ https://kokomen.kr/
