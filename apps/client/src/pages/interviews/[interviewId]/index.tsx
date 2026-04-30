@@ -23,6 +23,7 @@ import { SEO } from "@/shared/seo";
 import { InterviewQuestion } from "@/domains/interview/components/interviewQuestion";
 import InterviewStartModal from "@/domains/interview/components/interviewStartModal";
 import { InterviewNotFoundError } from "@/domains/interview/components/interviewNotFoundError";
+import { AlertTriangle } from "lucide-react";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
@@ -150,6 +151,14 @@ export default function InterviewPage({
       <Layout>
         <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
           <div className="flex flex-col flex-1 relative min-w-0">
+            {data?.is_demo && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200">
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+                <span className="text-xs text-amber-800 font-medium">
+                  데모 면접입니다. 로그인하면 더 많은 기능을 이용할 수 있어요.
+                </span>
+              </div>
+            )}
             <InterviewQuestion
               interviewMode={mode}
               question={currentQuestion}
@@ -196,6 +205,7 @@ export default function InterviewPage({
         <InterviewStartModal
           isInterviewStarted={isInterviewStarted}
           disabled={isPending}
+          isDemo={data?.is_demo}
           onInterviewStart={() => {
             setIsInterviewStarted(true);
             if (isVoiceInterview(data)) {
@@ -218,7 +228,10 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async (
   context
 ): Promise<
-  GetServerSidePropsResult<{ interviewId: number; mode: InterviewMode }>
+  GetServerSidePropsResult<{
+    interviewId: number;
+    mode: InterviewMode;
+  }>
 > => {
   const { interviewId, mode } = context.query;
 

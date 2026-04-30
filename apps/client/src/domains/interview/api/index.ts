@@ -47,4 +47,19 @@ export const getInterview = async (
   return data;
 };
 
+export const startGuestInterview =
+  async (): Promise<NewInterviewResponse> => {
+    const { data } = await interviewApiInstance.post(
+      "/interviews/guest",
+      null,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        withCredentials: false
+      }
+    );
+    return data;
+  };
+
 export type { NewInterviewResponse, NewInterviewRequest };

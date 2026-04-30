@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 type InterviewFinishModalProps = {
   interviewState: Interview["interview_state"];
-  interviewId: number;
+  interviewId: number | string;
 };
 const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
   memo(

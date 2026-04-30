@@ -1,4 +1,7 @@
-import { getInterviewReport } from "@/domains/interviewReport/api/report";
+import {
+  getInterviewReport,
+  getGuestInterviewReport
+} from "@/domains/interviewReport/api/report";
 import { FeedbackAccordion } from "@/domains/interviewReport/components/feedbackAccordion";
 import { InterviewReport } from "@kokomen/types";
 import {
@@ -12,16 +15,18 @@ import { Button } from "@kokomen/ui";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 import Header from "@/shared/header";
-import { TrendingUp, TrendingDown, Target } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, LogIn, Lock } from "lucide-react";
 import { withCheckInServer } from "@/utils/auth";
 import { getUserInfo } from "@/domains/auth/api";
 import { SEO } from "@/shared/seo";
 import { UserInfo } from "@kokomen/types";
 import Link from "next/link";
+import { isAxiosError } from "axios";
 
 export default function MyInterviewResultPage({
   report,
-  userInfo
+  userInfo,
+  isGuest
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const navigate = useRouter();
   const scoreDiff = report.user_cur_score - report.user_prev_score;
@@ -50,59 +55,61 @@ export default function MyInterviewResultPage({
             </div>
 
             {/* 최종 점수 섹션 */}
-            <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
-              <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
-                <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
-                  <div className="w-1 h-6 bg-warning rounded-full"></div>
-                  최종 점수
-                </h2>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-center space-x-8 mb-8">
-                  <div className="text-center">
-                    <p className="text-sm text-text-description mb-3">
-                      이전 점수
-                    </p>
-                    <div className="text-5xl md:text-6xl font-bold text-text-tertiary">
-                      {report.user_prev_score}
+            {!isGuest && (
+              <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
+                <div className="px-6 py-4 border-b border-border-secondary bg-fill-quaternary">
+                  <h2 className="text-xl font-semibold flex items-center gap-3 text-text-heading">
+                    <div className="w-1 h-6 bg-warning rounded-full"></div>
+                    최종 점수
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center justify-center space-x-8 mb-8">
+                    <div className="text-center">
+                      <p className="text-sm text-text-description mb-3">
+                        이전 점수
+                      </p>
+                      <div className="text-5xl md:text-6xl font-bold text-text-tertiary">
+                        {report.user_prev_score}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="text-3xl text-text-tertiary mb-3">→</div>
+                      {isScoreImproved ? (
+                        <TrendingUp className="w-8 h-8 text-success" />
+                      ) : (
+                        <TrendingDown className="w-8 h-8 text-error" />
+                      )}
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-text-description mb-3">
+                        현재 점수
+                      </p>
+                      <div className="text-5xl md:text-6xl font-bold text-blue-6">
+                        {report.user_cur_score}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <div className="text-3xl text-text-tertiary mb-3">→</div>
-                    {isScoreImproved ? (
-                      <TrendingUp className="w-8 h-8 text-success" />
-                    ) : (
-                      <TrendingDown className="w-8 h-8 text-error" />
-                    )}
-                  </div>
                   <div className="text-center">
-                    <p className="text-sm text-text-description mb-3">
-                      현재 점수
-                    </p>
-                    <div className="text-5xl md:text-6xl font-bold text-blue-6">
-                      {report.user_cur_score}
+                    <div
+                      className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-semibold shadow-sm ${
+                        isScoreImproved
+                          ? "bg-success-bg text-success-text border border-success-border"
+                          : "bg-error-bg text-error-text border border-error-border"
+                      }`}
+                    >
+                      {isScoreImproved ? (
+                        <TrendingUp className="w-5 h-5" />
+                      ) : (
+                        <TrendingDown className="w-5 h-5" />
+                      )}
+                      {isScoreImproved ? "+" : ""}
+                      {scoreDiff}점
                     </div>
                   </div>
                 </div>
-                <div className="text-center">
-                  <div
-                    className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-semibold shadow-sm ${
-                      isScoreImproved
-                        ? "bg-success-bg text-success-text border border-success-border"
-                        : "bg-error-bg text-error-text border border-error-border"
-                    }`}
-                  >
-                    {isScoreImproved ? (
-                      <TrendingUp className="w-5 h-5" />
-                    ) : (
-                      <TrendingDown className="w-5 h-5" />
-                    )}
-                    {isScoreImproved ? "+" : ""}
-                    {scoreDiff}점
-                  </div>
-                </div>
-              </div>
-            </section>
+              </section>
+            )}
 
             {report.root_question_reference_answers.length > 0 && (
               <section className="bg-bg-elevated rounded-2xl border border-border overflow-hidden">
@@ -177,11 +184,47 @@ export default function MyInterviewResultPage({
                 </h2>
               </div>
               <div className="p-6">
-                <FeedbackAccordion feedbacks={report.feedbacks} />
+                {isGuest ? (
+                  <div className="space-y-4">
+                    <FeedbackAccordion
+                      feedbacks={report.feedbacks.slice(0, 1)}
+                      isGuest
+                    />
+                    {report.feedbacks.length > 1 && (
+                      <div className="relative">
+                        <div className="blur-sm pointer-events-none select-none">
+                          <FeedbackAccordion
+                            feedbacks={report.feedbacks.slice(1)}
+                          />
+                        </div>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 rounded-xl">
+                          <Lock className="w-8 h-8 text-text-tertiary mb-3" />
+                          <p className="text-sm text-text-secondary font-medium mb-4">
+                            나머지 피드백은 로그인 후 확인할 수 있어요
+                          </p>
+                          <Button
+                            variant="primary"
+                            size="large"
+                            onClick={() =>
+                              navigate.push(
+                                "/login?redirectTo=/interviews"
+                              )
+                            }
+                          >
+                            <LogIn className="w-4 h-4 mr-2" />
+                            로그인하고 면접 체험하기
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <FeedbackAccordion feedbacks={report.feedbacks} />
+                )}
               </div>
             </section>
 
-            {/* 홈으로 버튼 */}
+            {/* 하단 버튼 */}
             <div className="text-center pt-6 flex flex-col gap-4">
               <Button
                 size="large"
@@ -191,14 +234,28 @@ export default function MyInterviewResultPage({
               >
                 홈으로 돌아가기
               </Button>
-              <Button
-                size="large"
-                onClick={() => navigate.push("/dashboard")}
-                variant={"primary"}
-                className="w-full"
-              >
-                마이페이지로 이동
-              </Button>
+              {isGuest ? (
+                <Button
+                  size="large"
+                  onClick={() =>
+                    navigate.push("/login?redirectTo=/interviews")
+                  }
+                  variant={"primary"}
+                  className="w-full"
+                >
+                  <LogIn className="w-4 h-4 mr-2" />
+                  로그인하고 면접 체험하기
+                </Button>
+              ) : (
+                <Button
+                  size="large"
+                  onClick={() => navigate.push("/dashboard")}
+                  variant={"primary"}
+                  className="w-full"
+                >
+                  마이페이지로 이동
+                </Button>
+              )}
             </div>
           </section>
         </main>
@@ -211,7 +268,7 @@ interface PageParams extends ParsedUrlQuery {
   interviewId: string;
 }
 export const getServerSideProps: GetServerSideProps<
-  { report: InterviewReport; userInfo: UserInfo | null },
+  { report: InterviewReport; userInfo: UserInfo | null; isGuest: boolean },
   PageParams
 > = async (
   context
@@ -219,6 +276,7 @@ export const getServerSideProps: GetServerSideProps<
   GetServerSidePropsResult<{
     report: InterviewReport;
     userInfo: UserInfo | null;
+    isGuest: boolean;
   }>
 > => {
   const interviewId = context.params?.interviewId;
@@ -227,21 +285,53 @@ export const getServerSideProps: GetServerSideProps<
       notFound: true
     };
   }
-  return withCheckInServer(
-    async () => {
-      const [report, userInfo] = await Promise.all([
-        getInterviewReport(context.req.cookies, interviewId as string),
-        getUserInfo(context)
-      ]);
-      return {
-        data: {
-          report: report.data,
-          userInfo: userInfo.data
-        }
-      };
-    },
-    {
-      redirectPathWhenUnauthorized: "/interviews"
+
+  const hasSession = !!context.req.cookies.JSESSIONID;
+
+  if (hasSession) {
+    return withCheckInServer(
+      async () => {
+        const [report, userInfo] = await Promise.all([
+          getInterviewReport(context.req.cookies, interviewId as string),
+          getUserInfo(context)
+        ]);
+        return {
+          data: {
+            report: report.data,
+            userInfo: userInfo.data,
+            isGuest: false
+          }
+        };
+      },
+      {
+        redirectPathWhenUnauthorized: "/interviews"
+      }
+    );
+  }
+
+  try {
+    const clientIp =
+      (context.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      (context.req.headers["x-real-ip"] as string) ||
+      context.req.socket.remoteAddress ||
+      "";
+    const report = await getGuestInterviewReport(interviewId as string, clientIp);
+    return {
+      props: {
+        report: report.data,
+        userInfo: null,
+        isGuest: true
+      }
+    };
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 404) {
+      return { notFound: true };
     }
-  );
+    return {
+      redirect: {
+        destination: "/interviews",
+        permanent: false
+      }
+    };
+  }
 };

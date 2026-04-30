@@ -5,9 +5,11 @@ import {
   getScoreLabel
 } from "@/utils/rankDisplay";
 import { Accordion, Tooltip } from "@kokomen/ui";
-import { MessageSquare, Star, Award, HelpCircle } from "lucide-react";
+import { MessageSquare, Star, Award, HelpCircle, LogIn } from "lucide-react";
 import { JSX } from "react";
 import AnswerMemoComponent from "@/domains/interviewReport/components/answerMemo";
+import { Button } from "@kokomen/ui";
+import Link from "next/link";
 
 function RankGuideTooltip(): JSX.Element {
   return (
@@ -48,9 +50,11 @@ function RankGuideTooltip(): JSX.Element {
 }
 
 export function FeedbackAccordion({
-  feedbacks
+  feedbacks,
+  isGuest
 }: {
   feedbacks: PrivateFeedback[];
+  isGuest?: boolean;
 }): JSX.Element {
   return (
     <Accordion.Accordion
@@ -63,6 +67,7 @@ export function FeedbackAccordion({
           key={feedback.question_id}
           feedback={feedback}
           idx={idx}
+          isGuest={isGuest}
         />
       ))}
     </Accordion.Accordion>
@@ -71,10 +76,12 @@ export function FeedbackAccordion({
 
 function FeedBackAccordionItem({
   feedback,
-  idx
+  idx,
+  isGuest
 }: {
   feedback: PrivateFeedback;
   idx: number;
+  isGuest?: boolean;
 }): JSX.Element {
   return (
     <Accordion.AccordionItem
@@ -161,12 +168,26 @@ function FeedBackAccordionItem({
               </div>
             </div>
           </div>
-          <AnswerMemoComponent
-            answerId={feedback.answer_id}
-            answerMemoProp={feedback.submitted_answer_memo_content}
-            tempMemo={feedback.temp_answer_memo_content}
-            visibility={feedback.answer_memo_visibility}
-          />
+          {isGuest ? (
+            <div className="border border-border-secondary p-4 rounded-lg flex flex-col justify-between items-center gap-3">
+              <p className="text-sm text-text-secondary">
+                로그인하면 메모를 작성하고 나만의 오답노트를 정리할 수 있어요.
+              </p>
+              <Link href="/login?redirectTo=/interviews" className="w-full">
+                <Button className="w-full" variant="glass">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  로그인하고 내 오답 정리하기
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <AnswerMemoComponent
+              answerId={feedback.answer_id}
+              answerMemoProp={feedback.submitted_answer_memo_content}
+              tempMemo={feedback.temp_answer_memo_content}
+              visibility={feedback.answer_memo_visibility}
+            />
+          )}
         </div>
       </Accordion.AccordionContent>
     </Accordion.AccordionItem>

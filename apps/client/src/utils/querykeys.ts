@@ -35,12 +35,13 @@ interface InterviewParams {
 }
 
 type InterviewMethods = {
-  byInterviewId: (id: number) => QueryKey;
+  byInterviewId: (id: number | string) => QueryKey;
   byInterviewIdAndQuestionId: (id: number, questionId: number) => QueryKey;
 };
 const interviewKeys: QueryKeyFactory<InterviewMethods> = {
   all: ["interview"] as const,
-  byInterviewId: (id: number): QueryKey => [...interviewKeys.all, id] as const,
+  byInterviewId: (id: number | string): QueryKey =>
+    [...interviewKeys.all, id] as const,
   byInterviewIdAndQuestionId: (id: number, questionId: number): QueryKey =>
     [...interviewKeys.all, id, questionId] as const
 };

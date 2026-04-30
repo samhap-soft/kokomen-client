@@ -35,7 +35,7 @@ const myInterviewResultData: InterviewReport = {
 describe("내 면접결과 페이지 테스트", () => {
   it("내 면접결과 페이지 렌더링 테스트", async () => {
     renderWithProviders(
-      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} />
+      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} isGuest={false} />
     );
     await waitFor(() => {
       expect(screen.getByText("자기소개를 해주세요.")).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe("내 면접결과 페이지 테스트", () => {
 describe("내 면접결과 메모 테스트", () => {
   it("메모가 제대로 렌더링 되는지 테스트", async () => {
     renderWithProviders(
-      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} />
+      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} isGuest={false} />
     );
     await waitFor(() => {
       expect(screen.getByText("자기소개를 해주세요.")).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe("내 면접결과 메모 테스트", () => {
 
   it("임시 작성한 메모가 있을 때 모달이 렌더링 되는지 테스트", async () => {
     renderWithProviders(
-      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} />
+      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} isGuest={false} />
     );
     await waitFor(() => {
       expect(screen.getByText("자기소개를 해주세요.")).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe("내 면접결과 메모 테스트", () => {
   });
   it("임시 작성한 메모가 있을 때 새로쓰기 버튼을 눌렀을 때 모달이 닫히고 메모가 임시저장한 값으로 변경 되는지 테스트", async () => {
     renderWithProviders(
-      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} />
+      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} isGuest={false} />
     );
     await waitFor(() => {
       expect(screen.getByText("자기소개를 해주세요.")).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe("내 면접결과 메모 테스트", () => {
   });
   it("메모 삭제 버튼을 눌렀을 때 모달이 렌더링 되는지 테스트", async () => {
     renderWithProviders(
-      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} />
+      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} isGuest={false} />
     );
     await waitFor(() => {
       expect(screen.getByText("자기소개를 해주세요.")).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe("내 면접결과 메모 테스트", () => {
       )
     );
     renderWithProviders(
-      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} />
+      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} isGuest={false} />
     );
     await waitFor(() => {
       expect(screen.getByText("자기소개를 해주세요.")).toBeInTheDocument();
@@ -184,7 +184,7 @@ describe("내 면접결과 메모 테스트", () => {
     );
 
     renderWithProviders(
-      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} />
+      <MyInterviewResultPage report={myInterviewResultData} userInfo={null} isGuest={false} />
     );
 
     await waitFor(() => {

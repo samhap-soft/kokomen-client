@@ -32,7 +32,7 @@ type InterviewInputProps = Pick<
   cur_question: string;
   // eslint-disable-next-line no-unused-vars
   updateInterviewData: (updates: Partial<Interview>) => void;
-  interviewId: number;
+  interviewId: number | string;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
   totalQuestions: number;
   setInterviewerEmotion: React.Dispatch<

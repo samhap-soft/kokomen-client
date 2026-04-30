@@ -22,4 +22,15 @@ function getInterviewReport(
   );
 }
 
-export { getInterviewReport };
+function getGuestInterviewReport(interview_id: string, clientIp: string) {
+  return interviewApiInstance.get<InterviewReport>(
+    `/interviews/${interview_id}/my-result`,
+    {
+      headers: {
+        "X-Real-IP": clientIp
+      }
+    }
+  );
+}
+
+export { getInterviewReport, getGuestInterviewReport };
