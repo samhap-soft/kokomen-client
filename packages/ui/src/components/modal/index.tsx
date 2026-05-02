@@ -49,6 +49,7 @@ interface ModalProps
   escToClose?: boolean;
   backdropClose?: boolean;
   closeButton?: boolean;
+  transparentBackdrop?: boolean;
 }
 const Modal = ({
   isOpen,
@@ -59,7 +60,8 @@ const Modal = ({
   closeButton = true,
   backdropClose = false,
   size = "md",
-  escToClose = false
+  escToClose = false,
+  transparentBackdrop = false
 }: ModalProps): JSX.Element | null => {
   useEffect(() => {
     if (!escToClose) return;
@@ -92,7 +94,10 @@ const Modal = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50  transition-opacity"
+        className={cn(
+          "fixed inset-0 bg-black/50  transition-opacity",
+          transparentBackdrop && "bg-transparent"
+        )}
         onClick={backdropCloseHandler}
       />
 

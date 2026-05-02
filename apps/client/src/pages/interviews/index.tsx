@@ -4,7 +4,7 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 import Header from "@/shared/header";
 import { withCheckInServer } from "@/utils/auth";
 import { User as UserIcon, Play } from "lucide-react";
@@ -14,13 +14,14 @@ import CreateInterviewForm from "@/domains/interview/components/createInterviewF
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
-import { Button } from "@kokomen/ui";
+import { Button, Modal } from "@kokomen/ui";
 import { CamelCasedProperties, Rank, UserInfo } from "@kokomen/types";
 import { Footer } from "@/shared/footer";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
 import { getRankList } from "@/domains/members/api";
 import GuestInterviewModal from "@/domains/interview/components/guestInterviewModal";
 import { useModal } from "@kokomen/utils";
+import Image from "next/image";
 
 export default function InterviewMainPage({
   categories,
@@ -34,6 +35,20 @@ export default function InterviewMainPage({
     openModal: openGuestModal,
     closeModal: closeGuestModal
   } = useModal();
+
+  const GUEST_WELCOME_KEY = "kokomen_guest_welcome_shown";
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    if (!userInfo && !localStorage.getItem(GUEST_WELCOME_KEY)) {
+      setShowWelcome(true);
+    }
+  }, [userInfo]);
+
+  const closeWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem(GUEST_WELCOME_KEY, "true");
+  };
   return (
     <>
       <SEO
@@ -133,6 +148,42 @@ export default function InterviewMainPage({
             <RankCard rankList={rankList} />
           </aside>
         </main>
+        {showWelcome && (
+          <Modal
+            isOpen={showWelcome}
+            onClose={closeWelcome}
+            title="환영합니다!"
+            size="xl"
+            backdropClose
+            transparentBackdrop
+          >
+            <div className="space-y-4 text-center">
+              <Image
+                src="/kokobot/interview_induction.png"
+                alt="interview_induction"
+                width={1100}
+                height={740}
+                className="w-full"
+              />
+              <div className="space-y-2">
+                <p className="text-xl font-medium text-text-primary">
+                  비회원으로 모의면접을 이용해 보세요!
+                </p>
+                <p className="text-base text-text-secondary">
+                  로그인 없이도 데모 면접을 체험할 수 있어요.
+                </p>
+              </div>
+              <Button
+                variant="primary"
+                size="large"
+                className="w-full font-semibold"
+                onClick={closeWelcome}
+              >
+                확인
+              </Button>
+            </div>
+          </Modal>
+        )}
         <Footer />
       </div>
     </>
