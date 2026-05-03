@@ -326,6 +326,7 @@ export const getServerSideProps: GetServerSideProps<
       }
     };
   } catch (error) {
+    console.error("error for guest interview report", JSON.stringify(error));
     if (isAxiosError(error) && error.response?.status === 404) {
       return { notFound: true };
     }
