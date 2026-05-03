@@ -206,9 +206,7 @@ export default function MyInterviewResultPage({
                             variant="primary"
                             size="large"
                             onClick={() =>
-                              navigate.push(
-                                "/login?redirectTo=/interviews"
-                              )
+                              navigate.push("/login?redirectTo=/interviews")
                             }
                           >
                             <LogIn className="w-4 h-4 mr-2" />
@@ -237,9 +235,7 @@ export default function MyInterviewResultPage({
               {isGuest ? (
                 <Button
                   size="large"
-                  onClick={() =>
-                    navigate.push("/login?redirectTo=/interviews")
-                  }
+                  onClick={() => navigate.push("/login?redirectTo=/interviews")}
                   variant={"primary"}
                   className="w-full"
                 >
@@ -311,11 +307,17 @@ export const getServerSideProps: GetServerSideProps<
 
   try {
     const clientIp =
-      (context.req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() ||
+      (context.req.headers["x-forwarded-for"] as string)
+        ?.split(",")[0]
+        ?.trim() ||
       (context.req.headers["x-real-ip"] as string) ||
       context.req.socket.remoteAddress ||
       "";
-    const report = await getGuestInterviewReport(interviewId as string, clientIp);
+    console.log("clientIp for guest interview report", clientIp);
+    const report = await getGuestInterviewReport(
+      interviewId as string,
+      clientIp
+    );
     return {
       props: {
         report: report.data,
