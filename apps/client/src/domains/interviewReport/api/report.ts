@@ -27,7 +27,7 @@ function getGuestInterviewReport(interview_id: string, clientIp: string) {
     `/interviews/${interview_id}/my-result`,
     {
       headers: {
-        "X-Real-IP": clientIp
+        "X-Forwarded-For": clientIp
       }
     }
   );
