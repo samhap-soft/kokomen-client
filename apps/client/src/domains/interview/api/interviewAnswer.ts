@@ -95,7 +95,7 @@ export async function getInterviewAnswerV2({
   questionId,
   mode
 }: {
-  interviewId: number;
+  interviewId: number | string;
   questionId: number;
   mode: InterviewMode;
 }): Promise<CamelCasedProperties<InterviewSubmitPollingSuccess>> {

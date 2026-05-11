@@ -4,21 +4,24 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 import Header from "@/shared/header";
 import { withCheckInServer } from "@/utils/auth";
-import { Trophy, Coins, User as UserIcon, Star } from "lucide-react";
+import { User as UserIcon, Play } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
 
 import CreateInterviewForm from "@/domains/interview/components/createInterviewForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import RankCard from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
-import { Button } from "@kokomen/ui";
+import { Button, Modal } from "@kokomen/ui";
 import { CamelCasedProperties, Rank, UserInfo } from "@kokomen/types";
 import { Footer } from "@/shared/footer";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
 import { getRankList } from "@/domains/members/api";
+import GuestInterviewModal from "@/domains/interview/components/guestInterviewModal";
+import { useModal } from "@kokomen/utils";
+import Image from "next/image";
 
 export default function InterviewMainPage({
   categories,
@@ -27,6 +30,25 @@ export default function InterviewMainPage({
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   useRouterPrefetch("/interviews");
   const router = useExtendedRouter();
+  const {
+    isOpen: isGuestModalOpen,
+    openModal: openGuestModal,
+    closeModal: closeGuestModal
+  } = useModal();
+
+  const GUEST_WELCOME_KEY = "kokomen_guest_welcome_shown";
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    if (!userInfo && !localStorage.getItem(GUEST_WELCOME_KEY)) {
+      setShowWelcome(true);
+    }
+  }, [userInfo]);
+
+  const closeWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem(GUEST_WELCOME_KEY, "true");
+  };
   return (
     <>
       <SEO
@@ -40,89 +62,128 @@ export default function InterviewMainPage({
       </SEO>
       <div className="min-h-screen">
         <Header user={userInfo} />
-        <main className="flex flex-col-reverse lg:flex-row lg:items-start mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 gap-8 mb-16">
+        <main className="flex flex-col-reverse lg:flex-row mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 gap-8 mb-16">
+          <ins
+            className="adsbygoogle"
+            style={{ display: "block" }}
+            data-ad-client="ca-pub-9998347148036420"
+            data-ad-slot="4601910391"
+            data-ad-format="auto"
+            data-full-width-responsive="true"
+          ></ins>
           <CreateInterviewForm categories={categories} />
 
-          <aside className="w-full lg:w-96">
+          <aside className="w-full lg:w-80 lg:sticky lg:top-8 shrink-0">
             <div>
-              <div className="bg-bg-elevated rounded-3xl border border-primary-border shadow-2xl overflow-hidden">
-                {/* 헤더 섹션 */}
-                <div className="p-6 relative overflow-hidden border-b border-primary-border">
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-primary-border">
-                          <UserIcon className="w-8 h-8 text-primary" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold">
-                          {userInfo?.nickname || "로그인 후 이용해주세요."}
-                        </h3>
-                      </div>
-                      {!userInfo && (
-                        <Button
-                          variant="soft"
-                          className="font-bold"
-                          type="button"
-                          onClick={() => router.navigateToLogin()}
-                        >
-                          로그인
-                        </Button>
-                      )}
-                    </div>
+              <div className="rounded-2xl border border-border overflow-hidden">
+                <div className="px-4 py-3 border-b border-border flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center border border-border">
+                    <UserIcon className="w-4 h-4 text-text-tertiary" />
                   </div>
+                  <span className="text-sm font-semibold text-text-primary flex-1 truncate">
+                    {userInfo?.nickname || "로그인 후 이용해주세요"}
+                  </span>
+                  {!userInfo && (
+                    <Button
+                      variant="soft"
+                      className="text-xs font-semibold"
+                      type="button"
+                      onClick={() => router.navigateToLogin()}
+                    >
+                      로그인
+                    </Button>
+                  )}
                 </div>
-
-                {/* 통계 섹션 */}
                 {userInfo && (
-                  <div className="p-6">
-                    <div className="flex flex-col gap-4 mb-6">
-                      <div className="group relative bg-gold-1 rounded-xl p-4 border border-gold-3 hover:shadow-md transition-all duration-300">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gold-6 rounded-lg flex items-center justify-center shadow-sm">
-                            <Trophy className="w-5 h-5 text-text-light-solid" />
-                          </div>
-                          <div>
-                            <p className="text-xs font-medium text-gold-8 mb-1">
-                              총 점수
-                            </p>
-                            <p className="text-xl font-bold text-gold-9">
-                              {userInfo?.score || 0}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Star className="w-4 h-4 text-gold-6" />
-                        </div>
-                      </div>
-
-                      <div className="group relative bg-green-1 rounded-xl p-4 border border-green-3 hover:shadow-md transition-all duration-300">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-green-6 rounded-lg flex items-center justify-center shadow-sm">
-                            <Coins className="w-5 h-5 text-text-light-solid" />
-                          </div>
-                          <div>
-                            <p className="text-xs font-medium text-green-8 mb-1">
-                              남은 토큰
-                            </p>
-                            <p className="text-xl font-bold text-green-9">
-                              {userInfo?.token_count || 0}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <div className="w-4 h-4 bg-green-6 rounded-full"></div>
-                        </div>
-                      </div>
+                  <div className="grid grid-cols-2 divide-x divide-border">
+                    <div className="px-4 py-3 text-center">
+                      <p className="text-xs text-text-tertiary mb-0.5">
+                        총 점수
+                      </p>
+                      <p className="text-lg font-bold text-text-primary tabular-nums">
+                        {userInfo.score?.toLocaleString() || 0}
+                      </p>
+                    </div>
+                    <div className="px-4 py-3 text-center">
+                      <p className="text-xs text-text-tertiary mb-0.5">
+                        남은 토큰
+                      </p>
+                      <p className="text-lg font-bold text-text-primary tabular-nums">
+                        {userInfo.token_count?.toLocaleString() || 0}
+                      </p>
                     </div>
                   </div>
                 )}
               </div>
             </div>
+            {!userInfo && (
+              <>
+                <button
+                  type="button"
+                  onClick={openGuestModal}
+                  className="block mt-4 w-full text-left"
+                >
+                  <div className="bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                        <Play className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-base font-bold">
+                          데모 면접 체험하기
+                        </p>
+                        <p className="text-xs text-white/80 mt-0.5">
+                          로그인 없이 텍스트 면접을 체험해보세요
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
+                <GuestInterviewModal
+                  isOpen={isGuestModalOpen}
+                  onClose={closeGuestModal}
+                />
+              </>
+            )}
             <RankCard rankList={rankList} />
           </aside>
         </main>
+        {showWelcome && (
+          <Modal
+            isOpen={showWelcome}
+            onClose={closeWelcome}
+            title="환영합니다!"
+            size="xl"
+            backdropClose
+            transparentBackdrop
+          >
+            <div className="space-y-4 text-center">
+              <Image
+                src="/kokobot/interview_induction.png"
+                alt="interview_induction"
+                width={1100}
+                height={740}
+                className="w-full"
+              />
+              <div className="space-y-2">
+                <p className="text-xl font-medium text-text-primary">
+                  비회원으로 모의면접을 이용해 보세요!
+                </p>
+                <p className="text-base text-text-secondary">
+                  로그인 없이도 데모 면접을 체험할 수 있어요.
+                </p>
+              </div>
+              <Button
+                variant="primary"
+                size="large"
+                className="w-full font-semibold"
+                onClick={closeWelcome}
+              >
+                확인
+              </Button>
+            </div>
+          </Modal>
+        )}
         <Footer />
       </div>
     </>

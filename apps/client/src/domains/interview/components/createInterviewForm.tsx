@@ -29,33 +29,30 @@ const QuestionCountSelector: MemoExoticComponent<
     handleQuestionCountChange
   }: QuestionCountSelectorProps) => {
     return (
-      <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
-        <h3 className="text-lg font-semibold text-text-heading mb-4 flex items-center gap-2">
-          <div className="w-2 h-2 bg-primary rounded-full"></div>
-          면접 문제 개수
+      <div className="rounded-xl p-5 border border-border">
+        <h3 className="text-sm font-semibold text-text-secondary mb-4">
+          문제 개수
         </h3>
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center gap-5">
           <Button
             type="button"
             onClick={() => handleQuestionCountChange("minus")}
-            className="w-12 h-12 bg-bg-elevated rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold text-text-secondary hover:text-primary hover:scale-110 border border-border"
-            variant="text"
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-bold"
+            variant="soft"
           >
             -
           </Button>
-          <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-xl">
-            <span
-              className="text-3xl font-bold text-text-light-solid"
-              data-testid="question-count"
-            >
-              {questionCount}
-            </span>
-          </div>
+          <span
+            className="text-3xl font-bold text-text-heading tabular-nums w-10 text-center"
+            data-testid="question-count"
+          >
+            {questionCount}
+          </span>
           <Button
             type="button"
             onClick={() => handleQuestionCountChange("plus")}
-            className="w-12 h-12 bg-bg-elevated rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold text-text-secondary hover:text-primary hover:scale-110 border border-border"
-            variant="text"
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-bold"
+            variant="soft"
           >
             +
           </Button>
@@ -79,34 +76,33 @@ const InterviewTypeSelector: MemoExoticComponent<
     handleInterviewTypeChange
   }: InterviewTypeSelectorProps) => {
     return (
-      <div className="bg-fill-quaternary rounded-2xl p-6 border border-border">
-        <h3 className="text-lg font-semibold text-text-heading mb-4 flex items-center gap-2">
-          <div className="w-2 h-2 bg-primary rounded-full"></div>
+      <div className="rounded-xl p-5 border border-border">
+        <h3 className="text-sm font-semibold text-text-secondary mb-4">
           면접 방식
         </h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2">
           <Button
             type="button"
             aria-selected={selectedInterviewType === "TEXT"}
             onClick={() => handleInterviewTypeChange("TEXT")}
-            className="py-6"
+            className="py-4"
             variant={selectedInterviewType === "TEXT" ? "primary" : "soft"}
           >
-            <div className="flex flex-col items-center gap-2">
-              <Keyboard className="w-6 h-6" />
-              <span className="text-base font-medium">텍스트</span>
+            <div className="flex flex-col items-center gap-1.5">
+              <Keyboard className="w-5 h-5" />
+              <span className="text-sm font-medium">텍스트</span>
             </div>
           </Button>
           <Button
             type="button"
             aria-selected={selectedInterviewType === "VOICE"}
             onClick={() => handleInterviewTypeChange("VOICE")}
-            className="py-6 group relative"
+            className="py-4"
             variant={selectedInterviewType === "VOICE" ? "primary" : "soft"}
           >
-            <div className="flex flex-col items-center gap-2">
-              <MicVocal className="w-6 h-6" />
-              <span className="text-base font-medium">음성</span>
+            <div className="flex flex-col items-center gap-1.5">
+              <MicVocal className="w-5 h-5" />
+              <span className="text-sm font-medium">음성</span>
             </div>
           </Button>
         </div>
@@ -282,114 +278,104 @@ const CreateInterviewForm = ({
 
   return (
     <form
-      className="w-full lg:flex-1 lg:min-w-0 flex flex-col"
+      className="w-full lg:flex-1 lg:min-w-0 flex flex-col gap-6"
       onSubmit={handleSubmit}
     >
       {/* 카테고리 탭 */}
-      <nav className="w-full mb-8">
-        <div className="bg-bg-elevated rounded-2xl p-2 shadow-lg border border-border">
-          <div className="flex overflow-x-auto gap-1 p-2">
-            {categories.map((category) => (
-              <Button
-                type="button"
-                key={category.key}
-                role="tab"
-                className="text-sm font-semibold"
-                aria-selected={selectedCategory.key === category.key}
-                variant={
-                  selectedCategory.key === category.key ? "primary" : "text"
-                }
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category.title}
-              </Button>
-            ))}
-          </div>
+      <nav className="w-full">
+        <div className="flex overflow-x-auto gap-1 border-b border-border pb-1">
+          {categories.map((category) => (
+            <Button
+              type="button"
+              key={category.key}
+              role="tab"
+              className="text-sm font-semibold whitespace-nowrap"
+              aria-selected={selectedCategory.key === category.key}
+              variant={
+                selectedCategory.key === category.key ? "primary" : "text"
+              }
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category.title}
+            </Button>
+          ))}
         </div>
       </nav>
 
-      {/* 메인 컨텐츠(카테고리) */}
-      <div className="bg-bg-elevated rounded-3xl border border-border shadow-2xl overflow-hidden">
-        <div className="p-8 lg:p-12">
-          <div className="text-center mb-12">
-            <div className="relative inline-block mb-6">
-              <Image
-                src={selectedCategory.image_url}
-                alt={selectedCategory.title}
-                width={200}
-                height={300}
-                priority
-                className="h-[300px] w-[200px] object-contain"
-              />
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-text-heading mb-4">
+      {/* 카테고리 소개 */}
+      <div className="rounded-2xl border border-border overflow-hidden">
+        <div className="flex flex-col md:flex-row items-center gap-6 p-6">
+          <Image
+            src={selectedCategory.image_url}
+            alt={selectedCategory.title}
+            width={120}
+            height={180}
+            priority
+            className="h-[180px] w-[120px] object-contain shrink-0"
+          />
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-2xl font-bold text-text-heading mb-2">
               {selectedCategory.title}
             </h1>
-            <p className="text-lg text-text-description leading-relaxed max-w-2xl mx-auto">
+            <p className="text-sm text-text-description leading-relaxed">
               {selectedCategory.description}
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* 문제 개수 선택 */}
-            <QuestionCountSelector
-              questionCount={questionCount}
-              handleQuestionCountChange={handleQuestionCountChange}
-            />
-
-            {/* 면접 타입 선택 */}
-            <InterviewTypeSelector
-              selectedInterviewType={selectedInterviewType}
-              handleInterviewTypeChange={handleInterviewTypeChange}
-            />
-          </div>
-
-          {/* 폼 제출 버튼 */}
-          <div className="text-center flex flex-col items-center gap-6">
-            <Button
-              type="button"
-              variant={"soft"}
-              disabled={isPending}
-              size={"large"}
-              className="font-semibold text-lg w-full"
-              onClick={openQuestionListModal}
-            >
-              <span>원하는 질문 선택해서 시작하기</span>
-            </Button>
-            <Button
-              type="submit"
-              disabled={isPending}
-              size={"large"}
-              className="font-semibold text-lg w-full"
-              variant="submit"
-            >
-              {isPending ? (
-                <span>면접 시작 중...</span>
-              ) : (
-                <span>랜덤 질문으로 시작하기</span>
-              )}
-            </Button>
-            <p className="mt-4 text-sm text-text-description">
-              선택한 카테고리의 {questionCount}개 문제로 면접을 진행합니다
-            </p>
-          </div>
-          <QuestionList
-            isOpen={isQuestionListOpen}
-            closeModal={closeQuestionListModal}
-            category={selectedCategory.key}
-            onSelectQuestion={handleSelectQuestion}
-          />
-          {/* 면접 시작 확인 모달 */}
-          <InterviewStartModal
-            isOpen={isOpen}
-            closeModal={closeModal}
-            onPressStart={handleConfirmStart}
-            questionCount={questionCount}
-            categoryTitle={selectedCategory.title}
-            interviewType={selectedInterviewType}
-          />
         </div>
       </div>
+
+      {/* 설정 */}
+      <div className="grid grid-cols-2 gap-4">
+        <QuestionCountSelector
+          questionCount={questionCount}
+          handleQuestionCountChange={handleQuestionCountChange}
+        />
+        <InterviewTypeSelector
+          selectedInterviewType={selectedInterviewType}
+          handleInterviewTypeChange={handleInterviewTypeChange}
+        />
+      </div>
+
+      {/* 시작 버튼 */}
+      <div className="flex flex-col gap-3">
+        <Button
+          type="button"
+          variant={"soft"}
+          disabled={isPending}
+          size={"large"}
+          className="font-semibold w-full"
+          onClick={openQuestionListModal}
+        >
+          원하는 질문 선택해서 시작하기
+        </Button>
+        <Button
+          type="submit"
+          disabled={isPending}
+          size={"large"}
+          className="font-semibold w-full"
+          variant="submit"
+        >
+          {isPending ? "면접 시작 중..." : "랜덤 질문으로 시작하기"}
+        </Button>
+        <p className="text-center text-xs text-text-tertiary mt-1">
+          선택한 카테고리의 {questionCount}개 문제로 면접을 진행합니다
+        </p>
+      </div>
+
+      <QuestionList
+        isOpen={isQuestionListOpen}
+        closeModal={closeQuestionListModal}
+        category={selectedCategory.key}
+        onSelectQuestion={handleSelectQuestion}
+      />
+      <InterviewStartModal
+        isOpen={isOpen}
+        closeModal={closeModal}
+        onPressStart={handleConfirmStart}
+        questionCount={questionCount}
+        categoryTitle={selectedCategory.title}
+        interviewType={selectedInterviewType}
+      />
     </form>
   );
 };

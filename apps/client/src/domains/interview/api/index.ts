@@ -1,5 +1,5 @@
 import { Interview, InterviewMode } from "@kokomen/types";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, isAxiosError } from "axios";
 
 export const interviewApiInstance: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -46,5 +46,25 @@ export const getInterview = async (
   );
   return data;
 };
+
+export const startGuestInterview = (): Promise<NewInterviewResponse> =>
+  interviewApiInstance
+    .post("/interviews/guest", null, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      withCredentials: false
+    })
+    .then((response) => response.data)
+    .catch((error) => {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          throw new Error(error.response.data.message);
+        }
+      }
+      throw new Error(
+        "면접 생성 중 오류가 발생했어요. 잠시 후 다시 시도해주세요."
+      );
+    });
 
 export type { NewInterviewResponse, NewInterviewRequest };

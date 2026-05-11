@@ -240,7 +240,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(
@@ -268,7 +268,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(
@@ -303,7 +303,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="VOICE" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="VOICE"/>);
 
       await waitFor(() => {
         expect(
@@ -339,7 +339,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
@@ -376,7 +376,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
@@ -408,7 +408,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
@@ -441,7 +441,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(screen.getByText("면접을 불러올 수 없어요")).toBeInTheDocument();
@@ -467,7 +467,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(
@@ -517,7 +517,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(
@@ -565,7 +565,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
 
       await waitFor(() => {
         expect(

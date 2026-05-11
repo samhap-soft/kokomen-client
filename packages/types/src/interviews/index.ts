@@ -24,6 +24,7 @@ type BaseInterview = {
   cur_question_id: number;
   cur_question_count: number;
   max_question_count: number;
+  is_demo?: boolean;
 };
 
 type TextInterview = BaseInterview & {
@@ -49,7 +50,7 @@ interface InterviewState {
 }
 
 type InterviewAnswerForm = {
-  interviewId: number;
+  interviewId: number | string;
   questionId: number;
   answer: string;
   mode: InterviewMode;

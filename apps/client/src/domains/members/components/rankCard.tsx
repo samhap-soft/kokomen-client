@@ -2,6 +2,13 @@ import { JSX } from "react";
 import { captureButtonEvent } from "@/utils/analytics";
 import Link from "next/link";
 import { CamelCasedProperties, Rank } from "@kokomen/types";
+import { Crown } from "lucide-react";
+
+const MEDAL_STYLES = [
+  "bg-amber-100 text-amber-700 border-amber-300",
+  "bg-gray-100 text-gray-500 border-gray-300",
+  "bg-orange-100 text-orange-700 border-orange-300"
+] as const;
 
 export default function RankCard({
   rankList
@@ -11,37 +18,47 @@ export default function RankCard({
   if (!rankList.length) return null;
 
   return (
-    <div className="bg-bg-elevated rounded-3xl border border-border shadow-2xl overflow-hidden mt-5 ">
-      <h3 className="text-lg font-bold text-gray-900 p-4">현재 랭크</h3>
-      {rankList.map((rank, index) => (
-        <Link
-          key={rank.id}
-          href={`/members/${rank.id}`}
-          className="flex items-center justify-between p-4 w-full border-none shadow-none"
-          aria-label={`rank-card-${rank.id}-${rank.nickname}`}
-          onClick={() => {
-            captureButtonEvent({
-              name: "MemberDashboard",
-              properties: {
-                rank: rank.id,
-                nickname: rank.nickname
-              }
-            });
-          }}
-        >
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-bg-light text-primary font-bold text-lg flex-shrink-0">
+    <div className="bg-bg-elevated rounded-3xl border border-border overflow-hidden mt-5">
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-border">
+        <Crown className="w-5 h-5 text-amber-500" />
+        <h3 className="text-lg font-bold text-text-primary">랭킹</h3>
+      </div>
+      <div className="divide-y divide-border">
+        {rankList.map((rank, index) => (
+          <Link
+            key={rank.id}
+            href={`/members/${rank.id}`}
+            className="flex items-center gap-3 px-5 py-3.5 hover:bg-bg-base-hover transition-colors"
+            aria-label={`rank-card-${rank.id}-${rank.nickname}`}
+            onClick={() => {
+              captureButtonEvent({
+                name: "MemberDashboard",
+                properties: {
+                  rank: rank.id,
+                  nickname: rank.nickname
+                }
+              });
+            }}
+          >
+            <div
+              className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold shrink-0 border ${
+                index < 3
+                  ? MEDAL_STYLES[index]
+                  : "bg-bg-base text-text-tertiary border-border"
+              }`}
+            >
               {index + 1}
             </div>
-            <p className="font-semibold text-lg text-gray-900 truncate min-w-0 flex-1 text-left">
+            <p className="font-medium text-sm text-text-primary truncate min-w-0 flex-1">
               {rank.nickname ?? "탈퇴한 사용자"}
             </p>
-          </div>
-          <p className="text-xl font-bold text-gray-900">
-            {rank.score} <span className="text-sm text-gray-500">점</span>
-          </p>
-        </Link>
-      ))}
+            <p className="text-sm font-semibold text-text-secondary tabular-nums">
+              {rank.score.toLocaleString()}
+              <span className="text-text-tertiary font-normal ml-0.5">점</span>
+            </p>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

@@ -5,13 +5,16 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  LogIn
 } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 interface InterviewStartModalProps {
   isInterviewStarted: boolean;
   disabled: boolean;
+  isDemo?: boolean;
   // eslint-disable-next-line no-unused-vars
   onInterviewStart: (audioStream?: MediaStream) => void;
 }
@@ -19,6 +22,7 @@ interface InterviewStartModalProps {
 function InterviewStartModal({
   isInterviewStarted,
   disabled,
+  isDemo,
   onInterviewStart
 }: InterviewStartModalProps) {
   const interviewMode = useSearchParams().get("mode");
@@ -35,6 +39,7 @@ function InterviewStartModal({
     <TextModeStartModal
       isInterviewStarted={isInterviewStarted}
       disabled={disabled}
+      isDemo={isDemo}
       onInterviewStart={onInterviewStart}
     />
   );
@@ -43,6 +48,7 @@ function InterviewStartModal({
 function TextModeStartModal({
   isInterviewStarted,
   disabled,
+  isDemo,
   onInterviewStart
 }: InterviewStartModalProps) {
   const { isOpen, closeModal } = useModal(true);
@@ -58,10 +64,28 @@ function TextModeStartModal({
     <Modal
       isOpen={isOpen}
       onClose={closeModal}
-      title="면접 시작하기"
+      title={isDemo ? "데모 면접 시작하기" : "면접 시작하기"}
       closeButton={false}
     >
       <div className="space-y-6 max-h-[80vh] overflow-y-auto">
+        {isDemo && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-amber-900">
+                  데모 버전입니다
+                </p>
+                <p className="text-xs text-amber-800">
+                  체험을 위한 면접이며, 실제 서비스와 다를 수 있습니다.
+                  로그인하면 음성 면접, 상세 피드백 등 모든 기능을 이용할 수
+                  있습니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="space-y-3">
           <h3 className="text-lg font-semibold text-text-primary">
             텍스트 면접 시작하기
@@ -71,7 +95,6 @@ function TextModeStartModal({
           </p>
         </div>
 
-        {/* 안내 메시지 */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-blue-500 mt-0.5" />
@@ -89,8 +112,7 @@ function TextModeStartModal({
           </div>
         </div>
 
-        {/* 시작 버튼 */}
-        <div className="flex justify-center">
+        <div className="flex flex-col gap-3">
           <Button
             variant="primary"
             size="xl"
@@ -98,8 +120,20 @@ function TextModeStartModal({
             onClick={handleStartInterview}
             className="w-full text-base font-bold hover:scale-100"
           >
-            면접 시작하기
+            {isDemo ? "데모 면접 시작하기" : "면접 시작하기"}
           </Button>
+          {isDemo && (
+            <Link href="/login?redirectTo=/interviews" className="w-full">
+              <Button
+                variant="gradient"
+                size="xl"
+                className="w-full text-base font-bold hover:scale-100"
+              >
+                <LogIn className="w-5 h-5 mr-2" />
+                로그인해서 면접보기
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </Modal>
