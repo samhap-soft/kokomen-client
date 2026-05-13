@@ -127,7 +127,7 @@ const onFullFilledPolling = async (
   }
 
   const retryCount = incrementRetryCount(requestId);
-  const maxRetries = 20;
+  const maxRetries = 30;
 
   if (retryCount >= maxRetries) {
     resetRetryCount(requestId);
