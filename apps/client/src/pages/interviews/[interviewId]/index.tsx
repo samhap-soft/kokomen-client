@@ -25,6 +25,12 @@ import { InterviewNotFoundError } from "@/domains/interview/components/interview
 import { AlertTriangle } from "lucide-react";
 
 // eslint-disable-next-line @rushstack/typedef-var
+const CameraPreview = dynamic(
+  () => import("@/domains/interview/components/cameraPreview"),
+  { ssr: false }
+);
+
+// eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
   () =>
     import("@kokomen/ui/domains").then(
@@ -72,6 +78,7 @@ export default function InterviewPage({
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
   const knockAudioRef = useRef<HTMLAudioElement | null>(null);
   const enterAudioRef = useRef<HTMLAudioElement | null>(null);
+  // eslint-disable-next-line no-unused-vars
   const playAudioRef = useRef<((url?: string) => void) | null>(null);
 
   const { phase, startKnocking, startDoorOpening } = useInterviewPhase({
@@ -212,6 +219,7 @@ export default function InterviewPage({
                   onKnock={handleKnock}
                   meetingRoomUrl="/interview/meeting_room.glb"
                 />
+                <CameraPreview enabled={isInterviewStarted} />
               </div>
             </div>
             <InterviewAnswerForm
