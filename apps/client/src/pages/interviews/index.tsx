@@ -37,17 +37,21 @@ export default function InterviewMainPage({
   } = useModal();
 
   const GUEST_WELCOME_KEY = "kokomen_guest_welcome_shown";
+  const ONE_DAY_MS = 86400000;
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    if (!userInfo && !localStorage.getItem(GUEST_WELCOME_KEY)) {
-      setShowWelcome(true);
+    if (!userInfo) {
+      const lastShown = localStorage.getItem(GUEST_WELCOME_KEY);
+      if (!lastShown || Date.now() - Number(lastShown) >= ONE_DAY_MS) {
+        setShowWelcome(true);
+      }
     }
   }, [userInfo]);
 
   const closeWelcome = () => {
     setShowWelcome(false);
-    localStorage.setItem(GUEST_WELCOME_KEY, "true");
+    localStorage.setItem(GUEST_WELCOME_KEY, Date.now().toString());
   };
   return (
     <>
