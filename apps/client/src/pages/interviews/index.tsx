@@ -22,6 +22,7 @@ import { getRankList } from "@/domains/members/api";
 import GuestInterviewModal from "@/domains/interview/components/guestInterviewModal";
 import { useModal } from "@kokomen/utils";
 import Image from "next/image";
+import { captureButtonEvent } from "@/utils/analytics";
 
 export default function InterviewMainPage({
   categories,
@@ -124,7 +125,10 @@ export default function InterviewMainPage({
               <>
                 <button
                   type="button"
-                  onClick={openGuestModal}
+                  onClick={() => {
+                    captureButtonEvent({ name: "DemoInterviewCTAClicked" });
+                    openGuestModal();
+                  }}
                   className="block mt-4 w-full text-left"
                 >
                   <div className="bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
