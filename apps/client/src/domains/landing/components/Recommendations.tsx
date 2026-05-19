@@ -25,9 +25,22 @@ const recommendations: Array<{
   }
 ];
 
+function maskName(name: string): string {
+  if (name.length <= 2) return name[0] + "*";
+  return name[0] + "*".repeat(name.length - 2) + name[name.length - 1];
+}
+
 function Recommendations(): React.ReactElement {
   return (
     <section className="w-full py-20">
+      <div className="text-center mb-12">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          현직자들의 추천
+        </h2>
+        <p className="mt-2 text-gray-600">
+          실제 현직 개발자분들이 꼬꼬면을 추천해주셨어요
+        </p>
+      </div>
       <div className="flex flex-wrap gap-8 w-full justify-center">
         {recommendations.map((recommendation) => (
           <div
@@ -35,19 +48,22 @@ function Recommendations(): React.ReactElement {
             className="group relative bg-bg-elevated rounded-2xl border border-border-secondary hover:border-border transition-all duration-300 overflow-hidden hover:shadow-xl max-w-[350px]"
           >
             <div className="relative flex flex-col">
-              <div className="border-b border-border-secondary p-4">
-                <div className="flex-1">
-                  <h3 className="font-bold text-text-primary text-lg mb-1">
-                    {recommendation.name}
-                  </h3>
-                  <p className="text-sm text-text-tertiary leading-tight">
-                    {recommendation.job}
-                  </p>
-                </div>
+              <div className="p-6">
+                <span className="text-4xl text-primary opacity-30 font-serif leading-none">
+                  &ldquo;
+                </span>
+                <p className="text-text-secondary leading-relaxed whitespace-pre-line mt-2">
+                  {recommendation.recommendation}
+                </p>
               </div>
-              <p className="text-text-secondary leading-relaxed whitespace-pre-line p-4">
-                {recommendation.recommendation}
-              </p>
+              <div className="border-t border-border-secondary p-4 bg-gray-50/50">
+                <h3 className="font-bold text-text-primary text-base">
+                  {maskName(recommendation.name)}
+                </h3>
+                <p className="text-sm text-text-tertiary leading-tight mt-1">
+                  {recommendation.job}
+                </p>
+              </div>
             </div>
           </div>
         ))}

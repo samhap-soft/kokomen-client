@@ -16,7 +16,12 @@ type ButtonCaptureEvent =
   | "CareerClicked"
   | "DemoInterviewCTAClicked"
   | "DemoInterviewStarted"
-  | "DemoInterviewLoginRedirect";
+  | "DemoInterviewLoginRedirect"
+  | "LandingResumeCTAClicked"
+  | "LandingInterviewCTAClicked"
+  | "LandingFreeTrialClicked"
+  | "LandingResumeStartClicked"
+  | "LandingBottomCTAClicked";
 function captureButtonEvent({
   name,
   properties
