@@ -69,9 +69,11 @@ for i in $(seq 1 $MAX_RETRIES); do
   sleep $RETRY_INTERVAL
 done
 
-# 5. remap.config 업데이트 -> ATS 트래픽 전환
+# 5. remap.config 생성 → 컨테이너에 직접 복사 (bind mount inode 문제 우회)
 echo "[INFO] ATS remap.config 업데이트 -> $NEW_CONTAINER"
-sed "s/CLIENT_BACKEND/$NEW_CONTAINER/g" "$REMAP_TMPL" > "$REMAP_CONFIG"
+sed "s/CLIENT_BACKEND/$NEW_CONTAINER/g" "$REMAP_TMPL" > /tmp/remap.config
+docker cp /tmp/remap.config kokomen-ats:/opt/etc/trafficserver/remap.config
+rm -f /tmp/remap.config
 
 # 6. ATS 설정 리로드 (무중단)
 echo "[INFO] ATS 설정 리로드..."
