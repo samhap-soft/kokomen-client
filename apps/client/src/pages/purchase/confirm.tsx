@@ -4,7 +4,7 @@ import { LoadingCircles } from "@kokomen/ui";
 import { useMutation } from "@tanstack/react-query";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function PurchaseConfirmPage({
   orderId,
@@ -14,6 +14,7 @@ export default function PurchaseConfirmPage({
   productName
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
+  const fired = useRef(false);
   const { isError, mutate } = useMutation({
     mutationFn: purchaseToken,
     onSuccess: () => {
@@ -22,7 +23,9 @@ export default function PurchaseConfirmPage({
   });
 
   useEffect(() => {
+    if (fired.current) return;
     if (orderId && paymentKey && amount && orderName && productName) {
+      fired.current = true;
       mutate({
         orderId: orderId as string,
         paymentKey: paymentKey as string,
@@ -31,7 +34,7 @@ export default function PurchaseConfirmPage({
         productName: productName as string
       });
     }
-  }, [orderId, paymentKey, amount, orderName, productName, mutate]);
+  }, [orderId, paymentKey, amount, orderName, productName]);
 
   if (isError) return <PurchaseFailed />;
   return (
