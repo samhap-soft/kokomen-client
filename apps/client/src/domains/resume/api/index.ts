@@ -147,6 +147,10 @@ function getResumeEvaluationResult(
       }
     })
     .then((res) => res.data)
+    .then((res) => {
+      console.log("resume evaluation result", JSON.stringify(res));
+      return res;
+    })
     .then(mapToCamelCase);
 }
 
