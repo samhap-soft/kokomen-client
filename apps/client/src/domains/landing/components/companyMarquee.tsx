@@ -22,6 +22,10 @@ const companies: { name: string; image: string }[] = [
   {
     name: "우아한형제들 로고",
     image: "/company/woowa.svg"
+  },
+  {
+    name: "에이블리 로고",
+    image: "/company/ably.jpg"
   }
 ];
 export default function CompanyMarquee() {

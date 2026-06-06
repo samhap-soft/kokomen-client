@@ -1,12 +1,12 @@
 import { Layout, LoadingFullScreen } from "@kokomen/ui";
 import { InterviewAnswerForm } from "@/domains/interview/components/interviewAnswerForm";
-import { InterviewSideBar } from "@kokomen/ui/domains";
+import { InterviewSideBar, useInterviewPhase } from "@kokomen/ui/domains";
 import { useModal } from "@kokomen/utils";
 import {
   publishInterviewEvent,
   useInterviewEvent
 } from "@/domains/interview/utils/interviewEventEmitter";
-import React, { JSX, useState } from "react";
+import React, { JSX, useCallback, useRef, useState } from "react";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
@@ -21,9 +21,14 @@ import { Interview, InterviewMode } from "@kokomen/types";
 import InterviewFinishModal from "@/domains/interview/components/interviewFinishModal";
 import { SEO } from "@/shared/seo";
 import { InterviewQuestion } from "@/domains/interview/components/interviewQuestion";
-import InterviewStartModal from "@/domains/interview/components/interviewStartModal";
 import { InterviewNotFoundError } from "@/domains/interview/components/interviewNotFoundError";
 import { AlertTriangle } from "lucide-react";
+
+// eslint-disable-next-line @rushstack/typedef-var
+const CameraPreview = dynamic(
+  () => import("@/domains/interview/components/cameraPreview"),
+  { ssr: false }
+);
 
 // eslint-disable-next-line @rushstack/typedef-var
 const AiInterviewInterface = dynamic(
@@ -71,6 +76,41 @@ export default function InterviewPage({
   mode
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
+  const knockAudioRef = useRef<HTMLAudioElement | null>(null);
+  const enterAudioRef = useRef<HTMLAudioElement | null>(null);
+  // eslint-disable-next-line no-unused-vars
+  const playAudioRef = useRef<((url?: string) => void) | null>(null);
+
+  const { phase, startKnocking, startDoorOpening } = useInterviewPhase({
+    onEntranceComplete: useCallback(() => {
+      setIsInterviewStarted(true);
+      playAudioRef.current?.();
+    }, [])
+  });
+
+  const handleKnock = useCallback(() => {
+    startKnocking();
+
+    const playEnterAudio = (): void => {
+      const enterAudio = new Audio("/interview/enter.mp3");
+      enterAudioRef.current = enterAudio;
+      enterAudio.onended = () => startDoorOpening();
+      enterAudio.onerror = () => startDoorOpening();
+      enterAudio.play().catch(() => {
+        setTimeout(() => startDoorOpening(), 1000);
+      });
+    };
+
+    const knockAudio = new Audio("/interview/knock.mp3");
+    knockAudioRef.current = knockAudio;
+    knockAudio.onended = playEnterAudio;
+    knockAudio.onerror = () => {
+      setTimeout(playEnterAudio, 500);
+    };
+    knockAudio.play().catch(() => {
+      setTimeout(playEnterAudio, 500);
+    });
+  }, [startKnocking, startDoorOpening]);
 
   const {
     isOpen: isInterviewSidebarOpen,
@@ -107,6 +147,7 @@ export default function InterviewPage({
       setIsSpeaking(true);
     }
   });
+  playAudioRef.current = playAudio;
   useInterviewEvent("interview:voiceRecognitionStarted", () => {
     setIsListening(true);
   });
@@ -174,7 +215,11 @@ export default function InterviewPage({
                   emotion={interviewerEmotion}
                   isListening={isListening}
                   isSpeaking={isSpeaking}
+                  phase={phase}
+                  onKnock={handleKnock}
+                  meetingRoomUrl="/interview/meeting_room.glb"
                 />
+                <CameraPreview enabled={isInterviewStarted} />
               </div>
             </div>
             <InterviewAnswerForm
@@ -202,17 +247,7 @@ export default function InterviewPage({
             prevQuestionAndAnswer={data.prev_questions_and_answers}
           />
         </div>
-        <InterviewStartModal
-          isInterviewStarted={isInterviewStarted}
-          disabled={isPending}
-          isDemo={data?.is_demo}
-          onInterviewStart={() => {
-            setIsInterviewStarted(true);
-            if (isVoiceInterview(data)) {
-              playAudio(data.cur_question_voice_url);
-            }
-          }}
-        />
+        {/* Entrance sequence replaces InterviewStartModal */}
         <InterviewFinishModal
           interviewState={data.interview_state}
           interviewId={interviewId}

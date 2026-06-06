@@ -13,7 +13,15 @@ type ButtonCaptureEvent =
   | "MembersInterveiw"
   | "MemberInterviewLike"
   | "MemberDashboard"
-  | "CareerClicked";
+  | "CareerClicked"
+  | "DemoInterviewCTAClicked"
+  | "DemoInterviewStarted"
+  | "DemoInterviewLoginRedirect"
+  | "LandingResumeCTAClicked"
+  | "LandingInterviewCTAClicked"
+  | "LandingFreeTrialClicked"
+  | "LandingResumeStartClicked"
+  | "LandingBottomCTAClicked";
 function captureButtonEvent({
   name,
   properties

@@ -22,6 +22,7 @@ import { getRankList } from "@/domains/members/api";
 import GuestInterviewModal from "@/domains/interview/components/guestInterviewModal";
 import { useModal } from "@kokomen/utils";
 import Image from "next/image";
+import { captureButtonEvent } from "@/utils/analytics";
 
 export default function InterviewMainPage({
   categories,
@@ -37,17 +38,21 @@ export default function InterviewMainPage({
   } = useModal();
 
   const GUEST_WELCOME_KEY = "kokomen_guest_welcome_shown";
+  const ONE_DAY_MS = 86400000;
   const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
-    if (!userInfo && !localStorage.getItem(GUEST_WELCOME_KEY)) {
-      setShowWelcome(true);
+    if (!userInfo) {
+      const lastShown = localStorage.getItem(GUEST_WELCOME_KEY);
+      if (!lastShown || Date.now() - Number(lastShown) >= ONE_DAY_MS) {
+        setShowWelcome(true);
+      }
     }
   }, [userInfo]);
 
   const closeWelcome = () => {
     setShowWelcome(false);
-    localStorage.setItem(GUEST_WELCOME_KEY, "true");
+    localStorage.setItem(GUEST_WELCOME_KEY, Date.now().toString());
   };
   return (
     <>
@@ -120,7 +125,10 @@ export default function InterviewMainPage({
               <>
                 <button
                   type="button"
-                  onClick={openGuestModal}
+                  onClick={() => {
+                    captureButtonEvent({ name: "DemoInterviewCTAClicked" });
+                    openGuestModal();
+                  }}
                   className="block mt-4 w-full text-left"
                 >
                   <div className="bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">

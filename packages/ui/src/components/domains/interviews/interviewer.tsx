@@ -22,7 +22,7 @@ const Interviewer: React.FC<InterviewerProps> = memo(
           </Html>
         }
       >
-        <group position={[0, -1.8, 1]}>
+        <group position={[4.0, -0.5, -3.1]} rotation={[0, -Math.PI / 2, 0]}>
           <AvatarMesh
             avatarUrl={avatarUrl}
             isSpeaking={isSpeaking}

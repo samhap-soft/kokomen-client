@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { AlertTriangle, LogIn } from "lucide-react";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
 import { useMutation } from "@tanstack/react-query";
+import { captureButtonEvent } from "@/utils/analytics";
 
 interface GuestInterviewModalProps {
   isOpen: boolean;
@@ -74,7 +75,10 @@ export default function GuestInterviewModal({
                 variant="soft"
                 size="large"
                 className="flex-1 font-semibold"
-                onClick={() => extendedRouter.navigateToLogin()}
+                onClick={() => {
+                  captureButtonEvent({ name: "DemoInterviewLoginRedirect" });
+                  extendedRouter.navigateToLogin();
+                }}
               >
                 <LogIn className="w-4 h-4 mr-2" />
                 로그인하고 진행
@@ -84,7 +88,10 @@ export default function GuestInterviewModal({
                 size="large"
                 className="flex-1 font-semibold"
                 disabled={isPending}
-                onClick={() => startGuestInterviewMutation()}
+                onClick={() => {
+                  captureButtonEvent({ name: "DemoInterviewStarted" });
+                  startGuestInterviewMutation();
+                }}
               >
                 {isPending ? "면접 생성 중..." : "이해했어요"}
               </Button>
