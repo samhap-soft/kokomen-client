@@ -38,10 +38,23 @@ fi
 NEW_CONTAINER="kokomen-client-${NEW_COLOR}"
 OLD_CONTAINER="kokomen-client-${CURRENT_COLOR}"
 
-# 2. ATS가 실행 중인지 확인, 아니면 시작
-if ! docker ps --format '{{.Names}}' | grep -q "kokomen-ats"; then
-  echo "[INFO] ATS 컨테이너 시작..."
-  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d ats
+# 2. ATS 상태 동기화
+#    'up -d'는 idempotent: compose 설정(네트워크 등)이 바뀐 경우에만 컨테이너를 재생성한다.
+#    조건 없이 항상 실행해서, 네트워크 변경 같은 설정 드리프트가 자동 반영되도록 한다.
+#    (steady state에서는 no-op이라 다운타임 없음)
+WAS_RUNNING="no"
+docker ps --format '{{.Names}}' | grep -q "kokomen-ats" && WAS_RUNNING="yes"
+
+echo "[INFO] ATS 상태 동기화 (설정 변동 시 자동 재생성)..."
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d ats
+
+# 안전장치: ATS가 kokomen-net에 연결되어 있는지 확인 (compose 프로젝트명 prefix 포함 매칭)
+if ! docker inspect -f '{{range $k, $_ := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}' kokomen-ats 2>/dev/null | grep -q "kokomen-net"; then
+  echo "[WARN] ATS가 kokomen-net 미연결 감지. 재생성 강제..."
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --force-recreate ats
+fi
+
+if [ "$WAS_RUNNING" = "no" ]; then
   echo "[INFO] ATS 기동 대기 (5초)..."
   sleep 5
 fi

@@ -9,6 +9,10 @@ services:
     restart: always
     profiles:
       - blue
+    networks:
+      kokomen-net:
+        # 고정 IP: 컨테이너 재생성 시에도 동일 IP 회수 -> ATS HostDB 캐시 stale 문제 방지
+        ipv4_address: 172.30.0.10
 
   client-green:
     image: ${DOCKER_USERNAME}/kokomen-client-prod:production
@@ -18,6 +22,9 @@ services:
     restart: always
     profiles:
       - green
+    networks:
+      kokomen-net:
+        ipv4_address: 172.30.0.11
 
   ats:
     image: trafficserver/trafficserver
@@ -39,3 +46,12 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/certbot:/var/www/certbot
     restart: always
+    networks:
+      - kokomen-net
+
+networks:
+  kokomen-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
