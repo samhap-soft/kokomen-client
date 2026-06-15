@@ -2,11 +2,8 @@ import { useSubmitInterviewAnswer } from "@/domains/interview/hooks/useSubmitInt
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { Interview, InterviewMode } from "@kokomen/types";
 import { Button, Textarea } from "@kokomen/ui";
-import {
-  LiveCodingEditor,
-  LiveCodingProblem
-} from "@kokomen/ui/domains";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { LiveCodingEditor, LiveCodingProblem } from "@kokomen/ui/domains";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 import React, { JSX, useState } from "react";
 
 const LANGUAGES = [
@@ -17,7 +14,9 @@ const LANGUAGES = [
   { value: "cpp", label: "C++" }
 ] as const;
 
-type LiveCodingInterviewViewProps = {
+type LiveCodingOverlayProps = {
+  isOpen: boolean;
+  onClose: () => void;
   isInterviewStarted: boolean;
   cur_question: string;
   cur_question_id: number;
@@ -43,7 +42,9 @@ const buildAnswer = (
   return trimmed ? `${trimmed}\n\n${codeBlock}` : codeBlock;
 };
 
-export function LiveCodingInterviewView({
+export function LiveCodingOverlay({
+  isOpen,
+  onClose,
   isInterviewStarted,
   cur_question,
   cur_question_id,
@@ -53,7 +54,7 @@ export function LiveCodingInterviewView({
   totalQuestions,
   setInterviewerEmotion,
   playAudio
-}: LiveCodingInterviewViewProps): JSX.Element {
+}: LiveCodingOverlayProps): JSX.Element | null {
   const [language, setLanguage] = useState<string>("javascript");
   const [code, setCode] = useState<string>("");
   const [explanation, setExplanation] = useState<string>("");
@@ -66,8 +67,13 @@ export function LiveCodingInterviewView({
     updateInterviewData,
     setInterviewerEmotion,
     playAudio,
-    onAnswerSubmitted: () => setExplanation("")
+    onAnswerSubmitted: () => {
+      setExplanation("");
+      onClose();
+    }
   });
+
+  if (!isOpen) return null;
 
   const handleSubmit = (): void => {
     if (!isInterviewStarted || isPending) return;
@@ -81,20 +87,23 @@ export function LiveCodingInterviewView({
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-bg-base">
-      {/* Header */}
+    <div className="fixed inset-0 z-50 flex flex-col bg-bg-base">
       <header className="flex items-center justify-between border-b border-border-secondary px-4 py-3 md:px-6">
-        <span className="text-sm font-semibold text-text-secondary">
-          라이브 코딩 면접
-        </span>
-        <span className="text-text-tertiary font-bold">
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-text-secondary transition-colors hover:bg-bg-elevated hover:text-text-primary"
+          aria-label="close-live-coding"
+        >
+          <X size={18} />
+          <span className="text-sm">닫기</span>
+        </button>
+        <span className="text-text-tertiary font-bold text-sm">
           {prev_questions_and_answers.length} / {totalQuestions}
         </span>
       </header>
 
-      {/* Body */}
       <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
-        {/* Left Panel - Problem / current question */}
         <div
           className={
             "border-b border-border-secondary md:border-b-0 md:border-r md:w-2/5 " +
@@ -122,7 +131,6 @@ export function LiveCodingInterviewView({
           )}
         </div>
 
-        {/* Right Panel - Editor + answer */}
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex items-center justify-between border-b border-border-secondary px-4 py-2">
             <select
@@ -164,9 +172,7 @@ export function LiveCodingInterviewView({
               variant="primary"
               size="large"
               onClick={handleSubmit}
-              disabled={
-                !isInterviewStarted || isPending || !code.trim()
-              }
+              disabled={!isInterviewStarted || isPending || !code.trim()}
               pendingSpinner={isPending}
               className="w-full"
             >
@@ -179,4 +185,4 @@ export function LiveCodingInterviewView({
   );
 }
 
-export default LiveCodingInterviewView;
+export default LiveCodingOverlay;
