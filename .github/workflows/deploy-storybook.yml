@@ -23,11 +23,11 @@ jobs:
       - name: Project setup
         run: |
           corepack enable
-          yarn set version berry
+          yarn set version 4.14.1
 
       - name: Install dependencies
         run: |
-          yarn install
+          yarn install --immutable
 
       - name: Run Chromatic
         uses: chromaui/action@latest

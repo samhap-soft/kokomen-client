@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@kokomen/utils": "workspace:*",
+    "@monaco-editor/react": "^4.7.0",
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
     "lucide-react": "^0.511.0",
@@ -19,6 +20,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.59.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "three": "^0.177.0"
   },
   "devDependencies": {
