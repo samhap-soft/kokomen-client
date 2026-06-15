@@ -118,7 +118,8 @@ const InterviewStartModal = ({
   onPressStart,
   questionCount,
   categoryTitle,
-  interviewType
+  interviewType,
+  isLiveCoding
 }: {
   isOpen: boolean;
   closeModal: () => void;
@@ -126,9 +127,11 @@ const InterviewStartModal = ({
   questionCount: number;
   categoryTitle: string;
   interviewType: InterviewMode;
+  isLiveCoding: boolean;
 }) => {
+  const effectiveType: InterviewMode = isLiveCoding ? "TEXT" : interviewType;
   const requiredToken =
-    interviewType === "VOICE" ? questionCount * 2 : questionCount;
+    effectiveType === "VOICE" ? questionCount * 2 : questionCount;
   return (
     <Modal isOpen={isOpen} onClose={closeModal} title="면접 시작하기">
       <div className="space-y-6">
@@ -140,7 +143,13 @@ const InterviewStartModal = ({
             선택한 카테고리의 {questionCount}개 문제로 면접을 진행합니다
           </p>
         </div>
-        {interviewType === "VOICE" && (
+        {isLiveCoding && interviewType === "VOICE" && (
+          <div className="flex items-center gap-2 text-sm text-blue-6 text-center justify-center">
+            <TriangleAlert />
+            라이브 코딩 문제는 텍스트 모드로 진행됩니다.
+          </div>
+        )}
+        {effectiveType === "VOICE" && (
           <div className="flex items-center gap-2 text-sm text-orange-6 text-center justify-center">
             <TriangleAlert />
             음성 면접은 토큰이 1문제당 2개씩 소모됩니다.
@@ -156,8 +165,13 @@ const InterviewStartModal = ({
           <ul className="text-sm text-text-description space-y-1 ml-5">
             <li>• 면접 진행 중에는 면접 중단이 불가능합니다</li>
             <li>
-              • {interviewType === "VOICE" ? "음성" : "텍스트"} 방식으로 면접이
-              진행됩니다
+              •{" "}
+              {isLiveCoding
+                ? "라이브 코딩(텍스트)"
+                : effectiveType === "VOICE"
+                  ? "음성"
+                  : "텍스트"}{" "}
+              방식으로 면접이 진행됩니다
             </li>
             <li>• 총 {questionCount}개의 문제가 출제됩니다</li>
           </ul>
@@ -234,10 +248,12 @@ const CreateInterviewForm = ({
   const handleNewInterview = useCallback(
     (selectedQuestions: InterviewQuestion | null) => {
       if (selectedQuestions) {
+        const isCode = selectedQuestions.question_type === "CODE";
         createCustomInterviewMutation.mutate({
           rootQuestionId: selectedQuestions.id,
           maxQuestionCount: questionCount,
-          mode: selectedInterviewType
+          mode: isCode ? "TEXT" : selectedInterviewType,
+          questionType: selectedQuestions.question_type
         });
       } else {
         createRandomInterviewMutation.mutate({
@@ -375,6 +391,7 @@ const CreateInterviewForm = ({
         questionCount={questionCount}
         categoryTitle={selectedCategory.title}
         interviewType={selectedInterviewType}
+        isLiveCoding={selectedQuestions?.question_type === "CODE"}
       />
     </form>
   );

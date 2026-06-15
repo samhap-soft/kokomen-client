@@ -1,27 +1,10 @@
-import {
-  getInterviewAnswerV2,
-  submitInterviewAnswerV2
-} from "@/domains/interview/api/interviewAnswer";
-import {
-  Interview,
-  InterviewMode,
-  InterviewAnswerForm as InterviewAnswerFormType
-} from "@kokomen/types";
+import { Interview, InterviewMode } from "@kokomen/types";
 import { useSpeechRecognitionWithEvents } from "@/domains/interview/hooks/useSpeechRecognitionWithEvents";
+import { useSubmitInterviewAnswer } from "@/domains/interview/hooks/useSubmitInterviewAnswer";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
-import { captureFormSubmitEvent } from "@/utils/analytics";
 import { Button, LoadingCircles, Textarea, useToast } from "@kokomen/ui";
-import { getEmotion } from "@kokomen/utils";
-import { useMutation } from "@tanstack/react-query";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
-import React, {
-  JSX,
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
 import { publishInterviewEvent } from "@/domains/interview/utils/interviewEventEmitter";
 
 type InterviewInputProps = Pick<
@@ -42,10 +25,6 @@ type InterviewInputProps = Pick<
   playAudio: (audioUrl?: string) => Promise<void>;
   mode: InterviewMode;
 };
-const SUBMIT_FAILED_MESSAGE: string =
-  "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
-const FINISHED_MESSAGE: string = "면접이 종료되었습니다. 수고하셨습니다.";
-
 export function InterviewAnswerForm({
   isInterviewStarted,
   cur_question,
@@ -62,7 +41,6 @@ export function InterviewAnswerForm({
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { info: infoToast } = useToast();
-  const delayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateInterviewInput = useCallback(
     (result: string) => {
@@ -94,116 +72,15 @@ export function InterviewAnswerForm({
       mode: mode
     });
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (data: InterviewAnswerFormType) => {
-      return submitInterviewAnswerV2(data).then(() =>
-        getInterviewAnswerV2({
-          interviewId: data.interviewId,
-          questionId: data.questionId,
-          mode: data.mode
-        })
-      );
-    },
-    onMutate: (data) => {
-      if (delayTimerRef.current) clearTimeout(delayTimerRef.current);
-      delayTimerRef.current = setTimeout(() => {
-        infoToast({
-          title: "면접관이 답변을 분석 중이에요",
-          description: "잠시만 기다려주세요. 곧 다음 질문이 준비됩니다.",
-          duration: 5000,
-          position: "top-center"
-        });
-      }, 5000);
-
-      publishInterviewEvent("interview:stopVoiceRecognition");
-      captureFormSubmitEvent({
-        name: "submitInterviewAnswer",
-        properties: {
-          question: cur_question,
-          answer: data.answer,
-          question_id: data.questionId
-        }
-      });
-      const previousMessage = {
-        prevMessage: cur_question,
-        prevQuestionId: cur_question_id
-      };
-      updateInterviewData({
-        prev_questions_and_answers: [
-          ...prev_questions_and_answers,
-          {
-            question: cur_question,
-            answer: interviewInput,
-            question_id: cur_question_id,
-            answer_id: 0
-          }
-        ]
-      });
-      return {
-        previousMessage
-      };
-    },
-    onSuccess: (data) => {
-      if (delayTimerRef.current) {
-        clearTimeout(delayTimerRef.current);
-        delayTimerRef.current = null;
-      }
-      if (data.interviewState === "FINISHED") {
-        updateInterviewData({
-          interview_state: "FINISHED",
-          cur_question: FINISHED_MESSAGE
-        });
-        return;
-      }
-      setInterviewerEmotion(getEmotion(data.curAnswerRank));
-      setInterviewInput("");
-      const updatedata = () => {
-        if ("nextQuestionVoiceUrl" in data)
-          return { cur_question_voice_url: data.nextQuestionVoiceUrl };
-        return { cur_question: data.nextQuestion ?? "" };
-      };
-      updateInterviewData({
-        ...updatedata(),
-        cur_question_id: data.nextQuestionId
-      });
-      setInterviewInput("");
-      if (data.nextQuestionVoiceUrl) {
-        playAudio(data.nextQuestionVoiceUrl);
-      }
-    },
-    onError: (_, __, context) => {
-      if (delayTimerRef.current) {
-        clearTimeout(delayTimerRef.current);
-        delayTimerRef.current = null;
-      }
-      updateInterviewData({
-        cur_question: SUBMIT_FAILED_MESSAGE,
-        prev_questions_and_answers: [
-          ...prev_questions_and_answers.filter(
-            (question) => question.question_id !== cur_question_id
-          )
-        ]
-      });
-
-      setTimeout(() => {
-        if (context?.previousMessage) {
-          // 이전 상태로 복원
-          updateInterviewData({
-            cur_question: context?.previousMessage?.prevMessage ?? ""
-          });
-        }
-      }, 1000);
-    },
-    retry: false
+  const { mutate, isPending } = useSubmitInterviewAnswer({
+    cur_question,
+    cur_question_id,
+    prev_questions_and_answers,
+    updateInterviewData,
+    setInterviewerEmotion,
+    playAudio,
+    onAnswerSubmitted: () => setInterviewInput("")
   });
-
-  useEffect(() => {
-    return () => {
-      if (delayTimerRef.current) {
-        clearTimeout(delayTimerRef.current);
-      }
-    };
-  }, []);
 
   const handleSubmit = (
     e: React.FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>

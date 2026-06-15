@@ -78,17 +78,30 @@ function QuestionListContent({
           해당 질문으로 면접이 처음 시작됩니다.
         </p>
       </div>
-      {questions.map((question) => (
-        <Button
-          variant={"outline"}
-          size={"large"}
-          key={question.id}
-          onClick={() => onSelectQuestion(question)}
-          className="w-full whitespace-normal"
-        >
-          {question.content}
-        </Button>
-      ))}
+      {questions.map((question) => {
+        const isCode = question.question_type === "CODE";
+        const label = isCode ? (question.title ?? question.content) : question.content;
+        return (
+          <Button
+            variant={"outline"}
+            size={"large"}
+            key={question.id}
+            onClick={() => onSelectQuestion(question)}
+            className="w-full whitespace-normal flex items-center gap-3 justify-start text-left"
+          >
+            <span
+              className={
+                isCode
+                  ? "shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                  : "shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-fill-tertiary text-text-secondary"
+              }
+            >
+              {isCode ? "라이브 코딩" : "일반 질문"}
+            </span>
+            <span className="flex-1">{label}</span>
+          </Button>
+        );
+      })}
     </div>
   );
 }

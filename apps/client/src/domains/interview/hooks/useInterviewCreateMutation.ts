@@ -5,6 +5,14 @@ import { startNewInterview } from "../api";
 import { captureFormSubmitEvent } from "@/utils/analytics";
 import { createCustomInterview } from "@/domains/interview/api/questions";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
+import { InterviewMode, RootQuestionType } from "@kokomen/types";
+
+type CreateCustomInterviewVariables = {
+  rootQuestionId: number;
+  maxQuestionCount: number;
+  mode: InterviewMode;
+  questionType?: RootQuestionType;
+};
 
 const useInterviewCreateMutation = ({
   onMutate
@@ -60,7 +68,8 @@ const useInterviewCreateMutation = ({
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
   const createCustomInterviewMutation = useMutation({
-    mutationFn: createCustomInterview,
+    mutationFn: ({ questionType: _questionType, ...payload }: CreateCustomInterviewVariables) =>
+      createCustomInterview(payload),
     onMutate: (data) => {
       onMutate?.();
       captureFormSubmitEvent({
@@ -68,14 +77,19 @@ const useInterviewCreateMutation = ({
         properties: {
           rootQuestionId: data.rootQuestionId,
           maxQuestionCount: data.maxQuestionCount,
-          mode: data.mode
+          mode: data.mode,
+          questionType: data.questionType ?? "GENERAL"
         }
       });
     },
     onSuccess: (data, variables) => {
+      const search =
+        variables.questionType === "CODE"
+          ? `mode=${variables.mode}&type=CODE`
+          : `mode=${variables.mode}`;
       router.push({
         pathname: `/interviews/${data.interview_id}`,
-        search: `mode=${variables.mode}`
+        search
       });
     },
     onError: (error) => {

@@ -4,9 +4,13 @@ type InterviewStatus = "standby" | "thinking" | "question" | "finished";
 type AnswerScore = "A" | "B" | "C" | "D" | "F";
 
 type InterviewerEmotion = "happy" | "encouraging" | "angry" | "neutral";
+type RootQuestionType = "GENERAL" | "CODE";
+
 type InterviewQuestion = {
   id: number;
   content: string;
+  question_type: RootQuestionType;
+  title: string | null;
 };
 
 type QuestionAndAnswer = {
@@ -155,6 +159,7 @@ export type {
   InterviewAnswerForm,
   ProceedState,
   AnswerScore,
-  InterviewQuestion
+  InterviewQuestion,
+  RootQuestionType
 };
 export * from "./resumeBasedInterview";
