@@ -171,7 +171,7 @@ export default function InterviewPage({
     : "";
 
   //기존 면접 정보 업데이트
-  const updateInterviewData = (updates: Partial<Interview>) => {
+  const updateInterviewData = (updates: Partial<Interview>): void => {
     const queryKey = interviewKeys.byInterviewId(interviewId);
 
     queryClient.setQueryData(queryKey, (oldData: Interview) => {
@@ -214,6 +214,7 @@ export default function InterviewPage({
               isInterviewStarted={isInterviewStarted}
               playFinished={playFinished}
               playAudio={playAudio}
+              isLiveCoding={isLiveCoding}
             />
 
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
@@ -228,12 +229,12 @@ export default function InterviewPage({
                   meetingRoomUrl="/interview/meeting_room.glb"
                 />
                 <CameraPreview enabled={isInterviewStarted} />
-                {isLiveCoding && (
+                {isLiveCoding && isInterviewStarted && (
                   <Button
                     type="button"
                     variant="primary"
                     onClick={openLiveCoding}
-                    className="absolute bottom-4 left-4 flex items-center gap-2 shadow-lg"
+                    className="absolute bottom-4 left-4 flex items-center gap-2 shadow-lg animate-slide-up"
                     aria-label="open-live-coding"
                   >
                     <Code2 className="w-4 h-4" />

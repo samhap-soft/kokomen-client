@@ -2,12 +2,16 @@ import { InterviewMode } from "@kokomen/types";
 import { Button } from "@kokomen/ui";
 import { JSX } from "react";
 
+const LIVE_CODING_BUBBLE_TEXT: string =
+  "앞에 놓여진 문제를 보고 코드를 작성해주세요";
+
 export function InterviewQuestion({
   interviewMode,
   question,
   isInterviewStarted,
   playFinished,
-  playAudio
+  playAudio,
+  isLiveCoding = false
 }: {
   interviewMode: InterviewMode;
   question: string;
@@ -15,8 +19,18 @@ export function InterviewQuestion({
   playFinished: boolean;
   // eslint-disable-next-line no-unused-vars
   playAudio: (audioUrl?: string) => Promise<void>;
-}) {
+  isLiveCoding?: boolean;
+}): JSX.Element | null {
   if (!isInterviewStarted) return <StartUpQuestion />;
+  if (isLiveCoding) {
+    return (
+      <div className="p-4 absolute top-20 left-[10%] w-[80%] h-36 text-center border flex items-center justify-center max-h-[150px] z-20 border-border rounded-xl bg-bg-base">
+        <div className="overflow-y-auto w-full max-h-full text-xl flex justify-center text-center align-middle">
+          {LIVE_CODING_BUBBLE_TEXT}
+        </div>
+      </div>
+    );
+  }
   if (interviewMode === "VOICE") {
     if (playFinished) {
       return (
