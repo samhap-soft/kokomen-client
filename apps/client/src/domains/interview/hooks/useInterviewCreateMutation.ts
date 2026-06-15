@@ -68,8 +68,11 @@ const useInterviewCreateMutation = ({
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
   const createCustomInterviewMutation = useMutation({
-    mutationFn: ({ questionType: _questionType, ...payload }: CreateCustomInterviewVariables) =>
-      createCustomInterview(payload),
+    mutationFn: ({
+      // eslint-disable-next-line no-unused-vars
+      questionType: _questionType,
+      ...payload
+    }: CreateCustomInterviewVariables) => createCustomInterview(payload),
     onMutate: (data) => {
       onMutate?.();
       captureFormSubmitEvent({

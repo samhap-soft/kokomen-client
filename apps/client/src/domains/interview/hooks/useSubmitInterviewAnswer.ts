@@ -11,7 +11,7 @@ import {
 import { useToast } from "@kokomen/ui";
 import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 
 const SUBMIT_FAILED_MESSAGE = "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
