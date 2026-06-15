@@ -1,7 +1,8 @@
-import { Layout, LoadingFullScreen } from "@kokomen/ui";
+import { Layout, LoadingFullScreen, Button } from "@kokomen/ui";
 import { InterviewAnswerForm } from "@/domains/interview/components/interviewAnswerForm";
-import { LiveCodingInterviewView } from "@/domains/interview/components/liveCodingInterviewView";
+import { LiveCodingOverlay } from "@/domains/interview/components/liveCodingOverlay";
 import { InterviewSideBar, useInterviewPhase } from "@kokomen/ui/domains";
+import { Code2 } from "lucide-react";
 import { useModal } from "@kokomen/utils";
 import {
   publishInterviewEvent,
@@ -119,6 +120,11 @@ export default function InterviewPage({
     openModal: openInterviewSidebar,
     closeModal: closeInterviewSidebar
   } = useModal();
+  const {
+    isOpen: isLiveCodingOpen,
+    openModal: openLiveCoding,
+    closeModal: closeLiveCoding
+  } = useModal();
   const queryClient = useQueryClient();
   const { data, isPending, isError } = useQuery({
     queryKey: interviewKeys.byInterviewId(interviewId),
@@ -180,41 +186,6 @@ export default function InterviewPage({
 
   if (isPending) return <LoadingFullScreen className="h-screen w-screen" />;
   if (isError) return <InterviewNotFoundError />;
-
-  if (isLiveCoding) {
-    return (
-      <>
-        <SEO
-          title="모의 면접 - 라이브 코딩"
-          description="운영체제, 데이터베이스, 자료구조, 알고리즘 면접 연습"
-          robots="noindex, nofollow, noarchive"
-          pathname={`/interviews/${interviewId}`}
-        />
-        <Layout>
-          <LiveCodingInterviewView
-            isInterviewStarted={true}
-            cur_question={
-              isTextInterview(data)
-                ? data.cur_question
-                : data.cur_question_voice_url
-            }
-            cur_question_id={data.cur_question_id}
-            prev_questions_and_answers={data.prev_questions_and_answers}
-            updateInterviewData={updateInterviewData}
-            interviewId={interviewId}
-            totalQuestions={data.max_question_count}
-            setInterviewerEmotion={setInterviewerEmotion}
-            playAudio={playAudio}
-          />
-          <InterviewFinishModal
-            interviewState={data.interview_state}
-            interviewId={interviewId}
-          />
-        </Layout>
-      </>
-    );
-  }
-
   return (
     <>
       <SEO
@@ -257,6 +228,18 @@ export default function InterviewPage({
                   meetingRoomUrl="/interview/meeting_room.glb"
                 />
                 <CameraPreview enabled={isInterviewStarted} />
+                {isLiveCoding && (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={openLiveCoding}
+                    className="absolute bottom-4 left-4 flex items-center gap-2 shadow-lg"
+                    aria-label="open-live-coding"
+                  >
+                    <Code2 className="w-4 h-4" />
+                    코드 작성하기
+                  </Button>
+                )}
               </div>
             </div>
             <InterviewAnswerForm
@@ -289,6 +272,25 @@ export default function InterviewPage({
           interviewState={data.interview_state}
           interviewId={interviewId}
         />
+        {isLiveCoding && (
+          <LiveCodingOverlay
+            isOpen={isLiveCodingOpen}
+            onClose={closeLiveCoding}
+            isInterviewStarted={isInterviewStarted}
+            cur_question={
+              isTextInterview(data)
+                ? data.cur_question
+                : data.cur_question_voice_url
+            }
+            cur_question_id={data.cur_question_id}
+            prev_questions_and_answers={data.prev_questions_and_answers}
+            updateInterviewData={updateInterviewData}
+            interviewId={interviewId}
+            totalQuestions={data.max_question_count}
+            setInterviewerEmotion={setInterviewerEmotion}
+            playAudio={playAudio}
+          />
+        )}
       </Layout>
     </>
   );
