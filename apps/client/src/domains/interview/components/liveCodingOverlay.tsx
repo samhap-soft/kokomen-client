@@ -4,7 +4,7 @@ import { Interview, InterviewMode } from "@kokomen/types";
 import { Button, Textarea } from "@kokomen/ui";
 import { LiveCodingEditor, LiveCodingProblem } from "@kokomen/ui/domains";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
-import React, { JSX, useState } from "react";
+import React, { JSX, useRef, useState } from "react";
 
 const LANGUAGES = [
   { value: "javascript", label: "JavaScript" },
@@ -30,6 +30,7 @@ type LiveCodingOverlayProps = {
   >;
   // eslint-disable-next-line no-unused-vars
   playAudio: (audioUrl?: string) => Promise<void>;
+  originalProblem: string;
 };
 
 const buildAnswer = (
@@ -53,12 +54,17 @@ export function LiveCodingOverlay({
   interviewId,
   totalQuestions,
   setInterviewerEmotion,
-  playAudio
-}: LiveCodingOverlayProps): JSX.Element | null {
+  playAudio,
+  originalProblem
+}: LiveCodingOverlayProps): JSX.Element {
   const [language, setLanguage] = useState<string>("javascript");
-  const [code, setCode] = useState<string>("");
+  const codeRef = useRef<string>("");
   const [explanation, setExplanation] = useState<string>("");
   const [isProblemCollapsed, setIsProblemCollapsed] = useState<boolean>(false);
+
+  const handleEditorChange = (value: string): void => {
+    codeRef.current = value;
+  };
 
   const { mutate, isPending } = useSubmitInterviewAnswer({
     cur_question,
@@ -73,21 +79,32 @@ export function LiveCodingOverlay({
     }
   });
 
-  if (!isOpen) return null;
-
   const handleSubmit = (): void => {
     if (!isInterviewStarted || isPending) return;
-    if (!code.trim()) return;
+    if (!codeRef.current.trim()) return;
     mutate({
       interviewId,
       questionId: cur_question_id,
-      answer: buildAnswer(explanation, language, code),
+      answer: buildAnswer(explanation, language, codeRef.current),
       mode: "TEXT" as InterviewMode
     });
   };
 
+  const isFollowUp =
+    prev_questions_and_answers.length > 0 &&
+    cur_question !== originalProblem;
+
+  const problemMarkdown = isFollowUp
+    ? `${originalProblem}\n\n---\n\n### 면접관의 추가 질문\n\n${cur_question}`
+    : originalProblem;
+
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-bg-base">
+    <div
+      className={
+        "fixed inset-0 z-50 flex flex-col bg-bg-base " +
+        (isOpen ? "" : "hidden")
+      }
+    >
       <header className="flex items-center justify-between border-b border-border-secondary px-4 py-3 md:px-6">
         <button
           type="button"
@@ -125,7 +142,7 @@ export function LiveCodingOverlay({
 
           {!isProblemCollapsed && (
             <LiveCodingProblem
-              markdownContent={cur_question}
+              markdownContent={problemMarkdown}
               className="h-full"
             />
           )}
@@ -149,7 +166,7 @@ export function LiveCodingOverlay({
 
           <LiveCodingEditor
             language={language}
-            onChange={setCode}
+            onChange={handleEditorChange}
             className="m-4 flex-1 min-h-[200px]"
           />
 
@@ -172,7 +189,7 @@ export function LiveCodingOverlay({
               variant="primary"
               size="large"
               onClick={handleSubmit}
-              disabled={!isInterviewStarted || isPending || !code.trim()}
+              disabled={!isInterviewStarted || isPending}
               pendingSpinner={isPending}
               className="w-full"
             >
