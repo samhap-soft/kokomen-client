@@ -170,6 +170,18 @@ export default function InterviewPage({
       : "면접이 종료되었습니다. 고생하셨습니다."
     : "";
 
+  // CODE 면접의 원본 문제(첫 root question)를 한 번만 캡처
+  const originalProblemRef = useRef<string>("");
+  if (
+    isLiveCoding &&
+    !originalProblemRef.current &&
+    data &&
+    data.prev_questions_and_answers.length === 0 &&
+    isTextInterview(data)
+  ) {
+    originalProblemRef.current = data.cur_question;
+  }
+
   //기존 면접 정보 업데이트
   const updateInterviewData = (updates: Partial<Interview>): void => {
     const queryKey = interviewKeys.byInterviewId(interviewId);
@@ -214,7 +226,9 @@ export default function InterviewPage({
               isInterviewStarted={isInterviewStarted}
               playFinished={playFinished}
               playAudio={playAudio}
-              isLiveCoding={isLiveCoding}
+              isLiveCoding={
+                isLiveCoding && data.prev_questions_and_answers.length === 0
+              }
             />
 
             <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
@@ -290,6 +304,7 @@ export default function InterviewPage({
             totalQuestions={data.max_question_count}
             setInterviewerEmotion={setInterviewerEmotion}
             playAudio={playAudio}
+            originalProblem={originalProblemRef.current}
           />
         )}
       </Layout>
