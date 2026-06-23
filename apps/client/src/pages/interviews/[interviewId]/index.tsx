@@ -76,7 +76,7 @@ const getCurrentQuestion = (interview: Interview): string => {
 export default function InterviewPage({
   interviewId,
   mode,
-  isLiveCoding
+  isLiveCoding: isLiveCodingFromUrl
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
   const [isInterviewStarted, setIsInterviewStarted] = useState<boolean>(false);
   const knockAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -170,6 +170,10 @@ export default function InterviewPage({
       : "면접이 종료되었습니다. 고생하셨습니다."
     : "";
 
+  // 라이브 코딩 여부: URL 쿼리(즉시 SSR 단계 분기용) ⇨ 서버 응답으로 보강
+  const isLiveCoding =
+    isLiveCodingFromUrl || (data?.include_live_coding ?? false);
+
   // CODE 면접의 원본 문제(첫 root question)를 한 번만 캡처
   const originalProblemRef = useRef<string>("");
   if (
@@ -241,6 +245,8 @@ export default function InterviewPage({
                   phase={phase}
                   onKnock={handleKnock}
                   meetingRoomUrl="/interview/meeting_room.glb"
+                  isLiveCoding={isLiveCoding}
+                  onOpenLiveCoding={openLiveCoding}
                 />
                 <CameraPreview enabled={isInterviewStarted} />
                 {isLiveCoding && isInterviewStarted && (
@@ -280,6 +286,7 @@ export default function InterviewPage({
             openSidebar={openInterviewSidebar}
             closeSidebar={closeInterviewSidebar}
             prevQuestionAndAnswer={data.prev_questions_and_answers}
+            parseCode={isLiveCoding}
           />
         </div>
         {/* Entrance sequence replaces InterviewStartModal */}

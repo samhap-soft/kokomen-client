@@ -27,6 +27,7 @@ interface InterviewReport {
   user_prev_rank: string;
   interview_mode: InterviewMode;
   root_question_reference_answers: RootQuestionReferenceAnswer[];
+  include_live_coding: boolean;
 }
 
 type AnswerMemo = {

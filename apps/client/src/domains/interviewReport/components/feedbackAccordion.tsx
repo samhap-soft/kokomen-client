@@ -4,7 +4,7 @@ import {
   getScoreIcon,
   getScoreLabel
 } from "@/utils/rankDisplay";
-import { Accordion, Tooltip } from "@kokomen/ui";
+import { Accordion, AnswerContent, Tooltip } from "@kokomen/ui";
 import { MessageSquare, Star, Award, HelpCircle, LogIn } from "lucide-react";
 import { JSX } from "react";
 import AnswerMemoComponent from "@/domains/interviewReport/components/answerMemo";
@@ -51,10 +51,12 @@ function RankGuideTooltip(): JSX.Element {
 
 export function FeedbackAccordion({
   feedbacks,
-  isGuest
+  isGuest,
+  parseCode = false
 }: {
   feedbacks: PrivateFeedback[];
   isGuest?: boolean;
+  parseCode?: boolean;
 }): JSX.Element {
   return (
     <Accordion.Accordion
@@ -68,6 +70,7 @@ export function FeedbackAccordion({
           feedback={feedback}
           idx={idx}
           isGuest={isGuest}
+          parseCode={parseCode}
         />
       ))}
     </Accordion.Accordion>
@@ -77,11 +80,13 @@ export function FeedbackAccordion({
 function FeedBackAccordionItem({
   feedback,
   idx,
-  isGuest
+  isGuest,
+  parseCode
 }: {
   feedback: PrivateFeedback;
   idx: number;
   isGuest?: boolean;
+  parseCode?: boolean;
 }): JSX.Element {
   return (
     <Accordion.AccordionItem
@@ -109,7 +114,11 @@ function FeedBackAccordionItem({
               <RankGuideTooltip />
             </div>
             <span className="text-text-heading font-medium text-left flex-1">
-              {feedback.question}
+              <AnswerContent
+                content={feedback.question}
+                parseCode={parseCode}
+                inline
+              />
             </span>
           </div>
         </div>
@@ -125,9 +134,7 @@ function FeedBackAccordionItem({
               </h4>
             </div>
             <div className="bg-primary-light border border-primary-border rounded-xl p-4">
-              <p className="text-text-primary leading-relaxed">
-                {feedback.answer}
-              </p>
+              <AnswerContent content={feedback.answer} parseCode={parseCode} />
             </div>
           </div>
 

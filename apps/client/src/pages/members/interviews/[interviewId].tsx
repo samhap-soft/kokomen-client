@@ -112,6 +112,7 @@ export default function MemberInterviewResultPage({
                   key={feedback.answerId}
                   questionAndFeedback={feedback}
                   index={index}
+                  parseCode={result.includeLiveCoding}
                 />
               ))}
             </div>

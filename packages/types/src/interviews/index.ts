@@ -29,6 +29,7 @@ type BaseInterview = {
   cur_question_count: number;
   max_question_count: number;
   is_demo?: boolean;
+  include_live_coding: boolean;
 };
 
 type TextInterview = BaseInterview & {
