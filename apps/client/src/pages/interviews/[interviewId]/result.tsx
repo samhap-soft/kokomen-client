@@ -12,6 +12,7 @@ import {
 import { ParsedUrlQuery } from "querystring";
 import { Layout, Score } from "@kokomen/ui";
 import { Button } from "@kokomen/ui";
+import { stripCodeBlocksForPreview } from "@kokomen/ui";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 import Header from "@/shared/header";
@@ -141,7 +142,7 @@ export default function MyInterviewResultPage({
                           </Link>
                         </div>
                         <div className="text-text-primary text-base leading-relaxed whitespace-wrap break-words line-clamp-1">
-                          {reference.answer_content}
+                          {stripCodeBlocksForPreview(reference.answer_content)}
                         </div>
                       </div>
                     )
@@ -189,12 +190,14 @@ export default function MyInterviewResultPage({
                     <FeedbackAccordion
                       feedbacks={report.feedbacks.slice(0, 1)}
                       isGuest
+                      parseCode={report.include_live_coding}
                     />
                     {report.feedbacks.length > 1 && (
                       <div className="relative">
                         <div className="blur-sm pointer-events-none select-none">
                           <FeedbackAccordion
                             feedbacks={report.feedbacks.slice(1)}
+                            parseCode={report.include_live_coding}
                           />
                         </div>
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 rounded-xl">
@@ -217,7 +220,10 @@ export default function MyInterviewResultPage({
                     )}
                   </div>
                 ) : (
-                  <FeedbackAccordion feedbacks={report.feedbacks} />
+                  <FeedbackAccordion
+                    feedbacks={report.feedbacks}
+                    parseCode={report.include_live_coding}
+                  />
                 )}
               </div>
             </section>

@@ -7,6 +7,7 @@ export { default as InterviewQuestion } from "./interviewQuestion";
 export { default as LiveCodingEditor } from "./liveCodingEditor";
 export { default as LiveCodingProblem } from "./liveCodingProblem";
 export { default as LiveCodingTimer } from "./liveCodingTimer";
+export { default as LiveCodingPaper } from "./LiveCodingPaper";
 export { default as LiveCodingTest } from "./liveCodingTest";
 export type { LiveCodingTestProps } from "./liveCodingTest";
 export { useInterviewPhase } from "./useInterviewPhase";

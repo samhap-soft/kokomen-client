@@ -47,6 +47,7 @@ type MemberInterviewResult = {
   interviewee_rank: number;
   total_member_count: number;
   interviewee_nickname: string;
+  include_live_coding: boolean;
 };
 
 export type { Feedback, Rank, MemberInterview, MemberInterviewResult };

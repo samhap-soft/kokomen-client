@@ -6,6 +6,7 @@ import { Toaster } from "@kokomen/ui";
 import { ErrorBoundary } from "@sentry/nextjs";
 import ErrorFallback from "@/shared/errorFallback";
 import FeedbackButton from "@/shared/feedbackButton";
+import PostingPopup from "@/shared/postingPopup";
 import ResumeStoreProvider from "@/domains/resume/context/resumeStore";
 import ResumeBasedInterviewStoreProvider from "@/domains/resume/context/resumeBasedInterviewStore";
 
@@ -21,6 +22,7 @@ export default function App({ Component, pageProps }: AppProps): JSX.Element {
             <ResumeBasedInterviewStoreProvider>
               <Component {...pageProps} />
               <FeedbackButton />
+              <PostingPopup />
             </ResumeBasedInterviewStoreProvider>
           </ResumeStoreProvider>
         </Toaster>

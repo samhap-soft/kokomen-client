@@ -3,7 +3,7 @@ import { Heart } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
-import { Button } from "@kokomen/ui";
+import { AnswerContent, Button } from "@kokomen/ui";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { MemberInterviewResult } from "@kokomen/types";
@@ -12,12 +12,14 @@ import useExtendedRouter from "@/hooks/useExtendedRouter";
 
 export default function MemberQuestionFeedback({
   questionAndFeedback,
-  index
+  index,
+  parseCode = false
 }: {
   questionAndFeedback: CamelCasedProperties<
     MemberInterviewResult["feedbacks"][number]
   >;
   index: number;
+  parseCode?: boolean;
 }) {
   const [answerLiked, setAnswerLiked] = useState<boolean>(
     questionAndFeedback.answerAlreadyLiked
@@ -129,9 +131,11 @@ export default function MemberQuestionFeedback({
             <h4 className="text-sm font-semibold text-gray-700">응답 내용</h4>
           </div>
           <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-xl p-4 border border-blue-3">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-              {questionAndFeedback.answer}
-            </p>
+            <AnswerContent
+              content={questionAndFeedback.answer}
+              className="text-gray-800"
+              parseCode={parseCode}
+            />
           </div>
         </div>
 

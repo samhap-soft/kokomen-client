@@ -7,12 +7,17 @@ import MeetingRoom from "./MeetingRoom";
 import EntranceCamera from "./EntranceCamera";
 import Door from "./Door";
 import KnockButton from "./KnockButton";
+import LiveCodingPaper from "./LiveCodingPaper";
 import { InterviewPhase } from "./useInterviewPhase";
 
 export interface AiInterviewInterfaceProps extends InterviewerProps {
   phase?: InterviewPhase;
   onKnock?: () => void;
   meetingRoomUrl?: string;
+  /** 라이브 코딩 면접 여부: true이면 책상 위 3D 종이를 클릭해 코딩 화면을 열 수 있다 */
+  isLiveCoding?: boolean;
+  /** 라이브 코딩 종이 클릭 시 호출 */
+  onOpenLiveCoding?: () => void;
 }
 
 export default function AiInterviewInterface({
@@ -22,7 +27,9 @@ export default function AiInterviewInterface({
   isSpeaking,
   phase = "INTERVIEW",
   onKnock,
-  meetingRoomUrl
+  meetingRoomUrl,
+  isLiveCoding = false,
+  onOpenLiveCoding
 }: AiInterviewInterfaceProps): JSX.Element {
   const showInterviewer =
     phase === "WALKING_IN" ||
@@ -70,6 +77,14 @@ export default function AiInterviewInterface({
             isSpeaking={isSpeaking}
             isListening={isListening}
           />
+        )}
+
+        {/* 종이의 <Text> 폰트 로딩이 전체 씬 Suspense로 전파돼 깜빡이는 것을
+            막기 위해 별도 경계로 격리한다. fallback은 비워 둔다. */}
+        {isLiveCoding && phase === "INTERVIEW" && onOpenLiveCoding && (
+          <Suspense fallback={null}>
+            <LiveCodingPaper onClick={onOpenLiveCoding} />
+          </Suspense>
         )}
       </Suspense>
     </Canvas>
