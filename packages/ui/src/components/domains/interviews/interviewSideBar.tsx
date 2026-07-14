@@ -27,7 +27,7 @@ export default function InterviewSideBar({
   return (
     <>
       <Button
-        variant={"text"}
+        variant={"default"}
         onClick={openSidebar}
         className="fixed top-3 right-3"
         role="button"
