@@ -24,6 +24,7 @@ import InterviewFinishModal from "@/domains/interview/components/interviewFinish
 import { SEO } from "@/shared/seo";
 import { InterviewQuestion } from "@/domains/interview/components/interviewQuestion";
 import { InterviewNotFoundError } from "@/domains/interview/components/interviewNotFoundError";
+import InterviewExitButton from "@/domains/interview/components/interviewExitButton";
 import { AlertTriangle } from "lucide-react";
 
 // eslint-disable-next-line @rushstack/typedef-var
@@ -281,6 +282,7 @@ export default function InterviewPage({
               mode={mode}
             />
           </div>
+          <InterviewExitButton />
           <InterviewSideBar
             open={isInterviewSidebarOpen}
             openSidebar={openInterviewSidebar}

@@ -1,10 +1,8 @@
 import { getResumeEvaluationState } from "@/domains/resume/api";
 import { useReportevent } from "@/domains/resume/utils/reportEventEmitter";
-import { RoundSpinner, Tooltip } from "@kokomen/ui";
-import { CheckIcon, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
-import React, { createContext, useState } from "react";
+import { ToastAction, useToast } from "@kokomen/ui";
+import { useRouter } from "next/router";
+import React, { createContext, useEffect, useRef, useState } from "react";
 
 type ResumeState = "IDLE" | "PENDING" | "COMPLETED" | "ERROR";
 interface IResumeStore {
@@ -19,9 +17,13 @@ export default function ResumeStoreProvider({
   children
 }: {
   children: React.ReactNode;
-}) {
+}): React.JSX.Element {
   const [reportState, setReportState] = useState<ResumeState>("IDLE");
   const [evaluationId, setEvaluationId] = useState<string | null>(null);
+  const router = useRouter();
+  const { toast, dismiss } = useToast();
+  // 진행 중 toast의 id를 보관했다가 완료/오류 시 제거
+  const pendingToastIdRef = useRef<string | null>(null);
 
   useReportevent("report:submitted", async (payload) => {
     try {
@@ -35,72 +37,62 @@ export default function ResumeStoreProvider({
       setReportState("ERROR");
     }
   });
-  return (
-    <ResumeStore.Provider
-      value={{ reportState, evaluationId, setEvaluationId }}
-    >
-      <AnimatePresence>
-        {reportState === "PENDING" && (
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed bottom-24 right-6"
-          >
-            <Tooltip className="rounded-full p-4 bg-primary-3 text-primary-text">
-              <Tooltip.Content placement="top">
-                이력서 평가 중...
-              </Tooltip.Content>
-              <RoundSpinner />
-            </Tooltip>
-          </motion.div>
-        )}
-        {reportState === "COMPLETED" && (
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed bottom-24 right-6"
+
+  const dismissPendingToast = (): void => {
+    if (pendingToastIdRef.current) {
+      dismiss(pendingToastIdRef.current);
+      pendingToastIdRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    if (reportState === "PENDING") {
+      dismissPendingToast();
+      const { id } = toast({
+        title: "이력서 평가 중...",
+        description: "평가가 완료되면 알려드릴게요.",
+        variant: "info",
+        position: "top-center",
+        duration: Infinity
+      });
+      pendingToastIdRef.current = id;
+    } else if (reportState === "COMPLETED") {
+      dismissPendingToast();
+      toast({
+        title: "이력서 평가 완료",
+        description: "평가 결과를 확인해보세요.",
+        variant: "success",
+        position: "top-center",
+        duration: Infinity,
+        action: (
+          <ToastAction
             onClick={() => {
+              router.push(`/resume/eval/${evaluationId}/result`);
               setReportState("IDLE");
               setEvaluationId(null);
             }}
           >
-            <Tooltip className="rounded-full p-4 bg-primary-3 text-primary-text">
-              <Link href={`/resume/eval/${evaluationId}/result`}>
-                <Tooltip.Content placement="top">
-                  이력서 평가 완료
-                </Tooltip.Content>
-                <CheckIcon className="w-6 h-6 text-primary" />
-              </Link>
-            </Tooltip>
-          </motion.div>
-        )}
-        {reportState === "ERROR" && (
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed bottom-24 right-6"
-          >
-            <Tooltip
-              className="rounded-full p-4 bg-primary-3 text-primary-text"
-              onClick={() => {
-                setReportState("IDLE");
-                setEvaluationId(null);
-              }}
-            >
-              <Tooltip.Content placement="top">
-                이력서 평가 중 <br /> 오류가 발생했어요
-              </Tooltip.Content>
-              <X className="w-6 h-6 text-primary" />
-            </Tooltip>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            결과 보기
+          </ToastAction>
+        )
+      });
+      setReportState("IDLE");
+    } else if (reportState === "ERROR") {
+      dismissPendingToast();
+      toast({
+        title: "이력서 평가 중 오류가 발생했어요",
+        description: "잠시 후 다시 시도해주세요.",
+        variant: "error",
+        position: "top-center"
+      });
+      setReportState("IDLE");
+      setEvaluationId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reportState]);
+
+  return (
+    <ResumeStore.Provider value={{ reportState, evaluationId, setEvaluationId }}>
       {children}
     </ResumeStore.Provider>
   );

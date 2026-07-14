@@ -1,10 +1,8 @@
 import { checkResumeBasedInterviewQuestion } from "@/domains/resume/api/resumeBasedInterview";
 import { useResumeBasedInterviewEvent } from "@/domains/resume/utils/resumeInterviewEventEmitter";
-import { RoundSpinner, Tooltip } from "@kokomen/ui";
-import { CheckIcon, X } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
-import React, { createContext, useState } from "react";
+import { ToastAction, useToast } from "@kokomen/ui";
+import { useRouter } from "next/router";
+import React, { createContext, useEffect, useRef, useState } from "react";
 
 type ResumeBasedInterviewState = "IDLE" | "PENDING" | "COMPLETED" | "ERROR";
 interface IResumeBasedInterviewStore {
@@ -20,12 +18,16 @@ export default function ResumeBasedInterviewStoreProvider({
   children
 }: {
   children: React.ReactNode;
-}) {
+}): React.JSX.Element {
   const [interviewState, setInterviewState] =
     useState<ResumeBasedInterviewState>("IDLE");
   const [interviewResultId, setInterviewResultId] = useState<number | null>(
     null
   );
+  const router = useRouter();
+  const { toast, dismiss } = useToast();
+  // 진행 중 toast의 id를 보관했다가 완료/오류 시 제거
+  const pendingToastIdRef = useRef<string | null>(null);
 
   useResumeBasedInterviewEvent(
     "resumeBasedInterview:submitted",
@@ -47,72 +49,63 @@ export default function ResumeBasedInterviewStoreProvider({
     }
   );
 
-  return (
-    <ResumeBasedInterviewStore.Provider
-      value={{ interviewState, interviewResultId, setInterviewResultId }}
-    >
-      <AnimatePresence>
-        {interviewState === "PENDING" && (
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed bottom-24 right-6"
-          >
-            <Tooltip className="rounded-full p-4 bg-primary-3 text-primary-text">
-              <Tooltip.Content placement="top">
-                면접 질문 생성 중...
-              </Tooltip.Content>
-              <RoundSpinner />
-            </Tooltip>
-          </motion.div>
-        )}
-        {interviewState === "COMPLETED" && (
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed bottom-24 right-6"
+  const dismissPendingToast = (): void => {
+    if (pendingToastIdRef.current) {
+      dismiss(pendingToastIdRef.current);
+      pendingToastIdRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    if (interviewState === "PENDING") {
+      dismissPendingToast();
+      const { id } = toast({
+        title: "면접 질문 생성 중...",
+        description: "질문 생성이 완료되면 알려드릴게요.",
+        variant: "info",
+        position: "top-center",
+        duration: Infinity
+      });
+      pendingToastIdRef.current = id;
+    } else if (interviewState === "COMPLETED") {
+      dismissPendingToast();
+      toast({
+        title: "면접 질문 생성 완료",
+        description: "생성된 질문으로 면접을 시작해보세요.",
+        variant: "success",
+        position: "top-center",
+        duration: Infinity,
+        action: (
+          <ToastAction
             onClick={() => {
+              router.push(`/resume/interview/${interviewResultId}`);
               setInterviewState("IDLE");
               setInterviewResultId(null);
             }}
           >
-            <Tooltip className="rounded-full p-4 bg-primary-3 text-primary-text">
-              <Link href={`/resume/interview/${interviewResultId}`}>
-                <Tooltip.Content placement="top">
-                  면접 질문 생성 완료
-                </Tooltip.Content>
-                <CheckIcon className="w-6 h-6 text-primary" />
-              </Link>
-            </Tooltip>
-          </motion.div>
-        )}
-        {interviewState === "ERROR" && (
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed bottom-24 right-6"
-          >
-            <Tooltip
-              className="rounded-full p-4 bg-primary-3 text-primary-text"
-              onClick={() => {
-                setInterviewState("IDLE");
-                setInterviewResultId(null);
-              }}
-            >
-              <Tooltip.Content placement="top">
-                면접 질문 생성 중 <br /> 오류가 발생했어요
-              </Tooltip.Content>
-              <X className="w-6 h-6 text-primary" />
-            </Tooltip>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            면접 시작하기
+          </ToastAction>
+        )
+      });
+      setInterviewState("IDLE");
+    } else if (interviewState === "ERROR") {
+      dismissPendingToast();
+      toast({
+        title: "면접 질문 생성 중 오류가 발생했어요",
+        description: "잠시 후 다시 시도해주세요.",
+        variant: "error",
+        position: "top-center"
+      });
+      setInterviewState("IDLE");
+      setInterviewResultId(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interviewState]);
+
+  return (
+    <ResumeBasedInterviewStore.Provider
+      value={{ interviewState, interviewResultId, setInterviewResultId }}
+    >
       {children}
     </ResumeBasedInterviewStore.Provider>
   );

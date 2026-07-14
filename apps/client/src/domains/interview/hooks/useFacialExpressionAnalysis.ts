@@ -175,7 +175,7 @@ export function useFacialExpressionAnalysis({
           title: message.title,
           description: message.description,
           duration: 5000,
-          position: "bottom-left"
+          position: "top-left"
         });
         lastWarningTimeRef.current = now;
         warningCountRef.current += 1;
@@ -194,7 +194,7 @@ export function useFacialExpressionAnalysis({
           description:
             "면접 중 자연스러운 미소는 좋은 인상을 줄 수 있어요. 가볍게 웃어보세요 😊",
           duration: 5000,
-          position: "bottom-left"
+          position: "top-left"
         });
         lastNeutralWarningTimeRef.current = now;
         consecutiveNeutralRef.current = 0;
