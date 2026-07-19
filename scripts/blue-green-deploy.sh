@@ -82,11 +82,9 @@ for i in $(seq 1 $MAX_RETRIES); do
   sleep $RETRY_INTERVAL
 done
 
-# 5. remap.config 생성 → 컨테이너에 직접 복사 (bind mount inode 문제 우회)
+# 5. remap.config 생성 → 호스트 파일 직접 덮어쓰기 (bind mount로 컨테이너 내부 자동 반영)
 echo "[INFO] ATS remap.config 업데이트 -> $NEW_CONTAINER"
-sed "s/CLIENT_BACKEND/$NEW_CONTAINER/g" "$REMAP_TMPL" > /tmp/remap.config
-docker cp /tmp/remap.config kokomen-ats:/opt/etc/trafficserver/remap.config
-rm -f /tmp/remap.config
+sed "s/CLIENT_BACKEND/$NEW_CONTAINER/g" "$REMAP_TMPL" > "$REMAP_CONFIG"
 
 # 6. ATS 설정 리로드 (무중단)
 echo "[INFO] ATS 설정 리로드..."
