@@ -11,6 +11,59 @@ import { server } from "@/mocks";
 import { delay, http, HttpResponse } from "msw";
 import { mockReplace } from "jest.setup";
 
+/**
+ * 입장 연출(노크 -> 문 열림 -> 착석)은 3D Canvas 안의 KnockButton과 오디오 재생에
+ * 의존하므로 jsdom에서는 진행시킬 수 없다. 페이즈 훅만 모킹해 원하는 상태로 렌더한다.
+ *   mockInterviewPhase = "WAITING"   -> 면접 시작 전
+ *   mockInterviewPhase = "INTERVIEW" -> 입장 연출을 끝낸 면접 중 상태
+ * (jest.mock 팩토리는 호이스팅되므로 이름이 "mock"으로 시작해야 참조할 수 있다)
+ */
+let mockInterviewPhase: "WAITING" | "INTERVIEW" = "INTERVIEW";
+
+/**
+ * useAudio는 jsdom에 없는 오디오 재생에 의존한다. 실제 훅을 쓰면 입장 완료 시점에
+ * playAudio()가 "Audio element not available"로 reject되어(async 함수) 처리되지 않은
+ * 프로미스 거부로 테스트가 실패한다. 오디오는 테스트 대상이 아니므로 대체한다.
+ */
+jest.mock("@kokomen/utils", () => {
+  const actual = jest.requireActual("@kokomen/utils");
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const react = require("react");
+  return {
+    ...actual,
+    useAudio: () => ({
+      playAudio: jest.fn().mockResolvedValue(undefined),
+      stopAudio: jest.fn(),
+      resetAudio: jest.fn(),
+      audioRef: react.createRef(),
+      playFinished: true,
+      loadingRef: { current: false },
+      readyRef: { current: true }
+    })
+  };
+});
+
+jest.mock("@kokomen/ui/domains", () => {
+  const actual = jest.requireActual("@kokomen/ui/domains");
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const react = require("react");
+  return {
+    ...actual,
+    useInterviewPhase: ({
+      onEntranceComplete
+    }: { onEntranceComplete?: () => void } = {}) => {
+      react.useEffect(() => {
+        if (mockInterviewPhase === "INTERVIEW") onEntranceComplete?.();
+      }, [onEntranceComplete]);
+      return {
+        phase: mockInterviewPhase,
+        startKnocking: jest.fn(),
+        startDoorOpening: jest.fn()
+      };
+    }
+  };
+});
+
 // navigator.mediaDevices 모킹
 Object.defineProperty(navigator, "mediaDevices", {
   value: {
@@ -209,6 +262,8 @@ describe("면접 페이지 컴포넌트 렌더링 테스트", () => {
 
 describe("면접 페이지 테스트", () => {
   beforeEach(() => {
+    // 기본값: 입장 연출을 끝낸 면접 중 상태
+    mockInterviewPhase = "INTERVIEW";
     window.ResizeObserver = ResizeObserver;
     // SpeechRecognition 모킹
     const { MockSpeechRecognition } = createMockSpeechRecognition();
@@ -222,8 +277,9 @@ describe("면접 페이지 테스트", () => {
     });
   });
 
-  describe("면접 시작 모달 테스트", () => {
-    it("면접 페이지 로드 시 시작 모달이 표시되는지 확인", async () => {
+  describe("면접 시작 전 상태 테스트", () => {
+    it("면접 시작 전에는 입장 안내 문구가 표시되는지 확인", async () => {
+      mockInterviewPhase = "WAITING";
       server.use(
         http.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
@@ -240,11 +296,11 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(
-          screen.getByRole("button", { name: "면접 시작하기" })
+          screen.getByText(/꼬꼬면 면접에 오신걸 환영합니다/)
         ).toBeInTheDocument();
       });
     });
@@ -268,16 +324,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: "면접 시작하기" })
-        ).toBeInTheDocument();
-      });
-
-      const startButton = screen.getByRole("button", { name: "면접 시작하기" });
-      fireEvent.click(startButton);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(screen.getByText("현재 새로운 질문")).toBeInTheDocument();
@@ -303,16 +350,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="VOICE"/>);
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: "면접 시작하기" })
-        ).toBeInTheDocument();
-      });
-
-      const startButton = screen.getByRole("button", { name: "면접 시작하기" });
-      fireEvent.click(startButton);
+      renderWithProviders(<InterviewPage interviewId={1} mode="VOICE" />);
 
       expect(screen.queryByText("음성으로 말하기")).not.toBeInTheDocument();
     });
@@ -339,7 +377,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
@@ -376,7 +414,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
@@ -408,7 +446,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(screen.getByText("면접이 종료되었습니다.")).toBeInTheDocument();
@@ -441,7 +479,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(screen.getByText("면접을 불러올 수 없어요")).toBeInTheDocument();
@@ -451,6 +489,7 @@ describe("면접 페이지 테스트", () => {
 
   describe("UI 상태 테스트", () => {
     it("면접 시작 전 음성 인식 버튼이 비활성화되는지 확인", async () => {
+      mockInterviewPhase = "WAITING";
       server.use(
         http.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/interviews/1/check`,
@@ -467,15 +506,9 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: "면접 시작하기" })
-        ).toBeInTheDocument();
-      });
-
-      const voiceButton = screen.getByRole("button", {
+      const voiceButton = await screen.findByRole("button", {
         name: "interview-voice-start"
       });
       expect(voiceButton).toBeDisabled();
@@ -517,16 +550,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: "면접 시작하기" })
-        ).toBeInTheDocument();
-      });
-
-      const startButton = screen.getByRole("button", { name: "면접 시작하기" });
-      fireEvent.click(startButton);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(screen.getByText("현재 새로운 질문")).toBeInTheDocument();
@@ -565,16 +589,7 @@ describe("면접 페이지 테스트", () => {
         )
       );
 
-      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT"/>);
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: "면접 시작하기" })
-        ).toBeInTheDocument();
-      });
-
-      const startButton = screen.getByRole("button", { name: "면접 시작하기" });
-      fireEvent.click(startButton);
+      renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
         expect(screen.getByText("1 / 3")).toBeInTheDocument();
