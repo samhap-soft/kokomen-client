@@ -196,7 +196,8 @@ sleep "$TRAEFIK_RELOAD_WAIT"
 echo "[INFO] 전환 검증..."
 SMOKE_OK=false
 for i in $(seq 1 10); do
-  if curl -skf -o /dev/null -H "Host: dev.kokomen.kr" https://localhost/ 2>/dev/null; then
+  # localhost는 ::1로 먼저 해석될 수 있고 Docker 퍼블리시는 기본 IPv4라 127.0.0.1을 명시한다
+  if curl -skf -o /dev/null --max-time 5 -H "Host: dev.kokomen.kr" https://127.0.0.1/ 2>/dev/null; then
     SMOKE_OK=true
     echo "[OK] dev.kokomen.kr 응답 정상 (${i}/10)"
     break

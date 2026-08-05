@@ -185,28 +185,51 @@ fi
 echo "[8/8] 라우팅 검증..."
 FAILED=""
 
+# curl의 http_code만 얻는다. 127.0.0.1을 명시하는 이유:
+#   "localhost"는 ::1로 먼저 해석될 수 있고, Docker의 포트 퍼블리시는
+#   기본적으로 IPv4(0.0.0.0)만 잡아서 연결 실패(000)로 보일 수 있다.
+# 실패해도 curl이 이미 "000"을 출력하므로 `|| echo`로 덧붙이면 안 된다(000000이 된다).
+http_code() {
+  local host="$1" url="$2"
+  curl -sk -o /dev/null -w '%{http_code}' --max-time 5 \
+    -H "Host: ${host}" "$url" 2>/dev/null || true
+}
+
+# Traefik이 리스너를 열고 동적 설정을 읽을 시간을 준다.
+# 000(연결 실패)은 아직 준비 안 된 상태일 수 있어 재시도한다.
 check() {
   local label="$1" host="$2" expect="$3" url="$4"
-  local code
-  code="$(curl -sk -o /dev/null -w '%{http_code}' -H "Host: ${host}" "$url" 2>/dev/null || echo "000")"
+  local code=""
+  for _ in $(seq 1 10); do
+    code="$(http_code "$host" "$url")"
+    [ "$code" = "$expect" ] && break
+    sleep 2
+  done
   if [ "$code" = "$expect" ]; then
     echo "  [OK]   ${label}: ${code}"
   else
-    echo "  [FAIL] ${label}: ${code} (기대값 ${expect})"
+    if [ "$code" = "000" ] || [ -z "$code" ]; then
+      echo "  [FAIL] ${label}: 연결 실패 (HTTP 응답 없음, 기대값 ${expect})"
+    else
+      echo "  [FAIL] ${label}: ${code} (기대값 ${expect})"
+    fi
     FAILED="yes"
   fi
 }
 
 # 프론트엔드 / API는 200, HTTP는 301 리다이렉트
-check "dev.kokomen.kr (HTTPS)"     "dev.kokomen.kr"     "200" "https://localhost/"
-check "api-dev HTTPS 도달"          "api-dev.kokomen.kr" "200" "https://localhost/api/v1/members/ranking"
-check "dev.kokomen.kr HTTP 리다이렉트" "dev.kokomen.kr"     "301" "http://localhost/"
+check "dev.kokomen.kr (HTTPS)"     "dev.kokomen.kr"     "200" "https://127.0.0.1/"
+check "api-dev HTTPS 도달"          "api-dev.kokomen.kr" "200" "https://127.0.0.1/api/v1/members/ranking"
+check "dev.kokomen.kr HTTP 리다이렉트" "dev.kokomen.kr"     "301" "http://127.0.0.1/"
 
-# ACME 챌린지 경로는 리다이렉트되지 않아야 한다(404여도 통과 — 파일이 없을 뿐)
-ACME_CODE="$(curl -s -o /dev/null -w '%{http_code}' -H "Host: dev.kokomen.kr" \
-  "http://localhost/.well-known/acme-challenge/migration-probe" 2>/dev/null || echo "000")"
+# ACME 챌린지 경로는 HTTPS로 리다이렉트되지 않아야 한다.
+# 파일이 없어 404가 나는 건 정상이지만, 응답 자체가 없으면(000) 확인이 안 된 것이므로 실패로 본다.
+ACME_CODE="$(http_code "dev.kokomen.kr" "http://127.0.0.1/.well-known/acme-challenge/migration-probe")"
 if [ "$ACME_CODE" = "301" ] || [ "$ACME_CODE" = "308" ]; then
   echo "  [FAIL] ACME 챌린지가 HTTPS로 리다이렉트됩니다 (${ACME_CODE}). 인증서 갱신이 깨집니다."
+  FAILED="yes"
+elif [ "$ACME_CODE" = "000" ] || [ -z "$ACME_CODE" ]; then
+  echo "  [FAIL] ACME 챌린지 경로 확인 실패 (응답 없음)"
   FAILED="yes"
 else
   echo "  [OK]   ACME 챌린지 경로 리다이렉트 안 됨: ${ACME_CODE}"
@@ -214,11 +237,24 @@ fi
 
 if [ -n "$FAILED" ]; then
   echo ""
+  echo "===== 진단 정보 ====="
+  echo "--- traefik 컨테이너 상태 ---"
+  docker ps -a --filter "name=kokomen-traefik" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" || true
+  echo "--- 퍼블리시된 포트 ---"
+  docker port kokomen-traefik || true
+  echo "--- 호스트에서 80/443 리스닝 여부 ---"
+  (ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null) | grep -E ':(80|443)\s' || echo "(80/443 리스너 없음)"
+  echo "--- traefik 로그 (마지막 60줄) ---"
+  docker logs --tail 60 kokomen-traefik 2>&1 || true
+  echo "--- HTTP 요청 상세 ---"
+  curl -sv --max-time 5 -o /dev/null -H "Host: dev.kokomen.kr" http://127.0.0.1/ 2>&1 | tail -15 || true
+  echo "====================="
+  echo ""
   echo "[ERROR] 검증 실패 -> nginx로 롤백합니다."
   docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" stop traefik || true
   docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" rm -f traefik || true
   docker start kokomen-nginx || true
-  echo "[ROLLBACK] nginx 복구 완료. Traefik 로그를 확인하세요."
+  echo "[ROLLBACK] nginx 복구 완료. 위 진단 정보를 확인하세요."
   exit 1
 fi
 
