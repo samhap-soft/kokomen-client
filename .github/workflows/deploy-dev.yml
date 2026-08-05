@@ -87,6 +87,9 @@ jobs:
           echo "NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api-dev.kokomen.kr/api/v1" >> .env
           echo "NEXT_PUBLIC_V3_API_BASE_URL=https://api-dev.kokomen.kr/api/v3" >> .env
           echo "NEXT_PUBLIC_GRAPHQL_URL=https://api-dev.kokomen.kr/api/v3/graphql" >> .env
+          # compose가 이미지 이름을 보간할 때 쓴다. 호스트에서 스크립트를 수동 실행할 때도
+          # 필요하므로 셸 환경뿐 아니라 .env에도 넣어둔다.
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
 
           # Security: Restrict .env permissions (readable only by owner)
           chmod 600 .env

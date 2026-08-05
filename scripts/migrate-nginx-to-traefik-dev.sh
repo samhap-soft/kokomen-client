@@ -18,9 +18,28 @@ REPO_CONFIG_DIR="./traefik/dev"
 LIVE_CONFIG_DIR="${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/dev}"
 LIVE_DYNAMIC_DIR="${LIVE_CONFIG_DIR}/dynamic"
 
+# compose가 이미지 이름을 보간할 때 쓰는 값.
+# CI에서는 워크플로우가 셸 환경으로 주입하지만 수동 실행 시에는 비어 있어서,
+# 이미지가 "/kokomen-client:development"가 되고 invalid reference format으로 죽는다.
+# ENV_FILE에 값이 있으면 그걸 쓰고, 없으면 여기서 멈춘다.
+if [ -z "${DOCKER_USERNAME:-}" ] && [ -f "$ENV_FILE" ]; then
+  DOCKER_USERNAME="$(sed -n 's/^DOCKER_USERNAME=//p' "$ENV_FILE" | tail -1 | tr -d '"'"'"'')"
+  export DOCKER_USERNAME
+fi
+if [ -z "${DOCKER_USERNAME:-}" ]; then
+  echo "[ERROR] DOCKER_USERNAME이 설정되지 않았습니다."
+  echo "        이 값이 없으면 이미지 이름이 '/kokomen-client:development'가 되어 실패합니다."
+  echo ""
+  echo "        해결 방법 중 하나:"
+  echo "          DOCKER_USERNAME=<도커허브계정> $0 $ENV_FILE"
+  echo "          또는 $ENV_FILE 에 DOCKER_USERNAME=<도커허브계정> 추가"
+  exit 1
+fi
+
 echo "========================================="
 echo " Nginx -> Traefik 마이그레이션: Dev"
 echo "========================================="
+echo "[INFO] DOCKER_USERNAME=$DOCKER_USERNAME"
 
 # ---------------------------------------------------------------------------
 # 1. 사전 점검

@@ -26,6 +26,20 @@ REPO_ROUTE_FILE="${REPO_CONFIG_DIR}/dynamic/client.yaml"
 # Traefik이 파일 변경을 감지하고 반영할 여유
 TRAEFIK_RELOAD_WAIT=3
 
+# compose가 이미지 이름을 보간할 때 쓰는 값.
+# CI에서는 워크플로우가 셸 환경으로 주입하지만 수동 실행 시에는 비어 있어서,
+# 이미지가 "/kokomen-client:development"가 되고 invalid reference format으로 죽는다.
+if [ -z "${DOCKER_USERNAME:-}" ] && [ -f "$ENV_FILE" ]; then
+  DOCKER_USERNAME="$(sed -n 's/^DOCKER_USERNAME=//p' "$ENV_FILE" | tail -1 | tr -d '"'"'"'')"
+  export DOCKER_USERNAME
+fi
+if [ -z "${DOCKER_USERNAME:-}" ]; then
+  echo "[ERROR] DOCKER_USERNAME이 설정되지 않았습니다."
+  echo "        DOCKER_USERNAME=<도커허브계정> $0 $ENV_FILE 형태로 실행하거나"
+  echo "        $ENV_FILE 에 DOCKER_USERNAME=<도커허브계정> 을 추가하세요."
+  exit 1
+fi
+
 echo "========================================="
 echo " Blue-Green Deploy: Dev (Traefik)"
 echo "========================================="
