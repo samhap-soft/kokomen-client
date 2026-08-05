@@ -54,6 +54,21 @@ if [ ! -d "$LIVE_DYNAMIC_DIR" ]; then
   exit 1
 fi
 
+# 쓰기 권한을 컨테이너를 건드리기 전에 확인한다.
+# 마이그레이션을 sudo로 돌리면 이 경로가 root 소유가 되어, 배포 유저가
+# 트래픽 전환 시점에야 Permission denied로 실패한다(컨테이너는 이미 떠 있는 상태).
+if [ ! -w "$LIVE_DYNAMIC_DIR" ] || [ ! -w "$LIVE_CONFIG_DIR" ]; then
+  echo "[ERROR] 라이브 설정 경로에 쓸 수 없습니다: $LIVE_CONFIG_DIR"
+  DIR_OWNER="$(stat -c '%U:%G' "$LIVE_CONFIG_DIR" 2>/dev/null \
+    || stat -f '%Su:%Sg' "$LIVE_CONFIG_DIR" 2>/dev/null \
+    || ls -ld "$LIVE_CONFIG_DIR" 2>/dev/null | awk '{print $3":"$4}')"
+  echo "        현재 유저: $(id -un) / 디렉토리 소유자: ${DIR_OWNER:-확인 불가}"
+  echo ""
+  echo "        호스트에서 한 번 실행해 소유권을 배포 유저로 넘기세요:"
+  echo "          sudo chown -R $(id -un):$(id -gn) $LIVE_CONFIG_DIR"
+  exit 1
+fi
+
 # 정적 설정: 변경되면 Traefik 재시작이 필요하다
 NEEDS_TRAEFIK_RESTART=false
 if ! cmp -s "${REPO_CONFIG_DIR}/traefik.yaml" "${LIVE_CONFIG_DIR}/traefik.yaml"; then
@@ -179,18 +194,21 @@ done
 # 4. 트래픽 전환 — 리포의 client.yaml을 새 색상으로 렌더해서 원자적으로 교체
 #    (리포 쪽 라우터/미들웨어 변경도 같이 반영된다)
 #    in-place 편집(sed -i)을 쓰면 Traefik이 반쯤 쓰인 파일을 읽을 수 있으므로
-#    반드시 temp 파일 -> 같은 디렉토리 내 rename 순서로 한다.
+#    반드시 temp 파일 -> rename 순서로 한다.
+#    temp/backup은 Traefik이 감시하는 dynamic/ 밖에 둔다(같은 파일시스템이므로
+#    rename은 그대로 원자적이고, Traefik이 중간 파일을 볼 일이 없다).
 # ---------------------------------------------------------------------------
 echo "[INFO] 트래픽 전환: $ACTIVE_SERVICE -> $NEW_SERVICE"
-cp "$LIVE_ROUTE_FILE" "${LIVE_DYNAMIC_DIR}/.client.yaml.bak"
-TMP_FILE="${LIVE_DYNAMIC_DIR}/.client.yaml.tmp"
+BAK_FILE="${LIVE_CONFIG_DIR}/.client.yaml.bak"
+TMP_FILE="${LIVE_CONFIG_DIR}/.client.yaml.tmp"
+cp "$LIVE_ROUTE_FILE" "$BAK_FILE"
 # 구분자로 |를 쓰면 정규식의 (blue|green) 때문에 패턴이 조기 종료된다. /를 쓴다.
 sed -E "s/^([[:space:]]*)service:[[:space:]]*client-(blue|green)[[:space:]]*$/\1service: ${NEW_SERVICE}/" \
   "$REPO_ROUTE_FILE" > "$TMP_FILE"
 
 if ! grep -qE "^[[:space:]]+service:[[:space:]]*${NEW_SERVICE}[[:space:]]*$" "$TMP_FILE"; then
   echo "[ERROR] 라우팅 파일 렌더 실패. 전환하지 않습니다."
-  rm -f "$TMP_FILE" "${LIVE_DYNAMIC_DIR}/.client.yaml.bak"
+  rm -f "$TMP_FILE" "$BAK_FILE"
   exit 1
 fi
 
@@ -222,7 +240,7 @@ if [ "$SMOKE_OK" = false ]; then
   echo "[ERROR] 전환 후 응답 검증 실패."
   if [ "$IS_FIRST_DEPLOY" = false ]; then
     echo "[ROLLBACK] 라우팅을 $ACTIVE_SERVICE 로 되돌립니다."
-    mv "${LIVE_DYNAMIC_DIR}/.client.yaml.bak" "$LIVE_ROUTE_FILE"
+    mv "$BAK_FILE" "$LIVE_ROUTE_FILE"
     sleep "$TRAEFIK_RELOAD_WAIT"
     echo "[ROLLBACK] 트래픽이 $CURRENT_COLOR 로 복구되었습니다. 새 컨테이너는 조사용으로 남겨둡니다."
   fi
@@ -230,7 +248,7 @@ if [ "$SMOKE_OK" = false ]; then
   exit 1
 fi
 
-rm -f "${LIVE_DYNAMIC_DIR}/.client.yaml.bak"
+rm -f "$BAK_FILE"
 
 # ---------------------------------------------------------------------------
 # 6. 이전 색상 정리

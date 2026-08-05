@@ -88,6 +88,17 @@ if [ ! -f "${LIVE_CONFIG_DIR}/traefik.yaml" ]; then
   echo "[ERROR] 정적 설정 파일 생성 실패: ${LIVE_CONFIG_DIR}/traefik.yaml"
   exit 1
 fi
+
+# 이 스크립트는 보통 sudo로 실행되지만, 이후 배포는 CI 러너 유저로 돌아간다.
+# 소유권을 넘겨두지 않으면 다음 배포가 트래픽 전환 시점에 Permission denied로 실패한다.
+# sudo로 실행됐으면 원래 유저(SUDO_USER)에게, 아니면 현재 유저에게 준다.
+CONFIG_OWNER="${TRAEFIK_CONFIG_OWNER:-${SUDO_USER:-$(id -un)}}"
+if chown -R "$CONFIG_OWNER" "$LIVE_CONFIG_DIR" 2>/dev/null; then
+  echo "[OK] 설정 디렉토리 소유권: $CONFIG_OWNER"
+else
+  echo "[WARN] 소유권 변경 실패. 배포 유저가 쓸 수 없으면 다음을 실행하세요:"
+  echo "         sudo chown -R <배포유저> $LIVE_CONFIG_DIR"
+fi
 echo "[OK] 설정 복사 완료 (활성 색상: blue)"
 
 # ---------------------------------------------------------------------------
