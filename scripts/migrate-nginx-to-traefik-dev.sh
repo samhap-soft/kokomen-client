@@ -1,0 +1,223 @@
+#!/bin/bash
+set -euo pipefail
+
+# Nginx -> Traefik 최초 마이그레이션 스크립트 (Dev, 1회성)
+# 사용법: ./scripts/migrate-nginx-to-traefik-dev.sh [.env]
+#
+# nginx와 Traefik은 둘 다 80/443을 쓰므로 동시에 띄울 수 없다.
+# 따라서 이 스크립트에는 nginx 정지 ~ Traefik 기동 사이 수초의 다운타임이 있다.
+# (dev라 감수하고, prod는 이 스크립트로 검증한 뒤 별도로 진행한다)
+#
+# 실패하면 Traefik을 내리고 nginx를 다시 올려 원복한다.
+
+ENV_FILE="${1:-.env}"
+COMPOSE_FILE="./docker/client/compose.dev.yaml"
+NGINX_COMPOSE_BACKUP="/opt/kokomen/rollback/compose.dev.nginx.yaml"
+
+REPO_CONFIG_DIR="./traefik/dev"
+LIVE_CONFIG_DIR="${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/dev}"
+LIVE_DYNAMIC_DIR="${LIVE_CONFIG_DIR}/dynamic"
+
+echo "========================================="
+echo " Nginx -> Traefik 마이그레이션: Dev"
+echo "========================================="
+
+# ---------------------------------------------------------------------------
+# 1. 사전 점검
+# ---------------------------------------------------------------------------
+echo "[1/8] 사전 점검..."
+
+for domain in dev.kokomen.kr api-dev.kokomen.kr; do
+  for f in fullchain.pem privkey.pem; do
+    if [ ! -f "/etc/letsencrypt/live/${domain}/${f}" ]; then
+      echo "[ERROR] 인증서 없음: /etc/letsencrypt/live/${domain}/${f}"
+      exit 1
+    fi
+  done
+done
+echo "[OK] 인증서 확인"
+
+if [ ! -d /var/www/certbot ]; then
+  echo "[ERROR] certbot webroot 없음: /var/www/certbot"
+  exit 1
+fi
+echo "[OK] certbot webroot 확인"
+
+if ! docker network inspect dev-kokomen-net >/dev/null 2>&1; then
+  echo "[ERROR] docker network 없음: dev-kokomen-net"
+  exit 1
+fi
+echo "[OK] docker network 확인"
+
+# ---------------------------------------------------------------------------
+# 2. 라이브 설정 디렉토리 생성 (리포 밖 — checkout이 건드리지 못하는 곳)
+# ---------------------------------------------------------------------------
+echo "[2/8] 라이브 설정 디렉토리 준비: $LIVE_CONFIG_DIR"
+mkdir -p "$LIVE_DYNAMIC_DIR"
+cp "${REPO_CONFIG_DIR}/traefik.yaml" "${LIVE_CONFIG_DIR}/traefik.yaml"
+cp "${REPO_CONFIG_DIR}"/dynamic/*.yaml "$LIVE_DYNAMIC_DIR/"
+echo "[OK] 설정 복사 완료 (활성 색상: blue)"
+
+# ---------------------------------------------------------------------------
+# 3. 롤백용 nginx compose 백업
+# ---------------------------------------------------------------------------
+echo "[3/8] 롤백용 nginx compose 백업..."
+mkdir -p "$(dirname "$NGINX_COMPOSE_BACKUP")"
+if [ ! -f "$NGINX_COMPOSE_BACKUP" ]; then
+  cat > "$NGINX_COMPOSE_BACKUP" <<'EOF'
+# 롤백 전용: Traefik 도입 이전의 dev 구성
+# 사용법: docker compose --env-file .env -f /opt/kokomen/rollback/compose.dev.nginx.yaml up -d
+services:
+  client:
+    image: ${DOCKER_USERNAME}/kokomen-client:development
+    container_name: kokomen-client
+    expose:
+      - "3000"
+    restart: always
+    networks:
+      - dev-kokomen-net
+
+  nginx:
+    image: nginx:latest
+    container_name: kokomen-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /opt/kokomen/rollback/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot
+    depends_on:
+      - client
+    restart: always
+    networks:
+      - dev-kokomen-net
+
+networks:
+  dev-kokomen-net:
+    external: true
+    driver: bridge
+EOF
+fi
+cp ./nginx/nginx.dev.conf /opt/kokomen/rollback/nginx.dev.conf
+echo "[OK] 롤백 자료 준비: $NGINX_COMPOSE_BACKUP"
+
+# ---------------------------------------------------------------------------
+# 4. client-blue 먼저 기동 (포트를 쓰지 않으므로 nginx와 공존 가능)
+# ---------------------------------------------------------------------------
+echo "[4/8] client-blue 기동..."
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile blue up -d client-blue
+
+echo "[5/8] client-blue 헬스체크 대기..."
+for i in $(seq 1 30); do
+  if docker exec kokomen-client-blue wget -q --spider http://localhost:3000/ 2>/dev/null; then
+    echo "[OK] client-blue 준비 완료 (${i}/30)"
+    break
+  fi
+  if [ "$i" -eq 30 ]; then
+    echo "[ERROR] client-blue 헬스체크 실패. 기존 nginx는 그대로 유지됩니다."
+    docker logs --tail 50 kokomen-client-blue || true
+    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile blue stop client-blue || true
+    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile blue rm -f client-blue || true
+    exit 1
+  fi
+  sleep 2
+done
+
+# certbot webroot도 미리 띄워둔다 (포트 미사용)
+echo "[INFO] certbot-webroot 기동..."
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d certbot-webroot
+
+# ---------------------------------------------------------------------------
+# 5. 여기서부터 다운타임: nginx 정지 -> Traefik 기동
+# ---------------------------------------------------------------------------
+echo "[6/8] nginx 정지 (다운타임 시작)..."
+docker stop kokomen-nginx || true
+
+echo "[7/8] Traefik 기동..."
+if ! docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d traefik; then
+  echo "[ERROR] Traefik 기동 실패 -> nginx 복구"
+  docker start kokomen-nginx || true
+  exit 1
+fi
+
+TRAEFIK_OK=false
+for i in $(seq 1 20); do
+  if docker exec kokomen-traefik traefik healthcheck --ping >/dev/null 2>&1; then
+    TRAEFIK_OK=true
+    echo "[OK] Traefik 기동 완료 (${i}/20)"
+    break
+  fi
+  sleep 2
+done
+
+if [ "$TRAEFIK_OK" = false ]; then
+  echo "[ERROR] Traefik 헬스체크 실패 -> nginx 복구"
+  docker logs --tail 80 kokomen-traefik || true
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" stop traefik || true
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" rm -f traefik || true
+  docker start kokomen-nginx || true
+  exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 6. 검증
+# ---------------------------------------------------------------------------
+echo "[8/8] 라우팅 검증..."
+FAILED=""
+
+check() {
+  local label="$1" host="$2" expect="$3" url="$4"
+  local code
+  code="$(curl -sk -o /dev/null -w '%{http_code}' -H "Host: ${host}" "$url" 2>/dev/null || echo "000")"
+  if [ "$code" = "$expect" ]; then
+    echo "  [OK]   ${label}: ${code}"
+  else
+    echo "  [FAIL] ${label}: ${code} (기대값 ${expect})"
+    FAILED="yes"
+  fi
+}
+
+# 프론트엔드 / API는 200, HTTP는 301 리다이렉트
+check "dev.kokomen.kr (HTTPS)"     "dev.kokomen.kr"     "200" "https://localhost/"
+check "api-dev HTTPS 도달"          "api-dev.kokomen.kr" "200" "https://localhost/api/v1/members/ranking"
+check "dev.kokomen.kr HTTP 리다이렉트" "dev.kokomen.kr"     "301" "http://localhost/"
+
+# ACME 챌린지 경로는 리다이렉트되지 않아야 한다(404여도 통과 — 파일이 없을 뿐)
+ACME_CODE="$(curl -s -o /dev/null -w '%{http_code}' -H "Host: dev.kokomen.kr" \
+  "http://localhost/.well-known/acme-challenge/migration-probe" 2>/dev/null || echo "000")"
+if [ "$ACME_CODE" = "301" ] || [ "$ACME_CODE" = "308" ]; then
+  echo "  [FAIL] ACME 챌린지가 HTTPS로 리다이렉트됩니다 (${ACME_CODE}). 인증서 갱신이 깨집니다."
+  FAILED="yes"
+else
+  echo "  [OK]   ACME 챌린지 경로 리다이렉트 안 됨: ${ACME_CODE}"
+fi
+
+if [ -n "$FAILED" ]; then
+  echo ""
+  echo "[ERROR] 검증 실패 -> nginx로 롤백합니다."
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" stop traefik || true
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" rm -f traefik || true
+  docker start kokomen-nginx || true
+  echo "[ROLLBACK] nginx 복구 완료. Traefik 로그를 확인하세요."
+  exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 7. 마무리
+# ---------------------------------------------------------------------------
+echo ""
+echo "[INFO] 검증 통과. 기존 nginx 컨테이너를 제거합니다."
+docker rm -f kokomen-nginx || true
+# 이전 단일 client 컨테이너도 정리 (blue로 대체됨)
+docker rm -f kokomen-client 2>/dev/null || true
+
+echo ""
+echo "========================================="
+echo " 마이그레이션 완료 (활성: blue)"
+echo "========================================="
+docker ps --filter "name=kokomen-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+echo ""
+echo "롤백이 필요하면:"
+echo "  docker compose -f $COMPOSE_FILE stop traefik"
+echo "  docker compose --env-file $ENV_FILE -f $NGINX_COMPOSE_BACKUP up -d"
