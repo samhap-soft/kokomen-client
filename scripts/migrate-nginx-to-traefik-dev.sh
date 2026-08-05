@@ -72,9 +72,22 @@ echo "[OK] docker network 확인"
 # 2. 라이브 설정 디렉토리 생성 (리포 밖 — checkout이 건드리지 못하는 곳)
 # ---------------------------------------------------------------------------
 echo "[2/8] 라이브 설정 디렉토리 준비: $LIVE_CONFIG_DIR"
+# Docker는 bind mount 소스가 없으면 그 경로에 "디렉토리"를 만들어 버린다.
+# traefik.yaml 자리에 디렉토리가 생기면 Traefik이 정적 설정을 읽지 못하고
+# 기본값으로 뜬다(= file provider 미기동, 라우팅 전무). 이전 실행에서 그렇게
+# 만들어진 잔재가 있으면 여기서 치운다.
+if [ -d "${LIVE_CONFIG_DIR}/traefik.yaml" ]; then
+  echo "[WARN] ${LIVE_CONFIG_DIR}/traefik.yaml 가 디렉토리입니다(Docker가 자동 생성). 제거합니다."
+  rmdir "${LIVE_CONFIG_DIR}/traefik.yaml" 2>/dev/null || rm -rf "${LIVE_CONFIG_DIR}/traefik.yaml"
+fi
 mkdir -p "$LIVE_DYNAMIC_DIR"
 cp "${REPO_CONFIG_DIR}/traefik.yaml" "${LIVE_CONFIG_DIR}/traefik.yaml"
 cp "${REPO_CONFIG_DIR}"/dynamic/*.yaml "$LIVE_DYNAMIC_DIR/"
+
+if [ ! -f "${LIVE_CONFIG_DIR}/traefik.yaml" ]; then
+  echo "[ERROR] 정적 설정 파일 생성 실패: ${LIVE_CONFIG_DIR}/traefik.yaml"
+  exit 1
+fi
 echo "[OK] 설정 복사 완료 (활성 색상: blue)"
 
 # ---------------------------------------------------------------------------
@@ -148,17 +161,80 @@ echo "[INFO] certbot-webroot 기동..."
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d certbot-webroot
 
 # ---------------------------------------------------------------------------
+# 4.5 사전 검증 (다운타임 없음)
+#     nginx가 80/443을 쥐고 있는 동안, 같은 설정으로 대체 포트에 Traefik을 띄워
+#     설정과 라우팅이 실제로 동작하는지 먼저 확인한다.
+#     이걸 통과하지 못하면 다운타임을 아예 감수하지 않는다.
+# ---------------------------------------------------------------------------
+echo "[INFO] 사전 검증: 대체 포트(18081/18443)로 설정 확인 (다운타임 없음)..."
+PROBE_NAME="kokomen-traefik-probe"
+docker rm -f "$PROBE_NAME" >/dev/null 2>&1 || true
+if ! docker run -d --name "$PROBE_NAME" \
+  --network dev-kokomen-net \
+  -p 127.0.0.1:18081:80 -p 127.0.0.1:18443:443 \
+  -v "${LIVE_CONFIG_DIR}/traefik.yaml:/etc/traefik/traefik.yaml:ro" \
+  -v "${LIVE_DYNAMIC_DIR}:/etc/traefik/dynamic:ro" \
+  -v /etc/letsencrypt:/etc/letsencrypt:ro \
+  traefik:v3.3 >/dev/null; then
+  echo "[ERROR] 사전 검증용 컨테이너 기동 실패. nginx는 그대로 유지됩니다."
+  exit 1
+fi
+
+PROBE_OK=false
+for i in $(seq 1 15); do
+  PROBE_CODE="$(curl -sk -o /dev/null -w '%{http_code}' --max-time 5 \
+    -H "Host: dev.kokomen.kr" "https://127.0.0.1:18443/" 2>/dev/null || true)"
+  if [ "$PROBE_CODE" = "200" ]; then
+    PROBE_OK=true
+    echo "[OK] 사전 검증 통과: dev.kokomen.kr -> 200 (${i}/15)"
+    break
+  fi
+  sleep 2
+done
+
+if [ "$PROBE_OK" = false ]; then
+  echo "[ERROR] 사전 검증 실패 (마지막 응답: ${PROBE_CODE:-없음})."
+  echo "        Traefik 설정이나 백엔드 연결에 문제가 있습니다."
+  echo "        nginx는 그대로 살아 있으므로 서비스 영향은 없습니다."
+  echo ""
+  echo "--- file provider 기동 여부 (없으면 정적 설정을 못 읽은 것) ---"
+  docker logs "$PROBE_NAME" 2>&1 | grep -i "provider\|error\|entryPoint" | head -20 || true
+  echo "--- 전체 로그 (마지막 40줄) ---"
+  docker logs --tail 40 "$PROBE_NAME" 2>&1 || true
+  echo "--- 마운트 확인 (traefik.yaml이 파일로 잡혔는지) ---"
+  docker exec "$PROBE_NAME" sh -c 'ls -la /etc/traefik/traefik.yaml /etc/traefik/dynamic/ 2>&1' || true
+  docker rm -f "$PROBE_NAME" >/dev/null 2>&1 || true
+  exit 1
+fi
+docker rm -f "$PROBE_NAME" >/dev/null 2>&1 || true
+
+# ---------------------------------------------------------------------------
 # 5. 여기서부터 다운타임: nginx 정지 -> Traefik 기동
 # ---------------------------------------------------------------------------
 echo "[6/8] nginx 정지 (다운타임 시작)..."
 docker stop kokomen-nginx || true
 
 echo "[7/8] Traefik 기동..."
-if ! docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d traefik; then
+# --force-recreate: 이전 실행에서 남은 컨테이너를 재사용하면 그때의 정의(포트/마운트
+# 누락 등)를 그대로 물고 뜬다. 실제로 포트가 퍼블리시되지 않는 사고가 있었다.
+if ! docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --force-recreate traefik; then
   echo "[ERROR] Traefik 기동 실패 -> nginx 복구"
   docker start kokomen-nginx || true
   exit 1
 fi
+
+# 포트가 실제로 퍼블리시됐는지 확인한다. compose가 성공해도 재사용된 컨테이너면
+# 포트 바인딩이 없을 수 있고, 그러면 호스트에서 아무도 접속하지 못한다.
+if ! docker port kokomen-traefik 2>/dev/null | grep -q '^80/tcp'; then
+  echo "[ERROR] Traefik에 80 포트가 퍼블리시되지 않았습니다 -> nginx 복구"
+  echo "--- docker port 출력 ---"
+  docker port kokomen-traefik || echo "(없음)"
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" stop traefik || true
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" rm -f traefik || true
+  docker start kokomen-nginx || true
+  exit 1
+fi
+echo "[OK] 포트 퍼블리시 확인: $(docker port kokomen-traefik | tr '\n' ' ')"
 
 TRAEFIK_OK=false
 for i in $(seq 1 20); do

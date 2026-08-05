@@ -112,10 +112,22 @@ for svc in traefik certbot-webroot; do
   cname="kokomen-${svc}"
   if ! docker ps --format '{{.Names}}' | grep -qx "$cname"; then
     echo "[INFO] $cname 시작..."
-    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d "$svc"
+    # --force-recreate: 남아 있던 컨테이너를 재사용하면 그때의 정의(포트/마운트 누락)를
+    # 그대로 물고 떠서 호스트에서 접속이 안 되는 사고가 있었다.
+    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --force-recreate "$svc"
     NEEDS_TRAEFIK_RESTART=false
   fi
 done
+
+# Traefik이 80/443을 실제로 물고 있는지 확인 (compose 성공만으로는 보장되지 않는다)
+if ! docker port kokomen-traefik 2>/dev/null | grep -q '^80/tcp'; then
+  echo "[ERROR] Traefik에 80 포트가 퍼블리시되지 않았습니다. 배포를 중단합니다."
+  echo "--- docker port 출력 ---"
+  docker port kokomen-traefik || echo "(없음)"
+  echo "        다음으로 복구하세요:"
+  echo "          docker compose --env-file $ENV_FILE -f $COMPOSE_FILE up -d --force-recreate traefik"
+  exit 1
+fi
 
 if [ "$NEEDS_TRAEFIK_RESTART" = true ]; then
   echo "[INFO] Traefik 재시작 (정적 설정 변경 반영)..."
