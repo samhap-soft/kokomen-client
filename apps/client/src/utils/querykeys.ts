@@ -141,6 +141,19 @@ const resumeEvaluationKeys: QueryKeyFactory<ResumeEvaluationMethods> = {
     [...resumeEvaluationKeys.all, "history", page, size] as const
 };
 
+// 이력서 분석(평가 + 면접 질문 통합 API) 도메인
+type ResumeAnalysisMethods = {
+  history: (page?: number, size?: number) => QueryKey;
+  detail: (analysisId: number | string) => QueryKey;
+};
+const resumeAnalysisKeys: QueryKeyFactory<ResumeAnalysisMethods> = {
+  all: ["resumeAnalysis"] as const,
+  history: (page: number = 0, size: number = 20): QueryKey =>
+    [...resumeAnalysisKeys.all, "history", page, size] as const,
+  detail: (analysisId: number | string): QueryKey =>
+    [...resumeAnalysisKeys.all, "detail", analysisId] as const
+};
+
 // 관리자 결제 관련 도메인
 type AdminPaymentMethods = {
   list: (page?: number) => QueryKey;
@@ -171,6 +184,7 @@ export {
   recruitKeys,
   resumeBasedInterviewKeys,
   resumeEvaluationKeys,
+  resumeAnalysisKeys,
   adminQuestionKeys,
   adminPaymentKeys,
   type InterviewHistoryParams,

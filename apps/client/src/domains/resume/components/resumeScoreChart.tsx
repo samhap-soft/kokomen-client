@@ -71,12 +71,9 @@ export const ResumeScoreChart = ({
   categoryData
 }: {
   categoryData: {
-    key: string;
     label: string;
-    color: string;
     score: number;
     evaluation: string;
-    reason: string;
   }[];
 }) => {
   const chartData = {

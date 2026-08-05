@@ -1,30 +1,73 @@
-version: "3.8"
-
 services:
-  client:
+  # Blue-Green 두 색. 포트를 publish하지 않고 expose만 하므로
+  # 두 색이 동시에 떠 있어도 충돌하지 않는다.
+  # 트래픽을 받는 쪽은 컨테이너 존재 여부가 아니라
+  # traefik/dev/dynamic/client.yaml 의 "service:" 한 줄이 결정한다.
+  client-blue:
     image: ${DOCKER_USERNAME}/kokomen-client:development
-    container_name: kokomen-client
+    container_name: kokomen-client-blue
     expose:
       - "3000"
     restart: always
+    profiles:
+      - blue
     networks:
       - dev-kokomen-net
 
-  nginx:
-    image: nginx:latest
-    container_name: kokomen-nginx
+  client-green:
+    image: ${DOCKER_USERNAME}/kokomen-client:development
+    container_name: kokomen-client-green
+    expose:
+      - "3000"
+    restart: always
+    profiles:
+      - green
+    networks:
+      - dev-kokomen-net
+
+  traefik:
+    image: traefik:v3.3
+    container_name: kokomen-traefik
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ../../nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      # 리포 워킹트리가 아니라 호스트의 별도 경로를 마운트한다.
+      # actions/checkout이 매 배포마다 추적 파일을 되돌리는데, 워킹트리를 그대로
+      # 마운트하면 checkout 순간 라우팅 파일이 초기값(client-blue)으로 돌아가고
+      # Traefik이 그걸 감지해 죽은 색으로 트래픽을 보낸다.
+      # 배포 스크립트가 리포 -> 이 경로로 동기화한다.
+      - ${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/dev}/traefik.yaml:/etc/traefik/traefik.yaml:ro
+      # 파일이 아니라 디렉토리를 마운트한다.
+      # 배포 시 temp 파일 -> rename으로 교체하므로 inode가 바뀌는데,
+      # 파일 단위 마운트면 컨테이너가 변경을 보지 못한다.
+      - ${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/dev}/dynamic:/etc/traefik/dynamic:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /var/www/certbot:/var/www/certbot
-    depends_on:
-      - client
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
     restart: always
     networks:
       - dev-kokomen-net
+
+  # certbot HTTP-01 챌린지 파일 서빙 전용.
+  # Traefik에는 정적 파일 서버가 없어서 별도 컨테이너가 필요하다.
+  # nginx 기본 root가 /usr/share/nginx/html 이므로 여기에 certbot webroot를 붙이면
+  # /.well-known/acme-challenge/<token> 경로가 그대로 맞는다.
+  certbot-webroot:
+    image: nginx:alpine
+    container_name: kokomen-certbot-webroot
+    expose:
+      - "80"
+    volumes:
+      - /var/www/certbot:/usr/share/nginx/html:ro
+    restart: always
+    networks:
+      - dev-kokomen-net
+
 networks:
   dev-kokomen-net:
     external: true

@@ -249,7 +249,9 @@ export default function InterviewPage({
                   isLiveCoding={isLiveCoding}
                   onOpenLiveCoding={openLiveCoding}
                 />
-                <CameraPreview enabled={isInterviewStarted} />
+                {mode === "VOICE" && (
+                  <CameraPreview enabled={isInterviewStarted} />
+                )}
                 {isLiveCoding && isInterviewStarted && (
                   <Button
                     type="button"
@@ -280,6 +282,7 @@ export default function InterviewPage({
               totalQuestions={data.max_question_count}
               playAudio={playAudio}
               mode={mode}
+              isFinished={data.interview_state === "FINISHED"}
             />
           </div>
           <InterviewExitButton />
