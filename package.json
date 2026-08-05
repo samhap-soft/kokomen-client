@@ -8,9 +8,7 @@
   },
   "workspaces": [
     "packages/*",
-    "apps/client",
-    "apps/kokomen-webview",
-    "apps/kokomen-server"
+    "apps/client"
   ],
   "resolutions": {
     "brace-expansion": "^2.0.2"
@@ -29,28 +27,16 @@
     "client": "yarn workspace @kokomen/client",
     "client:dev": "yarn workspace @kokomen/client dev",
     "client:test": "yarn workspace @kokomen/client test",
-    "server:dev": "yarn workspace @kokomen/server dev",
-    "server:build": "yarn workspace @kokomen/server build",
-    "server:start": "yarn workspace @kokomen/server start",
-    "webview:dev": "yarn workspace @kokomen/webview dev",
-    "webview:build": "yarn workspace @kokomen/webview build",
-    "webview:test": "yarn workspace @kokomen/webview test",
     "ui:dev": "yarn workspace @kokomen/ui storybook",
-    "docker-dev-up": "docker-compose -f compose.dev.yaml up -d",
+    "docker-dev-up": "docker compose -f docker/client/compose.dev.yaml up -d",
     "client:prod": "yarn workspace @kokomen/client start",
-    "docker-prod-up": "docker-compose -f compose.yaml up -d",
-    "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/webview lint && yarn workspace @kokomen/ui lint",
+    "docker-prod-up": "docker compose -f docker/client/compose.yaml up -d",
+    "lint": "yarn workspace @kokomen/client lint && yarn workspace @kokomen/ui lint",
     "types:build": "yarn workspace @kokomen/types build",
-    "test": "yarn workspace @kokomen/client test && yarn workspace @kokomen/webview test && yarn workspace @kokomen/server test",
+    "test": "yarn workspace @kokomen/client test",
     "lhci": "yarn workspace @kokomen/client lhci",
     "build": "yarn workspace @kokomen/client build",
     "prepare": "husky",
     "commit": "./scripts/commit-msg-helper.js"
-  },
-  "dependencies": {
-    "@types/cookie-parser": "^1.4.9",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.2",
-    "cookie-parser": "^1.4.7"
   }
 }
