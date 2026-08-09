@@ -21,9 +21,10 @@ import { mockReplace } from "jest.setup";
 let mockInterviewPhase: "WAITING" | "INTERVIEW" = "INTERVIEW";
 
 /**
- * useAudio는 jsdom에 없는 오디오 재생에 의존한다. 실제 훅을 쓰면 입장 완료 시점에
- * playAudio()가 "Audio element not available"로 reject되어(async 함수) 처리되지 않은
- * 프로미스 거부로 테스트가 실패한다. 오디오는 테스트 대상이 아니므로 대체한다.
+ * useAudio는 jsdom에 없는 오디오 재생에 의존한다. 실제 훅을 쓰면 mp3를 실제로
+ * 요청해 msw의 unhandled request 경고가 잔뜩 찍히고 타이밍도 불안정해진다.
+ * 오디오 재생은 테스트 대상이 아니므로 대체한다.
+ * (재생 실패는 호출부에서 catch하므로 이 모킹 없이도 테스트는 통과한다)
  */
 jest.mock("@kokomen/utils", () => {
   const actual = jest.requireActual("@kokomen/utils");

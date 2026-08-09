@@ -78,23 +78,6 @@ type ResumeEvaluationResult = {
   result: ResumeOutput["result"];
 };
 
-type ResumeEvaluationHistoryItem = {
-  id: number;
-  state: "PENDING" | "COMPLETED" | "FAILED";
-  job_position: string;
-  job_career: string;
-  total_score: number;
-  created_at: string;
-};
-
-type ResumeEvaluationsResponse = {
-  evaluations: ResumeEvaluationHistoryItem[];
-  current_page: number;
-  total_resume_evaluation_count: number;
-  total_pages: number;
-  has_next: boolean;
-};
-
 /**
  * 이력서 분석 (POST /resume-analyses)
  * 이력서 평가와 이력서 기반 면접 질문 생성이 하나의 리소스로 합쳐진 API.
@@ -295,8 +278,6 @@ export type {
   ResumeInputWithNewFile,
   ResumeFailed,
   ResumeEvaluationResult,
-  ResumeEvaluationHistoryItem,
-  ResumeEvaluationsResponse,
   ResumeAnalysisState,
   ResumeAnalysisFile,
   ResumeAnalysisCriterionResponse,

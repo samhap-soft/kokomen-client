@@ -132,15 +132,6 @@ const resumeBasedInterviewKeys: QueryKeyFactory<ResumeBasedInterviewMethods> = {
     [...resumeBasedInterviewKeys.all, "infinite"] as const
 };
 
-type ResumeEvaluationMethods = {
-  history: (page?: number, size?: number) => QueryKey;
-};
-const resumeEvaluationKeys: QueryKeyFactory<ResumeEvaluationMethods> = {
-  all: ["resumeEvaluation"] as const,
-  history: (page: number = 0, size: number = 20): QueryKey =>
-    [...resumeEvaluationKeys.all, "history", page, size] as const
-};
-
 // 이력서 분석(평가 + 면접 질문 통합 API) 도메인
 type ResumeAnalysisMethods = {
   history: (page?: number, size?: number) => QueryKey;
@@ -183,7 +174,6 @@ export {
   purchaseKeys,
   recruitKeys,
   resumeBasedInterviewKeys,
-  resumeEvaluationKeys,
   resumeAnalysisKeys,
   adminQuestionKeys,
   adminPaymentKeys,
@@ -193,7 +183,7 @@ export {
   type RecruitMethods,
   type ArchiveMethods,
   type ResumeBasedInterviewMethods,
-  type ResumeEvaluationMethods,
+  type ResumeAnalysisMethods,
   type AdminQuestionMethods,
   type AdminPaymentMethods,
   type InterviewQuestionMethods

@@ -83,12 +83,14 @@ export default function InterviewPage({
   const knockAudioRef = useRef<HTMLAudioElement | null>(null);
   const enterAudioRef = useRef<HTMLAudioElement | null>(null);
   // eslint-disable-next-line no-unused-vars
-  const playAudioRef = useRef<((url?: string) => void) | null>(null);
+  const playAudioRef = useRef<((url?: string) => Promise<void>) | null>(null);
 
   const { phase, startKnocking, startDoorOpening } = useInterviewPhase({
     onEntranceComplete: useCallback(() => {
       setIsInterviewStarted(true);
-      playAudioRef.current?.();
+      // 재생 실패(오디오 요소 미준비, 브라우저 자동재생 차단 등)는 면접 진행을
+      // 막지 않아야 한다. 처리하지 않으면 unhandled rejection이 된다.
+      playAudioRef.current?.().catch(() => {});
     }, [])
   });
 

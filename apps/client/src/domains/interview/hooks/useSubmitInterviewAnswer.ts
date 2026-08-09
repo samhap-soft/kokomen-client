@@ -116,7 +116,8 @@ export function useSubmitInterviewAnswer({
         cur_question_id: data.nextQuestionId
       });
       if (data.nextQuestionVoiceUrl) {
-        playAudio(data.nextQuestionVoiceUrl);
+        // 재생 실패가 답변 제출 흐름을 깨지 않도록 한다
+        playAudio(data.nextQuestionVoiceUrl).catch(() => {});
       }
       onAnswerSubmitted?.(variables.answer);
     },
