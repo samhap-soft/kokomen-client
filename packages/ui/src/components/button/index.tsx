@@ -147,6 +147,7 @@ export const Button = ({
   danger = false,
   optimistic = false,
   pendingSpinner = false,
+  pendingText,
   ...props
 }: IButtonProps): JSX.Element => (
   <button
@@ -166,9 +167,7 @@ export const Button = ({
     {props.disabled && pendingSpinner ? (
       <>
         <RoundSpinner />
-        <span className="text-text-secondary">
-          {props.pendingText ?? "제출중.."}
-        </span>
+        <span className="text-text-secondary">{pendingText ?? "제출중.."}</span>
       </>
     ) : (
       props.children

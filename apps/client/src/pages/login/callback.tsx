@@ -4,6 +4,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { useRouter } from "next/router";
 import { JSX, useEffect } from "react";
 import Link from "next/link";
+import { buildOnboardingPath } from "@/domains/onboarding/constants";
 
 type KakaoCallbackPageProps = {
   code: string;
@@ -31,8 +32,9 @@ export default function KakaoCallbackPage({
         return;
       }
 
-      const redirectTo = state || "/";
-      router.replace(redirectTo);
+      // 온보딩 폼 작성 여부는 온보딩 페이지에서 확인 후,
+      // 이미 작성한 사용자라면 원래 목적지로 다시 보내준다.
+      router.replace(buildOnboardingPath(state || "/"));
     },
 
     onError: (error) => {
@@ -129,7 +131,7 @@ export default function KakaoCallbackPage({
                 <span>페이지가 곧 이동됩니다...</span>
               </div>
               <Link
-                href={state || "/"}
+                href={buildOnboardingPath(state || "/")}
                 className="inline-block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
                 지금 이동하기
