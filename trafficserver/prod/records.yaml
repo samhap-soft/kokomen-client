@@ -1,31 +1,33 @@
+# ATS 9.x 이상 버전 기준 올바른 구조
 records:
-  # 포트 설정
-  proxy.config.http.server_ports: "80 443:ssl"
+  http:
+    server_ports: 80 443:ssl
+    keep_alive_enabled_out: 1
+    keep_alive_enabled_in: 1
+    response_server_enabled: 0
+    connect_attempts_timeout: 60
+    transaction_no_activity_timeout_out: 60
+    cache:
+      http: 0
+    # Via 헤더 설정 (경로 확인)
+    insert_request_via_str: 0
+    insert_response_via_str: 0
 
-  # 리버스 프록시 모드
-  proxy.config.reverse_proxy.enabled: 1
-  proxy.config.url_remap.remap_required: 1
+  reverse_proxy:
+    enabled: 1
 
-  # HTTP/2
-  proxy.config.http2.enabled: 1
+  url_remap:
+    remap_required: 1
+    pristine_host_hdr: 1
 
-  # SSL/TLS
-  proxy.config.ssl.TLSv1_2: 1
-  proxy.config.ssl.TLSv1_3: 1
-  proxy.config.ssl.TLSv1: 0
-  proxy.config.ssl.SSLv3: 0
-  proxy.config.ssl.server.cipher_suite: "HIGH:!aNULL:!MD5"
-
-  # Keep-alive
-  proxy.config.http.keep_alive_enabled_out: 1
-  proxy.config.http.keep_alive_enabled_in: 1
-
-  # 서버 토큰 숨김
-  proxy.config.http.response_server_enabled: 0
-
-  # 타임아웃
-  proxy.config.http.connect_attempts_timeout: 60
-  proxy.config.http.transaction_no_activity_timeout_out: 60
-
-  # 캐싱 비활성화
-  proxy.config.http.cache.http: 0
+  ssl:
+    client:
+      verify:
+        server:
+          policy: PERMISSIVE
+    server:
+      cert:
+        path: /etc/letsencrypt/live/kokomen.kr
+      private_key:
+        path: /etc/letsencrypt/live/kokomen.kr
+      cipher_suite: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384"

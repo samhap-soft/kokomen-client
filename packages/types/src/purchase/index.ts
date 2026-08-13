@@ -71,7 +71,7 @@ type AdminPayment = {
   serviceType: string;
   createdAt: string;
   updatedAt: string;
-  result: AdminPaymentResult;
+  result?: AdminPaymentResult | null;
 };
 
 type AdminPaymentPageResponse = {

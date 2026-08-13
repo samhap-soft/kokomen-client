@@ -12,7 +12,7 @@ COPY tsconfig.base.json tsconfig.base.json
 COPY apps apps
 COPY packages packages
 
-RUN corepack enable
+RUN corepack enable && corepack prepare yarn@4.14.1 --activate
 RUN yarn install --immutable
 
 ARG NEXT_PUBLIC_BASE_URL
@@ -36,7 +36,7 @@ RUN yarn workspace @kokomen/client build
 FROM node:22-alpine AS runner
 
 WORKDIR /app
-RUN corepack enable
+RUN corepack enable && corepack prepare yarn@4.14.1 --activate
 
 # ✅ Yarn PnP 환경 그대로 가져오기
 COPY --from=builder /app/.yarn .yarn

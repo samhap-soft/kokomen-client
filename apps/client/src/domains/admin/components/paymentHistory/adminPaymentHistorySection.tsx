@@ -50,11 +50,13 @@ const PaymentCard = ({
   onCancel: (payment: AdminPayment) => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const tossStatus = tossStatusLabel[payment.result.tosspaymentsStatus] ?? {
-    text: payment.result.tosspaymentsStatus,
+  const result = payment.result;
+  const tossStatus = (result &&
+    tossStatusLabel[result.tosspaymentsStatus]) ?? {
+    text: result?.tosspaymentsStatus ?? payment.state,
     className: "text-gray-600 bg-gray-50"
   };
-  const isCanceled = payment.result.canceledAt || payment.result.cancelReason;
+  const isCanceled = result?.canceledAt || result?.cancelReason;
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -76,12 +78,12 @@ const PaymentCard = ({
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500">
-              <span>{formatDateShort(payment.result.approvedAt)}</span>
+              <span>{formatDateShort(result?.approvedAt ?? null)}</span>
               <span>·</span>
               <span>
-                {payment.result.easyPayProvider
-                  ? `${payment.result.method}(${payment.result.easyPayProvider})`
-                  : payment.result.method}
+                {result?.easyPayProvider
+                  ? `${result.method}(${result.easyPayProvider})`
+                  : (result?.method ?? "-")}
               </span>
             </div>
           </div>
@@ -120,28 +122,28 @@ const PaymentCard = ({
             <div>
               <span className="text-gray-500">요청일</span>
               <span className="ml-2 text-gray-700">
-                {formatDateShort(payment.result.requestedAt)}
+                {formatDateShort(result?.requestedAt ?? null)}
               </span>
             </div>
             <div>
               <span className="text-gray-500">승인일</span>
               <span className="ml-2 text-gray-700">
-                {formatDateShort(payment.result.approvedAt)}
+                {formatDateShort(result?.approvedAt ?? null)}
               </span>
             </div>
           </div>
 
           {isCanceled && (
             <div className="mt-2 p-2 rounded bg-red-50 text-xs text-red-600">
-              <p>취소사유: {payment.result.cancelReason ?? "-"}</p>
-              <p>취소일: {formatDateTime(payment.result.canceledAt)}</p>
+              <p>취소사유: {result?.cancelReason ?? "-"}</p>
+              <p>취소일: {formatDateTime(result?.canceledAt ?? null)}</p>
             </div>
           )}
 
           <div className="flex items-center gap-2 pt-1">
-            {payment.result.receiptUrl && (
+            {result?.receiptUrl && (
               <a
-                href={payment.result.receiptUrl}
+                href={result.receiptUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100"
@@ -182,11 +184,13 @@ const PaymentRow = ({
   onCancel: (payment: AdminPayment) => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
-  const tossStatus = tossStatusLabel[payment.result.tosspaymentsStatus] ?? {
-    text: payment.result.tosspaymentsStatus,
+  const result = payment.result;
+  const tossStatus = (result &&
+    tossStatusLabel[result.tosspaymentsStatus]) ?? {
+    text: result?.tosspaymentsStatus ?? payment.state,
     className: "text-gray-600 bg-gray-50"
   };
-  const isCanceled = payment.result.canceledAt || payment.result.cancelReason;
+  const isCanceled = result?.canceledAt || result?.cancelReason;
 
   return (
     <>
@@ -206,7 +210,7 @@ const PaymentRow = ({
           </span>
         </td>
         <td className="px-4 py-3 text-gray-500 text-xs">
-          {formatDateShort(payment.result.approvedAt)}
+          {formatDateShort(result?.approvedAt ?? null)}
         </td>
         <td className="px-4 py-3 text-center">
           {!isCanceled ? (
@@ -236,9 +240,9 @@ const PaymentRow = ({
               <div>
                 <span className="text-gray-500">결제방법</span>
                 <span className="ml-1.5 text-gray-700">
-                  {payment.result.easyPayProvider
-                    ? `${payment.result.method}(${payment.result.easyPayProvider})`
-                    : payment.result.method}
+                  {result?.easyPayProvider
+                    ? `${result.method}(${result.easyPayProvider})`
+                    : (result?.method ?? "-")}
                 </span>
               </div>
               <div>
@@ -248,12 +252,12 @@ const PaymentRow = ({
               <div>
                 <span className="text-gray-500">요청일</span>
                 <span className="ml-1.5 text-gray-700">
-                  {formatDateShort(payment.result.requestedAt)}
+                  {formatDateShort(result?.requestedAt ?? null)}
                 </span>
               </div>
-              {payment.result.receiptUrl && (
+              {result?.receiptUrl && (
                 <a
-                  href={payment.result.receiptUrl}
+                  href={result.receiptUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline"
@@ -264,9 +268,9 @@ const PaymentRow = ({
             </div>
             {isCanceled && (
               <div className="mt-2 p-2 rounded bg-red-50 text-xs text-red-600">
-                취소사유: {payment.result.cancelReason ?? "-"} · 취소일:{" "}
-                {formatDateShort(payment.result.canceledAt)} · 취소상태:{" "}
-                {payment.result.cancelStatus ?? "-"}
+                취소사유: {result?.cancelReason ?? "-"} · 취소일:{" "}
+                {formatDateShort(result?.canceledAt ?? null)} · 취소상태:{" "}
+                {result?.cancelStatus ?? "-"}
               </div>
             )}
           </td>
