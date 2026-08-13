@@ -1,0 +1,37 @@
+# kokomen.kr 라우팅 (Blue-Green)
+#
+# ★ 배포 스크립트(scripts/blue-green-deploy-prod.sh)가 아래 "service:" 한 줄만 교체한다.
+#   두 색이 항상 정의돼 있지만 라우터는 한쪽만 가리키므로,
+#   비활성 색상 컨테이너를 미리 띄워도 트래픽이 가지 않는다.
+#   전환은 이 한 줄이 바뀌는 순간 100% 단번에 일어난다(구/신 버전 섞임 없음).
+#
+# ATS 방식(remap.config 렌더 -> docker cp -> traffic_ctl config reload)을 대체한다.
+# 컨테이너 이름으로 붙기 때문에 ATS 때 필요했던 고정 IP(172.30.0.10/11)에
+# 의존하지 않는다. Traefik은 요청마다 도커 DNS로 다시 해석해서
+# HostDB stale 문제가 없다.
+
+http:
+  routers:
+    client:
+      rule: "Host(`kokomen.kr`)"
+      entryPoints:
+        - websecure
+      service: client-blue
+      middlewares:
+        - security-headers
+      tls: {}
+
+  services:
+    client-blue:
+      loadBalancer:
+        # ATS의 url_remap.pristine_host_hdr=1 과 같은 동작.
+        # Next.js가 원본 Host를 보고 절대 URL을 만들기 때문에 반드시 필요하다.
+        passHostHeader: true
+        servers:
+          - url: "http://kokomen-client-blue:3000"
+
+    client-green:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          - url: "http://kokomen-client-green:3000"

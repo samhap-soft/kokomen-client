@@ -87,6 +87,9 @@ jobs:
           echo "NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api.kokomen.kr/api/v1" >> .env
           echo "NEXT_PUBLIC_V3_API_BASE_URL=https://api.kokomen.kr/api/v3" >> .env
           echo "NEXT_PUBLIC_GRAPHQL_URL=https://api.kokomen.kr/api/v3/graphql" >> .env
+          # compose가 이미지 이름을 보간할 때 쓴다. 호스트에서 스크립트를 수동 실행할 때도
+          # 필요하므로 셸 환경뿐 아니라 .env에도 넣어둔다.
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
 
           # Security: Restrict .env permissions (readable only by owner)
           chmod 600 .env
@@ -104,10 +107,30 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:production
           echo "✅ Docker image pulled successfully!"
 
+      # 프록시가 ATS -> Traefik으로 넘어가는 중이라, 배포 스크립트를 호스트 상태를 보고 고른다.
+      # 이렇게 하면 "머지 -> 마이그레이션" 순서를 맞출 필요가 없다.
+      #   - 아직 ATS가 80/443을 쥐고 있으면      ATS 스크립트
+      #   - 마이그레이션이 끝나 설정이 있으면     Traefik 스크립트
+      #   - 롤백(traefik 정지 + ATS 기동)해도    다음 배포가 자동으로 ATS로 되돌아간다
+      # 전환이 안정화되면(trafficserver/prod 제거 시) 이 분기도 지우고 한 줄로 되돌린다.
+      # 상세: apps/client/docs/traefik-prod-migration.md
       - name: Blue-Green Deploy
         run: |
-          chmod +x ./scripts/blue-green-deploy.sh
-          ./scripts/blue-green-deploy.sh .env
+          if docker ps --format '{{.Names}}' | grep -qx 'kokomen-ats'; then
+            SCRIPT=./scripts/blue-green-deploy.sh
+            echo "::notice title=Reverse proxy::ATS 실행 중 -> $SCRIPT 사용"
+          elif [ -d "${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/prod}/dynamic" ]; then
+            SCRIPT=./scripts/blue-green-deploy-prod.sh
+            echo "::notice title=Reverse proxy::Traefik 설정 감지 -> $SCRIPT 사용"
+          else
+            echo "::error title=Reverse proxy::ATS도 Traefik 설정도 없어 배포 대상을 판별할 수 없습니다."
+            echo "ATS가 죽어 있는지 확인하거나, 최초 전환이면 다음을 먼저 실행하세요:"
+            echo "  sudo ./scripts/migrate-ats-to-traefik-prod.sh .env"
+            docker ps -a --filter "name=kokomen-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+            exit 1
+          fi
+          chmod +x "$SCRIPT"
+          "$SCRIPT" .env
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
