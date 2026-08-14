@@ -12,8 +12,10 @@
     "emitDeclarationOnly": false,
 
     "strict": true,
-    "tsBuildInfoFile": ".tsbuildinfo",
-    "types": ["@types/react"]
+    "tsBuildInfoFile": ".tsbuildinfo"
+    // "types": ["@types/react"] 를 두지 않는다.
+    // 이 패키지는 React 타입을 참조하지 않는데, 이 설정이 있으면 @types/react
+    // 해석에 실패할 때 TS2688로 빌드가 깨진다(PnP에서 간헐적으로 관측됨).
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "**/*.test.*", "**/*.spec.*"]

@@ -1,0 +1,20 @@
+# 공통 미들웨어
+#
+# X-Forwarded-For / X-Forwarded-Proto / X-Forwarded-Host는 Traefik이 자동으로 붙인다.
+# 다만 nginx가 넣어주던 X-Real-IP는 Traefik이 넣지 않고, 값이 "클라이언트 IP"라
+# 정적 헤더로 흉내낼 수도 없다. 그래서 앱 쪽에서 X-Forwarded-For를 파싱하도록 맞췄다.
+# (apps/client/src/domains/members/api/index.ts)
+
+http:
+  middlewares:
+    security-headers:
+      headers:
+        customResponseHeaders:
+          X-Content-Type-Options: "nosniff"
+          X-Frame-Options: "SAMEORIGIN"
+          Referrer-Policy: "strict-origin-when-cross-origin"
+
+    https-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true

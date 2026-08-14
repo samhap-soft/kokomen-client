@@ -23,7 +23,6 @@ jobs:
       - name: Project setup
         run: |
           corepack enable
-          yarn set version 4.14.1
 
       - name: Install dependencies
         run: |

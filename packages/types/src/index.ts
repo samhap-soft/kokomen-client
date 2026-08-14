@@ -7,6 +7,7 @@ export * from "./dashboard";
 export * from "./utils";
 export * from "./notifications";
 export * from "./category";
+export * from "./onboarding";
 export * from "./webview";
 export * from "./purchase";
 export * from "./resume";

@@ -1,5 +1,6 @@
 import {
   CamelCasedProperties,
+  ResumeAnalysisCriterionKey,
   ResumeEvaluationResult as ResumeEvaluationResultType
 } from "@kokomen/types";
 
@@ -101,6 +102,20 @@ export const resumeEvaluationCategories: {
   { key: "problemSolving", label: "문제 해결", color: "#faad14" },
   { key: "careerGrowth", label: "성장 가능성", color: "#eb2f96" },
   { key: "documentation", label: "문서화 능력", color: "#722ed1" }
+];
+
+// 이력서 분석(통합 API)의 평가 지표.
+// jdFit은 채용 공고를 제공한 경우에만 응답에 포함된다.
+export const resumeAnalysisCategories: {
+  key: ResumeAnalysisCriterionKey;
+  label: string;
+  color: string;
+}[] = [
+  { key: "technicalSkills", label: "기술 역량", color: "#1677ff" },
+  { key: "projectExperience", label: "프로젝트 경험", color: "#52c41a" },
+  { key: "problemSolving", label: "문제 해결", color: "#faad14" },
+  { key: "softSkills", label: "소프트 스킬", color: "#eb2f96" },
+  { key: "jdFit", label: "채용공고 적합성", color: "#722ed1" }
 ];
 
 // 등급별 색상 및 범위

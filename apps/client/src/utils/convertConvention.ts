@@ -15,9 +15,11 @@ type CamelCasedProperties<T> = {
 export function mapToCamelCase<T extends object>(
   obj: T
 ): CamelCasedProperties<T> {
-  // 배열이면 재귀 처리
+  // 배열이면 재귀 처리 (원시값 원소는 그대로 두어야 문자로 쪼개지지 않음)
   if (Array.isArray(obj)) {
-    return obj.map((item) => mapToCamelCase(item)) as CamelCasedProperties<T>;
+    return obj.map((item) =>
+      typeof item === "object" && item !== null ? mapToCamelCase(item) : item
+    ) as CamelCasedProperties<T>;
   }
 
   // 객체면 키를 카멜케이스로 변환해서 리턴

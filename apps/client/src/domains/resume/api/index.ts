@@ -3,9 +3,7 @@ import {
   ResumeEvaluationResult,
   ResumeFailed,
   ResumeOutput,
-  ResumePending,
-  ResumeEvaluationsResponse,
-  CamelCasedProperties
+  ResumePending
 } from "@kokomen/types";
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { delay, exponentialDelay } from "@kokomen/utils";
@@ -154,37 +152,10 @@ function getResumeEvaluationResult(
     .then(mapToCamelCase);
 }
 
-function getResumeEvaluations(
-  page: number = 0,
-  size: number = 20,
-  context?: GetServerSidePropsContext
-): Promise<CamelCasedProperties<ResumeEvaluationsResponse>> {
-  const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + "/resumes/evaluations",
-    withCredentials: true
-  });
-
-  return instance
-    .get<CamelCasedProperties<ResumeEvaluationsResponse>>("", {
-      params: {
-        page,
-        size
-      },
-      headers: context
-        ? {
-            Cookie: context.req.headers.cookie
-          }
-        : undefined
-    })
-    .then((res) => res.data)
-    .then(mapToCamelCase);
-}
-
 export {
   submitResumeEvaluation,
   getResumeEvaluationState,
-  getResumeEvaluationResult,
-  getResumeEvaluations
+  getResumeEvaluationResult
 };
 export * from "./archive";
 export * from "./resumeBasedInterview";

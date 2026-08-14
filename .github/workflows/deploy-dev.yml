@@ -87,6 +87,9 @@ jobs:
           echo "NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api-dev.kokomen.kr/api/v1" >> .env
           echo "NEXT_PUBLIC_V3_API_BASE_URL=https://api-dev.kokomen.kr/api/v3" >> .env
           echo "NEXT_PUBLIC_GRAPHQL_URL=https://api-dev.kokomen.kr/api/v3/graphql" >> .env
+          # compose가 이미지 이름을 보간할 때 쓴다. 호스트에서 스크립트를 수동 실행할 때도
+          # 필요하므로 셸 환경뿐 아니라 .env에도 넣어둔다.
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
 
           # Security: Restrict .env permissions (readable only by owner)
           chmod 600 .env
@@ -103,25 +106,24 @@ jobs:
         run: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/kokomen-client:development
           echo "✅ Docker image pulled successfully!"
-      - name: Stop and remove existing container
+      - name: Blue-Green Deploy
         run: |
-          echo "Stopping existing containers..."
-          docker stop kokomen-client || true
-          docker rm kokomen-client || true
-          echo "✅ Old container removed"
-        continue-on-error: true
-      - name: Clean up previous stack
-        run: |
-          docker compose --env-file .env -f ./docker/client/compose.dev.yaml down --remove-orphans || true
-          docker system prune -af --volumes || true
-
-      - name: Run Docker Compose
-        run: |
-          docker compose --env-file .env -f ./docker/client/compose.dev.yaml up -d --pull always
+          chmod +x ./scripts/blue-green-deploy-dev.sh
+          ./scripts/blue-green-deploy-dev.sh .env
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
+      # 이전에는 docker system prune -af --volumes 를 돌렸는데 두 가지 이유로 제거했다.
+      # 1. -a 가 이전 버전 이미지까지 지워서 롤백(이전 색상 재기동)이 불가능해진다.
+      # 2. --volumes 는 붙어있지 않은 볼륨을 전부 삭제한다. 나중에 Traefik ACME로
+      #    넘어가면 acme.json이 날아가 배포마다 인증서를 재발급하고
+      #    Let's Encrypt 중복 발급 한도(주 5회)에 걸린다.
+      # dangling 이미지만 정리한다.
+      - name: Clean up dangling images
+        run: |
+          docker image prune -f || true
+
       - name: Deployment summary
         run: |
-          echo "🚀 Deployment completed"
-          docker compose --env-file .env -f ./docker/client/compose.dev.yaml ps
+          echo "🚀 Blue-Green deployment completed"
+          docker ps --filter "name=kokomen-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"

@@ -1,0 +1,22 @@
+# api-dev.kokomen.kr 라우팅
+#
+# 기존 nginx는 /api/v3 와 / 를 따로 location으로 뒀지만 업스트림·헤더 설정이
+# 완전히 동일했으므로 라우터 하나로 합쳤다.
+
+http:
+  routers:
+    api:
+      rule: "Host(`api-dev.kokomen.kr`)"
+      entryPoints:
+        - websecure
+      service: api
+      middlewares:
+        - security-headers
+      tls: {}
+
+  services:
+    api:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          - url: "http://kokomen-interview-api-dev:8080"

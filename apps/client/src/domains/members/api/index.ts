@@ -10,6 +10,7 @@ import {
 } from "@/utils/convertConvention";
 import axios, { AxiosInstance } from "axios";
 import { GetServerSidePropsContext } from "next";
+import { getClientIp } from "@/utils/clientIp";
 
 const memberInstance: AxiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}`,
@@ -59,7 +60,7 @@ const getMemberInterviewResult = async (
     .get<MemberInterviewResult>(`/interviews/${interviewId}/result`, {
       headers: {
         cookie: context.req.headers.cookie,
-        "X-Forwarded-For": context.req.headers["x-real-ip"]
+        "X-Forwarded-For": getClientIp(context.req)
       }
     })
     .then((res) => res.data)

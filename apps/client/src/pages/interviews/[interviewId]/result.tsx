@@ -18,6 +18,7 @@ import { JSX } from "react";
 import Header from "@/shared/header";
 import { TrendingUp, TrendingDown, Target, LogIn, Lock } from "lucide-react";
 import { withCheckInServer } from "@/utils/auth";
+import { getClientIp } from "@/utils/clientIp";
 import { getUserInfo } from "@/domains/auth/api";
 import { SEO } from "@/shared/seo";
 import { UserInfo } from "@kokomen/types";
@@ -108,6 +109,10 @@ export default function MyInterviewResultPage({
                       {isScoreImproved ? "+" : ""}
                       {scoreDiff}점
                     </div>
+                    <p className="text-xs text-text-tertiary mt-3">
+                      한 번의 면접으로 얻거나 잃을 수 있는 점수는 -100점 ~
+                      +100점 범위예요.
+                    </p>
                   </div>
                 </div>
               </section>
@@ -314,13 +319,7 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   try {
-    const clientIp =
-      (context.req.headers["x-forwarded-for"] as string)
-        ?.split(",")[0]
-        ?.trim() ||
-      (context.req.headers["x-real-ip"] as string) ||
-      context.req.socket.remoteAddress ||
-      "";
+    const clientIp = getClientIp(context.req);
     console.log("clientIp for guest interview report", clientIp);
     const report = await getGuestInterviewReport(
       interviewId as string,

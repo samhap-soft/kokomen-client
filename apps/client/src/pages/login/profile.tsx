@@ -12,6 +12,7 @@ import ProfileSettingForm from "@/domains/auth/components/profilesettingForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import { SEO } from "@/shared/seo";
 import { UserInfo } from "@kokomen/types";
+import { buildOnboardingPath } from "@/domains/onboarding/constants";
 
 interface LoginProfileSettingProps {
   userInfo: UserInfo;
@@ -22,7 +23,7 @@ export default function LoginProfileSetting({
   userInfo,
   state
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
-  useRouterPrefetch(state || "/");
+  useRouterPrefetch(buildOnboardingPath(state));
   return (
     <>
       <SEO
@@ -42,7 +43,11 @@ export default function LoginProfileSetting({
                 <p className="text-gray-600 text-sm">닉네임을 설정해주세요</p>
               </div>
 
-              <ProfileSettingForm userInfo={userInfo} redirectTo={state} />
+              {/* 닉네임 설정 후에는 온보딩 폼으로 이어진다. */}
+              <ProfileSettingForm
+                userInfo={userInfo}
+                redirectTo={buildOnboardingPath(state)}
+              />
             </div>
           </div>
         </main>
@@ -59,7 +64,9 @@ export const getServerSideProps = async (
     if (userInfo.data.profile_completed) {
       return {
         redirect: {
-          destination: (context.query.state as string) || "/",
+          destination: buildOnboardingPath(
+            (context.query.state as string) || "/"
+          ),
           permanent: false
         }
       };

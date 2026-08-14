@@ -6,6 +6,10 @@ import { Button, LoadingCircles, Textarea, useToast } from "@kokomen/ui";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
 import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
 import { publishInterviewEvent } from "@/domains/interview/utils/interviewEventEmitter";
+import { InterviewTimer } from "@/domains/interview/components/interviewTimer";
+
+// 질문당 답변 제한 시간(초)
+const ANSWER_TIME_LIMIT_SECONDS = 90;
 
 type InterviewInputProps = Pick<
   Interview,
@@ -24,6 +28,7 @@ type InterviewInputProps = Pick<
   // eslint-disable-next-line no-unused-vars
   playAudio: (audioUrl?: string) => Promise<void>;
   mode: InterviewMode;
+  isFinished: boolean;
 };
 export function InterviewAnswerForm({
   isInterviewStarted,
@@ -36,7 +41,8 @@ export function InterviewAnswerForm({
   totalQuestions,
   setInterviewerEmotion,
   playAudio,
-  mode
+  mode,
+  isFinished
 }: InterviewInputProps): JSX.Element {
   const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -95,11 +101,61 @@ export function InterviewAnswerForm({
       });
     }
   };
-  return (
-    <form className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
-      {/* 음성 인식 상태 표시 */}
 
-      <Textarea
+  // 제한 시간 초과 시 현재까지 입력한 답변을 자동 제출
+  const handleTimeout = useCallback(() => {
+    if (isPending || !isInterviewStarted || isFinished) return;
+    setIsListening(false);
+    infoToast({
+      description: "답변 시간이 종료되어 자동으로 제출됩니다.",
+      duration: 4000,
+      position: "top-center"
+    });
+    // 아무것도 입력하지 않은 채 시간이 초과되면 미작성 답변으로 제출
+    const answer =
+      interviewInput.trim().length > 0
+        ? interviewInput
+        : "시간 초과로 답을 적지 못했습니다";
+    mutate({
+      interviewId: interviewId,
+      questionId: cur_question_id,
+      answer: answer,
+      mode: mode as InterviewMode
+    });
+  }, [
+    isPending,
+    isInterviewStarted,
+    isFinished,
+    setIsListening,
+    infoToast,
+    mutate,
+    interviewId,
+    cur_question_id,
+    interviewInput,
+    mode
+  ]);
+
+  // 한 번 입력한 답변은 지울 수 없도록 이전 입력을 접두사로 유지
+  const handleAppendOnlyChange = useCallback(
+    (nextValue: string) => {
+      setInterviewInput((prev) =>
+        nextValue.startsWith(prev) ? nextValue : prev
+      );
+    },
+    [setInterviewInput]
+  );
+  return (
+    <>
+      <InterviewTimer
+        durationSeconds={ANSWER_TIME_LIMIT_SECONDS}
+        resetKey={cur_question_id}
+        isActive={isInterviewStarted && !isPending && !isFinished}
+        onTimeout={handleTimeout}
+      />
+      <form className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
+        {/* 음성 인식 상태 표시 */}
+
+        <Textarea
         ref={textAreaRef}
         role="textbox"
         aria-label="interview-answer"
@@ -110,8 +166,17 @@ export function InterviewAnswerForm({
           isVoiceListening ? "bg-bg-text-hover animate-pulse" : ""
         }`}
         rows={1}
-        onChange={(e) => setInterviewInput(e.target.value)}
+        onChange={(e) => handleAppendOnlyChange(e.target.value)}
         onKeyDown={(e) => {
+          // 삭제/잘라내기 키로 입력한 답변을 지울 수 없도록 차단
+          const isDeletion =
+            e.key === "Backspace" ||
+            e.key === "Delete" ||
+            ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "x");
+          if (isDeletion) {
+            e.preventDefault();
+            return;
+          }
           if (
             e.key === "Enter" &&
             !e.shiftKey &&
@@ -194,7 +259,8 @@ export function InterviewAnswerForm({
           <ArrowBigUp className="text-primary-content" />
         </Button>
       </div>
-    </form>
+      </form>
+    </>
   );
 }
 

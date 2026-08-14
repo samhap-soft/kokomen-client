@@ -1,0 +1,27 @@
+# 공통 미들웨어
+#
+# 응답 헤더 3개는 ATS의 header_rewrite/security-headers.conf와 1:1로 같다.
+#
+# 요청 헤더 쪽은 차이가 있다.
+# ATS의 header_rewrite/proxy-headers.conf는 X-Real-IP / X-Forwarded-For /
+# X-Forwarded-Proto를 직접 세팅했다. Traefik은 X-Forwarded-* 는 자동으로 붙이지만
+# X-Real-IP는 붙이지 않고, 값이 "클라이언트 IP"라 정적 헤더로 흉내낼 수도 없다.
+# 그래서 앱이 X-Forwarded-For를 먼저 보도록 맞춰뒀다.
+# (apps/client/src/utils/clientIp.ts — dev/prod 공용이므로 추가 작업 없음)
+#
+# 또한 ATS는 X-Forwarded-For를 클라이언트 IP 하나로 덮어썼지만
+# Traefik은 기존 값 뒤에 덧붙인다. clientIp.ts가 첫 번째 값을 쓰므로 동작은 같다.
+
+http:
+  middlewares:
+    security-headers:
+      headers:
+        customResponseHeaders:
+          X-Content-Type-Options: "nosniff"
+          X-Frame-Options: "SAMEORIGIN"
+          Referrer-Policy: "strict-origin-when-cross-origin"
+
+    https-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true

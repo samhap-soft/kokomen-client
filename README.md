@@ -66,11 +66,6 @@
 - **Form Handling**: React Hook Form + Zod validation
 - **UI Components**: 자체 디자인 시스템 (@kokomen/ui)
 
-#### 모바일 애플리케이션 (Native)
-- **Framework**: React Native + Expo
-- **Navigation**: React Navigation
-- **Speech Recognition**: Expo Speech Recognition
-
 ### Backend & Infrastructure
 
 #### API & Services
@@ -91,7 +86,6 @@
 - **Package Manager**: Yarn Berry (v4.9.2) with Workspaces
 - **Bundler**: 
   - Next.js: Turbopack
-  - Webview: Vite
   - UI Library: Storybook with Vite
 - **Module Resolution**: Plug'n'Play (PnP)
 
@@ -101,7 +95,6 @@
 - **Type Checking**: TypeScript strict mode
 - **Testing**: 
   - Jest + React Testing Library
-  - Vitest (Webview)
   - Coverage reporting with Istanbul
 
 ## 📁 프로젝트 구조
@@ -109,31 +102,20 @@
 ```
 kokomen/                        # 애플리케이션 모노레포
 ├── apps/                       # 애플리케이션 패키지들
-│   ├── client/                 # Next.js 웹 애플리케이션
-│   │   ├── src/
-│   │   │   ├── domains/        # 도메인별 비즈니스 로직
-│   │   │   │   ├── auth/       # 인증/인가
-│   │   │   │   ├── interview/  # 면접 진행
-│   │   │   │   ├── dashboard/  # 대시보드
-│   │   │   │   ├── members/    # 멤버/랭킹
-│   │   │   │   └── notifications/ # 알림
-│   │   │   ├── pages/          # Next.js 페이지 라우팅
-│   │   │   ├── shared/         # 공통 컴포넌트
-│   │   │   └── utils/          # 유틸리티 함수
-│   │   ├── public/             # 정적 자산
-│   │   └── __tests__/          # 테스트 파일
-│   │
-│   ├── kokomen-webview/        # React 기반 웹뷰 애플리케이션
-│   │   └── src/
-│   │       ├── routes/         # TanStack Router
-│   │       └── domains/        # 도메인 로직
-│   │
-│   └── kokomen-native/         # React Native 모바일 앱
-│       ├── ios/                # iOS 네이티브 코드
-│       ├── android/            # Android 네이티브 코드
-│       └── src/
-│           ├── screens/        # 화면 컴포넌트
-│           └── router/         # 내비게이션
+│   └── client/                 # Next.js 웹 애플리케이션
+│       ├── src/
+│       │   ├── domains/        # 도메인별 비즈니스 로직
+│       │   │   ├── auth/       # 인증/인가
+│       │   │   ├── interview/  # 면접 진행
+│       │   │   ├── resume/     # 이력서 분석
+│       │   │   ├── dashboard/  # 대시보드
+│       │   │   ├── members/    # 멤버/랭킹
+│       │   │   └── notifications/ # 알림
+│       │   ├── pages/          # Next.js 페이지 라우팅
+│       │   ├── shared/         # 공통 컴포넌트
+│       │   └── utils/          # 유틸리티 함수
+│       ├── public/             # 정적 자산
+│       └── __tests__/          # 테스트 파일
 │
 ├── packages/                   # 공유 패키지
 │   ├── ui/                     # 디자인 시스템 & UI 라이브러리
@@ -196,9 +178,6 @@ cp apps/client/.env.example apps/client/.env.local
 # 웹 애플리케이션 개발 서버
 yarn client:dev
 
-# 웹뷰 개발 서버
-yarn webview:dev
-
 # UI 컴포넌트 Storybook
 yarn ui:dev
 
@@ -213,7 +192,6 @@ yarn docker-dev-up
 ```bash
 # 개발
 yarn client:dev        # Next.js 개발 서버 (https://localhost:3000)
-yarn webview:dev       # Vite 개발 서버
 yarn ui:dev           # Storybook UI 개발
 
 # 빌드
@@ -223,7 +201,6 @@ yarn types:build      # TypeScript 타입 빌드
 # 테스트
 yarn test             # 모든 테스트 실행
 yarn client:test      # Client 앱 테스트
-yarn webview:test     # Webview 테스트
 
 # 코드 품질
 yarn lint             # ESLint 실행
@@ -274,13 +251,11 @@ GitHub Actions를 통한 자동 배포:
 ### 단위 테스트
 
 ```bash
-# Jest 테스트 실행(웹뷰 + 웹 둘 다 실행)
+# Jest 테스트 실행
 yarn test
 
 # 웹 테스트
 yarn client:test
-# 웹뷰 테스트
-yarn webview:test
 
 ```
 

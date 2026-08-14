@@ -1,0 +1,26 @@
+# TLS 인증서 / 옵션
+#
+# 인증서는 기존 certbot이 호스트에 발급해둔 것을 그대로 쓴다(read-only 마운트).
+# Traefik 자체 ACME로 넘어가는 건 별개의 변경이라 여기서는 건드리지 않는다.
+#
+# cipherSuites는 지정하지 않는다. nginx의 "HIGH:!aNULL:!MD5"는 OpenSSL 표기라
+# 그대로 옮길 수 없고, Go/Traefik 기본값이 이미 그보다 좁고 안전하다.
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+
+  certificates:
+    - certFile: /etc/letsencrypt/live/dev.kokomen.kr/fullchain.pem
+      keyFile: /etc/letsencrypt/live/dev.kokomen.kr/privkey.pem
+    - certFile: /etc/letsencrypt/live/api-dev.kokomen.kr/fullchain.pem
+      keyFile: /etc/letsencrypt/live/api-dev.kokomen.kr/privkey.pem
+
+  stores:
+    default:
+      # SNI가 어디에도 안 맞을 때 쓸 인증서.
+      # nginx에서 첫 server 블록(dev.kokomen.kr)이 기본이었던 것과 같은 동작.
+      defaultCertificate:
+        certFile: /etc/letsencrypt/live/dev.kokomen.kr/fullchain.pem
+        keyFile: /etc/letsencrypt/live/dev.kokomen.kr/privkey.pem

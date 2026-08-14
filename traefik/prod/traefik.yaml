@@ -1,0 +1,47 @@
+# Traefik 정적 설정 (prod)
+#
+# 이 파일을 바꾸면 Traefik 재시작이 필요하다.
+# 라우팅/백엔드/인증서처럼 배포 중에 바뀌는 것은 모두 dynamic/ 아래에서 관리한다.
+#
+# dev(traefik/dev/traefik.yaml)와 내용이 거의 같다. 다른 점은 없지만,
+# 정적 설정이 바뀔 때 dev에서 먼저 검증한 뒤 prod에 옮기기 위해 파일을 분리해 둔다.
+
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+log:
+  level: INFO
+
+accessLog: {}
+
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+    transport:
+      respondingTimeouts:
+        # ATS records.yaml의 keep_alive_enabled_in / nginx keepalive_timeout 65 대응
+        idleTimeout: 65s
+        # readTimeout/writeTimeout은 의도적으로 두지 않는다.
+        # 값을 주면 요청 "전체"에 대한 제한이 되어 PDF 업로드나
+        # 이력서 분석 스트리밍 같은 장시간 커넥션이 끊긴다.
+
+  # 헬스체크 전용. compose에서 호스트로 publish하지 않으므로
+  # 도커 네트워크 내부에서만 접근 가능하다.
+  internal:
+    address: ":8082"
+
+providers:
+  # 파일 하나가 아니라 "디렉토리"를 감시한다.
+  # 배포 스크립트가 temp 파일 생성 후 rename으로 교체하기 때문에,
+  # 파일 단위 bind mount로는 inode가 바뀌어 변경을 감지하지 못한다.
+  # (ATS에서 remap.config을 docker cp로 밀어넣어야 했던 것과 같은 문제)
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+ping:
+  entryPoint: internal
