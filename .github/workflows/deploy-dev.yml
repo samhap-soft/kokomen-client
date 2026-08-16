@@ -7,7 +7,10 @@ on:
 jobs:
   build-and-push:
     name: Build and Push to Docker Hub
-    runs-on: ubuntu-latest
+    # arm64 네이티브 러너. 배포 대상이 OCI A1(aarch64)이라 arm64 이미지가 필요한데,
+    # ubuntu-latest(amd64)에서 QEMU로 에뮬레이션하면 yarn install + Next 빌드가
+    # 30분을 넘긴다. GitHub 호스티드 arm64 러너는 public 레포에서 무료다.
+    runs-on: ubuntu-24.04-arm
 
     steps:
       - name: Checkout source code
@@ -34,9 +37,15 @@ jobs:
           context: .
           push: true
           file: ./apps/client/Dockerfile
+          # 배포 대상이 aarch64 단일이므로 arm64만 빌드한다.
+          # prod는 별개 이미지(kokomen-client-prod)라 영향받지 않는다.
+          platforms: linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client:buildcache,mode=max
+          # 캐시 태그를 아키텍처별로 분리한다. 기존 :buildcache는 amd64 레이어라
+          # arm64 빌드에서 재사용되지 않고, 태그를 공유하면 서로 덮어써서
+          # 매 빌드가 콜드 빌드가 된다.
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client:buildcache-arm64
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client:buildcache-arm64,mode=max
           build-args: |
             NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
             NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}

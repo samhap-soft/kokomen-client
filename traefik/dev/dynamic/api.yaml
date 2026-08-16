@@ -2,17 +2,19 @@
 #
 # 기존 nginx는 /api/v3 와 / 를 따로 location으로 뒀지만 업스트림·헤더 설정이
 # 완전히 동일했으므로 라우터 하나로 합쳤다.
+#
+# TLS는 앞단 nginx-proxy가 종단하므로 여기서는 web(:80) 엔트리포인트로 받는다.
+# Host 헤더는 nginx-proxy가 보존해서 넘기므로 rule은 그대로 동작한다.
 
 http:
   routers:
     api:
       rule: "Host(`api-dev.kokomen.kr`)"
       entryPoints:
-        - websecure
+        - web
       service: api
       middlewares:
         - security-headers
-      tls: {}
 
   services:
     api:

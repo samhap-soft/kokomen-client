@@ -89,6 +89,19 @@ for f in "${REPO_CONFIG_DIR}"/dynamic/*.yaml; do
   fi
 done
 
+# 리포에서 사라진 설정은 라이브에서도 지운다.
+# 위 루프는 추가/갱신만 하므로, 예전에 있던 파일(tls.yaml 등)이 라이브에 남아
+# Traefik이 계속 읽는다. 없는 인증서 경로를 가리키면 매 watch마다 에러가 난다.
+# 점(.)으로 시작하는 temp/backup은 Traefik이 무시하므로 건드리지 않는다.
+for f in "${LIVE_DYNAMIC_DIR}"/*.yaml; do
+  [ -e "$f" ] || continue
+  base="$(basename "$f")"
+  if [ ! -f "${REPO_CONFIG_DIR}/dynamic/${base}" ]; then
+    echo "[INFO] 리포에서 삭제된 설정 제거: $base"
+    rm -f "$f"
+  fi
+done
+
 # ---------------------------------------------------------------------------
 # 1. 현재 활성 색상 판별 (라이브 라우팅 파일이 유일한 진실)
 # ---------------------------------------------------------------------------
@@ -121,9 +134,11 @@ NEW_CONTAINER="kokomen-client-${NEW_COLOR}"
 OLD_CONTAINER="kokomen-client-${CURRENT_COLOR}"
 
 # ---------------------------------------------------------------------------
-# 2. 프록시 / 챌린지 컨테이너 기동
+# 2. 프록시 컨테이너 기동
+#    ACME 챌린지는 앞단 nginx-proxy의 acme-companion이 처리하므로
+#    certbot-webroot 컨테이너는 더 이상 쓰지 않는다.
 # ---------------------------------------------------------------------------
-for svc in traefik certbot-webroot; do
+for svc in traefik; do
   cname="kokomen-${svc}"
   if ! docker ps --format '{{.Names}}' | grep -qx "$cname"; then
     echo "[INFO] $cname 시작..."
@@ -134,11 +149,26 @@ for svc in traefik certbot-webroot; do
   fi
 done
 
-# Traefik이 80/443을 실제로 물고 있는지 확인 (compose 성공만으로는 보장되지 않는다)
-if ! docker port kokomen-traefik 2>/dev/null | grep -q '^80/tcp'; then
-  echo "[ERROR] Traefik에 80 포트가 퍼블리시되지 않았습니다. 배포를 중단합니다."
-  echo "--- docker port 출력 ---"
-  docker port kokomen-traefik || echo "(없음)"
+# Traefik은 호스트 포트를 publish하지 않는다. 앞단 nginx-proxy가 80/443을 잡고
+# Host 헤더로 이 컨테이너에 넘긴다. 그래서 확인할 것이 두 가지로 바뀐다.
+#
+#   1) nginx-proxy가 떠 있는지 (없으면 외부에서 아예 도달하지 못한다)
+#   2) Traefik이 nginx-proxy와 같은 네트워크에 붙어 있는지
+#      (docker-gen이 컨테이너를 발견하려면 같은 네트워크여야 한다)
+if ! docker ps --format '{{.Names}}' | grep -qx 'nginx-proxy'; then
+  echo "[ERROR] nginx-proxy 컨테이너가 떠 있지 않습니다. 배포를 중단합니다."
+  echo "        이 호스트의 80/443은 mykku 스택의 nginx-proxy가 담당합니다."
+  echo "        확인: docker ps -a --filter name=nginx-proxy"
+  exit 1
+fi
+
+PROXY_NET="$(docker inspect nginx-proxy \
+  --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}' 2>/dev/null | head -1)"
+if ! docker inspect kokomen-traefik \
+     --format "{{range \$k, \$v := .NetworkSettings.Networks}}{{\$k}}{{\"\n\"}}{{end}}" 2>/dev/null \
+     | grep -qx "$PROXY_NET"; then
+  echo "[ERROR] kokomen-traefik이 nginx-proxy 네트워크($PROXY_NET)에 붙어 있지 않습니다."
+  echo "        docker-gen이 vhost를 만들지 못해 외부에서 도달할 수 없습니다."
   echo "        다음으로 복구하세요:"
   echo "          docker compose --env-file $ENV_FILE -f $COMPOSE_FILE up -d --force-recreate traefik"
   exit 1
@@ -216,9 +246,12 @@ mv "$TMP_FILE" "$LIVE_ROUTE_FILE"
 echo "[OK] 라우팅 파일 교체 완료"
 
 # ---------------------------------------------------------------------------
-# 5. 전환 검증 — Traefik을 통해 실제로 응답이 오는지 확인
-#    Host 헤더를 지정해 로컬 443으로 찔러본다.
+# 5. 전환 검증 — 엣지를 통해 실제로 응답이 오는지 확인
+#    Host 헤더를 지정해 로컬 443으로 찔러본다. 443을 잡고 있는 것은 앞단
+#    nginx-proxy이므로, 이 요청은 nginx-proxy -> Traefik -> 새 색상까지
+#    체인 전체를 검증한다.
 #    SNI가 localhost라 인증서가 안 맞으므로 -k 를 쓴다(라우팅은 Host 헤더로 결정됨).
+#    인증서 발급 전에도 nginx-proxy가 self-signed로 443에 응답하므로 -k면 통과한다.
 # ---------------------------------------------------------------------------
 echo "[INFO] Traefik 반영 대기 (${TRAEFIK_RELOAD_WAIT}초)..."
 sleep "$TRAEFIK_RELOAD_WAIT"

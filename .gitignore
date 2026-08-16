@@ -19,3 +19,5 @@ node_modules/
 robots.txt
 sitemap.xml
 sitemap-*.xml
+
+.idea/

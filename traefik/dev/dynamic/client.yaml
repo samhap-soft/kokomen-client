@@ -4,17 +4,18 @@
 #   두 색이 항상 정의돼 있지만 라우터는 한쪽만 가리키므로,
 #   비활성 색상 컨테이너를 미리 띄워도 트래픽이 가지 않는다.
 #   전환은 이 한 줄이 바뀌는 순간 100% 단번에 일어난다(구/신 버전 섞임 없음).
+#
+# TLS는 앞단 nginx-proxy가 종단하므로 여기서는 web(:80) 엔트리포인트로 받는다.
 
 http:
   routers:
     client:
       rule: "Host(`dev.kokomen.kr`)"
       entryPoints:
-        - websecure
+        - web
       service: client-blue
       middlewares:
         - security-headers
-      tls: {}
 
   services:
     client-blue:
