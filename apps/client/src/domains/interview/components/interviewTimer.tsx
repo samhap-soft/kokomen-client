@@ -4,11 +4,9 @@ import { Clock } from "lucide-react";
 interface InterviewTimerProps {
   // 카운트다운 시작 시간(초)
   durationSeconds: number;
-  // 이 값이 바뀌면 타이머가 리셋됨 (질문별 리셋용)
-  resetKey: number | string;
   // 타이머 동작 여부
   isActive: boolean;
-  // 시간이 0이 되면 호출 (질문당 한 번)
+  // 시간이 0이 되면 호출 (마운트당 한 번)
   onTimeout: () => void;
 }
 
@@ -18,9 +16,16 @@ const formatTime = (totalSeconds: number): string => {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
 
+/**
+ * 질문별 리셋은 호출부에서 `key={cur_question_id}`로 리마운트해서 처리한다.
+ *
+ * 리셋을 내부 useEffect로 하면 안 된다. 리셋 effect가 도는 커밋에서는
+ * setSecondsLeft(durationSeconds)가 아직 반영되지 않아 secondsLeft가 0으로 남아 있는데,
+ * 같은 커밋의 타임아웃 effect는 리셋된 ref(hasTimedOut=false)를 보게 되어
+ * 다음 질문에서 곧바로 onTimeout이 다시 실행된다.
+ */
 export function InterviewTimer({
   durationSeconds,
-  resetKey,
   isActive,
   onTimeout
 }: InterviewTimerProps): JSX.Element {
@@ -28,12 +33,6 @@ export function InterviewTimer({
   const hasTimedOutRef = useRef<boolean>(false);
   const onTimeoutRef = useRef(onTimeout);
   onTimeoutRef.current = onTimeout;
-
-  // 질문이 바뀌면 타이머 리셋
-  useEffect(() => {
-    setSecondsLeft(durationSeconds);
-    hasTimedOutRef.current = false;
-  }, [resetKey, durationSeconds]);
 
   // 매초 카운트다운
   useEffect(() => {
@@ -49,7 +48,7 @@ export function InterviewTimer({
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [isActive, resetKey]);
+  }, [isActive]);
 
   // 시간이 다 되면 한 번만 콜백 실행
   useEffect(() => {
