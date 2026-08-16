@@ -157,7 +157,7 @@ done
 #      (docker-gen이 컨테이너를 발견하려면 같은 네트워크여야 한다)
 if ! docker ps --format '{{.Names}}' | grep -qx 'nginx-proxy'; then
   echo "[ERROR] nginx-proxy 컨테이너가 떠 있지 않습니다. 배포를 중단합니다."
-  echo "        이 호스트의 80/443은 mykku 스택의 nginx-proxy가 담당합니다."
+  echo "        이 호스트의 80/443은 앞단 nginx-proxy가 담당합니다."
   echo "        확인: docker ps -a --filter name=nginx-proxy"
   exit 1
 fi
