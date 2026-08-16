@@ -215,7 +215,7 @@ export const getServerSideProps = async (
     async () => {
       const [categoriesResponse, userInfoResponse, rankList] =
         await Promise.allSettled([
-          getCategories(),
+          getCategories(context),
           getUserInfo(context),
           getRankList()
         ]);

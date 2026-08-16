@@ -11,7 +11,6 @@ import Header from "@/shared/header";
 import { SEO } from "@/shared/seo";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
 import OnboardingForm from "@/domains/onboarding/components/onboardingForm";
-import { hasSubmittedOnboarding } from "@/domains/onboarding/utils";
 
 interface OnboardingPageProps {
   userInfo: UserInfo;
@@ -61,11 +60,7 @@ export const getServerSideProps = async (
       }
 
       // 이미 작성한 사용자는 온보딩을 다시 보여주지 않는다.
-      // 서버가 onboarding_form_filled를 내려주기 전까지는 제출 쿠키로도 판단한다.
-      if (
-        userInfo.data.onboarding_form_filled ||
-        hasSubmittedOnboarding(context.req.cookies)
-      ) {
+      if (userInfo.data.onboarding_form_filled) {
         return {
           redirect: {
             destination: redirectTo,

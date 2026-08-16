@@ -28,9 +28,20 @@ services:
   traefik:
     image: traefik:v3.3
     container_name: kokomen-traefik
-    ports:
-      - "80:80"
-      - "443:443"
+    # 호스트 포트를 publish하지 않는다.
+    # 이 호스트는 다른 스택과 공유하며 80/443은 앞단 nginx-proxy가 잡고 있다.
+    # nginx-proxy가 TLS를 종단하고 Host 헤더를 보존한 채 여기 :80으로 넘긴다.
+    # Traefik은 내부 라우팅(blue-green 전환 + api 분기)만 담당한다.
+    expose:
+      - "80"
+    environment:
+      # nginx-proxy(docker-gen)가 이 값을 보고 vhost를 생성한다.
+      # 두 도메인을 콤마로 넘기면 둘 다 이 컨테이너로 온다.
+      VIRTUAL_HOST: dev.kokomen.kr,api-dev.kokomen.kr
+      VIRTUAL_PORT: "80"
+      # acme-companion이 Let's Encrypt 인증서를 자동 발급·갱신한다.
+      # 이전의 호스트 certbot + certbot-webroot 컨테이너를 대체한다.
+      LETSENCRYPT_HOST: dev.kokomen.kr,api-dev.kokomen.kr
     volumes:
       # 리포 워킹트리가 아니라 호스트의 별도 경로를 마운트한다.
       # actions/checkout이 매 배포마다 추적 파일을 되돌리는데, 워킹트리를 그대로
@@ -42,7 +53,6 @@ services:
       # 배포 시 temp 파일 -> rename으로 교체하므로 inode가 바뀌는데,
       # 파일 단위 마운트면 컨테이너가 변경을 보지 못한다.
       - ${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/dev}/dynamic:/etc/traefik/dynamic:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
     healthcheck:
       test: ["CMD", "traefik", "healthcheck", "--ping"]
       interval: 10s
@@ -52,23 +62,14 @@ services:
     restart: always
     networks:
       - dev-kokomen-net
-
-  # certbot HTTP-01 챌린지 파일 서빙 전용.
-  # Traefik에는 정적 파일 서버가 없어서 별도 컨테이너가 필요하다.
-  # nginx 기본 root가 /usr/share/nginx/html 이므로 여기에 certbot webroot를 붙이면
-  # /.well-known/acme-challenge/<token> 경로가 그대로 맞는다.
-  certbot-webroot:
-    image: nginx:alpine
-    container_name: kokomen-certbot-webroot
-    expose:
-      - "80"
-    volumes:
-      - /var/www/certbot:/usr/share/nginx/html:ro
-    restart: always
-    networks:
-      - dev-kokomen-net
+      - proxy-network
 
 networks:
   dev-kokomen-net:
     external: true
-    driver: bridge
+  # 앞단 nginx-proxy가 붙어 있는 네트워크.
+  # docker-gen이 컨테이너를 발견하려면 같은 네트워크에 있어야 한다.
+  # 실제 네트워크명이 그쪽 compose 프로젝트 prefix(app_)를 포함하므로 name:을 명시한다.
+  proxy-network:
+    external: true
+    name: app_proxy-network
