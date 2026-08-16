@@ -13,11 +13,12 @@ log:
 accessLog: {}
 
 entryPoints:
+  # TLS는 이 Traefik이 종단하지 않는다.
+  # 호스트를 mykku와 공유하므로 80/443은 앞단의 nginx-proxy(+acme-companion)가 잡고,
+  # Traefik은 Host 헤더를 그대로 넘겨받아 내부 라우팅(blue-green 전환)만 담당한다.
+  # 그래서 web 하나만 두고 컨테이너 포트를 호스트에 publish하지 않는다.
   web:
     address: ":80"
-
-  websecure:
-    address: ":443"
     transport:
       respondingTimeouts:
         # nginx의 keepalive_timeout 65 대응
