@@ -29,7 +29,7 @@ services:
     image: traefik:v3.3
     container_name: kokomen-traefik
     # 호스트 포트를 publish하지 않는다.
-    # 이 호스트(OCI A1)는 mykku와 공유하며 80/443은 mykku의 nginx-proxy가 잡고 있다.
+    # 이 호스트는 다른 스택과 공유하며 80/443은 앞단 nginx-proxy가 잡고 있다.
     # nginx-proxy가 TLS를 종단하고 Host 헤더를 보존한 채 여기 :80으로 넘긴다.
     # Traefik은 내부 라우팅(blue-green 전환 + api 분기)만 담당한다.
     expose:
@@ -67,9 +67,9 @@ services:
 networks:
   dev-kokomen-net:
     external: true
-  # mykku의 nginx-proxy가 붙어 있는 네트워크.
+  # 앞단 nginx-proxy가 붙어 있는 네트워크.
   # docker-gen이 컨테이너를 발견하려면 같은 네트워크에 있어야 한다.
-  # 실제 네트워크명이 compose 프로젝트 prefix(app_)를 포함하므로 name:을 명시한다.
+  # 실제 네트워크명이 그쪽 compose 프로젝트 prefix(app_)를 포함하므로 name:을 명시한다.
   proxy-network:
     external: true
     name: app_proxy-network
