@@ -14,7 +14,6 @@ import {
 import { AxiosError } from "axios";
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { submitOnboardingSurvey } from "@/domains/onboarding/api";
-import { markOnboardingSubmitted } from "@/domains/onboarding/utils";
 import {
   DESKTOP_STEPS,
   MOBILE_STEPS,
@@ -77,7 +76,6 @@ export default function OnboardingForm({
   const { mutate: submitOnboarding, isPending } = useMutation({
     mutationFn: submitOnboardingSurvey,
     onSuccess: () => {
-      markOnboardingSubmitted();
       setIsCompleted(true);
     },
     onError: (error: AxiosError) => {
