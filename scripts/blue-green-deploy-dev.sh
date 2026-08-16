@@ -247,11 +247,20 @@ echo "[OK] 라우팅 파일 교체 완료"
 
 # ---------------------------------------------------------------------------
 # 5. 전환 검증 — 엣지를 통해 실제로 응답이 오는지 확인
-#    Host 헤더를 지정해 로컬 443으로 찔러본다. 443을 잡고 있는 것은 앞단
-#    nginx-proxy이므로, 이 요청은 nginx-proxy -> Traefik -> 새 색상까지
-#    체인 전체를 검증한다.
-#    SNI가 localhost라 인증서가 안 맞으므로 -k 를 쓴다(라우팅은 Host 헤더로 결정됨).
-#    인증서 발급 전에도 nginx-proxy가 self-signed로 443에 응답하므로 -k면 통과한다.
+#    앞단 nginx-proxy가 80/443을 잡고 있으므로, 이 요청은
+#    nginx-proxy -> Traefik -> 새 색상까지 체인 전체를 검증한다.
+#
+#    Host 헤더 대신 --resolve 를 쓰는 이유:
+#    nginx-proxy는 해당 vhost의 인증서가 있을 때만 443 블록을 만든다.
+#    인증서가 없으면 443 요청이 default 서버로 가서 500이 되고, -k 로도
+#    통과하지 못한다(-k는 인증서 검증만 건너뛴다). 그래서 80으로 요청하고
+#    -L 로 리다이렉트를 따라간다.
+#      - 인증서 없음: 80에서 바로 200
+#      - 인증서 있음: 80 -> 301 -> 443 -> 200
+#    이때 -H "Host:" 를 쓰면 리다이렉트를 따라갈 때 curl이 도메인을 실제
+#    DNS로 다시 조회해 외부(운영 IP)로 나가버린다. --resolve 는 80/443 양쪽을
+#    127.0.0.1로 고정하므로 리다이렉트 후에도 로컬에 머문다.
+#    SNI가 맞아도 자체 서명 단계일 수 있어 -k 는 유지한다.
 # ---------------------------------------------------------------------------
 echo "[INFO] Traefik 반영 대기 (${TRAEFIK_RELOAD_WAIT}초)..."
 sleep "$TRAEFIK_RELOAD_WAIT"
@@ -260,7 +269,10 @@ echo "[INFO] 전환 검증..."
 SMOKE_OK=false
 for i in $(seq 1 10); do
   # localhost는 ::1로 먼저 해석될 수 있고 Docker 퍼블리시는 기본 IPv4라 127.0.0.1을 명시한다
-  if curl -skf -o /dev/null --max-time 5 -H "Host: dev.kokomen.kr" https://127.0.0.1/ 2>/dev/null; then
+  if curl -skfL -o /dev/null --max-time 5 \
+       --resolve "dev.kokomen.kr:80:127.0.0.1" \
+       --resolve "dev.kokomen.kr:443:127.0.0.1" \
+       http://dev.kokomen.kr/ 2>/dev/null; then
     SMOKE_OK=true
     echo "[OK] dev.kokomen.kr 응답 정상 (${i}/10)"
     break
