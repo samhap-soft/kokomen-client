@@ -65,7 +65,7 @@ export function InterviewTimer({
     <div
       role="timer"
       aria-label="남은 답변 시간"
-      className={`fixed top-3 right-16 z-50 flex items-center gap-1.5 px-3 py-2 rounded-md border shadow-sm bg-bg-base tabular-nums font-bold ${
+      className={`fixed top-3 right-32 z-50 flex items-center gap-1.5 px-3 py-2 rounded-md border shadow-sm bg-bg-base tabular-nums font-bold ${
         isLow
           ? "border-error text-error animate-pulse"
           : "border-border text-text-secondary"

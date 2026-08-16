@@ -4,9 +4,10 @@ import { useSubmitInterviewAnswer } from "@/domains/interview/hooks/useSubmitInt
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import { Button, LoadingCircles, Textarea, useToast } from "@kokomen/ui";
 import { ArrowBigUp, CircleStop, Mic } from "lucide-react";
-import React, { JSX, MouseEvent, useCallback, useRef, useState } from "react";
+import React, { JSX, MouseEvent, useCallback, useRef } from "react";
 import { publishInterviewEvent } from "@/domains/interview/utils/interviewEventEmitter";
 import { InterviewTimer } from "@/domains/interview/components/interviewTimer";
+import { useAppendOnlyAnswerInput } from "@/domains/interview/hooks/useAppendOnlyAnswerInput";
 
 // 질문당 답변 제한 시간(초)
 const ANSWER_TIME_LIMIT_SECONDS = 90;
@@ -44,9 +45,29 @@ export function InterviewAnswerForm({
   mode,
   isFinished
 }: InterviewInputProps): JSX.Element {
-  const [interviewInput, setInterviewInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const { info: infoToast } = useToast();
+  const { info: infoToast, warning: warningToast } = useToast();
+
+  // 안내 토스트가 여러 개 쌓이지 않도록 이전 토스트를 닫고 새로 띄운다
+  const blockedEditToastRef = useRef<{ dismiss: () => void } | null>(null);
+  const handleBlockedEdit = useCallback(() => {
+    blockedEditToastRef.current?.dismiss();
+    blockedEditToastRef.current = warningToast({
+      description: "이미 입력한 답변은 수정하거나 지울 수 없습니다.",
+      duration: 2000,
+      position: "top-center"
+    });
+  }, [warningToast]);
+
+  const {
+    value: interviewInput,
+    setValue: setInterviewInput,
+    handleChange: handleAppendOnlyChange,
+    handleCompositionStart,
+    handleCompositionEnd,
+    handleCut,
+    guardDeletionKeyDown
+  } = useAppendOnlyAnswerInput({ onBlockedEdit: handleBlockedEdit });
 
   const updateInterviewInput = useCallback(
     (result: string) => {
@@ -68,7 +89,7 @@ export function InterviewAnswerForm({
       duration: 5000,
       position: "top-center"
     });
-  }, [infoToast]);
+  }, [infoToast, setInterviewInput]);
 
   const { isListening: isVoiceListening, error: voiceError } =
     useSpeechRecognitionWithEvents({
@@ -135,15 +156,6 @@ export function InterviewAnswerForm({
     mode
   ]);
 
-  // 한 번 입력한 답변은 지울 수 없도록 이전 입력을 접두사로 유지
-  const handleAppendOnlyChange = useCallback(
-    (nextValue: string) => {
-      setInterviewInput((prev) =>
-        nextValue.startsWith(prev) ? nextValue : prev
-      );
-    },
-    [setInterviewInput]
-  );
   return (
     <>
       <InterviewTimer
@@ -166,20 +178,17 @@ export function InterviewAnswerForm({
           isVoiceListening ? "bg-bg-text-hover animate-pulse" : ""
         }`}
         rows={1}
-        onChange={(e) => handleAppendOnlyChange(e.target.value)}
+        onChange={handleAppendOnlyChange}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
+        onCut={handleCut}
         onKeyDown={(e) => {
-          // 삭제/잘라내기 키로 입력한 답변을 지울 수 없도록 차단
-          const isDeletion =
-            e.key === "Backspace" ||
-            e.key === "Delete" ||
-            ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "x");
-          if (isDeletion) {
-            e.preventDefault();
-            return;
-          }
+          // 삭제/잘라내기 키로 입력한 답변을 지울 수 없도록 차단(조합 중은 허용)
+          if (guardDeletionKeyDown(e)) return;
           if (
             e.key === "Enter" &&
             !e.shiftKey &&
+            !e.nativeEvent.isComposing &&
             !isPending &&
             isInterviewStarted
           ) {
