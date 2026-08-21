@@ -16,11 +16,12 @@ log:
 accessLog: {}
 
 entryPoints:
+  # TLS는 이 Traefik이 종단하지 않는다.
+  # 호스트를 다른 스택과 공유하므로 80/443은 앞단의 nginx-proxy(+acme-companion)가 잡고,
+  # Traefik은 Host 헤더를 그대로 넘겨받아 내부 라우팅만 담당한다.
+  # 그래서 web 하나만 두고 컨테이너 포트를 호스트에 publish하지 않는다.
   web:
     address: ":80"
-
-  websecure:
-    address: ":443"
     transport:
       respondingTimeouts:
         # ATS records.yaml의 keep_alive_enabled_in / nginx keepalive_timeout 65 대응
@@ -41,6 +42,15 @@ providers:
   # (ATS에서 remap.config을 docker cp로 밀어넣어야 했던 것과 같은 문제)
   file:
     directory: /etc/traefik/dynamic
+    watch: true
+
+  # backend 레포의 kokomen-api-{blue,green} 라벨을 읽는다.
+  # API의 blue-green은 "어느 색 컨테이너가 떠 있는지"로 결정되므로 file provider가 아니다.
+  # 두 provider를 함께 켜서 각 레포가 자기 방식을 유지한다.
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: prod-kokomen-net
     watch: true
 
 ping:
