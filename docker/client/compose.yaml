@@ -1,3 +1,9 @@
+# dev와 prod compose가 같은 디렉터리에 있어 프로젝트명이 둘 다 "client"로 잡힌다.
+# Compose는 container_name이 아니라 project+service 라벨로 컨테이너를 식별하므로,
+# 한쪽 배포의 --force-recreate가 반대쪽 컨테이너를 교체해버린다.
+# 프로젝트명을 명시해 두 스택을 분리한다.
+name: kokomen-client-prod
+
 # prod 클라이언트 스택.
 #
 # 이 호스트는 다른 스택과 공유하며 80/443은 앞단 nginx-proxy가 잡고 있다.
