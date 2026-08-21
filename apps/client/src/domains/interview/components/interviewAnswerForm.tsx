@@ -8,9 +8,7 @@ import React, { JSX, MouseEvent, useCallback, useRef } from "react";
 import { publishInterviewEvent } from "@/domains/interview/utils/interviewEventEmitter";
 import { InterviewTimer } from "@/domains/interview/components/interviewTimer";
 import { useAppendOnlyAnswerInput } from "@/domains/interview/hooks/useAppendOnlyAnswerInput";
-
-// 질문당 답변 제한 시간(초)
-const ANSWER_TIME_LIMIT_SECONDS = 90;
+import { ANSWER_TIME_LIMIT_SECONDS } from "@/domains/interview/constants";
 
 type InterviewInputProps = Pick<
   Interview,
@@ -30,6 +28,10 @@ type InterviewInputProps = Pick<
   playAudio: (audioUrl?: string) => Promise<void>;
   mode: InterviewMode;
   isFinished: boolean;
+  // 설정(면접 설정 dialog)에서 켠 경우에만 제한 시간을 적용한다
+  isTimeLimitEnabled: boolean;
+  // 설정에서 켠 경우에만 입력한 답변을 수정·삭제할 수 없다
+  isAppendOnlyEnabled: boolean;
 };
 export function InterviewAnswerForm({
   isInterviewStarted,
@@ -43,7 +45,9 @@ export function InterviewAnswerForm({
   setInterviewerEmotion,
   playAudio,
   mode,
-  isFinished
+  isFinished,
+  isTimeLimitEnabled,
+  isAppendOnlyEnabled
 }: InterviewInputProps): JSX.Element {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { info: infoToast, warning: warningToast } = useToast();
@@ -67,7 +71,10 @@ export function InterviewAnswerForm({
     handleCompositionEnd,
     handleCut,
     guardDeletionKeyDown
-  } = useAppendOnlyAnswerInput({ onBlockedEdit: handleBlockedEdit });
+  } = useAppendOnlyAnswerInput({
+    enabled: isAppendOnlyEnabled,
+    onBlockedEdit: handleBlockedEdit
+  });
 
   const updateInterviewInput = useCallback(
     (result: string) => {
@@ -158,13 +165,18 @@ export function InterviewAnswerForm({
 
   return (
     <>
-      {/* 질문이 바뀌면 타이머를 리마운트해서 리셋한다 */}
-      <InterviewTimer
-        key={cur_question_id}
-        durationSeconds={ANSWER_TIME_LIMIT_SECONDS}
-        isActive={isInterviewStarted && !isPending && !isFinished}
-        onTimeout={handleTimeout}
-      />
+      {/*
+        질문이 바뀌면 타이머를 리마운트해서 리셋한다.
+        설정을 켠 순간에도 새로 마운트되므로 제한 시간이 그 시점부터 다시 시작된다.
+      */}
+      {isTimeLimitEnabled && (
+        <InterviewTimer
+          key={cur_question_id}
+          durationSeconds={ANSWER_TIME_LIMIT_SECONDS}
+          isActive={isInterviewStarted && !isPending && !isFinished}
+          onTimeout={handleTimeout}
+        />
+      )}
       <form className="bottom-10 gap-3 p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base">
         {/* 음성 인식 상태 표시 */}
 

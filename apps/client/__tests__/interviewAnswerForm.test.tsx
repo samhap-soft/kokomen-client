@@ -7,8 +7,14 @@ import { InterviewAnswerForm } from "@/domains/interview/components/interviewAns
 
 const BLOCKED_EDIT_MESSAGE = "이미 입력한 답변은 수정하거나 지울 수 없습니다.";
 
-function renderForm() {
-  renderWithProviders(
+function AnswerForm({
+  isAppendOnlyEnabled = true,
+  isTimeLimitEnabled = false
+}: {
+  isAppendOnlyEnabled?: boolean;
+  isTimeLimitEnabled?: boolean;
+}) {
+  return (
     <InterviewAnswerForm
       isInterviewStarted={true}
       cur_question="현재 질문"
@@ -22,12 +28,23 @@ function renderForm() {
       playAudio={jest.fn().mockResolvedValue(undefined)}
       mode="TEXT"
       isFinished={false}
+      isAppendOnlyEnabled={isAppendOnlyEnabled}
+      isTimeLimitEnabled={isTimeLimitEnabled}
     />
   );
+}
 
+function getAnswerInput() {
   return screen.getByRole("textbox", {
     name: "interview-answer"
   }) as HTMLTextAreaElement;
+}
+
+/** "답변 수정 금지"가 켜진 상태로 렌더한다(기존 append-only 동작) */
+function renderForm() {
+  renderWithProviders(<AnswerForm />);
+
+  return getAnswerInput();
 }
 
 /** IME 조합 한 음절을 입력한다. steps는 조합 중간값들("ㅇ" -> "아" -> "안") */
@@ -45,7 +62,7 @@ function composeSyllable(
   });
 }
 
-describe("면접 답변 입력(append-only)", () => {
+describe("면접 답변 입력 - 답변 수정 금지 ON", () => {
   it("한글 자음/모음 조합이 정상적으로 합성된다", () => {
     const input = renderForm();
 
@@ -150,5 +167,67 @@ describe("면접 답변 입력(append-only)", () => {
 
     fireEvent.change(input, { target: { value: "a" } });
     expect(input.value).toBe("ab");
+  });
+});
+
+describe("면접 답변 입력 - 답변 수정 금지 OFF", () => {
+  it("입력한 답변을 자유롭게 지울 수 있다", () => {
+    renderWithProviders(<AnswerForm isAppendOnlyEnabled={false} />);
+    const input = getAnswerInput();
+
+    composeSyllable(input, "", ["ㅇ", "아", "안"]);
+    composeSyllable(input, "안", ["ㄴ", "녀", "녕"]);
+    expect(input.value).toBe("안녕");
+
+    // 삭제 키를 막지 않고, 실제 값도 줄어든다
+    expect(fireEvent.keyDown(input, { key: "Backspace" })).toBe(true);
+    fireEvent.change(input, { target: { value: "안" } });
+
+    expect(input.value).toBe("안");
+    expect(screen.queryByText(BLOCKED_EDIT_MESSAGE)).not.toBeInTheDocument();
+  });
+
+  it("중간 내용을 다른 값으로 바꿔도 되돌리지 않는다", () => {
+    renderWithProviders(<AnswerForm isAppendOnlyEnabled={false} />);
+    const input = getAnswerInput();
+
+    fireEvent.change(input, { target: { value: "안녕하세요" } });
+    fireEvent.change(input, { target: { value: "다시 씁니다" } });
+
+    expect(input.value).toBe("다시 씁니다");
+    expect(screen.queryByText(BLOCKED_EDIT_MESSAGE)).not.toBeInTheDocument();
+  });
+
+  it("도중에 설정을 켜면 그때까지 입력한 내용부터 잠긴다", () => {
+    const { rerender } = renderWithProviders(
+      <AnswerForm isAppendOnlyEnabled={false} />
+    );
+    const input = getAnswerInput();
+
+    fireEvent.change(input, { target: { value: "설정 끄고 쓴 답변" } });
+
+    rerender(<AnswerForm isAppendOnlyEnabled={true} />);
+
+    expect(fireEvent.keyDown(input, { key: "Backspace" })).toBe(false);
+    expect(input.value).toBe("설정 끄고 쓴 답변");
+    expect(screen.getByText(BLOCKED_EDIT_MESSAGE)).toBeInTheDocument();
+  });
+});
+
+describe("면접 답변 시간 제한 설정", () => {
+  it("설정이 꺼져 있으면 타이머가 보이지 않는다", () => {
+    renderWithProviders(<AnswerForm isTimeLimitEnabled={false} />);
+
+    expect(screen.queryByRole("timer")).not.toBeInTheDocument();
+  });
+
+  it("설정을 켜면 그 순간부터 제한 시간이 시작된다", () => {
+    const { rerender } = renderWithProviders(
+      <AnswerForm isTimeLimitEnabled={false} />
+    );
+
+    rerender(<AnswerForm isTimeLimitEnabled={true} />);
+
+    expect(screen.getByRole("timer")).toHaveTextContent("1:30");
   });
 });

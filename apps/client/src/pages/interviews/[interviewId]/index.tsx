@@ -25,6 +25,8 @@ import { SEO } from "@/shared/seo";
 import { InterviewQuestion } from "@/domains/interview/components/interviewQuestion";
 import { InterviewNotFoundError } from "@/domains/interview/components/interviewNotFoundError";
 import InterviewExitButton from "@/domains/interview/components/interviewExitButton";
+import InterviewSettingsButton from "@/domains/interview/components/interviewSettingsButton";
+import { useInterviewSettings } from "@/domains/interview/hooks/useInterviewSettings";
 import { AlertTriangle } from "lucide-react";
 
 // eslint-disable-next-line @rushstack/typedef-var
@@ -128,6 +130,9 @@ export default function InterviewPage({
     openModal: openLiveCoding,
     closeModal: closeLiveCoding
   } = useModal();
+  // 면접 중에도 켜고 끌 수 있는 옵션(답변 시간 제한 / 답변 수정 금지)
+  const { settings, toggleSetting } = useInterviewSettings();
+
   const queryClient = useQueryClient();
   const { data, isPending, isError } = useQuery({
     queryKey: interviewKeys.byInterviewId(interviewId),
@@ -285,9 +290,15 @@ export default function InterviewPage({
               playAudio={playAudio}
               mode={mode}
               isFinished={data.interview_state === "FINISHED"}
+              isTimeLimitEnabled={settings.isTimeLimitEnabled}
+              isAppendOnlyEnabled={settings.isAppendOnlyEnabled}
             />
           </div>
           <InterviewExitButton />
+          <InterviewSettingsButton
+            settings={settings}
+            onToggle={toggleSetting}
+          />
           <InterviewSideBar
             open={isInterviewSidebarOpen}
             openSidebar={openInterviewSidebar}

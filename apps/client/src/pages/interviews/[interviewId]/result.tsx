@@ -24,7 +24,6 @@ import { SEO } from "@/shared/seo";
 import { UserInfo } from "@kokomen/types";
 import Link from "next/link";
 import { isAxiosError } from "axios";
-import PostingPopup from "@/shared/postingPopup";
 
 export default function MyInterviewResultPage({
   report,
@@ -267,7 +266,6 @@ export default function MyInterviewResultPage({
             </div>
           </section>
         </main>
-        <PostingPopup />
       </Layout>
     </>
   );
