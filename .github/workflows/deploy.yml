@@ -7,7 +7,10 @@ on:
 jobs:
   build-and-push:
     name: Build and Push to Docker Hub
-    runs-on: ubuntu-latest
+    # arm64 네이티브 러너. 배포 대상이 OCI A1(aarch64)이라 arm64 이미지가 필요한데,
+    # ubuntu-latest(amd64)에서 QEMU로 에뮬레이션하면 yarn install + Next 빌드가
+    # 30분을 넘긴다. GitHub 호스티드 arm64 러너는 public 레포에서 무료다.
+    runs-on: ubuntu-24.04-arm
 
     steps:
       - name: Checkout source code
@@ -35,8 +38,13 @@ jobs:
           push: true
           file: ./apps/client/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:buildcache,mode=max
+          # 배포 대상이 aarch64 단일이므로 arm64만 빌드한다.
+          platforms: linux/arm64
+          # 캐시 태그를 아키텍처별로 분리한다. 기존 :buildcache는 amd64 레이어라
+          # arm64 빌드에서 재사용되지 않고, 태그를 공유하면 서로 덮어써서
+          # 매 빌드가 콜드 빌드가 된다.
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:buildcache-arm64
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:buildcache-arm64,mode=max
           build-args: |
             NEXT_PUBLIC_POSTHOG_KEY=${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
             NEXT_PUBLIC_POSTHOG_HOST=${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
@@ -68,7 +76,9 @@ jobs:
   deploy-to-ec2:
     name: Deploy to EC2
     needs: build-and-push
-    runs-on: [self-hosted, client-prod]
+    # 서버가 한 대로 합쳐지므로 러너를 나눌 이유가 없다.
+    # 이 러너 하나가 backend·client 양쪽 prod 배포를 받는다.
+    runs-on: [self-hosted, prod, new]
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -107,30 +117,13 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/kokomen-client-prod:production
           echo "✅ Docker image pulled successfully!"
 
-      # 프록시가 ATS -> Traefik으로 넘어가는 중이라, 배포 스크립트를 호스트 상태를 보고 고른다.
-      # 이렇게 하면 "머지 -> 마이그레이션" 순서를 맞출 필요가 없다.
-      #   - 아직 ATS가 80/443을 쥐고 있으면      ATS 스크립트
-      #   - 마이그레이션이 끝나 설정이 있으면     Traefik 스크립트
-      #   - 롤백(traefik 정지 + ATS 기동)해도    다음 배포가 자동으로 ATS로 되돌아간다
-      # 전환이 안정화되면(trafficserver/prod 제거 시) 이 분기도 지우고 한 줄로 되돌린다.
-      # 상세: apps/client/docs/traefik-prod-migration.md
+      # ATS -> Traefik 전환이 완료되어 스크립트 분기를 제거했다.
+      # (trafficserver/prod 와 blue-green-deploy.sh 도 함께 삭제)
+      # 라이브 설정 디렉토리 존재 확인은 배포 스크립트 자체가 수행한다.
       - name: Blue-Green Deploy
         run: |
-          if docker ps --format '{{.Names}}' | grep -qx 'kokomen-ats'; then
-            SCRIPT=./scripts/blue-green-deploy.sh
-            echo "::notice title=Reverse proxy::ATS 실행 중 -> $SCRIPT 사용"
-          elif [ -d "${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/prod}/dynamic" ]; then
-            SCRIPT=./scripts/blue-green-deploy-prod.sh
-            echo "::notice title=Reverse proxy::Traefik 설정 감지 -> $SCRIPT 사용"
-          else
-            echo "::error title=Reverse proxy::ATS도 Traefik 설정도 없어 배포 대상을 판별할 수 없습니다."
-            echo "ATS가 죽어 있는지 확인하거나, 최초 전환이면 다음을 먼저 실행하세요:"
-            echo "  sudo ./scripts/migrate-ats-to-traefik-prod.sh .env"
-            docker ps -a --filter "name=kokomen-" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-            exit 1
-          fi
-          chmod +x "$SCRIPT"
-          "$SCRIPT" .env
+          chmod +x ./scripts/blue-green-deploy-prod.sh
+          ./scripts/blue-green-deploy-prod.sh .env
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 

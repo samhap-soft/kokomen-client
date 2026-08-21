@@ -9,17 +9,21 @@
 # 컨테이너 이름으로 붙기 때문에 ATS 때 필요했던 고정 IP(172.30.0.10/11)에
 # 의존하지 않는다. Traefik은 요청마다 도커 DNS로 다시 해석해서
 # HostDB stale 문제가 없다.
+#
+# TLS는 앞단 nginx-proxy가 종단하므로 여기서는 web(:80) 엔트리포인트로 받는다.
+# Host 헤더는 nginx-proxy가 보존해서 넘기므로 rule은 그대로 동작한다.
+#
+# www.kokomen.kr을 함께 받는다. 이전에는 라우터가 없어 www 접속이 실패했다.
 
 http:
   routers:
     client:
-      rule: "Host(`kokomen.kr`)"
+      rule: "Host(`kokomen.kr`) || Host(`www.kokomen.kr`)"
       entryPoints:
-        - websecure
+        - web
       service: client-blue
       middlewares:
         - security-headers
-      tls: {}
 
   services:
     client-blue:

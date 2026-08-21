@@ -4,9 +4,12 @@ set -euo pipefail
 # Blue-Green 무중단 배포 스크립트 (Prod, Traefik file provider)
 # 사용법: ./scripts/blue-green-deploy-prod.sh [.env]
 #
-# scripts/blue-green-deploy.sh(ATS)의 Traefik 대체판이다.
-# 마이그레이션(scripts/migrate-ats-to-traefik-prod.sh)을 끝내고 검증한 뒤에
-# .github/workflows/deploy.yml 이 이 스크립트를 호출하도록 바꾼다.
+# prod 클라이언트 blue-green 배포 (Traefik file provider).
+# ATS 방식은 제거됐다(trafficserver/prod 와 blue-green-deploy.sh 삭제).
+# .github/workflows/deploy.yml 이 이 스크립트를 직접 호출한다.
+#
+# 이 호스트는 다른 스택과 공유하며 80/443은 앞단 nginx-proxy가 잡는다.
+# Traefik은 호스트 포트를 publish하지 않는 내부 라우터이고, TLS는 앞단이 종단한다.
 #
 # ATS 방식과의 차이:
 #   - sed 템플릿 렌더 + docker cp + traffic_ctl reload  →  파일 rename 한 번
@@ -54,21 +57,12 @@ echo "[INFO] 라이브 설정 경로: $LIVE_CONFIG_DIR"
 # ---------------------------------------------------------------------------
 # 0. 전제 조건 확인
 # ---------------------------------------------------------------------------
-# ATS가 아직 80/443을 쥐고 있으면 마이그레이션이 끝나지 않은 상태다.
-# 이 상태로 진행하면 Traefik이 포트 바인딩 실패로 뜨지 못하고,
-# 최악의 경우 ATS를 건드려 서비스가 끊긴다. 아무것도 하지 않고 멈춘다.
-if docker ps --format '{{.Names}}' | grep -qx "kokomen-ats"; then
-  echo "[ERROR] ATS(kokomen-ats)가 아직 실행 중입니다. Traefik 배포를 진행하지 않습니다."
-  echo "        전환 전이라면 ATS용 스크립트를 쓰세요:"
-  echo "          ./scripts/blue-green-deploy.sh $ENV_FILE"
-  echo "        전환하려면 먼저 한 번:"
-  echo "          sudo ./scripts/migrate-ats-to-traefik-prod.sh $ENV_FILE"
-  exit 1
-fi
-
 if [ ! -d "$LIVE_DYNAMIC_DIR" ]; then
   echo "[ERROR] 라이브 설정 디렉토리가 없습니다: $LIVE_DYNAMIC_DIR"
-  echo "        최초 1회 ./scripts/migrate-ats-to-traefik-prod.sh 를 먼저 실행하세요."
+  echo "        최초 1회 아래로 시딩하세요(리포 -> 호스트):"
+  echo "          sudo mkdir -p $LIVE_DYNAMIC_DIR && sudo chown -R \$(id -un):\$(id -gn) ${LIVE_CONFIG_DIR}"
+  echo "          cp ${REPO_CONFIG_DIR}/traefik.yaml ${LIVE_CONFIG_DIR}/"
+  echo "          cp ${REPO_CONFIG_DIR}/dynamic/*.yaml ${LIVE_DYNAMIC_DIR}/"
   exit 1
 fi
 
@@ -107,6 +101,20 @@ for f in "${REPO_CONFIG_DIR}"/dynamic/*.yaml; do
     tmp="${LIVE_DYNAMIC_DIR}/.${base}.tmp"
     cp "$f" "$tmp"
     mv "$tmp" "${LIVE_DYNAMIC_DIR}/${base}"
+  fi
+done
+
+# 리포에서 사라진 설정은 라이브에서도 지운다.
+# 위 루프는 추가/갱신만 하므로, 예전에 있던 파일(tls.yaml, http.yaml 등)이
+# 라이브에 남아 Traefik이 계속 읽는다. 없는 인증서 경로를 가리키면
+# 매 watch마다 에러가 난다.
+# 점(.)으로 시작하는 temp/backup은 Traefik이 무시하므로 건드리지 않는다.
+for f in "${LIVE_DYNAMIC_DIR}"/*.yaml; do
+  [ -e "$f" ] || continue
+  base="$(basename "$f")"
+  if [ ! -f "${REPO_CONFIG_DIR}/dynamic/${base}" ]; then
+    echo "[INFO] 리포에서 삭제된 설정 제거: $base"
+    rm -f "$f"
   fi
 done
 
@@ -155,30 +163,41 @@ for svc in traefik certbot-webroot; do
   fi
 done
 
-# Traefik이 80/443을 실제로 물고 있는지 확인 (compose 성공만으로는 보장되지 않는다)
-if ! docker port kokomen-traefik 2>/dev/null | grep -q '^80/tcp'; then
-  echo "[ERROR] Traefik에 80 포트가 퍼블리시되지 않았습니다. 배포를 중단합니다."
-  echo "--- docker port 출력 ---"
-  docker port kokomen-traefik || echo "(없음)"
-  echo "        다음으로 복구하세요:"
-  echo "          docker compose --env-file $ENV_FILE -f $COMPOSE_FILE up -d --force-recreate traefik"
+# Traefik은 호스트 포트를 publish하지 않는다. 앞단 nginx-proxy가 80/443을 잡고
+# Host 헤더로 이 컨테이너에 넘긴다. 그래서 확인할 것이 두 가지로 바뀐다.
+#   1) nginx-proxy가 떠 있는지 (없으면 외부에서 아예 도달하지 못한다)
+#   2) Traefik이 nginx-proxy와 같은 네트워크에 붙어 있는지
+#      (docker-gen이 컨테이너를 발견하려면 같은 네트워크여야 한다)
+if ! docker ps --format '{{.Names}}' | grep -qx 'nginx-proxy'; then
+  echo "[ERROR] nginx-proxy 컨테이너가 떠 있지 않습니다. 배포를 중단합니다."
+  echo "        이 호스트의 80/443은 앞단 nginx-proxy가 담당합니다."
+  exit 1
+fi
+
+PROXY_NET="$(docker inspect nginx-proxy \
+  --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}' 2>/dev/null | head -1)"
+if ! docker inspect kokomen-traefik-prod \
+     --format "{{range \$k, \$v := .NetworkSettings.Networks}}{{\$k}}{{\"\\n\"}}{{end}}" 2>/dev/null \
+     | grep -qx "$PROXY_NET"; then
+  echo "[ERROR] kokomen-traefik-prod이 nginx-proxy 네트워크($PROXY_NET)에 붙어 있지 않습니다."
+  echo "        docker-gen이 vhost를 만들지 못해 외부에서 도달할 수 없습니다."
   exit 1
 fi
 
 if [ "$NEEDS_TRAEFIK_RESTART" = true ]; then
   echo "[INFO] Traefik 재시작 (정적 설정 변경 반영)..."
-  docker restart kokomen-traefik
+  docker restart kokomen-traefik-prod
 fi
 
 echo "[INFO] Traefik 헬스체크 대기..."
 for i in $(seq 1 15); do
-  if docker exec kokomen-traefik traefik healthcheck --ping >/dev/null 2>&1; then
+  if docker exec kokomen-traefik-prod traefik healthcheck --ping >/dev/null 2>&1; then
     echo "[OK] Traefik 준비 완료 (${i}/15)"
     break
   fi
   if [ "$i" -eq 15 ]; then
     echo "[ERROR] Traefik이 응답하지 않습니다. 배포 중단."
-    docker logs --tail 50 kokomen-traefik || true
+    docker logs --tail 50 kokomen-traefik-prod || true
     exit 1
   fi
   sleep 2
@@ -238,7 +257,19 @@ echo "[OK] 라우팅 파일 교체 완료"
 
 # ---------------------------------------------------------------------------
 # 6. 전환 검증 — Traefik을 통해 실제로 응답이 오는지 확인
-#    Host 헤더를 지정해 로컬 443으로 찔러본다.
+#    앞단 nginx-proxy가 80/443을 잡고 있으므로 이 요청은
+#    nginx-proxy -> Traefik -> 새 색상까지 체인 전체를 검증한다.
+#
+#    Host 헤더 대신 --resolve 를 쓰는 이유:
+#    nginx-proxy는 해당 vhost의 인증서가 있을 때만 443 블록을 만든다.
+#    인증서가 없으면 443 요청이 default 서버로 가서 500이 되고, -k 로도
+#    통과하지 못한다(-k는 인증서 검증만 건너뛴다). 그래서 80으로 요청하고
+#    -L 로 리다이렉트를 따라간다.
+#      - 인증서 없음: 80에서 바로 200
+#      - 인증서 있음: 80 -> 301 -> 443 -> 200
+#    -H "Host:" 를 쓰면 리다이렉트를 따라갈 때 curl이 도메인을 실제 DNS로
+#    다시 조회해 외부(운영 IP)로 나가버린다. --resolve 는 80/443 양쪽을
+#    127.0.0.1로 고정하므로 리다이렉트 후에도 로컬에 머문다.
 #    SNI가 localhost라 인증서가 안 맞으므로 -k 를 쓴다(라우팅은 Host 헤더로 결정됨).
 # ---------------------------------------------------------------------------
 echo "[INFO] Traefik 반영 대기 (${TRAEFIK_RELOAD_WAIT}초)..."
@@ -248,7 +279,10 @@ echo "[INFO] 전환 검증..."
 SMOKE_OK=false
 for i in $(seq 1 10); do
   # localhost는 ::1로 먼저 해석될 수 있고 Docker 퍼블리시는 기본 IPv4라 127.0.0.1을 명시한다
-  if curl -skf -o /dev/null --max-time 5 -H "Host: ${SERVICE_HOST}" https://127.0.0.1/ 2>/dev/null; then
+  if curl -skfL -o /dev/null --max-time 5 \
+       --resolve "${SERVICE_HOST}:80:127.0.0.1" \
+       --resolve "${SERVICE_HOST}:443:127.0.0.1" \
+       "http://${SERVICE_HOST}/" 2>/dev/null; then
     SMOKE_OK=true
     echo "[OK] ${SERVICE_HOST} 응답 정상 (${i}/10)"
     break
@@ -265,7 +299,7 @@ if [ "$SMOKE_OK" = false ]; then
     sleep "$TRAEFIK_RELOAD_WAIT"
     echo "[ROLLBACK] 트래픽이 $CURRENT_COLOR 로 복구되었습니다. 새 컨테이너는 조사용으로 남겨둡니다."
   fi
-  docker logs --tail 50 kokomen-traefik || true
+  docker logs --tail 50 kokomen-traefik-prod || true
   exit 1
 fi
 

@@ -1,18 +1,19 @@
-version: "3.8"
-
 # prod 클라이언트 스택.
 #
-# 리버스 프록시가 두 개 정의돼 있다(ats / traefik). 둘 다 80/443을 쓰므로
-# 동시에 뜰 수 없고, 배포 스크립트가 필요한 쪽만 지정해서 올린다.
-#   - ats     : 현행. scripts/blue-green-deploy.sh 가 사용
-#   - traefik : 전환 대상. scripts/blue-green-deploy-prod.sh 가 사용
-# 전환(scripts/migrate-ats-to-traefik-prod.sh) 후 안정화되면 ats 관련 정의와
-# trafficserver/prod/ 를 함께 제거한다.
+# 이 호스트는 다른 스택과 공유하며 80/443은 앞단 nginx-proxy가 잡고 있다.
+# 따라서 traefik은 호스트 포트를 publish하지 않고 내부 라우터로만 동작한다.
+# nginx-proxy가 TLS를 종단하고 Host 헤더를 보존한 채 traefik:80으로 넘긴다.
 #
-# 주의: 서비스명을 생략한 `docker compose up -d` 를 절대 실행하지 말 것.
-#       ats와 traefik이 동시에 뜨려 하면서 포트 충돌로 한쪽이 죽는다.
+# traefik이 두 provider를 함께 켜는 이유:
+#   - file   : 클라이언트 blue-green (dynamic/client.yaml 의 "service:" 한 줄 교체)
+#   - docker : API blue-green (backend 레포가 컨테이너 라벨로 선언, 떠 있는 색으로 결정)
+# 각 레포가 자기 방식을 유지하므로 두 레포가 같은 파일을 만지지 않는다.
 
 services:
+  # Blue-Green 두 색. 포트를 publish하지 않고 expose만 하므로
+  # 두 색이 동시에 떠 있어도 충돌하지 않는다.
+  # 트래픽을 받는 쪽은 컨테이너 존재 여부가 아니라
+  # traefik/prod/dynamic/client.yaml 의 "service:" 한 줄이 결정한다.
   client-blue:
     image: ${DOCKER_USERNAME}/kokomen-client-prod:production
     container_name: kokomen-client-blue
@@ -22,11 +23,7 @@ services:
     profiles:
       - blue
     networks:
-      kokomen-net:
-        # 고정 IP: 컨테이너 재생성 시에도 동일 IP 회수 -> ATS HostDB 캐시 stale 문제 방지.
-        # Traefik은 요청마다 도커 DNS로 다시 해석하므로 이 설정이 필요 없지만,
-        # ATS 롤백 경로를 살려두는 동안은 그대로 유지한다.
-        ipv4_address: 172.30.0.10
+      - prod-kokomen-net
 
   client-green:
     image: ${DOCKER_USERNAME}/kokomen-client-prod:production
@@ -37,39 +34,24 @@ services:
     profiles:
       - green
     networks:
-      kokomen-net:
-        ipv4_address: 172.30.0.11
-
-  ats:
-    image: trafficserver/trafficserver
-    container_name: kokomen-ats
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      # 커스텀 설정 파일만 개별 마운트 (ATS 기본 파일 유지)
-      - ../../trafficserver/prod/records.yaml:/opt/etc/trafficserver/records.yaml:ro
-      - ../../trafficserver/prod/remap.config:/opt/etc/trafficserver/remap.config
-      - ../../trafficserver/prod/ssl_multicert.config:/opt/etc/trafficserver/ssl_multicert.config:ro
-      - ../../trafficserver/prod/ip_allow.yaml:/opt/etc/trafficserver/ip_allow.yaml:ro
-      - ../../trafficserver/prod/logging.yaml:/opt/etc/trafficserver/logging.yaml:ro
-      - ../../trafficserver/prod/plugin.config:/opt/etc/trafficserver/plugin.config:ro
-      - ../../trafficserver/prod/storage.config:/opt/etc/trafficserver/storage.config:ro
-      - ../../trafficserver/prod/header_rewrite:/opt/etc/trafficserver/header_rewrite:ro
-      # Let's Encrypt 인증서
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /var/www/certbot:/var/www/certbot
-    restart: always
-    networks:
-      - kokomen-net
+      - prod-kokomen-net
 
   traefik:
     image: traefik:v3.3
-    container_name: kokomen-traefik
-    ports:
-      - "80:80"
-      - "443:443"
+    container_name: kokomen-traefik-prod
+    expose:
+      - "80"
+    environment:
+      # nginx-proxy(docker-gen)가 이 값을 보고 vhost를 생성한다.
+      VIRTUAL_HOST: kokomen.kr,www.kokomen.kr,api.kokomen.kr
+      VIRTUAL_PORT: "80"
+      # acme-companion이 Let's Encrypt 인증서를 자동 발급·갱신한다.
+      # 세 도메인이 한 장의 SAN 인증서로 묶인다.
+      # 이전의 호스트 certbot + certbot-webroot 컨테이너를 대체한다.
+      LETSENCRYPT_HOST: kokomen.kr,www.kokomen.kr,api.kokomen.kr
     volumes:
+      # docker provider용. backend 레포가 붙인 API 컨테이너 라벨을 읽는다.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       # 리포 워킹트리가 아니라 호스트의 별도 경로를 마운트한다.
       # actions/checkout이 매 배포마다 추적 파일을 되돌리는데, 워킹트리를 그대로
       # 마운트하면 checkout 순간 라우팅 파일이 초기값(client-blue)으로 돌아가고
@@ -80,7 +62,6 @@ services:
       # 배포 시 temp 파일 -> rename으로 교체하므로 inode가 바뀌는데,
       # 파일 단위 마운트면 컨테이너가 변경을 보지 못한다.
       - ${TRAEFIK_CONFIG_DIR:-/opt/kokomen/traefik/prod}/dynamic:/etc/traefik/dynamic:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
     healthcheck:
       test: ["CMD", "traefik", "healthcheck", "--ping"]
       interval: 10s
@@ -89,26 +70,15 @@ services:
       start_period: 10s
     restart: always
     networks:
-      - kokomen-net
-
-  # certbot HTTP-01 챌린지 파일 서빙 전용.
-  # Traefik에는 정적 파일 서버가 없어서 별도 컨테이너가 필요하다.
-  # nginx 기본 root가 /usr/share/nginx/html 이므로 여기에 certbot webroot를 붙이면
-  # /.well-known/acme-challenge/<token> 경로가 그대로 맞는다.
-  certbot-webroot:
-    image: nginx:alpine
-    container_name: kokomen-certbot-webroot
-    expose:
-      - "80"
-    volumes:
-      - /var/www/certbot:/usr/share/nginx/html:ro
-    restart: always
-    networks:
-      - kokomen-net
+      - prod-kokomen-net
+      - proxy-network
 
 networks:
-  kokomen-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.0.0/24
+  prod-kokomen-net:
+    external: true
+  # 앞단 nginx-proxy가 붙어 있는 네트워크.
+  # docker-gen이 컨테이너를 발견하려면 같은 네트워크에 있어야 한다.
+  # 실제 네트워크명이 그쪽 compose 프로젝트 prefix(app_)를 포함하므로 name:을 명시한다.
+  proxy-network:
+    external: true
+    name: app_proxy-network

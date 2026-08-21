@@ -158,9 +158,10 @@ export function InterviewAnswerForm({
 
   return (
     <>
+      {/* 질문이 바뀌면 타이머를 리마운트해서 리셋한다 */}
       <InterviewTimer
+        key={cur_question_id}
         durationSeconds={ANSWER_TIME_LIMIT_SECONDS}
-        resetKey={cur_question_id}
         isActive={isInterviewStarted && !isPending && !isFinished}
         onTimeout={handleTimeout}
       />
