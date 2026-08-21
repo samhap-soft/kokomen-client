@@ -129,7 +129,7 @@ fi
 CURRENT_COLOR="${ACTIVE_SERVICE#client-}"
 echo "[INFO] 라우팅 파일 기준 현재 활성: $CURRENT_COLOR"
 
-if docker ps --format '{{.Names}}' | grep -qx "kokomen-client-${CURRENT_COLOR}"; then
+if docker ps --format '{{.Names}}' | grep -qx "kokomen-client-${CURRENT_COLOR}-prod"; then
   if [ "$CURRENT_COLOR" = "blue" ]; then
     NEW_COLOR="green"
   else
@@ -146,22 +146,22 @@ else
 fi
 
 NEW_SERVICE="client-${NEW_COLOR}"
-NEW_CONTAINER="kokomen-client-${NEW_COLOR}"
-OLD_CONTAINER="kokomen-client-${CURRENT_COLOR}"
+NEW_CONTAINER="kokomen-client-${NEW_COLOR}-prod"
+OLD_CONTAINER="kokomen-client-${CURRENT_COLOR}-prod"
 
 # ---------------------------------------------------------------------------
 # 3. 프록시 / 챌린지 컨테이너 기동
 # ---------------------------------------------------------------------------
-for svc in traefik certbot-webroot; do
-  cname="kokomen-${svc}"
-  if ! docker ps --format '{{.Names}}' | grep -qx "$cname"; then
-    echo "[INFO] $cname 시작..."
-    # --force-recreate: 남아 있던 컨테이너를 재사용하면 그때의 정의(포트/마운트 누락)를
-    # 그대로 물고 떠서 호스트에서 접속이 안 되는 사고가 있었다.
-    docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --force-recreate "$svc"
-    NEEDS_TRAEFIK_RESTART=false
-  fi
-done
+# certbot-webroot는 이 설계에서 삭제됐다(TLS는 앞단 nginx-proxy가 종단한다).
+# 컨테이너 이름은 dev 스택과 한 호스트에 공존하므로 -prod 접미사가 붙은 실제 이름으로
+# 확인해야 한다. "kokomen-traefik"으로 보면 dev traefik에 매칭돼 prod를 띄우지 않고 넘어간다.
+if ! docker ps --format '{{.Names}}' | grep -qx 'kokomen-traefik-prod'; then
+  echo "[INFO] kokomen-traefik-prod 시작..."
+  # --force-recreate: 남아 있던 컨테이너를 재사용하면 그때의 정의(포트/마운트 누락)를
+  # 그대로 물고 떠서 호스트에서 접속이 안 되는 사고가 있었다.
+  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --force-recreate traefik
+  NEEDS_TRAEFIK_RESTART=false
+fi
 
 # Traefik은 호스트 포트를 publish하지 않는다. 앞단 nginx-proxy가 80/443을 잡고
 # Host 헤더로 이 컨테이너에 넘긴다. 그래서 확인할 것이 두 가지로 바뀐다.

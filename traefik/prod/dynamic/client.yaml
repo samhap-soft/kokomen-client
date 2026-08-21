@@ -32,10 +32,10 @@ http:
         # Next.js가 원본 Host를 보고 절대 URL을 만들기 때문에 반드시 필요하다.
         passHostHeader: true
         servers:
-          - url: "http://kokomen-client-blue:3000"
+          - url: "http://kokomen-client-blue-prod:3000"
 
     client-green:
       loadBalancer:
         passHostHeader: true
         servers:
-          - url: "http://kokomen-client-green:3000"
+          - url: "http://kokomen-client-green-prod:3000"
