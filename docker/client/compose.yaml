@@ -43,7 +43,11 @@ services:
       - prod-kokomen-net
 
   traefik:
-    image: traefik:v3.3
+    # v3.5까지는 Docker API 1.24를 고정으로 요청한다. 이 호스트의 Docker 29는
+    # API 1.40 미만을 거부하므로 docker provider가 "client version 1.24 is too old"로
+    # 연결에 실패하고, API 라벨을 읽지 못해 api.kokomen.kr이 404가 된다.
+    # DOCKER_API_VERSION 환경변수로는 우회되지 않는다(코드에 고정). v3.6부터 동작한다.
+    image: traefik:v3.6
     container_name: kokomen-traefik-prod
     expose:
       - "80"
