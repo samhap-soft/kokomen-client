@@ -221,8 +221,7 @@ for i in $(seq 1 $MAX_RETRIES); do
     echo "[ERROR] $NEW_CONTAINER 헬스체크 실패. 배포 중단(트래픽은 그대로 $CURRENT_COLOR)."
     docker logs --tail 50 "$NEW_CONTAINER" || true
     if [ "$IS_FIRST_DEPLOY" = false ]; then
-      docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile "$NEW_COLOR" stop "client-${NEW_COLOR}" || true
-      docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile "$NEW_COLOR" rm -f "client-${NEW_COLOR}" || true
+      docker rm -f "$NEW_CONTAINER" >/dev/null 2>&1 || true
     fi
     exit 1
   fi
@@ -312,9 +311,16 @@ if [ "$IS_FIRST_DEPLOY" = false ]; then
   echo "[INFO] 이전 컨테이너 정리: $OLD_CONTAINER"
   # 전환 직전에 들어온 요청이 끝날 시간을 준다
   sleep 5
-  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile "$CURRENT_COLOR" stop "client-${CURRENT_COLOR}" || true
-  docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" --profile "$CURRENT_COLOR" rm -f "client-${CURRENT_COLOR}" || true
-  echo "[OK] $OLD_CONTAINER 제거 완료"
+  # compose rm은 project+service 라벨로 대상을 찾으므로, 프로젝트명이 바뀐 뒤 남은
+  # 옛 컨테이너를 찾지 못한다. 게다가 || true 뒤에 성공 메시지를 무조건 출력해서
+  # 실패가 조용히 묻혔다(고아 컨테이너가 계속 떠 있었다).
+  # 컨테이너 이름으로 직접 지우고 결과를 확인한다.
+  docker rm -f "$OLD_CONTAINER" >/dev/null 2>&1 || true
+  if docker ps -a --format '{{.Names}}' | grep -qx "$OLD_CONTAINER"; then
+    echo "[WARN] $OLD_CONTAINER 제거 실패. 트래픽은 이미 전환됐으므로 배포는 계속하지만 수동 확인이 필요하다."
+  else
+    echo "[OK] $OLD_CONTAINER 제거 완료"
+  fi
 fi
 
 echo ""
