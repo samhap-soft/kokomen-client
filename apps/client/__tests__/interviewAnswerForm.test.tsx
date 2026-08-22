@@ -28,6 +28,7 @@ function AnswerForm({
       playAudio={jest.fn().mockResolvedValue(undefined)}
       mode="TEXT"
       isFinished={false}
+      isInterviewerSpeaking={false}
       isAppendOnlyEnabled={isAppendOnlyEnabled}
       isTimeLimitEnabled={isTimeLimitEnabled}
     />
@@ -229,5 +230,47 @@ describe("면접 답변 시간 제한 설정", () => {
     rerender(<AnswerForm isTimeLimitEnabled={true} />);
 
     expect(screen.getByRole("timer")).toHaveTextContent("1:30");
+  });
+});
+
+describe("면접 답변 제출 조건", () => {
+  it("빈 답변은 Enter로도 제출되지 않는다", () => {
+    const input = renderForm();
+
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(
+      screen.getByRole("button", { name: "interview-submit" })
+    ).toBeDisabled();
+  });
+
+  it("공백만 입력한 답변은 제출 버튼이 활성화되지 않는다", () => {
+    renderWithProviders(<AnswerForm isAppendOnlyEnabled={false} />);
+    const input = getAnswerInput();
+
+    fireEvent.change(input, { target: { value: "   " } });
+
+    expect(
+      screen.getByRole("button", { name: "interview-submit" })
+    ).toBeDisabled();
+  });
+
+  it("내용이 있으면 제출 버튼이 활성화된다", () => {
+    renderWithProviders(<AnswerForm isAppendOnlyEnabled={false} />);
+    const input = getAnswerInput();
+
+    fireEvent.change(input, { target: { value: "실제 답변" } });
+
+    expect(
+      screen.getByRole("button", { name: "interview-submit" })
+    ).toBeEnabled();
+  });
+});
+
+describe("면접 진행도 표시", () => {
+  it("첫 질문에서 0이 아니라 1번째 질문으로 표시한다", () => {
+    renderWithProviders(<AnswerForm isAppendOnlyEnabled={false} />);
+
+    expect(screen.getByText("1 / 3")).toBeInTheDocument();
   });
 });

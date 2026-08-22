@@ -48,7 +48,12 @@ export default function AiInterviewInterface({
         }
       >
         <EntranceCamera phase={phase} />
-        <Environment preset="apartment" />
+        {/* drei 프리셋은 외부 CDN에서 HDRI를 받아온다. 전체 씬 Suspense에 묶이면
+            네트워크가 느리거나 차단된 환경에서 면접장 자체가 뜨지 않으므로
+            별도 경계로 격리한다. 아래 조명만으로도 씬은 보인다. */}
+        <Suspense fallback={null}>
+          <Environment preset="apartment" />
+        </Suspense>
         <ambientLight intensity={0.4} />
         <directionalLight position={[3, 4, 2]} intensity={0.6} castShadow />
 

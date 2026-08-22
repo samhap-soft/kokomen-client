@@ -1,5 +1,5 @@
-import React, { JSX } from "react";
-import { Camera, CameraOff, Loader2 } from "lucide-react";
+import React, { JSX, useState } from "react";
+import { Camera, CameraOff, Loader2, X } from "lucide-react";
 import { useFacialExpressionAnalysis } from "../hooks/useFacialExpressionAnalysis";
 
 interface CameraPreviewProps {
@@ -26,14 +26,18 @@ export default function CameraPreview({
     isModelLoading,
     currentExpression
   } = useFacialExpressionAnalysis({ enabled });
+  // 안내를 한 번 닫으면 이 면접 동안 다시 띄우지 않는다
+  const [isHintDismissed, setIsHintDismissed] = useState<boolean>(false);
+
+  const showHint = !isCameraOn && enabled && !isModelLoading && !isHintDismissed;
 
   return (
-    <div className="absolute bottom-4 right-4 z-30 flex flex-col items-end">
+    <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 z-30 flex flex-col items-end">
       {isCameraOn && (
-        <div className="relative w-[200px] h-[150px] rounded-lg overflow-hidden border-2 border-white/50 shadow-lg bg-black">
+        <div className="relative w-[120px] h-[90px] sm:w-[200px] sm:h-[150px] rounded-lg overflow-hidden border-2 border-white/50 shadow-lg bg-black">
           <video
             ref={videoRef}
-            className="w-full h-full object-cover mirror"
+            className="w-full h-full object-cover"
             style={{ transform: "scaleX(-1)" }}
             muted
             playsInline
@@ -43,45 +47,52 @@ export default function CameraPreview({
               <Loader2 className="w-6 h-6 text-white animate-spin" />
             </div>
           )}
-          {!isModelLoading && currentExpression && (
+          {!isModelLoading && (
             <div className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-black/60 rounded text-xs text-white">
-              {EXPRESSION_LABELS[currentExpression] || currentExpression}
-            </div>
-          )}
-          {!isModelLoading && !currentExpression && isCameraOn && (
-            <div className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-black/60 rounded text-xs text-white">
-              얼굴을 인식하는 중...
+              {currentExpression
+                ? EXPRESSION_LABELS[currentExpression] || currentExpression
+                : "얼굴을 인식하는 중..."}
             </div>
           )}
         </div>
       )}
       <div className="relative mt-2">
-        {!isCameraOn && enabled && !isModelLoading && (
+        {showHint && (
           <div
             role="tooltip"
-            className="absolute bottom-full right-0 mb-2 px-3 py-2 text-sm font-medium text-white bg-gray-800 rounded-md shadow-lg whitespace-nowrap animate-bounce pointer-events-none"
+            className="absolute bottom-full right-0 mb-2 flex items-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-white bg-gray-800 rounded-md shadow-lg whitespace-nowrap"
           >
             표정 인식을 활성화 해보세요
+            <button
+              type="button"
+              onClick={() => setIsHintDismissed(true)}
+              aria-label="표정 인식 안내 닫기"
+              className="rounded p-0.5 hover:bg-white/20"
+            >
+              <X className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
             <div className="absolute top-full right-4 w-0 h-0 border-4 border-l-transparent border-r-transparent border-b-transparent border-t-gray-800" />
           </div>
         )}
         <button
+          type="button"
           onClick={toggleCamera}
           disabled={!enabled || isModelLoading}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
+          aria-pressed={isCameraOn}
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full border shadow-sm text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
             isCameraOn
               ? "bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
-              : "bg-blue-50 border-blue-300 text-blue-600 hover:bg-blue-100 animate-pulse"
+              : "bg-blue-50 border-blue-300 text-blue-600 hover:bg-blue-100"
           }`}
         >
           {isCameraOn ? (
             <>
-              <CameraOff className="w-4 h-4" />
+              <CameraOff className="w-4 h-4" aria-hidden="true" />
               카메라 끄기
             </>
           ) : (
             <>
-              <Camera className="w-4 h-4" />
+              <Camera className="w-4 h-4" aria-hidden="true" />
               표정 인식
             </>
           )}

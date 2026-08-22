@@ -58,6 +58,8 @@ export function useFacialExpressionAnalysis({
   const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const faceApiRef = useRef<typeof import("face-api.js") | null>(null);
+  // 이전 추론이 아직 끝나지 않았는지 표시한다
+  const isAnalyzingRef = useRef<boolean>(false);
 
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [isModelLoading, setIsModelLoading] = useState(false);
@@ -80,10 +82,10 @@ export function useFacialExpressionAnalysis({
     try {
       const faceapi = await import("face-api.js");
       const MODEL_URL = "/models/face-api";
+      // 표정만 쓰기 때문에 landmark 모델(수백 KB)은 불러오지 않는다
       await Promise.all([
         faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
+        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
       ]);
       // eslint-disable-next-line require-atomic-updates
       faceApiRef.current = faceapi;
@@ -122,17 +124,14 @@ export function useFacialExpressionAnalysis({
     }
   }, []);
 
-  const runAnalysis = useCallback(async () => {
-    if (!faceApiRef.current || !videoRef.current) return;
-    if (document.visibilityState === "hidden") return;
-
+  const analyzeFrame = useCallback(async () => {
     const faceapi = faceApiRef.current;
+    if (!faceapi || !videoRef.current) return;
     const detection = await faceapi
       .detectSingleFace(
         videoRef.current,
         new faceapi.TinyFaceDetectorOptions({ inputSize: 224 })
       )
-      .withFaceLandmarks()
       .withFaceExpressions();
 
     if (!detection) {
@@ -201,6 +200,27 @@ export function useFacialExpressionAnalysis({
       }
     }
   }, [negativeThreshold, warningCooldownMs, warning, info]);
+
+  /**
+   * 추론이 분석 간격보다 오래 걸리면 호출이 쌓여 3D 캔버스와 함께
+   * 메인 스레드를 막는다. 앞선 추론이 끝나기 전에는 새로 시작하지 않는다.
+   */
+  const runAnalysis = useCallback(async () => {
+    if (document.visibilityState === "hidden") return;
+    if (isAnalyzingRef.current) return;
+
+    isAnalyzingRef.current = true;
+    try {
+      await analyzeFrame();
+    } catch (e) {
+      console.error("facial expression analysis failed:", e);
+    } finally {
+      // 이 ref는 재진입을 막는 플래그일 뿐이고 이 함수만 쓴다.
+      // 규칙이 경고하는 경합은 여기서는 일어나지 않는다.
+      // eslint-disable-next-line require-atomic-updates
+      isAnalyzingRef.current = false;
+    }
+  }, [analyzeFrame]);
 
   const startAnalysisLoop = useCallback(() => {
     if (intervalRef.current) return;

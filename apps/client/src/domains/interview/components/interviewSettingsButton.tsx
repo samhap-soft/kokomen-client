@@ -48,7 +48,7 @@ export default function InterviewSettingsButton({
         role="button"
         aria-label="면접 설정 열기"
         title="면접 설정"
-        className="fixed top-3 left-20 z-50"
+        className="fixed top-2 left-16 sm:top-3 sm:left-20 z-50"
       >
         <Settings />
       </Button>
