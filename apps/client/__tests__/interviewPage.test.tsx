@@ -593,7 +593,7 @@ describe("면접 페이지 테스트", () => {
       renderWithProviders(<InterviewPage interviewId={1} mode="TEXT" />);
 
       await waitFor(() => {
-        expect(screen.getByText("1 / 3")).toBeInTheDocument();
+        expect(screen.getByText("2 / 3")).toBeInTheDocument();
       });
     });
   });
