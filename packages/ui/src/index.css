@@ -152,24 +152,47 @@
   --color-primary-9: #804000;
   --color-primary-10: #5c2f00;
 
+  /* Gray Colors (중립 프리미티브) */
+  --color-gray-1: #fafafa;
+  --color-gray-2: #f0f0f0;
+  --color-gray-3: #d9d9d9;
+  --color-gray-4: #bfbfbf;
+  --color-gray-5: #8c8c8c;
+  --color-gray-6: #595959;
+  --color-gray-7: #434343;
+  --color-gray-8: #262626;
+  --color-gray-9: #1f1f1f;
+  --color-gray-10: #141414;
+
+  --color-base-white: #ffffff;
+  --color-base-black: #141414;
+
   --color-primary: #ff9013;
   --color-secondary: #73c8d2;
   --color-primary-light: #f5f1dc;
+
+  /* Figma Foundation/Typography 의 font family.
+     --font-pretendard 는 apps/client 의 next/font(localFont)가 주입한다.
+     Storybook 등 주입이 없는 환경에서는 로컬 설치본 → 시스템 폰트로 내려간다. */
+  --font-sans:
+    var(--font-pretendard), Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 @theme {
-  --color-text-primary: #000000;
-  --color-text-secondary: color-mix(in srgb, #000000, transparent 35%);
-  --color-text-tertiary: color-mix(in srgb, #000000, transparent 55%);
-  --color-text-quaternary: color-mix(in srgb, #000000, transparent 75%);
-  --color-text-light-solid: #ffffff;
+  /* sys.color.onsurface.* — Figma 는 알파가 아닌 solid gray 를 쓴다 */
+  --color-text-primary: var(--color-gray-10); /* #141414 */
+  --color-text-secondary: var(--color-gray-6); /* #595959 */
+  --color-text-tertiary: var(--color-gray-5); /* #8c8c8c */
+  --color-text-quaternary: var(--color-gray-4); /* #bfbfbf */
+  --color-text-light-solid: var(--color-base-white);
   --color-text-heading: var(--color-text-primary);
   --color-text-label: var(--color-text-secondary);
   --color-text-description: var(--color-text-tertiary);
   --color-text-disabled: var(--color-text-quaternary);
   --color-text-placeholder: var(--color-text-quaternary);
 
-  --color-icon: var(--color-text-tertiary);
-  --color-icon-hover: var(--color-text);
+  --color-icon: var(--color-text-secondary); /* #595959 */
+  --color-icon-hover: var(--color-text-primary); /* #141414 */
 
   --color-bg-base: #ffffff;
   --color-bg-elevated: #ffffff;
@@ -179,10 +202,11 @@
   --color-bg-container-disabled: var(--color-text-tertiary);
   --color-bg-text-active: var(--color-fill);
   --color-bg-text-hover: var(--color-fill-secondary);
-  --color-bg-border-bg: var(--color-bg-container);
+  --color-bg-border-bg: var(--color-base-white); /* #ffffff */
 
-  --color-border: var(--color-primary-light);
-  --color-border-secondary: var(--color-primary-light);
+  /* sys.color.stroke.default → gray/200, primary-muted → primary-light */
+  --color-border: var(--color-gray-2); /* #f0f0f0 */
+  --color-border-secondary: var(--color-primary-light); /* #f5f1dc */
   --color-split: rgba(0, 0, 0, 0.06);
 
   --color-fill: rgba(0, 0, 0, 0.15);
@@ -196,7 +220,7 @@
   --color-primary-bg: var(--color-primary-6);
   --color-primary-bg-light: var(--color-primary-light);
   --color-primary-bg-hover: var(--color-primary-3);
-  --color-primary-bg-light-hover: var(--color-primary-light-hover);
+  --color-primary-bg-light-hover: var(--color-primary-2); /* #ffe6cc */
   --color-primary-border: var(--color-primary-3);
   --color-primary-border-hover: var(--color-primary-4);
   --color-primary-hover: var(--color-primary-4);
@@ -240,6 +264,19 @@
   --color-error-text-hover: var(--color-red-8); /* #a8071a */
   --color-error-text: var(--color-red-9); /* #820014 */
   --color-error-text-active: var(--color-red-10); /* #5c0011 */
+
+  /* Info(informative) Color Tokens — 기존에는 .dark 에만 있어서 라이트 모드에서
+     bg-info / text-info-text 같은 유틸리티가 생성되지 않았다. Figma 기준으로 보완. */
+  --color-info: var(--color-blue-6); /* #0046ff */
+  --color-info-bg: var(--color-blue-1); /* #e6f4ff */
+  --color-info-bg-hover: var(--color-blue-2); /* #bae0ff */
+  --color-info-border: var(--color-blue-3); /* #91caff */
+  --color-info-border-hover: var(--color-blue-4); /* #69b1ff */
+  --color-info-hover: var(--color-blue-4); /* #69b1ff */
+  --color-info-active: var(--color-blue-7); /* #0038c4 */
+  --color-info-text-hover: var(--color-blue-8); /* #002994 */
+  --color-info-text: var(--color-blue-9); /* #001e66 */
+  --color-info-text-active: var(--color-blue-10); /* #001d66 */
 }
 @theme {
   /* Size tokens */
@@ -315,10 +352,10 @@
 }
 
 .dark {
-  --color-text-primary: color-mix(in srgb, #ffffff, transparent 15%);
-  --color-text-secondary: color-mix(in srgb, #ffffff, transparent 15%);
-  --color-text-tertiary: color-mix(in srgb, #ffffff, transparent 55%);
-  --color-text-quaternary: color-mix(in srgb, #ffffff, transparent 75%);
+  --color-text-primary: #f5f5f5;
+  --color-text-secondary: #d9d9d9;
+  --color-text-tertiary: #8c8c8c;
+  --color-text-quaternary: #434343;
   --color-text-light-solid: #ffffff;
   --color-text-heading: var(--color-text-primary);
   --color-text-label: var(--color-text-secondary);
@@ -326,8 +363,8 @@
   --color-text-disabled: var(--color-text-quaternary);
   --color-text-placeholder: var(--color-text-quaternary);
 
-  --color-icon: var(--color-text-tertiary);
-  --color-icon-hover: var(--color-text);
+  --color-icon: var(--color-text-tertiary); /* #8c8c8c */
+  --color-icon-hover: var(--color-text-primary); /* #f5f5f5 */
 
   --color-bg-base: #141414;
   --color-bg-elevated: #1f1f1f;
@@ -337,7 +374,7 @@
   --color-bg-container-disabled: var(--color-fill-tertiary);
   --color-bg-text-active: var(--color-fill);
   --color-bg-text-hover: var(--color-fill-secondary);
-  --color-bg-border-bg: var(--color-bg-container);
+  --color-bg-border-bg: var(--color-bg-base); /* #141414 */
 
   --color-border: #424242;
   --color-border-secondary: #303030;
@@ -374,8 +411,8 @@
   --color-success-text: var(--color-green-9);
   --color-success-text-active: var(--color-green-10);
 
-  /* Warning colors */
-  --color-e: var(--color-gold-6);
+  /* Warning colors — Figma: light → Volcano, dark → Gold */
+  --color-warning: var(--color-gold-6);
   --color-warning-bg: var(--color-gold-1);
   --color-warning-bg-hover: var(--color-gold-2);
   --color-warning-border: var(--color-gold-3);
@@ -545,6 +582,75 @@
   --color-yellow-8: #f3ea62;
   --color-yellow-9: #f8f448;
   --color-yellow-10: #fafa85;
+}
+
+/* ── Semantic Typography ────────────────────────────────────────────────
+   Figma: Foundation/Typography → "Semantic Typography — PC / Mobile".
+   Primitive 단계(text-xs~3xl)는 Tailwind 기본 스케일과 값이 같아서 그대로 쓰고,
+   시맨틱 단계만 유틸리티로 정의한다. Mobile 값을 기본으로 두고 md(48rem)
+   이상에서 PC 값으로 올린다.
+
+     토큰        Mobile        PC
+     display     2xl 24/32     3xl 30/36
+     heading-1   xl  20/28     2xl 24/32
+     heading-2   lg  18/28     xl  20/28
+     heading-3   base 16/24    lg  18/28
+     body-lg     sm  14/20     base 16/24
+     body        sm  14/20     sm  14/20
+     caption     xs  12/16     xs  12/16                                  */
+@utility type-display {
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  @media (width >= 48rem) {
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl--line-height);
+  }
+}
+
+@utility type-heading-1 {
+  font-size: var(--text-xl);
+  line-height: var(--text-xl--line-height);
+  @media (width >= 48rem) {
+    font-size: var(--text-2xl);
+    line-height: var(--text-2xl--line-height);
+  }
+}
+
+@utility type-heading-2 {
+  font-size: var(--text-lg);
+  line-height: var(--text-lg--line-height);
+  @media (width >= 48rem) {
+    font-size: var(--text-xl);
+    line-height: var(--text-xl--line-height);
+  }
+}
+
+@utility type-heading-3 {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  @media (width >= 48rem) {
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+  }
+}
+
+@utility type-body-lg {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+  @media (width >= 48rem) {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+}
+
+@utility type-body {
+  font-size: var(--text-sm);
+  line-height: var(--text-sm--line-height);
+}
+
+@utility type-caption {
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
 }
 
 @utility bg-gradient-primary {
