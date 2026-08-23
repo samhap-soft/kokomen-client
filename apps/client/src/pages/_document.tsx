@@ -3,7 +3,7 @@ import { JSX } from "react";
 
 export default function Document(): JSX.Element {
   return (
-    <Html lang="en">
+    <Html lang="ko">
       <Head />
       <body className="antialiased">
         <Main />

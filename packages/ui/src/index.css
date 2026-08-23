@@ -172,10 +172,12 @@
   --color-primary-light: #f5f1dc;
 
   /* Figma Foundation/Typography 의 font family.
-     --font-pretendard 는 apps/client 의 next/font(localFont)가 주입한다.
-     Storybook 등 주입이 없는 환경에서는 로컬 설치본 → 시스템 폰트로 내려간다. */
+     --font-pretendard 는 apps/client 의 _app.tsx 에서 next/font(localFont)가
+     주입한다. 정의되지 않은 var() 를 fallback 없이 참조하면 선언 전체가
+     invalid at computed-value time 이 되어 뒤의 스택까지 통째로 버려지므로,
+     Storybook 등 주입이 없는 환경을 위해 var() 안에 로컬 설치본을 적어둔다. */
   --font-sans:
-    var(--font-pretendard), Pretendard, -apple-system, BlinkMacSystemFont,
+    var(--font-pretendard, Pretendard), -apple-system, BlinkMacSystemFont,
     system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 @theme {
