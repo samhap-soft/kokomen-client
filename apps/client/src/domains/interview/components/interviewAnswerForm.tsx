@@ -3,7 +3,13 @@ import { useSpeechRecognitionWithEvents } from "@/domains/interview/hooks/useSpe
 import { useSubmitInterviewAnswer } from "@/domains/interview/hooks/useSubmitInterviewAnswer";
 import { useInterviewDraftGuard } from "@/domains/interview/hooks/useInterviewDraftGuard";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
-import { Button, LoadingCircles, Textarea, useToast } from "@kokomen/ui";
+import {
+  Button,
+  LoadingCircles,
+  RoundSpinner,
+  Textarea,
+  useToast
+} from "@kokomen/ui";
 import { ArrowBigUp, CircleStop, Mic, RotateCcw } from "lucide-react";
 import React, {
   JSX,
@@ -384,11 +390,18 @@ export function InterviewAnswerForm({
             round
             className="w-[44px] h-[44px] sm:w-[50px] sm:h-[50px] shrink-0 disabled:opacity-50 disabled:pointer-events-none transition-opacity duration-200"
             disabled={!hasAnswer || !isInterviewStarted || isPending}
-            pendingSpinner={isPending}
+            aria-busy={isPending}
             onClick={handleSubmit}
             variant={"primary"}
           >
-            {!isPending && <ArrowBigUp className="text-primary-content" />}
+            {isPending ? (
+              <>
+                <RoundSpinner />
+                <span className="sr-only">답변 제출 중</span>
+              </>
+            ) : (
+              <ArrowBigUp className="text-primary-content" />
+            )}
           </Button>
         </div>
       </form>
