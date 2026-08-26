@@ -42,7 +42,7 @@ export default function Home({
               transition={{ duration: 0.2, ease: "easeInOut" }}
             >
               <h1 className="text-4xl sm:text-4xl lg:text-6xl font-bold text-gray-900">
-                <span className="block">혼자하는 취업준비</span>
+                <span className="block mb-2">혼자하는 취업준비</span>
                 <span className="block text-primary">이젠 끝내세요</span>
               </h1>
               <p className="mt-6 text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
