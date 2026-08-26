@@ -8,7 +8,7 @@ import {
   publishInterviewEvent,
   useInterviewEvent
 } from "@/domains/interview/utils/interviewEventEmitter";
-import React, { JSX, useCallback, useRef, useState } from "react";
+import React, { JSX, useCallback, useEffect, useRef, useState } from "react";
 import {
   GetServerSideProps,
   GetServerSidePropsResult,
@@ -163,7 +163,10 @@ export default function InterviewPage({
       setIsSpeaking(true);
     }
   });
-  playAudioRef.current = playAudio;
+  useEffect(() => {
+    playAudioRef.current = playAudio;
+  }, [playAudio]);
+
   useInterviewEvent("interview:voiceRecognitionStarted", () => {
     setIsListening(true);
   });
@@ -183,16 +186,13 @@ export default function InterviewPage({
     isLiveCodingFromUrl || (data?.include_live_coding ?? false);
 
   // CODE 면접의 원본 문제(첫 root question)를 한 번만 캡처
-  const originalProblemRef = useRef<string>("");
-  if (
-    isLiveCoding &&
-    !originalProblemRef.current &&
-    data &&
-    data.prev_questions_and_answers.length === 0 &&
-    isTextInterview(data)
-  ) {
-    originalProblemRef.current = data.cur_question;
-  }
+  const [originalProblem, setOriginalProblem] = useState<string>("");
+  useEffect(() => {
+    if (!isLiveCoding || originalProblem) return;
+    if (!data || data.prev_questions_and_answers.length > 0) return;
+    if (!isTextInterview(data)) return;
+    setOriginalProblem(data.cur_question);
+  }, [isLiveCoding, originalProblem, data]);
 
   //기존 면접 정보 업데이트
   const updateInterviewData = (updates: Partial<Interview>): void => {
@@ -222,10 +222,14 @@ export default function InterviewPage({
       </SEO>
 
       <Layout>
-        <div className="mx-auto relative min-h-[720px] h-screen w-dvw flex min-w-0">
-          <div className="flex flex-col flex-1 relative min-w-0">
+        {/*
+          모바일에서는 고정 최소 높이(min-h-[720px])가 화면을 넘겨 답변 폼이 잘렸다.
+          작은 화면에서는 세로 스크롤을 허용하고, sm 이상에서만 화면에 꽉 맞춘다.
+        */}
+        <div className="mx-auto relative w-full sm:min-h-[720px] h-dvh flex min-w-0">
+          <div className="flex flex-col flex-1 relative min-w-0 overflow-y-auto sm:overflow-visible">
             {data?.is_demo && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200">
+              <div className="flex items-center gap-2 px-4 py-2 pt-12 sm:pt-2 bg-amber-50 border-b border-amber-200">
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
                 <span className="text-xs text-amber-800 font-medium">
                   데모 면접입니다. 로그인하면 더 많은 기능을 이용할 수 있어요.
@@ -238,12 +242,13 @@ export default function InterviewPage({
               isInterviewStarted={isInterviewStarted}
               playFinished={playFinished}
               playAudio={playAudio}
+              isSpeaking={isSpeaking}
               isLiveCoding={
                 isLiveCoding && data.prev_questions_and_answers.length === 0
               }
             />
 
-            <div className="min-h-[500px] flex-1 border-2 border-border rounded-lg">
+            <div className="min-h-[280px] sm:min-h-[500px] flex-1 border-2 border-border rounded-lg">
               <div className="bg-gradient-to-r w-full h-full from-blue-50 to-primary-bg-hover relative rounded-lg">
                 <AiInterviewInterface
                   avatarUrl={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}/models/interviewer.glb`}
@@ -256,15 +261,14 @@ export default function InterviewPage({
                   isLiveCoding={isLiveCoding}
                   onOpenLiveCoding={openLiveCoding}
                 />
-                {mode === "VOICE" && (
-                  <CameraPreview enabled={isInterviewStarted} />
-                )}
+                {/* 표정 인식은 VOICE 전용 기능이 아니다. TEXT 모드에서도 쓸 수 있게 한다 */}
+                <CameraPreview enabled={isInterviewStarted} />
                 {isLiveCoding && isInterviewStarted && (
                   <Button
                     type="button"
                     variant="primary"
                     onClick={openLiveCoding}
-                    className="absolute bottom-4 left-4 flex items-center gap-2 shadow-lg animate-slide-up"
+                    className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 flex items-center gap-2 shadow-lg motion-safe:animate-slide-up"
                     aria-label="open-live-coding"
                   >
                     <Code2 className="w-4 h-4" />
@@ -290,6 +294,7 @@ export default function InterviewPage({
               playAudio={playAudio}
               mode={mode}
               isFinished={data.interview_state === "FINISHED"}
+              isInterviewerSpeaking={isSpeaking}
               isTimeLimitEnabled={settings.isTimeLimitEnabled}
               isAppendOnlyEnabled={settings.isAppendOnlyEnabled}
             />
@@ -329,7 +334,7 @@ export default function InterviewPage({
             totalQuestions={data.max_question_count}
             setInterviewerEmotion={setInterviewerEmotion}
             playAudio={playAudio}
-            originalProblem={originalProblemRef.current}
+            originalProblem={originalProblem}
           />
         )}
       </Layout>
@@ -352,7 +357,19 @@ export const getServerSideProps: GetServerSideProps<{
 > => {
   const { interviewId, mode, type } = context.query;
 
-  if (!interviewId || !mode) {
+  // 쿼리는 문자열 또는 문자열 배열로 올 수 있고, 값 자체를 신뢰할 수 없다.
+  const rawInterviewId = Array.isArray(interviewId) ? interviewId[0] : interviewId;
+  const rawMode = Array.isArray(mode) ? mode[0] : mode;
+  const rawType = Array.isArray(type) ? type[0] : type;
+
+  const parsedInterviewId = Number(rawInterviewId);
+  const isValidInterviewId =
+    rawInterviewId !== undefined &&
+    Number.isInteger(parsedInterviewId) &&
+    parsedInterviewId > 0;
+  const isValidMode = rawMode === "TEXT" || rawMode === "VOICE";
+
+  if (!isValidInterviewId || !isValidMode) {
     return {
       notFound: true
     };
@@ -360,9 +377,9 @@ export const getServerSideProps: GetServerSideProps<{
 
   return {
     props: {
-      interviewId: +interviewId,
-      mode: mode as InterviewMode,
-      isLiveCoding: type === "CODE"
+      interviewId: parsedInterviewId,
+      mode: rawMode as InterviewMode,
+      isLiveCoding: rawType === "CODE"
     }
   };
 };
