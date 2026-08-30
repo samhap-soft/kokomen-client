@@ -1,6 +1,7 @@
 import { getServerSideSitemapLegacy } from "next-sitemap";
 import { GetServerSidePropsContext } from "next";
 import { getMemberInterviews } from "@/domains/members/api";
+import { parseNumericId } from "@/utils/routeParams";
 
 const MAX_INTERVIEW_COUNT = 100000;
 type PageParams = {
@@ -9,15 +10,16 @@ type PageParams = {
 export const getServerSideProps = async (
   ctx: GetServerSidePropsContext<PageParams>
 ) => {
-  const { memberId } = ctx.params as { memberId: string };
-  if (!memberId) {
+  // 숫자가 아닌 memberId(스캐너 퍼징 등)로 API를 호출하면 member_id=NaN이 전달되므로 먼저 걸러낸다.
+  const memberId = parseNumericId(ctx.params?.memberId);
+  if (memberId === null) {
     return {
       notFound: true
     };
   }
 
   const interviewList = await getMemberInterviews(
-    Number(memberId),
+    memberId,
     0,
     "desc",
     MAX_INTERVIEW_COUNT

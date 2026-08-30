@@ -40,7 +40,7 @@ describe("memberInterviewPage", () => {
   it("렌더링 기본 테스트", async () => {
     renderWithProviders(
       <MemberInterviewPage
-        memberId="1"
+        memberId={1}
         user={null}
         interviews={mockMemberInterview}
         sort="desc"
@@ -54,7 +54,7 @@ describe("memberInterviewPage", () => {
   it("데이터 페칭에 따른 렌더링 테스트", async () => {
     renderWithProviders(
       <MemberInterviewPage
-        memberId="1"
+        memberId={1}
         user={null}
         interviews={mockMemberInterview}
         sort="desc"
@@ -69,7 +69,7 @@ describe("memberInterviewPage", () => {
   it("데이터 페이지네이션 테스트", async () => {
     renderWithProviders(
       <MemberInterviewPage
-        memberId="1"
+        memberId={1}
         user={null}
         interviews={mockMemberInterview}
         sort="desc"
@@ -90,7 +90,7 @@ describe("memberInterviewPage", () => {
   it("데이터 페이지네이션 테스트", async () => {
     renderWithProviders(
       <MemberInterviewPage
-        memberId="1"
+        memberId={1}
         user={null}
         interviews={{
           ...mockMemberInterview,
@@ -112,7 +112,7 @@ describe("memberInterviewPage", () => {
   it("면접 기록 데이터 없을 때 렌더링 테스트", async () => {
     renderWithProviders(
       <MemberInterviewPage
-        memberId="1"
+        memberId={1}
         user={null}
         interviews={{ ...mockMemberInterview, interviewSummaries: [] }}
         sort="desc"

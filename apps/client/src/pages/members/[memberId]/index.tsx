@@ -14,6 +14,7 @@ import { CamelCasedProperties } from "@/utils/convertConvention";
 import { TrendingUp } from "lucide-react";
 import { SEO } from "@/shared/seo";
 import { getRankDisplay, getPercentileDisplay } from "@/utils/rankDisplay";
+import { parseNumericId, parsePageNumber } from "@/utils/routeParams";
 import { UserInfo } from "@kokomen/types";
 
 export default function MemberInterviewPage({
@@ -127,7 +128,7 @@ export default function MemberInterviewPage({
               면접 기록
             </h2>
             <MemberInterviewHistory
-              memberId={Number(memberId)}
+              memberId={memberId}
               interviewSummaries={interviews.interviewSummaries}
               sort={sort}
               page={page}
@@ -141,7 +142,7 @@ export default function MemberInterviewPage({
 }
 
 export const getServerSideProps: GetServerSideProps<{
-  memberId: string;
+  memberId: number;
   user: UserInfo | null;
   interviews: CamelCasedProperties<MemberInterview>;
   sort: "asc" | "desc";
@@ -150,25 +151,26 @@ export const getServerSideProps: GetServerSideProps<{
   context
 ): Promise<
   GetServerSidePropsResult<{
-    memberId: string;
+    memberId: number;
     user: UserInfo | null;
     interviews: CamelCasedProperties<MemberInterview>;
     sort: "asc" | "desc";
     page: number;
   }>
 > => {
-  const { memberId } = context.params as { memberId: string };
-  const { sort, page } = context.query as { sort: string; page: string };
-  if (!memberId) {
+  const { sort, page } = context.query;
+  // 숫자가 아닌 memberId(스캐너 퍼징 등)로 API를 호출하면 member_id=NaN이 전달되므로 먼저 걸러낸다.
+  const memberId = parseNumericId(context.params?.memberId);
+  if (memberId === null) {
     return {
       notFound: true
     };
   }
   const sortOption = sort === "asc" ? "asc" : "desc";
-  const pageOption = isNaN(Number(page)) ? 0 : Number(page);
+  const pageOption = parsePageNumber(page);
   const [user, interviews] = await Promise.allSettled([
     getUserInfo(context),
-    getMemberInterviews(Number(memberId), pageOption, sortOption)
+    getMemberInterviews(memberId, pageOption, sortOption)
   ]);
 
   if (interviews.status === "fulfilled") {
