@@ -95,7 +95,7 @@ const Modal = ({
       {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 bg-black/50  transition-opacity",
+          "fixed inset-0 bg-black/30 transition-opacity",
           transparentBackdrop && "bg-transparent"
         )}
         onClick={backdropCloseHandler}

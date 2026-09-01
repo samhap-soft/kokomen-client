@@ -110,14 +110,14 @@ ToastViewport.displayName = "ToastViewport";
 
 // Toast Variants
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-xl border p-4 pr-8 shadow-lg transition-all duration-300 ease-out transform",
+  "group pointer-events-auto relative flex w-full items-start justify-between gap-4 overflow-hidden rounded-xl border px-3.5 py-5 pr-8 transition-all duration-300 ease-out transform",
   {
     variants: {
       variant: {
         default:
-          "border-border bg-bg-elevated text-text-primary shadow-box-shadow",
+          "border-border-secondary bg-bg-elevated text-text-primary shadow-box-shadow",
         success:
-          "border-success-border bg-success-bg text-success-text shadow-box-shadow",
+          "border-success-border bg-bg-elevated text-success-text shadow-box-shadow",
         error:
           "border-error-border bg-error-bg text-error-text shadow-box-shadow",
         warning:
