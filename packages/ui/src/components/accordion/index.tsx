@@ -197,7 +197,7 @@ export function AccordionTrigger({
       <button
         type="button"
         id={headerId}
-        className={`flex items-center justify-between w-full p-4 text-left font-medium text-gray-700 bg-primary-bg-light hover:bg-primary-bg-hover focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 transition-colors duration-150 ease-in-out ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${isOpen ? "bg-primary-bg-hover" : ""} ${className || ""}`}
+        className={`flex items-center justify-between w-full p-4 text-left text-base font-medium text-gray-700 bg-primary-bg-light hover:bg-primary-bg-hover focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-75 transition-colors duration-150 ease-in-out ${disabled ? "cursor-not-allowed" : "cursor-pointer"} ${isOpen ? "bg-primary-bg-hover" : ""} ${className || ""}`}
         onClick={toggleOpen}
         aria-expanded={isOpen}
         aria-controls={panelId}
@@ -278,7 +278,7 @@ export function AccordionContent({
       style={{ maxHeight: panelHeight }}
       {...props}
     >
-      <div className="p-4 text-gray-600">{children}</div>
+      <div className="bg-bg-elevated p-4 text-sm text-gray-600">{children}</div>
     </div>
   );
 }

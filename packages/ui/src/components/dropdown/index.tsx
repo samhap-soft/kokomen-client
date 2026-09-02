@@ -120,7 +120,12 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
   className
 }) => {
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div
+      className={cn(
+        "inline-flex items-center gap-2 rounded-lg border border-border-secondary bg-bg-elevated px-4 py-2.5 text-sm",
+        className
+      )}
+    >
       <span>{children}</span>
       {isOpen ? (
         <ChevronUp className="w-4 h-4" />

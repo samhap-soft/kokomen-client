@@ -178,20 +178,21 @@ const Select: FC<SelectProps> = ({
       <div
         ref={selectRef}
         className={`
-          relative w-full bg-bg-elevated border rounded-lg cursor-pointer
+          relative w-full bg-bg-elevated rounded-lg cursor-pointer
           transition-all duration-200 ease-in-out
           ${sizeClasses[size]}
           ${
-            error
-              ? "border-error hover:border-error-hover focus-within:border-error-hover"
-              : "border-border hover:border-primary-border focus-within:border-primary-border"
+            isOpen
+              ? "border-2 border-primary"
+              : error
+                ? "border border-error hover:border-error-hover focus-within:border-error-hover"
+                : "border border-border-secondary hover:border-primary-border focus-within:border-primary-border"
           }
           ${
             disabled
-              ? "bg-bg-container-disabled cursor-not-allowed opacity-60"
+              ? "cursor-not-allowed opacity-60"
               : "hover:shadow-sm focus-within:shadow-sm"
           }
-          ${isOpen ? "ring-2 ring-primary-bg" : ""}
         `}
         onClick={toggleDropdown}
         onKeyDown={handleKeyDown}
@@ -205,7 +206,9 @@ const Select: FC<SelectProps> = ({
         {/* 선택된 값 또는 플레이스홀더 */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <span className="text-text-primary truncate">
+            <span
+              className={`truncate ${disabled ? "text-text-disabled" : "text-text-primary"}`}
+            >
               {selectedOptionLabel}
             </span>
           </div>
@@ -221,7 +224,7 @@ const Select: FC<SelectProps> = ({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-bg-elevated border border-border rounded-lg shadow-lg max-h-60 overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-bg-elevated border border-border-secondary rounded-lg shadow-lg max-h-60 overflow-hidden">
           {/* 검색 입력 */}
           {searchable && (
             <div className="p-2 border-b border-border">
@@ -253,29 +256,39 @@ const Select: FC<SelectProps> = ({
                   : "옵션이 없습니다"}
               </li>
             ) : (
-              filteredOptions.map((option, index) => (
-                <li
-                  key={option.value}
-                  className={`
-                    flex items-center justify-between px-4 py-2 cursor-pointer
-                    transition-colors duration-150 active:bg-primary-light
-                    ${index === focusedIndex ? "bg-primary-bg" : "hover:bg-fill-content"}
-                    ${option.disabled ? "opacity-50 cursor-not-allowed" : ""}
-                    ${option.value === value ? "bg-primary-bg text-primary-light hover:bg-primary-bg-hover" : "text-text-primary"}
-                    ${multiSelect && (value as string[]).includes(option.value) ? "bg-primary-bg text-primary-light hover:bg-primary-bg-hover" : "text-text-primary"}
-                  `}
-                  onClick={() => handleOptionSelect(option)}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  role="option"
-                  aria-selected={option.value === value}
-                  aria-disabled={option.disabled}
-                >
-                  <span className="truncate">{option.label}</span>
-                  {option.value === value && (
-                    <Check className="w-4 h-4 text-primary flex-shrink-0" />
-                  )}
-                </li>
-              ))
+              filteredOptions.map((option, index) => {
+                const isSelected = multiSelect
+                  ? ((value as string[]) ?? []).includes(option.value)
+                  : option.value === value;
+                return (
+                  <li
+                    key={option.value}
+                    className={`
+                      flex items-center justify-between px-4 py-2 text-sm cursor-pointer
+                      transition-colors duration-150
+                      ${
+                        option.disabled
+                          ? "text-text-disabled cursor-not-allowed"
+                          : isSelected
+                            ? "bg-primary-bg text-primary-light font-semibold"
+                            : index === focusedIndex
+                              ? "bg-primary-bg-light-hover text-text-primary"
+                              : "text-text-primary hover:bg-primary-bg-light-hover"
+                      }
+                    `}
+                    onClick={() => handleOptionSelect(option)}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    role="option"
+                    aria-selected={isSelected}
+                    aria-disabled={option.disabled}
+                  >
+                    <span className="truncate">{option.label}</span>
+                    {isSelected && (
+                      <Check className="w-4 h-4 text-primary-light flex-shrink-0" />
+                    )}
+                  </li>
+                );
+              })
             )}
           </ul>
         </div>
