@@ -15,6 +15,7 @@ import MemberQuestionFeedback from "@/domains/members/components/memberQuestionF
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { SEO } from "@/shared/seo";
 import { UserInfo } from "@kokomen/types";
+import { parseNumericId } from "@/utils/routeParams";
 
 export default function MemberInterviewResultPage({
   result,
@@ -159,15 +160,13 @@ export const getServerSideProps = async (
     interviewId: number;
   }>
 > => {
-  const { interviewId } = context.params as {
-    interviewId: string;
-  };
+  // 숫자가 아닌 interviewId(스캐너 퍼징 등)가 그대로 API 요청에 실리지 않도록 먼저 걸러낸다.
+  const interviewIdNumber = parseNumericId(context.params?.interviewId);
 
-  if (!interviewId || isNaN(Number(interviewId))) {
+  if (interviewIdNumber === null) {
     return { notFound: true };
   }
 
-  const interviewIdNumber = Number(interviewId);
   const [userResult, interviewResult] = await Promise.allSettled([
     getUserInfo(context),
     getMemberInterviewResult(interviewIdNumber, context)

@@ -24,6 +24,7 @@ import { SEO } from "@/shared/seo";
 import { UserInfo } from "@kokomen/types";
 import Link from "next/link";
 import { isAxiosError } from "axios";
+import { parseNumericId } from "@/utils/routeParams";
 
 export default function MyInterviewResultPage({
   report,
@@ -286,12 +287,14 @@ export const getServerSideProps: GetServerSideProps<
     isGuest: boolean;
   }>
 > => {
-  const interviewId = context.params?.interviewId;
-  if (!interviewId) {
+  // 숫자가 아닌 interviewId(스캐너 퍼징 등)가 그대로 API 요청에 실리지 않도록 먼저 걸러낸다.
+  const parsedInterviewId = parseNumericId(context.params?.interviewId);
+  if (parsedInterviewId === null) {
     return {
       notFound: true
     };
   }
+  const interviewId = String(parsedInterviewId);
 
   const hasSession = !!context.req.cookies.JSESSIONID;
 
@@ -299,7 +302,7 @@ export const getServerSideProps: GetServerSideProps<
     return withCheckInServer(
       async () => {
         const [report, userInfo] = await Promise.all([
-          getInterviewReport(context.req.cookies, interviewId as string),
+          getInterviewReport(context.req.cookies, interviewId),
           getUserInfo(context)
         ]);
         return {
@@ -319,10 +322,7 @@ export const getServerSideProps: GetServerSideProps<
   try {
     const clientIp = getClientIp(context.req);
     console.log("clientIp for guest interview report", clientIp);
-    const report = await getGuestInterviewReport(
-      interviewId as string,
-      clientIp
-    );
+    const report = await getGuestInterviewReport(interviewId, clientIp);
     return {
       props: {
         report: report.data,
