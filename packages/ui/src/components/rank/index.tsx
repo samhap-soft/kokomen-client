@@ -14,20 +14,23 @@ export const Rank: React.FC<{ rank: number }> = ({ rank }) => {
   let icon: React.ElementType, color: string, bgColor: string;
   if (rank === 1) {
     icon = Crown;
-    color = "text-yellow-8";
-    bgColor = "bg-yellow-2";
+    color = "text-yellow-10";
+    bgColor =
+      "bg-[linear-gradient(117.74deg,var(--color-yellow-4)_14.57%,var(--color-yellow-1)_49.38%,var(--color-yellow-4)_84.18%)]";
   } else if (rank === 2) {
     icon = Medal;
-    color = "text-gray-600";
-    bgColor = "bg-gray-200";
+    color = "text-gray-800";
+    bgColor =
+      "bg-[linear-gradient(119.05deg,var(--color-gray-300)_13.13%,var(--color-base-white)_50%,var(--color-gray-300)_86.87%)]";
   } else if (rank === 3) {
     icon = Medal;
-    color = "text-orange-7";
-    bgColor = "bg-orange-2";
+    color = "text-orange-10";
+    bgColor =
+      "bg-[linear-gradient(116.28deg,var(--color-yellow-7)_10%,var(--color-orange-3)_50%,var(--color-yellow-7)_90%)]";
   } else if (rank <= 10) {
     icon = Award;
-    color = "text-blue-7";
-    bgColor = "bg-blue-2";
+    color = "text-primary-10";
+    bgColor = "bg-primary-4";
   } else {
     icon = Trophy;
     color = "text-purple-7";
@@ -36,7 +39,7 @@ export const Rank: React.FC<{ rank: number }> = ({ rank }) => {
   const Icon = icon;
   return (
     <span
-      className={`${color} ${bgColor} inline-flex items-center rounded-xl px-4 py-2 font-bold`}
+      className={`${color} ${bgColor} inline-flex items-center rounded-xl px-4 py-2 text-base font-bold`}
     >
       <Icon className="w-5 h-5 mr-1" />
       {rank}위
@@ -50,37 +53,26 @@ export const Percentile: React.FC<{
 }> = ({ rank, totalMemberCount }) => {
   const percentile = Math.round((rank / totalMemberCount) * 100);
   let color: string, bgColor: string;
-  if (percentile >= 90) {
-    color = "text-red-7";
-    bgColor = "bg-red-2";
-  } else if (percentile >= 70) {
-    color = "text-volcano-7";
-    bgColor = "bg-volcano-2";
-  } else if (percentile >= 50) {
-    color = "text-orange-7";
-    bgColor = "bg-orange-2";
-  } else if (percentile >= 30) {
-    color = "text-yellow-7";
-    bgColor = "bg-yellow-2";
-  } else if (percentile >= 20) {
-    color = "text-lime-7";
-    bgColor = "bg-lime-2";
-  } else if (percentile >= 10) {
-    color = "text-green-7";
-    bgColor = "bg-green-2";
-  } else if (percentile >= 5) {
-    color = "text-cyan-7";
-    bgColor = "bg-cyan-2";
-  } else if (percentile >= 1) {
-    color = "text-blue-7";
-    bgColor = "bg-blue-2";
-  } else {
-    color = "text-purple-7";
+  // 백분위가 낮을수록(상위권일수록) 희소한 색을 씁니다
+  if (percentile <= 1) {
+    color = "text-purple-8";
     bgColor = "bg-purple-2";
+  } else if (percentile <= 10) {
+    color = "text-blue-9";
+    bgColor = "bg-blue-2";
+  } else if (percentile <= 30) {
+    color = "text-green-9";
+    bgColor = "bg-green-2";
+  } else if (percentile <= 50) {
+    color = "text-yellow-10";
+    bgColor = "bg-yellow-2";
+  } else {
+    color = "text-volcano-10";
+    bgColor = "bg-volcano-1";
   }
   return (
     <span
-      className={`${color} ${bgColor} inline-flex items-center rounded-xl px-4 py-2 font-bold `}
+      className={`${color} ${bgColor} inline-flex items-center rounded-xl px-4 py-2 text-base font-bold`}
     >
       상위 {percentile}%
     </span>
@@ -116,12 +108,14 @@ export const Score: React.FC<{ rank: string }> = ({ rank }) => {
       icon = <AlertCircle className="w-5 h-5 mr-1" />;
       break;
     default:
-      color = "text-text-description";
+      color = "text-text-primary";
       label = rank;
       icon = <Star className="w-5 h-5 mr-1" />;
   }
   return (
-    <span className={`${color} inline-flex items-center rounded px-2 py-1`}>
+    <span
+      className={`${color} inline-flex items-center rounded px-2 py-1 text-base`}
+    >
       {icon}
       {label}
     </span>

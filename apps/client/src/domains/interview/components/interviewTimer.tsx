@@ -1,5 +1,9 @@
 import { JSX, useEffect, useRef, useState } from "react";
 import { Clock } from "lucide-react";
+import {
+  TIMER_ANNOUNCE_THRESHOLDS,
+  TIMER_LOW_THRESHOLD_SECONDS
+} from "@/domains/interview/constants";
 
 interface InterviewTimerProps {
   // 카운트다운 시작 시간(초)
@@ -17,7 +21,8 @@ const formatTime = (totalSeconds: number): string => {
 };
 
 /**
- * 질문별 리셋은 호출부에서 `key={cur_question_id}`로 리마운트해서 처리한다.
+ * 질문별 리셋은 호출부에서 `key`로 리마운트해서 처리한다.
+ * 제출이 실패해 같은 질문을 다시 답해야 할 때도 key가 바뀌어야 타이머가 되살아난다.
  *
  * 리셋을 내부 useEffect로 하면 안 된다. 리셋 effect가 도는 커밋에서는
  * setSecondsLeft(durationSeconds)가 아직 반영되지 않아 secondsLeft가 0으로 남아 있는데,
@@ -30,11 +35,15 @@ export function InterviewTimer({
   onTimeout
 }: InterviewTimerProps): JSX.Element {
   const [secondsLeft, setSecondsLeft] = useState<number>(durationSeconds);
+  const [announcement, setAnnouncement] = useState<string>("");
   const hasTimedOutRef = useRef<boolean>(false);
   const onTimeoutRef = useRef(onTimeout);
-  onTimeoutRef.current = onTimeout;
 
-  // 매초 카운트다운
+  useEffect(() => {
+    onTimeoutRef.current = onTimeout;
+  }, [onTimeout]);
+
+  // 매초 카운트다운. isActive가 false인 동안(면접관이 말하는 중, 제출 중)에는 멈춘다.
   useEffect(() => {
     if (!isActive) return;
     const intervalId = setInterval(() => {
@@ -58,20 +67,35 @@ export function InterviewTimer({
     }
   }, [secondsLeft, isActive]);
 
-  const isLow = secondsLeft <= 10;
+  /**
+   * 남은 시간을 매초 읽어주면 방해가 되므로 임계점에서만 알린다.
+   * 시각 표시는 aria-hidden으로 두고 이 live region만 읽히게 한다.
+   */
+  useEffect(() => {
+    if (!isActive) return;
+    if (!TIMER_ANNOUNCE_THRESHOLDS.includes(secondsLeft)) return;
+    setAnnouncement(`답변 시간이 ${secondsLeft}초 남았습니다.`);
+  }, [secondsLeft, isActive]);
+
+  const isLow = secondsLeft <= TIMER_LOW_THRESHOLD_SECONDS;
 
   return (
-    <div
-      role="timer"
-      aria-label="남은 답변 시간"
-      className={`fixed top-3 right-32 z-50 flex items-center gap-1.5 px-3 py-2 rounded-md border shadow-sm bg-bg-base tabular-nums font-bold ${
-        isLow
-          ? "border-error text-error animate-pulse"
-          : "border-border text-text-secondary"
-      }`}
-    >
-      <Clock className="w-4 h-4" />
-      <span>{formatTime(secondsLeft)}</span>
-    </div>
+    <>
+      <div
+        role="timer"
+        aria-label="남은 답변 시간"
+        className={`fixed top-2 right-1/2 translate-x-1/2 sm:right-32 sm:translate-x-0 z-50 flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-md border shadow-sm bg-bg-base tabular-nums font-bold text-sm sm:text-base ${
+          isLow
+            ? "border-error text-error motion-safe:animate-pulse"
+            : "border-border text-text-secondary"
+        }`}
+      >
+        <Clock className="w-4 h-4" aria-hidden="true" />
+        <span>{formatTime(secondsLeft)}</span>
+      </div>
+      <span aria-live="polite" role="status" className="sr-only">
+        {announcement}
+      </span>
+    </>
   );
 }

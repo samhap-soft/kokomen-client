@@ -14,8 +14,9 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 
-const SUBMIT_FAILED_MESSAGE = "제출 중 오류가 발생했습니다. 다시 시도해주세요.";
 const FINISHED_MESSAGE = "면접이 종료되었습니다. 수고하셨습니다.";
+// 분석이 길어질 때 안내를 띄우기까지의 대기 시간(ms)
+const ANALYZING_HINT_DELAY_MS = 1500;
 
 type UseSubmitInterviewAnswerOptions = {
   cur_question: string;
@@ -30,6 +31,12 @@ type UseSubmitInterviewAnswerOptions = {
   playAudio: (audioUrl?: string) => Promise<void>;
   // eslint-disable-next-line no-unused-vars
   onAnswerSubmitted?: (submittedAnswer: string) => void;
+  /**
+   * 제출이 실패했을 때 호출된다. 실패한 답변을 그대로 넘겨주므로
+   * 호출부에서 재시도 UI를 띄울 수 있다.
+   */
+  // eslint-disable-next-line no-unused-vars
+  onSubmitError?: (failedAnswer: string) => void;
 };
 
 export function useSubmitInterviewAnswer({
@@ -39,10 +46,21 @@ export function useSubmitInterviewAnswer({
   updateInterviewData,
   setInterviewerEmotion,
   playAudio,
-  onAnswerSubmitted
+  onAnswerSubmitted,
+  onSubmitError
 }: UseSubmitInterviewAnswerOptions) {
-  const { info: infoToast } = useToast();
+  const { info: infoToast, error: errorToast } = useToast();
   const delayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const analyzingToastRef = useRef<{ dismiss: () => void } | null>(null);
+
+  const clearAnalyzingHint = (): void => {
+    if (delayTimerRef.current) {
+      clearTimeout(delayTimerRef.current);
+      delayTimerRef.current = null;
+    }
+    analyzingToastRef.current?.dismiss();
+    analyzingToastRef.current = null;
+  };
 
   const mutation = useMutation({
     mutationFn: (data: InterviewAnswerFormType) => {
@@ -55,15 +73,15 @@ export function useSubmitInterviewAnswer({
       );
     },
     onMutate: (data) => {
-      if (delayTimerRef.current) clearTimeout(delayTimerRef.current);
+      clearAnalyzingHint();
       delayTimerRef.current = setTimeout(() => {
-        infoToast({
+        analyzingToastRef.current = infoToast({
           title: "면접관이 답변을 분석 중이에요",
           description: "잠시만 기다려주세요. 곧 다음 질문이 준비됩니다.",
-          duration: 5000,
+          duration: 8000,
           position: "top-center"
         });
-      }, 5000);
+      }, ANALYZING_HINT_DELAY_MS);
 
       publishInterviewEvent("interview:stopVoiceRecognition");
       captureFormSubmitEvent({
@@ -74,10 +92,6 @@ export function useSubmitInterviewAnswer({
           question_id: data.questionId
         }
       });
-      const previousMessage = {
-        prevMessage: cur_question,
-        prevQuestionId: cur_question_id
-      };
       updateInterviewData({
         prev_questions_and_answers: [
           ...prev_questions_and_answers,
@@ -89,30 +103,27 @@ export function useSubmitInterviewAnswer({
           }
         ]
       });
-      return {
-        previousMessage
-      };
+      return { previousQuestions: prev_questions_and_answers };
     },
     onSuccess: (data, variables) => {
-      if (delayTimerRef.current) {
-        clearTimeout(delayTimerRef.current);
-        delayTimerRef.current = null;
-      }
+      clearAnalyzingHint();
+
       if (data.interviewState === "FINISHED") {
         updateInterviewData({
           interview_state: "FINISHED",
           cur_question: FINISHED_MESSAGE
         });
+        onAnswerSubmitted?.(variables.answer);
         return;
       }
       setInterviewerEmotion(getEmotion(data.curAnswerRank));
-      const updatedata = () => {
+      const nextQuestion = (): Partial<Interview> => {
         if ("nextQuestionVoiceUrl" in data)
           return { cur_question_voice_url: data.nextQuestionVoiceUrl };
         return { cur_question: data.nextQuestion ?? "" };
       };
       updateInterviewData({
-        ...updatedata(),
+        ...nextQuestion(),
         cur_question_id: data.nextQuestionId
       });
       if (data.nextQuestionVoiceUrl) {
@@ -121,27 +132,23 @@ export function useSubmitInterviewAnswer({
       }
       onAnswerSubmitted?.(variables.answer);
     },
-    onError: (_, __, context) => {
-      if (delayTimerRef.current) {
-        clearTimeout(delayTimerRef.current);
-        delayTimerRef.current = null;
-      }
+    onError: (_error, variables, context) => {
+      clearAnalyzingHint();
+
+      // 낙관적으로 추가한 답변만 되돌린다. 질문 텍스트는 건드리지 않는다.
       updateInterviewData({
-        cur_question: SUBMIT_FAILED_MESSAGE,
-        prev_questions_and_answers: [
-          ...prev_questions_and_answers.filter(
-            (question) => question.question_id !== cur_question_id
-          )
-        ]
+        prev_questions_and_answers:
+          context?.previousQuestions ?? prev_questions_and_answers
       });
 
-      setTimeout(() => {
-        if (context?.previousMessage) {
-          updateInterviewData({
-            cur_question: context?.previousMessage?.prevMessage ?? ""
-          });
-        }
-      }, 1000);
+      errorToast({
+        title: "답변을 제출하지 못했어요",
+        description: "네트워크 상태를 확인한 뒤 다시 시도해주세요.",
+        duration: 5000,
+        position: "top-center"
+      });
+
+      onSubmitError?.(variables.answer);
     },
     retry: false
   });

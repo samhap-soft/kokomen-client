@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * 끝에 남은 한글 자모(낱자) 패턴.
@@ -15,6 +15,8 @@ function getImmutablePrefix(locked: string): string {
 }
 
 type UseAppendOnlyAnswerInputParams = {
+  // "답변 수정 금지" 설정이 켜져 있는지 여부. 꺼져 있으면 자유롭게 수정할 수 있다.
+  enabled: boolean;
   // 확정된 답변을 지우거나 고치려 할 때 호출(토스트 안내용)
   onBlockedEdit: () => void;
 };
@@ -51,8 +53,12 @@ type UseAppendOnlyAnswerInput = {
  * 또한 조합이 끊긴 채 남은 꼬리 자모(예: "나"에서 모음을 지워 남은 "ㄴ")는
  * 완성된 글자가 아니므로 잠그지 않는다. 그렇지 않으면 지울 수도 없는 낱자가
  * 답변 끝에 박혀버린다.
+ *
+ * enabled가 false면 잠금 없이 일반 textarea처럼 동작하고,
+ * 면접 중에 true로 켜면 그 순간까지 입력한 내용부터 잠긴다.
  */
 export function useAppendOnlyAnswerInput({
+  enabled,
   onBlockedEdit
 }: UseAppendOnlyAnswerInputParams): UseAppendOnlyAnswerInput {
   const [value, setValueState] = useState<string>("");
@@ -61,6 +67,16 @@ export function useAppendOnlyAnswerInput({
   // IME 조합 중인지 여부
   const isComposingRef = useRef<boolean>(false);
   const valueRef = useRef<string>("");
+  // 콜백을 다시 만들지 않고도 최신 설정값을 보기 위한 ref
+  const isEnabledRef = useRef<boolean>(enabled);
+  isEnabledRef.current = enabled;
+
+  // 설정을 켠 순간까지 입력한 내용을 확정 처리한다
+  useEffect(() => {
+    if (enabled) {
+      lockedRef.current = valueRef.current;
+    }
+  }, [enabled]);
 
   const commitValue = useCallback((next: string) => {
     valueRef.current = next;
@@ -117,6 +133,12 @@ export function useAppendOnlyAnswerInput({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const next = e.target.value;
+      // 잠금이 꺼져 있으면 그대로 반영하되, 다시 켤 때 기준이 되도록 확정값은 갱신해둔다
+      if (!isEnabledRef.current) {
+        lockedRef.current = next;
+        commitValue(next);
+        return;
+      }
       // 조합이 끊겨 꼬리에 남은 자모("나" → "ㄴ")는 아직 확정된 글자가 아니므로 지울 수 있다
       if (next.startsWith(getImmutablePrefix(lockedRef.current))) {
         // 조합 중이 아니면 입력한 내용이 바로 확정된다
@@ -135,6 +157,7 @@ export function useAppendOnlyAnswerInput({
 
   const guardDeletionKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>): boolean => {
+      if (!isEnabledRef.current) return false;
       // IME 조합 중에는 자모 단위 수정(백스페이스 포함)을 허용해야 한글 입력이 가능하다
       if (isComposingRef.current || e.nativeEvent.isComposing) return false;
 
@@ -164,6 +187,7 @@ export function useAppendOnlyAnswerInput({
 
   const handleCut = useCallback(
     (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      if (!isEnabledRef.current) return;
       e.preventDefault();
       notifyBlockedEdit();
     },
