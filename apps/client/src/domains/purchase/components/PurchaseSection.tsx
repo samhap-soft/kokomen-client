@@ -56,13 +56,6 @@ function SelectItem({
           면접에 필요한 토큰을 구매할 수 있어요.
         </p>
       </div>
-      <div className="flex items-center bg-warning-bg p-4 gap-6 rounded-md">
-        <MessageCircleWarning className="size-6 text-warning hidden sm:block" />
-        <div>
-          <p>현재는 결제 서비스를 정식으로 제공하고 있지 않아요.</p>
-          <p>토큰을 구매하더라도 실제 결제가 이루어지지는 않아요.</p>
-        </div>
-      </div>
       <div className="border border-border-secondary rounded-md p-4">
         <p className="font-bold">토큰 구매 시 주의 사항</p>
         <ul className="text-gray-500 p-4">
