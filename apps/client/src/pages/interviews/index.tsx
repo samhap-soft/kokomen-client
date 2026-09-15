@@ -90,7 +90,7 @@ export default function InterviewMainPage({
                   </span>
                   {!userInfo && (
                     <Button
-                      variant="soft"
+                      variant="primary-soft"
                       className="text-xs font-semibold"
                       type="button"
                       onClick={() => router.navigateToLogin()}

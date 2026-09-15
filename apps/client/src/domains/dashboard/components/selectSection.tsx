@@ -72,7 +72,7 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             {/* 면접 기록 탭 */}
             {interviewSections.map((sec) => (
               <Button
-                variant={"link"}
+                variant={"none"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
                   sec.value === section
                     ? "bg-primary-bg-light text-primary border border-primary-border"
@@ -89,7 +89,7 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             <p className="text-sm font-medium text-text-secondary">아카이브</p>
             {archiveSections.map((sec) => (
               <Button
-                variant={"link"}
+                variant={"none"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
                   sec.value === section
                     ? "bg-primary-bg-light text-primary border border-primary-border"
@@ -109,7 +109,7 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             {/* 유저 설정 탭 */}
             {userSections.map((sec) => (
               <Button
-                variant={"link"}
+                variant={"none"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg  ${
                   sec.value === section
                     ? "bg-primary-bg-light text-primary border border-primary-border"
@@ -127,14 +127,14 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
               약관 및 정책
             </p>
             <Button
-              variant={"link"}
+              variant={"none"}
               onClick={() => router.push("/terms/termsofuse")}
               className="justify-start"
             >
               서비스 이용 약관
             </Button>
             <Button
-              variant={"link"}
+              variant={"none"}
               onClick={() => router.push("/terms/privacy")}
               className="justify-start"
             >

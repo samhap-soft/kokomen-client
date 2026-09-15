@@ -266,7 +266,7 @@ const MobileProfileDropdown = ({ user }: HeaderProps) => {
                   type="button"
                   onClick={logout}
                   name="logout"
-                  variant={"soft"}
+                  variant={"primary-soft"}
                   className="[&_svg]:size-4"
                 >
                   <LogOut className="w-4 h-4 text-gray-600" />

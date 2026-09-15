@@ -43,7 +43,7 @@ export default function InterviewSettingsButton({
   return (
     <>
       <Button
-        variant={"default"}
+        variant={"secondary"}
         onClick={openModal}
         role="button"
         aria-label="면접 설정 열기"

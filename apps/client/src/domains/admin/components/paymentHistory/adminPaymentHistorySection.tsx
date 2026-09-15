@@ -418,7 +418,7 @@ const AdminPaymentHistorySection = (): JSX.Element => {
             </div>
           )}
           <div className="flex justify-end gap-2">
-            <Button variant="soft" onClick={() => setCancelTarget(null)}>
+            <Button variant="primary-soft" onClick={() => setCancelTarget(null)}>
               닫기
             </Button>
             <Button

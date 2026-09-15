@@ -152,7 +152,7 @@ function PurchaseMode({
       <div id="tosspayments-agreement-container" />
       <div className="flex justify-center gap-4 w-full">
         <Button
-          variant={"outline"}
+          variant={"secondary"}
           size={"large"}
           onClick={() => setSelectedItem(null)}
           className="flex-1"

@@ -1,33 +1,87 @@
 import { Button } from "./index";
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
+import { AddIcon, ChevronRightIcon } from "../icon";
 
 const meta: Meta<typeof Button> = {
-  // Meta<ButtonProps>도 가능
   title: "Common/Button",
   component: Button,
   parameters: {
-    layout: "centered",
+    layout: "centered"
   },
   tags: ["autodocs"],
-  // argTypes는 react-docgen-typescript가 잘 추론하지만,
-  // 특정 컨트롤을 지정하거나 설명을 추가하고 싶을 때 사용합니다.
-  // 모든 스토리에 적용될 기본 args (onClick을 fn으로 설정)
   args: {
-    onClick: fn(), // onClick 이벤트가 발생하면 Actions 탭에 기록됨
-  },
+    onClick: fn()
+  }
 };
 
 export default meta;
 
-// StoryObj 타입을 사용하여 스토리 타입을 명시
-type Story = StoryObj<typeof Button>; // 또는 StoryObj<ButtonProps>
+type Story = StoryObj<typeof Button>;
+
+const VARIANTS = ["primary", "secondary", "danger", "primary-soft"] as const;
+const SIZES = ["small", "default", "large", "xl"] as const;
 
 export const Primary: Story = {
   args: {
-    children: "Primary Button", // Button 컴포넌트가 children으로 텍스트를 받는다고 가정
-    variant: "text", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "default", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-    round: false,
-  },
+    children: "Button",
+    variant: "primary",
+    size: "default"
+  }
+};
+
+/** Figma 옵션 테이블의 variant 4종 x size 4종 */
+export const AllVariants: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-6">
+      {VARIANTS.map((variant) => (
+        <div key={variant} className="flex items-center gap-3">
+          {SIZES.map((size) => (
+            <Button key={size} {...args} variant={variant} size={size}>
+              {variant}
+            </Button>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+};
+
+/** danger 에는 Figma 명세상 disabled 상태가 없다. */
+export const States: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-3">
+      {VARIANTS.map((variant) => (
+        <div key={variant} className="flex items-center gap-3">
+          <Button {...args} variant={variant}>
+            default
+          </Button>
+          <Button {...args} variant={variant} disabled>
+            disabled
+          </Button>
+        </div>
+      ))}
+    </div>
+  )
+};
+
+/** prefix icon 과 suffix icon 을 동시에 쓰는 것은 디자인 가이드에서 지양한다. */
+export const WithIcon: Story = {
+  render: (args) => (
+    <div className="flex items-center gap-3">
+      <Button {...args} prefixIcon={<AddIcon />}>
+        prefix icon
+      </Button>
+      <Button {...args} variant="secondary" suffixIcon={<ChevronRightIcon />}>
+        suffix icon
+      </Button>
+    </div>
+  )
+};
+
+export const Round: Story = {
+  args: {
+    children: "Button",
+    round: true
+  }
 };

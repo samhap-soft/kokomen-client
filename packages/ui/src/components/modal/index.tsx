@@ -108,7 +108,7 @@ const Modal = ({
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           {closeButton && (
             <Button
-              variant={"text"}
+              variant={"secondary"}
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >

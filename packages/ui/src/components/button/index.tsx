@@ -26,73 +26,23 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* ── Figma 명세 variant ─────────────────────────────────────────── */
+        /** surface/brand-fill → hovered, 글자·아이콘은 onsurface/neutral */
         primary:
           "bg-primary-bg text-text-primary hover:bg-primary-bg-hover [&_svg]:text-text-primary",
+        /** gray/100 + 1px stroke/default, hover 에서 gray/200 · 테두리 제거 */
         secondary:
           "bg-gray-1 text-text-primary border border-border hover:bg-gray-2 hover:border-transparent",
+        /** surface/warning → hovered, 글자·아이콘은 onsurface/neutral-inverse */
         danger:
           "bg-warning text-text-light-solid hover:bg-warning-hover [&_svg]:text-text-light-solid",
+        /** surface/brand-weak → hovered, 글자·아이콘은 surface/brand */
         "primary-soft":
           "bg-primary-bg-light text-primary hover:bg-primary-bg-light-hover [&_svg]:text-primary",
-
-        /* ── Legacy variant ─────────────────────────────────────────────────
-           Figma 옵션 테이블에는 없는 값들이다. 기존 호출부를 깨지 않기 위해
-           남겨두었고, `soft` / `cancel` / `default` / `warning` 은 대응되는
-           Figma variant 와 동일한 스타일을 쓴다. 나머지는 디자인 확정 후
-           위 4종으로 정리해야 한다. */
-        /** @deprecated Figma `primary-soft` 를 사용한다. */
-        soft: "bg-primary-bg-light text-primary hover:bg-primary-bg-light-hover [&_svg]:text-primary",
-        /** @deprecated Figma `secondary` 를 사용한다. */
-        cancel:
-          "bg-gray-1 text-text-primary border border-border hover:bg-gray-2 hover:border-transparent",
-        /** @deprecated Figma `secondary` 를 사용한다. */
-        default:
-          "bg-gray-1 text-text-primary border border-border hover:bg-gray-2 hover:border-transparent",
-        /** @deprecated Figma `danger` 를 사용한다. */
-        warning:
-          "bg-warning text-text-light-solid hover:bg-warning-hover [&_svg]:text-text-light-solid",
-        /** @deprecated Figma 명세에 없다. */
-        dashed:
-          "text-primary-text outline-border-secondary hover:outline-primary-border-hover focus:outline-primary outline-dashed outline-2 hover:text-primary-hover bg-transparent",
-        /** @deprecated Figma 명세에 없다. TextButton 으로 대체를 검토한다. */
-        text: "text-text-primary hover:bg-bg-text-hover active:bg-bg-text-active bg-transparent",
-        /** @deprecated Figma 명세에 없다. TextButton 으로 대체를 검토한다. */
-        link: "text-primary hover:text-primary-hover underline-offset-4 hover:underline bg-transparent",
-        /** @deprecated Figma 명세에 없다. */
-        success:
-          "bg-success hover:bg-success-hover active:bg-success-active text-text-light-solid",
-        /** @deprecated Figma 명세에 없다. */
-        info: "bg-info hover:bg-info-hover active:bg-info-active text-text-light-solid",
-        /** @deprecated Figma 명세에 없다. */
-        submit: "bg-blue-5 text-text-light-solid active:bg-blue-6",
-        /** @deprecated Figma 명세에 없다. */
-        gradient:
-          "bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary-active text-text-light-solid",
-        /** @deprecated Figma 명세에 없다. */
-        gradientSuccess:
-          "bg-gradient-to-r from-success to-success-hover hover:from-success-hover hover:to-success-active text-text-light-solid",
-        /** @deprecated Figma 명세에 없다. */
-        gradientPurple:
-          "bg-gradient-to-r from-purple-5 to-purple-6 hover:from-purple-6 hover:to-purple-7 text-text-light-solid",
-        /** @deprecated Figma 명세에 없다. */
-        outline:
-          "bg-transparent text-text-primary border-2 border-border hover:bg-primary hover:text-text-primary active:bg-primary-active",
-        /** @deprecated Figma 명세에 없다. */
-        outlineSuccess:
-          "bg-transparent text-success border-2 border-success hover:bg-success hover:text-text-light-solid active:bg-success-active",
-        /** @deprecated Figma 명세에 없다. */
-        outlineWarning:
-          "bg-transparent text-warning border-2 border-warning hover:bg-warning hover:text-text-light-solid active:bg-warning-hover",
-        /** @deprecated Figma 명세에 없다. */
-        softSuccess:
-          "bg-success-bg text-success hover:bg-success-bg-hover active:bg-success-border",
-        /** @deprecated Figma 명세에 없다. */
-        softWarning:
-          "bg-warning-bg text-warning hover:bg-warning-bg-hover active:bg-warning-border",
-        /** @deprecated Figma 명세에 없다. */
-        glass:
-          "bg-base-white/20 backdrop-blur-md border border-base-white/30 text-text-primary hover:bg-base-white/30 hover:border-base-white/50",
+        /**
+         * 스타일 variant 가 아니라 opt-out 이다. Figma 옵션 테이블에는 없지만,
+         * 헤더 드롭다운 항목이나 사이드바 내비게이션처럼 `button` 시맨틱만
+         * 필요하고 모양은 className 으로 직접 그리는 자리에서 사용한다.
+         */
         none: ""
       },
       size: {
@@ -105,24 +55,21 @@ const buttonVariants = cva(
         true: "rounded-full",
         false: "rounded-xl"
       },
+      /**
+       * 낙관적 업데이트 중(=`disabled`)에도 비활성 회색이 아니라 활성 상태처럼
+       * 보이게 하는 모디파이어. Figma 명세에는 없다.
+       */
       optimistic: {
-        true: "",
+        true: "disabled:!bg-volcano-3 disabled:!text-volcano-6",
         false: ""
       }
     },
     defaultVariants: {
       variant: "primary",
       size: "default",
-      round: false
-    },
-    compoundVariants: [
-      {
-        variant: "glass",
-        optimistic: true,
-        className:
-          "disabled:!bg-volcano-3 disabled:!text-volcano-6 disabled:!opacity-100"
-      }
-    ]
+      round: false,
+      optimistic: false
+    }
   }
 );
 

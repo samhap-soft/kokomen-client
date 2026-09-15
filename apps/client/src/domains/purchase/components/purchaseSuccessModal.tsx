@@ -38,7 +38,7 @@ export default function PurchaseSuccessModal() {
         인터뷰 보러가기
       </Button>
       <Button
-        variant={"outline"}
+        variant={"secondary"}
         onClick={() => {
           closeModal();
           deletePurchaseSuccessParam();

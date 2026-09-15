@@ -161,7 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
         {/* Close Button */}
         {closable && (
           <div className="absolute top-4 right-4 z-10">
-            <Button variant="text" onClick={onClose} aria-label="Close">
+            <Button variant="secondary" onClick={onClose} aria-label="Close">
               <CloseIcon />
             </Button>
           </div>

@@ -154,7 +154,7 @@ export default function InterviewHistory({
                   role="button"
                   name={`${pageNumber + 1} page`}
                   aria-label="page"
-                  variant={page === pageNumber ? "primary" : "glass"}
+                  variant={page === pageNumber ? "primary" : "secondary"}
                   className={`${page === pageNumber && "disabled:opacity-100 disabled:bg-primary-bg-hover disabled:text-primary"}`}
                   onClick={() => {
                     router.push(

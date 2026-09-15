@@ -105,7 +105,7 @@ export default function MemberQuestionFeedback({
             type="button"
             name={`answer-like-button-${questionAndFeedback.answerId}`}
             role="button"
-            variant="glass"
+            variant="secondary"
             optimistic={true}
             className={`${answerLiked && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
             aria-label={`답변 ${index + 1} 좋아요`}

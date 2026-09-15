@@ -71,15 +71,13 @@ export default function MemberInterviewResultPage({
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button
-                      variant="glass"
+                      variant="secondary"
                       round
                       onClick={handleShare}
                       aria-label="공유하기"
                     >
-                      <Share2 className="w-4 h-4 text-white mr-2" />
-                      <span className="text-sm font-medium text-white">
-                        공유하기
-                      </span>
+                      <Share2 className="w-4 h-4" />
+                      <span className="text-sm font-medium">공유하기</span>
                     </Button>
                   </div>
                 </div>

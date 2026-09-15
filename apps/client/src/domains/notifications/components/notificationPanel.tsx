@@ -199,7 +199,7 @@ const NotificationPanel = () => {
       {/* 탭 버튼 */}
       <div className="flex border-b border-gray-200">
         <Button
-          variant={!showReadNotifications ? "primary" : "text"}
+          variant={!showReadNotifications ? "primary" : "secondary"}
           size="small"
           onClick={handleUnreadTabClick}
           className="flex-1 p-4 text-base rounded-b-none"
@@ -207,7 +207,7 @@ const NotificationPanel = () => {
           안읽은 알림
         </Button>
         <Button
-          variant={showReadNotifications ? "primary" : "text"}
+          variant={showReadNotifications ? "primary" : "secondary"}
           size="small"
           onClick={handleReadTabClick}
           className="flex-1 border-r border-gray-200 p-4 text-base rounded-b-none"
@@ -255,7 +255,7 @@ const NotificationPanelIcon = ({ user }: { user: UserInfo | null }) => {
     <div className="relative" ref={notificationPanelRef}>
       <Button
         role="button"
-        variant={"text"}
+        variant={"secondary"}
         size="small"
         onClick={handleToggleNotificationPanel}
         onKeyDown={handleKeyDown}

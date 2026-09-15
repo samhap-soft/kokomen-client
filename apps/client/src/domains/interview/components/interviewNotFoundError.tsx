@@ -27,14 +27,14 @@ export function InterviewNotFoundError(): JSX.Element {
             {/* 보조 액션 */}
             <div className="flex gap-3">
               <Button
-                variant={"gradient"}
+                variant={"primary"}
                 onClick={() => router.back()}
                 className="flex-1 py-2 px-4 transition-colors duration-200 text-sm font-bold text-text-light-solid"
               >
                 이전 페이지
               </Button>
               <Button
-                variant={"gradient"}
+                variant={"primary"}
                 onClick={() => router.push("/interviews")}
                 className="flex-1 py-2 px-4 transition-colors duration-200 text-sm font-bold text-text-light-solid"
               >

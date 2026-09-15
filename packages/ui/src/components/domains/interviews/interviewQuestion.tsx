@@ -21,7 +21,7 @@ export default function InterviewQuestion({
     if (playFinished) {
       return (
         <Button
-          variant={"soft"}
+          variant={"primary-soft"}
           onClick={() => {
             playAudio().catch(() => {});
           }}
