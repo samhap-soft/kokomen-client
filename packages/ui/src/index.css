@@ -190,7 +190,7 @@
   --color-text-heading: var(--color-text-primary);
   --color-text-label: var(--color-text-secondary);
   --color-text-description: var(--color-text-tertiary);
-  --color-text-disabled: var(--color-text-quaternary);
+  --color-text-disabled: var(--color-gray-5); /* sys onsurface/neutral-disabled */
   --color-text-placeholder: var(--color-text-quaternary);
 
   --color-icon: var(--color-text-secondary); /* #595959 */
@@ -201,14 +201,14 @@
   --color-bg-layout: #f5f5f5;
   --color-bg-mask: rgba(0, 0, 0, 0.45);
   --color-bg-spotlight: rgba(0, 0, 0, 0.85);
-  --color-bg-container-disabled: var(--color-text-tertiary);
+  --color-bg-container-disabled: var(--color-gray-3); /* #d9d9d9 */
   --color-bg-text-active: var(--color-fill);
   --color-bg-text-hover: var(--color-fill-secondary);
   --color-bg-border-bg: var(--color-base-white); /* #ffffff */
 
   /* sys.color.stroke.default → gray/200, primary-muted → primary-light */
   --color-border: var(--color-gray-2); /* #f0f0f0 */
-  --color-border-secondary: var(--color-primary-light); /* #f5f1dc */
+  --color-border-secondary: var(--color-primary-2); /* #ffe6cc */
   --color-split: rgba(0, 0, 0, 0.06);
 
   --color-fill: rgba(0, 0, 0, 0.15);
@@ -220,9 +220,9 @@
   --color-fill-alter: var(--color-fill-quaternary);
 
   --color-primary-bg: var(--color-primary-6);
-  --color-primary-bg-light: var(--color-primary-light);
-  --color-primary-bg-hover: var(--color-primary-3);
-  --color-primary-bg-light-hover: var(--color-primary-2); /* #ffe6cc */
+  --color-primary-bg-light: var(--color-primary-2); /* #ffe6cc */
+  --color-primary-bg-hover: var(--color-primary-5); /* #ffa64d */
+  --color-primary-bg-light-hover: var(--color-primary-1); /* #fff3e6 */
   --color-primary-border: var(--color-primary-3);
   --color-primary-border-hover: var(--color-primary-4);
   --color-primary-hover: var(--color-primary-4);
@@ -246,9 +246,9 @@
 
   --color-warning-bg: var(--color-volcano-1);
   --color-warning-bg-hover: var(--color-volcano-2);
-  --color-warning-border: var(--color-volcano-3);
+  --color-warning-border: var(--color-volcano-7);
   --color-warning-border-hover: var(--color-volcano-4);
-  --color-warning-hover: var(--color-volcano-4);
+  --color-warning-hover: var(--color-volcano-5);
   --color-warning: var(--color-volcano-6);
   --color-warning-active: var(--color-volcano-7);
   --color-warning-text-hover: var(--color-volcano-8);
@@ -258,7 +258,7 @@
   /* Error Color Tokens - 기존 red 팔레트 활용 */
   --color-error-bg: var(--color-red-1); /* #fff1f0 */
   --color-error-bg-hover: var(--color-red-2); /* #ffccc7 */
-  --color-error-border: var(--color-red-2); /* #ffccc7 */
+  --color-error-border: var(--color-red-7); /* #cf1322 */
   --color-error-border-hover: var(--color-red-3); /* #ffa39e */
   --color-error-hover: var(--color-red-4); /* #ff7875 */
   --color-error: var(--color-red-5); /* #ff4d4f */
@@ -269,7 +269,7 @@
 
   /* Info(informative) Color Tokens — 기존에는 .dark 에만 있어서 라이트 모드에서
      bg-info / text-info-text 같은 유틸리티가 생성되지 않았다. Figma 기준으로 보완. */
-  --color-info: var(--color-blue-6); /* #0046ff */
+  --color-info: var(--color-blue-5); /* #4096ff */
   --color-info-bg: var(--color-blue-1); /* #e6f4ff */
   --color-info-bg-hover: var(--color-blue-2); /* #bae0ff */
   --color-info-border: var(--color-blue-3); /* #91caff */
@@ -281,24 +281,29 @@
   --color-info-text-active: var(--color-blue-10); /* #001d66 */
 }
 @theme {
-  /* Size tokens */
-  --size-xxs: 4px;
-  --size-xs: 8px;
-  --size-sm: 12px;
-  --size: 16px;
-  --size-ms: 16px;
-  --size-md: 20px;
-  --size-lg: 24px;
-  --size-xl: 32px;
-  --size-xxl: 48px;
+  /* ── Foundation/Sizing (collection "Sizing") ─────────────────────────────
+     Figma 가 t-shirt 이름(xxs/xs/sm/…)에서 실측 px 이름으로 바꿨기 때문에
+     토큰 이름도 size/<px> 로 맞췄다. 10px, 40px 단계가 새로 추가되었다. */
+  --size-4: 4px;
+  --size-8: 8px;
+  --size-10: 10px;
+  --size-12: 12px;
+  --size-16: 16px;
+  --size-20: 20px;
+  --size-24: 24px;
+  --size-32: 32px;
+  --size-40: 40px;
+  --size-48: 48px;
 
-  /* Height tokens */
-  --control-height-xs: 16px;
-  --control-height-sm: 24px;
-  --control-height: 32px;
-  --control-height-lg: 40px;
+  --control-height-16: 16px;
+  --control-height-24: 24px;
+  --control-height-32: 32px;
+  --control-height-40: 40px;
 
-  /* Screen size tokens */
+  /* ── Foundation/Layout (collection "Layout") ─────────────────────────────
+     값은 Figma breakpoint/* 와 동일하다. Tailwind 의 실제 브레이크포인트
+     네임스페이스(--breakpoint-*)로 옮기면 sm:/md: 유틸리티의 기준값이
+     통째로 바뀌므로, 문서용 토큰인 --screen-* 이름을 그대로 유지한다. */
   --screen-xs: 480px;
   --screen-sm: 576px;
   --screen-md: 768px;
@@ -306,51 +311,69 @@
   --screen-xl: 1200px;
   --screen-xxl: 1600px;
 
-  /* Margin tokens */
-  --margin-xxs: var(--size-xxs); /* 4px */
-  --margin-xs: var(--size-xs); /* 8px */
-  --margin-sm: var(--size-sm); /* 12px */
-  --margin: var(--size); /* 16px */
-  --margin-md: var(--size-md); /* 20px */
-  --margin-lg: var(--size-lg); /* 24px */
-  --margin-xl: var(--size-xl); /* 32px */
-  --margin-xxl: var(--size-xxl); /* 48px */
+  --z-index-sidebar-default: 30;
+  --z-index-sidebar-high: 40;
+  --z-index-overlay: 50;
+  --z-index-toast: 100;
 
-  /* Padding tokens */
-  --padding-xxs: var(--size-xxs); /* 4px */
-  --padding-xs: var(--size-xs); /* 8px */
-  --padding-sm: var(--size-sm); /* 12px */
-  --padding: var(--size); /* 16px */
-  --padding-md: var(--size-md); /* 20px */
-  --padding-lg: var(--size-lg); /* 24px */
-  --padding-xl: var(--size-xl); /* 32px */
+  --sidebar-width: 500px;
+  --layout-min-height: 720px;
 
-  /* Content padding tokens for different screen sizes */
-  --padding-content-horizontal-sm: var(--size); /* 16px */
-  --padding-content-vertical-sm: var(--size-xs); /* 8px */
-  --padding-content-horizontal: var(--size-sm); /* 12px */
-  --padding-content-vertical: var(--size-sm); /* 12px */
-  --padding-content-horizontal-lg: var(--size-lg); /* 24px */
-  --padding-content-vertical-lg: var(--size); /* 16px */
+  /* ── Foundation/Spacing & Radius (collection "Spacing & Radius") ───────── */
+  --margin-4: var(--size-4);
+  --margin-8: var(--size-8);
+  --margin-10: var(--size-10);
+  --margin-12: var(--size-12);
+  --margin-16: var(--size-16);
+  --margin-20: var(--size-20);
+  --margin-24: var(--size-24);
+  --margin-32: var(--size-32);
+  --margin-40: var(--size-40);
+  --margin-48: var(--size-48);
 
-  /* Border radius tokens */
-  --border-radius: 6px;
-  --border-radius-lg: 8px;
-  --border-radius-sm: 4px;
-  --border-radius-xs: 2px;
+  --padding-4: var(--size-4);
+  --padding-8: var(--size-8);
+  --padding-10: var(--size-10);
+  --padding-12: var(--size-12);
+  --padding-16: var(--size-16);
+  --padding-20: var(--size-20);
+  --padding-24: var(--size-24);
+  --padding-32: var(--size-32);
+  --padding-40: var(--size-40);
 
-  /* Box shadow tokens */
-  --box-shadow:
-    0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+  --padding-content-horizontal-sm: var(--size-16);
+  --padding-content-vertical-sm: var(--size-8);
+  --padding-content-horizontal: var(--size-12);
+  --padding-content-vertical: var(--size-12);
+  --padding-content-horizontal-lg: var(--size-24);
+  --padding-content-vertical-lg: var(--size-16);
+
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+
+  /* ── Foundation/Opacity & Shadow ─────────────────────────────────────────
+     Opacity 컬렉션은 Figma 에서 퍼센트 정수로 관리한다. */
+  --opacity-fill-quaternary: 0.02;
+  --opacity-fill-tertiary: 0.04;
+  --opacity-split: 0.06;
+  --opacity-fill-secondary: 0.06;
+  --opacity-fill: 0.15;
+  --opacity-fill-dark: 0.18;
+  --opacity-text-quaternary: 0.25;
+  --opacity-text-tertiary: 0.45;
+  --opacity-mask: 0.45;
+  --opacity-disabled: 0.5;
+  --opacity-text-secondary: 0.65;
+  --opacity-spotlight: 0.85;
+  --opacity-toast-description: 0.9;
+
+  /* shadow/sm · shadow/md · shadow/lg 는 Tailwind 기본값과 값이 같아서
+     재정의하지 않는다. shadow/base 만 Figma 전용이라 추가한다. */
+  --shadow-base:
+    0 4px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
-
-  --box-shadow-secondary:
-    0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0 9px 28px 8px rgba(0, 0, 0, 0.05);
-
-  --box-shadow-tertiary:
-    0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02),
-    0 2px 4px 0 rgba(0, 0, 0, 0.02);
 }
 
 .dark {
@@ -379,6 +402,7 @@
   --color-bg-border-bg: var(--color-bg-base); /* #141414 */
 
   --color-border: #424242;
+  --color-base-black: #000000;
   --color-border-secondary: #303030;
   --color-split: rgba(255, 255, 255, 0.06);
 
@@ -392,6 +416,8 @@
 
   --color-primary-bg: var(--color-blue-1);
   --color-primary-bg-hover: var(--color-blue-2);
+  --color-primary-bg-light: var(--color-primary-2);
+  --color-primary-bg-light-hover: var(--color-primary-2);
   --color-primary-border: var(--color-blue-3);
   --color-primary-border-hover: var(--color-blue-4);
   --color-primary-hover: var(--color-blue-5);
@@ -414,7 +440,7 @@
   --color-success-text-active: var(--color-green-10);
 
   /* Warning colors — Figma: light → Volcano, dark → Gold */
-  --color-warning: var(--color-gold-6);
+  --color-warning: var(--color-volcano-6);
   --color-warning-bg: var(--color-gold-1);
   --color-warning-bg-hover: var(--color-gold-2);
   --color-warning-border: var(--color-gold-3);

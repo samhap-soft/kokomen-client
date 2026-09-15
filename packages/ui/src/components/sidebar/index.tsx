@@ -1,12 +1,20 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Button } from "../button";
-import { X } from "lucide-react";
+import { CloseIcon } from "../icon";
 import { cn } from "../../utils/index.ts";
 
-// Sidebar 스타일 variants
+/**
+ * Figma: Component/Sidebar (완) — component set 64:1173
+ *
+ * placement(left · right · top · bottom) x size(default · large).
+ * panel 은 surface/neutral 배경 + shadow/lg 에 상하 padding 20,
+ * body 는 padding 8/24/24/24 · gap 12 · flex-1 overflow-y-auto 다.
+ * placement 는 패널 위치와 닫힘 트랜스폼을 결정하고,
+ * size 는 본문 글자 크기만 바꾼다(default text-sm / large text-base).
+ */
 const sidebarVariants = cva(
-  "bg-white shadow-2xl transition-all duration-300 ease-out flex flex-col overflow-hidden pt-18 absolute w-full md:w-[500px] h-full",
+  "bg-bg-base shadow-lg transition-all duration-300 ease-out flex flex-col overflow-hidden py-5 absolute w-full md:w-[500px] h-full",
   {
     variants: {
       placement: {
@@ -154,13 +162,18 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
         {closable && (
           <div className="absolute top-4 right-4 z-10">
             <Button variant="text" onClick={onClose} aria-label="Close">
-              <X />
+              <CloseIcon />
             </Button>
           </div>
         )}
 
         {/* Body */}
-        <div className={cn("flex-1 overflow-y-auto", bodyClassName)}>
+        <div
+          className={cn(
+            "flex flex-1 flex-col gap-3 overflow-y-auto px-6 pt-2 pb-6",
+            bodyClassName
+          )}
+        >
           {children}
         </div>
       </div>

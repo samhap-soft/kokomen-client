@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "../icon";
 import { cn } from "../../utils/index.ts";
 
 interface DropdownProps {
@@ -64,7 +64,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       {isOpen && (
         <div
           className={cn(
-            "absolute z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[200px]",
+            "absolute z-50 bg-bg-base border border-gray-200 rounded-lg shadow-lg py-1 min-w-[200px]",
             getPlacementClasses()
           )}
         >
@@ -122,15 +122,15 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 rounded-lg border border-border-secondary bg-bg-elevated px-4 py-2.5 text-sm",
+        "inline-flex items-center gap-2 rounded-lg border border-primary-light bg-bg-base px-4 py-2.5 text-sm",
         className
       )}
     >
       <span>{children}</span>
       {isOpen ? (
-        <ChevronUp className="w-4 h-4" />
+        <ChevronUpIcon size={16} />
       ) : (
-        <ChevronDown className="w-4 h-4" />
+        <ChevronDownIcon size={16} />
       )}
     </div>
   );

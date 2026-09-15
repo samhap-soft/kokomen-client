@@ -165,6 +165,7 @@ function CareerRange() {
               })
             }
             unit="년"
+            showBounds={false}
           />
           <div className="flex justify-between">
             <p className="-translate-x-3 text-sm font-medium">신입</p>

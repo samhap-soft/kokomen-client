@@ -1,12 +1,12 @@
 import { cva, VariantProps } from "class-variance-authority";
 import React, { JSX, useCallback, useEffect } from "react";
-import { X } from "lucide-react";
+import { CloseIcon } from "../icon";
 import { Button } from "../button";
 import { cn } from "../../utils/index.ts";
 
 type ModalVariants = VariantProps<typeof modalVariants>;
 const modalVariants = cva(
-  "relative bg-white rounded-lg shadow-xl w-full mx-4 transform transition-all animate-modal-pop-in",
+  "relative bg-bg-base rounded-lg shadow-xl w-full mx-4 transform transition-all animate-modal-pop-in",
   {
     variants: {
       size: {
@@ -112,7 +112,7 @@ const Modal = ({
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <X size={24} />
+              <CloseIcon size={24} />
             </Button>
           )}
         </div>

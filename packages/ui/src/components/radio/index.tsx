@@ -1,4 +1,4 @@
-import { cva, VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import React, { createContext, useContext, useId } from "react";
 import { cn } from "../../utils/index.ts";
 
@@ -15,101 +15,75 @@ interface RadioContextValue {
 // Radio 컨텍스트 생성
 const RadioContext = createContext<RadioContextValue | undefined>(undefined);
 
-// Radio 스타일 variants 정의
+/**
+ * Figma: Common/Radio (완) — component set 55:89
+ *
+ * size(small · medium · large) x checked(false · true) x state(default · disabled).
+ * Figma 에는 variant 프로퍼티가 없고 체크 색은 항상 surface/brand-fill 이다.
+ *
+ *   small  circle 16 · label sm(14/20)
+ *   medium circle 20 · label base(16/24)
+ *   large  circle 24 · label lg(18/28)
+ *
+ * unchecked 는 투명 배경 + 2px stroke/primary-light 테두리,
+ * checked 는 테두리 없이 surface/brand-fill 로 원을 채운다(내부 점 없음).
+ * disabled 은 surface/neutral-container-disabled 로 채우고 라벨을
+ * onsurface/neutral-disabled 로 바꾼다 — opacity 는 쓰지 않는다.
+ */
 const radioVariants = cva(
   `
-  relative inline-flex items-center justify-center rounded-full border-2 
-  transition-all duration-200 ease-in-out cursor-pointer
-  focus:outline-none focus:ring-2 focus:ring-offset-2
-  disabled:cursor-not-allowed disabled:opacity-50
-  `,
-  {
-    variants: {
-      variant: {
-        primary: `
-          border-border text-primary
-          hover:border-primary-border-hover
-          focus:border-primary-border focus:ring-primary-bg
-          checked:border-primary checked:bg-primary
-          checked:hover:border-primary-hover checked:hover:bg-primary-hover
-          checked:active:border-primary-active checked:active:bg-primary-active
-        `,
-        success: `
-          border-border text-success
-          hover:border-success-border-hover
-          focus:border-success-border focus:ring-success-bg
-          checked:border-success checked:bg-success
-          checked:hover:border-success-hover checked:hover:bg-success-hover
-          checked:active:border-success-active checked:active:bg-success-active
-        `,
-        warning: `
-          border-border text-warning
-          hover:border-warning-border-hover
-          focus:border-warning-border focus:ring-warning-bg
-          checked:border-warning checked:bg-warning
-          checked:hover:border-warning-hover checked:hover:bg-warning-hover
-          checked:active:border-warning-active checked:active:bg-warning-active
-        `,
-        error: `
-          border-border text-error
-          hover:border-error-border-hover
-          focus:border-error-border focus:ring-error-bg
-          checked:border-error checked:bg-error
-          checked:hover:border-error-hover checked:hover:bg-error-hover
-          checked:active:border-error-active checked:active:bg-error-active
-        `,
-      },
-      size: {
-        small: "w-4 h-4",
-        medium: "w-5 h-5",
-        large: "w-6 h-6",
-      },
-    },
-    defaultVariants: {
-      variant: "primary",
-      size: "medium",
-    },
-  }
-);
-
-// Radio 내부 점 스타일
-const radioInnerVariants = cva(
-  `
-  absolute rounded-full bg-text-light-solid
-  transition-all duration-200 ease-in-out
+  relative inline-flex shrink-0 items-center justify-center rounded-full
+  transition-colors duration-200 ease-in-out cursor-pointer
+  focus:outline-none
   `,
   {
     variants: {
       size: {
-        small: "w-1.5 h-1.5",
-        medium: "w-2 h-2",
-        large: "w-2.5 h-2.5",
+        small: "size-4",
+        medium: "size-5",
+        large: "size-6"
       },
+      checked: {
+        true: "",
+        false: "border-2 border-border-secondary bg-transparent"
+      },
+      disabled: {
+        true: "cursor-not-allowed border-transparent bg-bg-container-disabled",
+        false: ""
+      }
     },
     defaultVariants: {
       size: "medium",
+      checked: false,
+      disabled: false
     },
+    compoundVariants: [
+      {
+        checked: true,
+        disabled: false,
+        className: "bg-primary-bg"
+      }
+    ]
   }
 );
 
 // Label 스타일
 const labelVariants = cva(
   `
-  ml-2 cursor-pointer select-none
+  cursor-pointer select-none
   transition-colors duration-200 ease-in-out
-  disabled:cursor-not-allowed disabled:opacity-50
   `,
   {
     variants: {
       size: {
         small: "text-sm",
         medium: "text-base",
-        large: "text-lg",
-      },
+        large: "text-lg"
+      }
     },
     defaultVariants: {
-      size: "medium",
-    },
+      size: "medium"
+    }
   }
 );
 
@@ -127,7 +101,7 @@ export interface RadioGroupProps {
 }
 
 // Radio Props
-export interface RadioProps extends VariantProps<typeof radioVariants> {
+export interface RadioProps {
   value: string;
   children?: React.ReactNode;
   disabled?: boolean;
@@ -136,6 +110,17 @@ export interface RadioProps extends VariantProps<typeof radioVariants> {
   "aria-label"?: string;
   "aria-describedby"?: string;
 }
+
+/**
+ * Figma 는 체크 색으로 surface/brand-fill 만 정의한다. success / warning / error
+ * 는 Figma 명세에 없는 코드 전용 확장이라 대응 토큰으로만 이어둔다.
+ */
+const checkedFillByVariant = {
+  primary: "bg-primary-bg",
+  success: "bg-success",
+  warning: "bg-warning",
+  error: "bg-error"
+} as const;
 
 // RadioGroup 컴포넌트
 export const RadioGroup = ({
@@ -251,55 +236,36 @@ export const Radio = ({
     <label
       htmlFor={id}
       className={cn(
-        "flex items-center",
+        "flex items-center gap-2",
         labelVariants({ size }),
-        isDisabled && "cursor-not-allowed opacity-50",
+        isDisabled && "cursor-not-allowed",
         className
       )}
     >
-      <div className="relative flex items-center justify-center gap-2">
-        <input
-          type="radio"
-          id={id}
-          name={name}
-          value={value}
-          checked={isChecked}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          disabled={isDisabled}
-          className="sr-only"
-          aria-label={ariaLabel}
-          aria-describedby={ariaDescribedBy}
-        />
-        <div
-          className={cn(
-            radioVariants({ variant, size }),
-            isChecked && "border-opacity-100",
-            isDisabled && "opacity-50"
-          )}
-          style={{
-            backgroundColor: isChecked
-              ? `var(--color-${variant})`
-              : "transparent",
-            borderColor: isChecked
-              ? `var(--color-${variant})`
-              : `var(--color-border)`,
-          }}
-        >
-          {isChecked && (
-            <div
-              className={cn(radioInnerVariants({ size }))}
-              style={{
-                backgroundColor: "var(--color-text-light-solid)",
-              }}
-            />
-          )}
-        </div>
-      </div>
+      <input
+        type="radio"
+        id={id}
+        name={name}
+        value={value}
+        checked={isChecked}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        disabled={isDisabled}
+        className="sr-only"
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
+      />
+      <span
+        aria-hidden
+        className={cn(
+          radioVariants({ size, checked: isChecked, disabled: isDisabled }),
+          isChecked && !isDisabled && checkedFillByVariant[variant ?? "primary"]
+        )}
+      />
       {children && (
         <span
           className={cn(
-            "text-text-primary ml-2",
+            "text-text-primary",
             isDisabled && "text-text-disabled"
           )}
         >

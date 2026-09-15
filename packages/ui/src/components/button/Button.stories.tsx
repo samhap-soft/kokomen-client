@@ -29,6 +29,5 @@ export const Primary: Story = {
     variant: "text", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
     size: "default", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
     round: false,
-    danger: false,
   },
 };

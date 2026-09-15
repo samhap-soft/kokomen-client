@@ -1,4 +1,4 @@
-import { ChevronDown, Check, Search } from "lucide-react";
+import { ChevronDownIcon, CheckIcon, SearchIcon } from "../icon";
 import { FC, useState, useRef, useEffect, useCallback, useMemo } from "react";
 
 interface SelectOption {
@@ -212,7 +212,7 @@ const Select: FC<SelectProps> = ({
               {selectedOptionLabel}
             </span>
           </div>
-          <ChevronDown
+          <ChevronDownIcon
             className={`
               w-4 h-4 transition-transform duration-200
               ${isOpen ? "rotate-180" : ""}
@@ -229,7 +229,7 @@ const Select: FC<SelectProps> = ({
           {searchable && (
             <div className="p-2 border-b border-border">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-tertiary" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -272,8 +272,8 @@ const Select: FC<SelectProps> = ({
                           : isSelected
                             ? "bg-primary-bg text-primary-light font-semibold"
                             : index === focusedIndex
-                              ? "bg-primary-bg-light-hover text-text-primary"
-                              : "text-text-primary hover:bg-primary-bg-light-hover"
+                              ? "bg-primary-bg-light text-text-primary"
+                              : "text-text-primary hover:bg-primary-bg-light"
                       }
                     `}
                     onClick={() => handleOptionSelect(option)}
@@ -284,7 +284,7 @@ const Select: FC<SelectProps> = ({
                   >
                     <span className="truncate">{option.label}</span>
                     {isSelected && (
-                      <Check className="w-4 h-4 text-primary-light flex-shrink-0" />
+                      <CheckIcon className="w-4 h-4 text-primary-light flex-shrink-0" />
                     )}
                   </li>
                 );
