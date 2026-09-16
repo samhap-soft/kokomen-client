@@ -239,7 +239,7 @@ export default function MyInterviewResultPage({
               <Button
                 size="large"
                 onClick={() => navigate.push("/")}
-                variant={"soft"}
+                variant={"primary-soft"}
                 className="w-full"
               >
                 홈으로 돌아가기

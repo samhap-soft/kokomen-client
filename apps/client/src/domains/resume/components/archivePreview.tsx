@@ -131,7 +131,7 @@ export default function ArchivePreview() {
           {/* 탭 */}
           <div className="flex gap-2 mb-4">
             <Button
-              variant={activeTab === "RESUME" ? "primary" : "glass"}
+              variant={activeTab === "RESUME" ? "primary" : "secondary"}
               size="small"
               onClick={() => {
                 setActiveTab("RESUME");
@@ -141,7 +141,7 @@ export default function ArchivePreview() {
               이력서
             </Button>
             <Button
-              variant={activeTab === "PORTFOLIO" ? "primary" : "glass"}
+              variant={activeTab === "PORTFOLIO" ? "primary" : "secondary"}
               size="small"
               onClick={() => {
                 setActiveTab("PORTFOLIO");
@@ -213,7 +213,7 @@ export default function ArchivePreview() {
               />
               <div className="flex items-center gap-4">
                 <Button
-                  variant="glass"
+                  variant="secondary"
                   size="small"
                   onClick={goToPrevPage}
                   disabled={pageNumber <= 1}
@@ -224,7 +224,7 @@ export default function ArchivePreview() {
                   {pageNumber} / {numPages || "-"}
                 </span>
                 <Button
-                  variant="glass"
+                  variant="secondary"
                   size="small"
                   onClick={goToNextPage}
                   disabled={pageNumber >= (numPages || 0)}

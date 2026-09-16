@@ -38,7 +38,7 @@ const QuestionCountSelector: MemoExoticComponent<
             type="button"
             onClick={() => handleQuestionCountChange("minus")}
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-bold"
-            variant="soft"
+            variant="primary-soft"
           >
             -
           </Button>
@@ -52,7 +52,7 @@ const QuestionCountSelector: MemoExoticComponent<
             type="button"
             onClick={() => handleQuestionCountChange("plus")}
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-bold"
-            variant="soft"
+            variant="primary-soft"
           >
             +
           </Button>
@@ -86,7 +86,7 @@ const InterviewTypeSelector: MemoExoticComponent<
             aria-selected={selectedInterviewType === "TEXT"}
             onClick={() => handleInterviewTypeChange("TEXT")}
             className="py-4"
-            variant={selectedInterviewType === "TEXT" ? "primary" : "soft"}
+            variant={selectedInterviewType === "TEXT" ? "primary" : "primary-soft"}
           >
             <div className="flex flex-col items-center gap-1.5">
               <Keyboard className="w-5 h-5" />
@@ -98,7 +98,7 @@ const InterviewTypeSelector: MemoExoticComponent<
             aria-selected={selectedInterviewType === "VOICE"}
             onClick={() => handleInterviewTypeChange("VOICE")}
             className="py-4"
-            variant={selectedInterviewType === "VOICE" ? "primary" : "soft"}
+            variant={selectedInterviewType === "VOICE" ? "primary" : "primary-soft"}
           >
             <div className="flex flex-col items-center gap-1.5">
               <MicVocal className="w-5 h-5" />
@@ -180,7 +180,7 @@ const InterviewStartModal = ({
         <div className="flex gap-3">
           <Button
             type="button"
-            variant="cancel"
+            variant="secondary"
             size={"large"}
             onClick={closeModal}
             className="flex-1"
@@ -308,7 +308,7 @@ const CreateInterviewForm = ({
               className="text-sm font-semibold whitespace-nowrap"
               aria-selected={selectedCategory.key === category.key}
               variant={
-                selectedCategory.key === category.key ? "primary" : "text"
+                selectedCategory.key === category.key ? "primary" : "secondary"
               }
               onClick={() => setSelectedCategory(category)}
             >
@@ -356,7 +356,7 @@ const CreateInterviewForm = ({
       <div className="flex flex-col gap-3">
         <Button
           type="button"
-          variant={"soft"}
+          variant={"primary-soft"}
           disabled={isPending}
           size={"large"}
           className="font-semibold w-full"
@@ -369,7 +369,7 @@ const CreateInterviewForm = ({
           disabled={isPending}
           size={"large"}
           className="font-semibold w-full"
-          variant="submit"
+          variant="primary"
         >
           {isPending ? "면접 시작 중..." : "랜덤 질문으로 시작하기"}
         </Button>

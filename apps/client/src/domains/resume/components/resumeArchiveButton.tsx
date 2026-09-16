@@ -37,7 +37,7 @@ function ArchiveButton({
       <Sidebar open={open} onClose={closeSidebar}>
         <div>
           <nav className="flex justify-end">
-            <Button variant="text" type="button" onClick={closeSidebar}>
+            <Button variant="secondary" type="button" onClick={closeSidebar}>
               <X size={24} />
             </Button>
           </nav>
@@ -70,7 +70,7 @@ function ArchiveItem({
 }: CamelCasedProperties<ArchivedResumeAndPortfolio> & { onClick: () => void }) {
   return (
     <Button
-      variant="soft"
+      variant="primary-soft"
       type="button"
       className="w-full flex flex-col border border-border rounded-lg p-4 items-start break-words whitespace-pre-line text-left"
       onClick={onClick}

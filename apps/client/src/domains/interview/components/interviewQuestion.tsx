@@ -63,7 +63,7 @@ export function InterviewQuestion({
         </span>
         {/* 재생이 끝난 뒤에만 보여주면 중간에 놓친 질문을 다시 들을 수 없다 */}
         <Button
-          variant={"soft"}
+          variant={"primary-soft"}
           onClick={() => {
             playAudio().catch(() => {});
           }}

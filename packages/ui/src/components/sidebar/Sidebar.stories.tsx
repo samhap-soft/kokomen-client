@@ -200,7 +200,7 @@ export const ComplexContent: Story = {
               </div>
 
               <div className="pt-4 border-t">
-                <Button variant="outline" className="w-full">
+                <Button variant="secondary" className="w-full">
                   설정 저장
                 </Button>
               </div>

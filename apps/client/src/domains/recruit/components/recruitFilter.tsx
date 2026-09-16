@@ -129,8 +129,8 @@ function CareerRange() {
     <div className="relative" ref={careerRangeRef}>
       <Button
         type="button"
-        variant="text"
-        className="border-border border w-full"
+        variant="secondary"
+        className="w-full"
         onClick={() => setIsOpen(!isOpen)}
       >
         <CalendarSearch className="w-4 h-4" /> 경력
@@ -165,6 +165,7 @@ function CareerRange() {
               })
             }
             unit="년"
+            showBounds={false}
           />
           <div className="flex justify-between">
             <p className="-translate-x-3 text-sm font-medium">신입</p>

@@ -1,6 +1,11 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from "lucide-react";
+import {
+  CloseIcon,
+  CheckCircleIcon,
+  AlertIcon,
+  InfoIcon
+} from "../icon";
 import { cn } from "../../utils/index.ts";
 
 // Toast Position
@@ -114,15 +119,16 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
+        /* Figma 는 테두리를 팔레트 단계에 직접 바인딩한다(primary-light · red/200 ·
+           volcano/300). 시맨틱 토큰 --color-*-border 는 sys/color/stroke/* 를
+           따라가므로 여기서는 팔레트를 그대로 참조한다. */
         default:
-          "border-border-secondary bg-bg-elevated text-text-primary shadow-box-shadow",
+          "border-primary-light bg-bg-base text-text-primary shadow-base",
         success:
-          "border-success-border bg-bg-elevated text-success-text shadow-box-shadow",
-        error:
-          "border-error-border bg-error-bg text-error-text shadow-box-shadow",
-        warning:
-          "border-warning-border bg-warning-bg text-warning-text shadow-box-shadow",
-        info: "border-info-border text-info-text shadow-box-shadow bg-white"
+          "border-success-border bg-bg-base text-success-text shadow-base",
+        error: "border-red-2 bg-error-bg text-error-text shadow-base",
+        warning: "border-volcano-3 bg-warning-bg text-warning-text shadow-base",
+        info: "border-info-border bg-bg-base text-info-text shadow-base"
       }
     },
     defaultVariants: {
@@ -198,13 +204,13 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
     const getIcon = () => {
       switch (variant) {
         case "success":
-          return <CheckCircle className="h-5 w-5 text-success" />;
+          return <CheckCircleIcon className="h-5 w-5 text-success" />;
         case "error":
-          return <AlertCircle className="h-5 w-5 text-error" />;
+          return <AlertIcon className="h-5 w-5 text-error" />;
         case "warning":
-          return <AlertTriangle className="h-5 w-5 text-warning" />;
+          return <AlertIcon className="h-5 w-5 text-warning" />;
         case "info":
-          return <Info className="h-5 w-5 text-info" />;
+          return <InfoIcon className="h-5 w-5 text-info" />;
         default:
           return null;
       }
@@ -238,7 +244,7 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
           onClick={handleClose}
           className="absolute right-2 top-2 rounded-md p-1 opacity-0 transition-opacity hover:bg-black/10 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring group-hover:opacity-100"
         >
-          <X className="h-4 w-4" />
+          <CloseIcon className="h-4 w-4" />
         </button>
       </div>
     );
@@ -278,7 +284,7 @@ const ToastClose = React.forwardRef<HTMLButtonElement, ToastCloseProps>(
       )}
       {...props}
     >
-      <X className="h-4 w-4" />
+      <CloseIcon className="h-4 w-4" />
     </button>
   )
 );

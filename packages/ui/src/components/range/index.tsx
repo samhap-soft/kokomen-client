@@ -2,28 +2,52 @@ import { cn } from "../../utils";
 import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import Tooltip from "../tooltip";
 
-export type RangeProps =
-  | {
-      min: number;
-      max: number;
-      defaultValue?: number;
-      onChange?: (value: number) => void;
-      dual?: false;
-      className?: string;
-      unit?: string;
-    }
-  | {
-      min: number;
-      max: number;
-      defaultValue?: [number, number];
-      onChange?: (value: [number, number]) => void;
-      dual: true;
-      className?: string;
-      unit?: string;
-    };
+/**
+ * Figma: Common/Range (완) — component set 55:952
+ *
+ * mode(single · dual) x state(default · disabled). 위에서 아래로
+ * title(base/regular, onsurface/neutral) + 값(sm/regular, onsurface/neutral-label)
+ * → track(h6, rounded-full, gray/400) → min·max 라벨(xs, onsurface/neutral-subtle)
+ * 순서로 쌓인다. progress 는 surface/brand, disabled 에서는 gray/500 이다.
+ * handle 은 24x24 흰 원 + shadow/md 이며 테두리는 없다.
+ * track 은 cursor-pointer, handle 은 cursor-grab / active:cursor-grabbing 이고
+ * hover 와 드래그 중에는 scale-110 이 걸린다.
+ */
+type RangeCommonProps = {
+  min: number;
+  max: number;
+  className?: string;
+  unit?: string;
+  /** Figma 의 title 영역. 한 줄로만 표기되며, 하단에 현재 값이 함께 붙는다. */
+  title?: string;
+  disabled?: boolean;
+  /** Figma 의 min·max 라벨. 호출부가 자체 라벨을 그릴 때만 끈다. */
+  showBounds?: boolean;
+};
+
+export type RangeProps = RangeCommonProps &
+  (
+    | {
+        defaultValue?: number;
+        onChange?: (value: number) => void;
+        dual?: false;
+      }
+    | {
+        defaultValue?: [number, number];
+        onChange?: (value: [number, number]) => void;
+        dual: true;
+      }
+  );
 
 export function Range(props: RangeProps) {
-  const { min, max, className } = props;
+  const {
+    min,
+    max,
+    className,
+    title,
+    disabled = false,
+    showBounds = true
+  } = props;
   const isDual = props.dual === true;
   const onChange = props.onChange;
 
@@ -161,66 +185,108 @@ export function Range(props: RangeProps) {
     }
   }, [draggingHandle, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
-  return (
-    <div
-      ref={trackRef}
-      aria-label="range"
-      role="slider"
-      aria-valuemin={min}
-      aria-valuemax={max}
-      aria-valuenow={isDual ? minValue : maxValue}
-      className={cn(
-        "relative w-full h-4 bg-primary-light rounded-full cursor-pointer",
-        className
-      )}
-    >
-      {/* 진행 바 */}
-      <div
-        className="absolute top-0 h-full bg-primary rounded-full pointer-events-none"
-        style={{
-          left: `${minPercentage}%`,
-          width: `${maxPercentage - minPercentage}%`
-        }}
-      />
+  const unit = props.unit ?? "";
+  const handleClassName = cn(
+    "absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 bg-bg-base rounded-full p-0 shadow-md transition-transform z-10",
+    disabled
+      ? "cursor-not-allowed"
+      : "cursor-grab active:cursor-grabbing hover:scale-110"
+  );
 
-      {/* Min 핸들 (dual mode only) */}
-      {isDual && (
+  return (
+    <div className={cn("w-full", className)}>
+      {title && (
+        <div className="mb-5">
+          <p className="truncate text-base text-text-primary">{title}</p>
+          <p className="text-sm text-text-label">
+            {isDual
+              ? `${minValue}${unit} ~ ${maxValue}${unit}`
+              : `${maxValue}${unit}`}
+          </p>
+        </div>
+      )}
+
+      <div
+        ref={trackRef}
+        aria-label="range"
+        role="slider"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={isDual ? minValue : maxValue}
+        aria-disabled={disabled}
+        className={cn(
+          "relative h-1.5 w-full rounded-full bg-gray-4",
+          disabled ? "cursor-not-allowed" : "cursor-pointer"
+        )}
+      >
+        {/* 진행 바 */}
+        <div
+          className={cn(
+            "pointer-events-none absolute top-0 h-full rounded-full",
+            disabled ? "bg-gray-5" : "bg-primary"
+          )}
+          style={{
+            left: `${minPercentage}%`,
+            width: `${maxPercentage - minPercentage}%`
+          }}
+        />
+
+        {/* Min 핸들 (dual mode only) */}
+        {isDual && (
+          <Tooltip
+            className={cn(
+              handleClassName,
+              draggingHandle === "min" && "scale-110"
+            )}
+            style={{ left: `${minPercentage}%` }}
+            onMouseDown={(e) => !disabled && handleMouseDown(e, "min")}
+            onTouchStart={(e) => !disabled && handleTouchStart(e, "min")}
+          >
+            <Tooltip.Content>
+              <p>
+                {minValue}
+                {unit}
+              </p>
+            </Tooltip.Content>
+          </Tooltip>
+        )}
+
+        {/* Max 핸들 (single mode에서는 single, dual mode에서는 max) */}
         <Tooltip
           className={cn(
-            "absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 bg-white border-2 border-primary rounded-full p-0 shadow-md transition-transform hover:scale-110 cursor-grab active:cursor-grabbing z-10",
-            draggingHandle === "min" && "scale-110 bg-primary-light"
+            handleClassName,
+            (draggingHandle === "max" || draggingHandle === "single") &&
+              "scale-110"
           )}
-          style={{ left: `${minPercentage}%` }}
-          onMouseDown={(e) => handleMouseDown(e, "min")}
-          onTouchStart={(e) => handleTouchStart(e, "min")}
+          style={{ left: `${maxPercentage}%` }}
+          onMouseDown={(e) =>
+            !disabled && handleMouseDown(e, isDual ? "max" : "single")
+          }
+          onTouchStart={(e) =>
+            !disabled && handleTouchStart(e, isDual ? "max" : "single")
+          }
         >
           <Tooltip.Content>
             <p>
-              {minValue}
-              {props.unit ?? ""}
+              {maxValue}
+              {unit}
             </p>
           </Tooltip.Content>
         </Tooltip>
-      )}
+      </div>
 
-      {/* Max 핸들 (single mode에서는 single, dual mode에서는 max) */}
-      <Tooltip
-        className={cn(
-          "absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 bg-white border-2 border-primary rounded-full p-0 shadow-md transition-transform hover:scale-110 cursor-grab active:cursor-grabbing z-10",
-          (draggingHandle === "max" || draggingHandle === "single") &&
-            "scale-110 bg-primary-light"
-        )}
-        style={{ left: `${maxPercentage}%` }}
-        onMouseDown={(e) => handleMouseDown(e, isDual ? "max" : "single")}
-        onTouchStart={(e) => handleTouchStart(e, isDual ? "max" : "single")}
-      >
-        <Tooltip.Content>
-          <p>
-            {maxValue}
-            {props.unit ?? ""}
-          </p>
-        </Tooltip.Content>
-      </Tooltip>
+      {showBounds && (
+        <div className="mt-2 flex justify-between text-xs text-text-tertiary">
+          <span>
+            {min}
+            {unit}
+          </span>
+          <span>
+            {max}
+            {unit}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

@@ -83,7 +83,7 @@ function QuestionListContent({
         const label = isCode ? (question.title ?? question.content) : question.content;
         return (
           <Button
-            variant={"outline"}
+            variant={"secondary"}
             size={"large"}
             key={question.id}
             onClick={() => onSelectQuestion(question)}

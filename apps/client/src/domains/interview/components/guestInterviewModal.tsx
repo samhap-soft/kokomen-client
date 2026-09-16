@@ -53,7 +53,7 @@ export default function GuestInterviewModal({
               </p>
             </div>
             <Button
-              variant="softWarning"
+              variant="secondary"
               size="large"
               className="w-full font-semibold"
               onClick={handleClose}
@@ -72,7 +72,7 @@ export default function GuestInterviewModal({
 
             <div className="flex gap-3">
               <Button
-                variant="soft"
+                variant="primary-soft"
                 size="large"
                 className="flex-1 font-semibold"
                 onClick={() => {

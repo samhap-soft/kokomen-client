@@ -40,7 +40,7 @@ const ModalTemplate = (args: any) => {
         <p>이것은 모달 내용입니다. 여기에 원하는 내용을 넣을 수 있습니다.</p>
         <div className="mt-4 flex gap-2">
           <Button onClick={() => setIsOpen(false)}>확인</Button>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <Button variant="secondary" onClick={() => setIsOpen(false)}>
             취소
           </Button>
         </div>
@@ -137,7 +137,7 @@ export const ComplexContent: Story = {
             </div>
             <div className="flex gap-2">
               <Button onClick={() => setIsOpen(false)}>확인</Button>
-              <Button variant="outline" onClick={() => setIsOpen(false)}>
+              <Button variant="secondary" onClick={() => setIsOpen(false)}>
                 취소
               </Button>
             </div>

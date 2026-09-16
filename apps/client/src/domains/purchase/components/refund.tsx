@@ -15,7 +15,7 @@ export default function Refund({ purchaseId }: { purchaseId: number }) {
 
   return (
     <>
-      <Button variant="text" onClick={openModal} type="button" danger>
+      <Button variant="danger" onClick={openModal} type="button">
         환불하기
       </Button>
       <Modal
@@ -71,7 +71,7 @@ function RefundModal({
           {refundReasons?.map((reason) => (
             <>
               <Button
-                variant={"softWarning"}
+                variant={"secondary"}
                 key={reason.code}
                 onClick={() => {
                   setSelectedReason(
@@ -196,7 +196,7 @@ function ReasonForm({
           <Button
             type="submit"
             size={"large"}
-            variant="warning"
+            variant="danger"
             disabled={isRequestRefundPending}
           >
             환불하기
@@ -212,7 +212,7 @@ function ReasonForm({
         <Button
           type="button"
           size={"large"}
-          variant={"soft"}
+          variant={"primary-soft"}
           onClick={() => {
             modalClose();
             setSelectedReason(null);
@@ -224,7 +224,7 @@ function ReasonForm({
         <Button
           type="button"
           size={"large"}
-          variant={"softWarning"}
+          variant={"secondary"}
           className="flex-1"
           onClick={() => {
             requestRefundMutation({

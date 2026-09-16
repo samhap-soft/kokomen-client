@@ -290,7 +290,7 @@ export function InterviewAnswerForm({
             </span>
             <Button
               type="button"
-              variant={"default"}
+              variant={"secondary"}
               size={"small"}
               aria-label="interview-retry-submit"
               onClick={() => submitAnswer(failedAnswer)}
@@ -426,7 +426,7 @@ function VoiceInputButton({
         role="button"
         aria-label="interview-voice-stop"
         name="interview-voice-stop"
-        variant={"glass"}
+        variant={"secondary"}
         className="flex items-center gap-2 text-text-tertiary"
         onClick={() => publishInterviewEvent("interview:stopVoiceRecognition")}
         disabled={disabled}
@@ -448,7 +448,7 @@ function VoiceInputButton({
       role="button"
       aria-label="interview-voice-start"
       name="interview-voice-start"
-      variant={"glass"}
+      variant={"secondary"}
       className="flex items-center gap-2 text-text-tertiary"
       onClick={() => publishInterviewEvent("interview:startVoiceRecognition")}
       disabled={disabled}

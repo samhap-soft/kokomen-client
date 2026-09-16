@@ -83,7 +83,7 @@ export default function OnboardingQuestionCard({
             <Button
               key={option.value}
               type="button"
-              variant={selected ? "primary" : "default"}
+              variant={selected ? "primary" : "secondary"}
               role={question.type === "single" ? "radio" : "checkbox"}
               aria-checked={selected}
               aria-selected={selected}
