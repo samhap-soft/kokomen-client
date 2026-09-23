@@ -1,6 +1,7 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Button } from "../button";
+import { legacyButtonStyles } from "../button/legacyStyles.ts";
 import { CloseIcon } from "../icon";
 import { cn } from "../../utils/index.ts";
 
@@ -82,7 +83,8 @@ const sidebarVariants = cva(
   }
 );
 
-interface SidebarProps extends VariantProps<typeof sidebarVariants> {
+export interface SidebarProps
+  extends VariantProps<typeof sidebarVariants> {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -161,7 +163,12 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
         {/* Close Button */}
         {closable && (
           <div className="absolute top-4 right-4 z-10">
-            <Button variant="secondary" onClick={onClose} aria-label="Close">
+            <Button
+              variant="none"
+              className={legacyButtonStyles.text}
+              onClick={onClose}
+              aria-label="Close"
+            >
               <CloseIcon />
             </Button>
           </div>

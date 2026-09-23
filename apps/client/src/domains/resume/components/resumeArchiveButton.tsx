@@ -1,4 +1,4 @@
-import { Button, Sidebar } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Sidebar } from "@kokomen/ui";
 import { Layers, PackageOpen, X } from "lucide-react";
 import { useSidebar } from "@kokomen/utils";
 import {
@@ -37,7 +37,12 @@ function ArchiveButton({
       <Sidebar open={open} onClose={closeSidebar}>
         <div>
           <nav className="flex justify-end">
-            <Button variant="secondary" type="button" onClick={closeSidebar}>
+            <Button
+              variant="none"
+              className={legacyButtonStyles.text}
+              type="button"
+              onClick={closeSidebar}
+            >
               <X size={24} />
             </Button>
           </nav>

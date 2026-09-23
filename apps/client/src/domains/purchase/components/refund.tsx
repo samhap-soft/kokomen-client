@@ -1,7 +1,13 @@
 import { useModal } from "@kokomen/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getRefundReasons, requestRefund } from "../api";
-import { Button, Input, Modal, RoundSpinner } from "@kokomen/ui";
+import {
+  Button,
+  Input,
+  legacyButtonStyles,
+  Modal,
+  RoundSpinner
+} from "@kokomen/ui";
 import { CamelCasedProperties, RefundReason } from "@kokomen/types";
 import { Dispatch, SetStateAction, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -71,7 +77,8 @@ function RefundModal({
           {refundReasons?.map((reason) => (
             <>
               <Button
-                variant={"secondary"}
+                variant={"none"}
+                className={legacyButtonStyles.softWarning}
                 key={reason.code}
                 onClick={() => {
                   setSelectedReason(
@@ -224,8 +231,8 @@ function ReasonForm({
         <Button
           type="button"
           size={"large"}
-          variant={"secondary"}
-          className="flex-1"
+          variant={"none"}
+          className={`${legacyButtonStyles.softWarning} flex-1`}
           onClick={() => {
             requestRefundMutation({
               refundReasonText: ""

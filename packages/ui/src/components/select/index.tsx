@@ -186,7 +186,7 @@ const Select: FC<SelectProps> = ({
               ? "border-2 border-primary"
               : error
                 ? "border border-error hover:border-error-hover focus-within:border-error-hover"
-                : "border border-border-secondary hover:border-primary-border focus-within:border-primary-border"
+                : "border border-primary-2 hover:border-primary-border focus-within:border-primary-border"
           }
           ${
             disabled
@@ -224,7 +224,7 @@ const Select: FC<SelectProps> = ({
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-bg-elevated border border-border-secondary rounded-lg shadow-lg max-h-60 overflow-hidden">
+        <div className="absolute z-50 w-full mt-1 bg-bg-elevated border border-primary-2 rounded-lg shadow-lg max-h-60 overflow-hidden">
           {/* 검색 입력 */}
           {searchable && (
             <div className="p-2 border-b border-border">

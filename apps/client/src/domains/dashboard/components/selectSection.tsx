@@ -6,7 +6,7 @@ import ResumeBasedInterviewHistory from "@/domains/resume/components/resumeBased
 import ResumeEvaluationHistory from "@/domains/resume/components/resumeEvaluationHistory";
 import ArchivePreview from "@/domains/resume/components/archivePreview";
 import { UserInfo } from "@kokomen/types";
-import { Button } from "@kokomen/ui";
+import { Button, legacyButtonStyles } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
 type Section =
@@ -129,14 +129,14 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             <Button
               variant={"none"}
               onClick={() => router.push("/terms/termsofuse")}
-              className="justify-start"
+              className={`${legacyButtonStyles.link} justify-start`}
             >
               서비스 이용 약관
             </Button>
             <Button
               variant={"none"}
               onClick={() => router.push("/terms/privacy")}
-              className="justify-start"
+              className={`${legacyButtonStyles.link} justify-start`}
             >
               개인정보 처리 방침
             </Button>

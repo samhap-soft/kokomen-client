@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Button, Modal } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Modal } from "@kokomen/ui";
 import { useModal } from "@kokomen/utils";
 import { Settings } from "lucide-react";
 import { ANSWER_TIME_LIMIT_SECONDS } from "@/domains/interview/constants";
@@ -43,12 +43,12 @@ export default function InterviewSettingsButton({
   return (
     <>
       <Button
-        variant={"secondary"}
+        variant={"none"}
         onClick={openModal}
         role="button"
         aria-label="면접 설정 열기"
         title="면접 설정"
-        className="fixed top-2 left-16 sm:top-3 sm:left-20 z-50"
+        className={`${legacyButtonStyles.surface} fixed top-2 left-16 sm:top-3 sm:left-20 z-50`}
       >
         <Settings />
       </Button>

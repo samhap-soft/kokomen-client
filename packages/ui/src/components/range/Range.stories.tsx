@@ -12,61 +12,73 @@ const meta: Meta<typeof Range> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof Range>;
 
+/** Figma 의 mode=single. title 과 현재 값, min·max 라벨이 함께 그려진다. */
 export const Single: Story = {
-  render: () => (
+  args: {
+    min: 0,
+    max: 100,
+    defaultValue: 50,
+    title: "난이도",
+    onChange: fn()
+  },
+  render: (args) => (
     <div className="w-80">
-      <Range
-        min={0}
-        max={100}
-        defaultValue={50}
-        onChange={(value: number) => fn()(value)}
-      />
+      <Range {...args} />
     </div>
   )
 };
 
+/** Figma 의 mode=dual. */
 export const Dual: Story = {
-  render: () => (
+  args: {
+    min: 0,
+    max: 100,
+    dual: true,
+    defaultValue: [20, 80],
+    title: "구간",
+    onChange: fn()
+  },
+  render: (args) => (
     <div className="w-80">
-      <Range
-        min={0}
-        max={100}
-        defaultValue={[20, 80] as [number, number]}
-        dual
-        onChange={(value: [number, number]) => fn()(value)}
-      />
+      <Range {...args} />
     </div>
   )
 };
 
-export const PriceRange: Story = {
-  render: () => (
+/** Figma 의 state=disabled. progress 가 gray/500 으로 바뀐다. */
+export const Disabled: Story = {
+  args: {
+    min: 0,
+    max: 100,
+    defaultValue: 40,
+    title: "난이도",
+    disabled: true,
+    onChange: fn()
+  },
+  render: (args) => (
     <div className="w-80">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        가격 범위
-      </label>
-      <Range
-        min={0}
-        max={100000}
-        defaultValue={[30000, 80000] as [number, number]}
-        dual
-        onChange={(value: [number, number]) => fn()(value)}
-      />
+      <Range {...args} />
     </div>
   )
 };
 
-export const SmallRange: Story = {
-  render: () => (
+/** `unit` 과 `showBounds` 조합. 호출부가 자체 라벨을 그릴 때 bounds 를 끈다. */
+export const WithUnit: Story = {
+  args: {
+    min: 0,
+    max: 100000,
+    dual: true,
+    defaultValue: [30000, 80000],
+    title: "가격 범위",
+    unit: "원",
+    showBounds: false,
+    onChange: fn()
+  },
+  render: (args) => (
     <div className="w-80">
-      <Range
-        min={0}
-        max={10}
-        defaultValue={5}
-        onChange={(value: number) => fn()(value)}
-      />
+      <Range {...args} />
     </div>
   )
 };

@@ -1,5 +1,6 @@
 import { Sidebar } from "../../sidebar";
 import { Button } from "../../button";
+import { legacyButtonStyles } from "../../button/legacyStyles.ts";
 import { QuestionAndAnswer } from "@kokomen/types";
 import { SidebarIcon } from "lucide-react";
 import { JSX } from "react";
@@ -27,9 +28,9 @@ export default function InterviewSideBar({
   return (
     <>
       <Button
-        variant={"secondary"}
+        variant={"none"}
         onClick={openSidebar}
-        className="fixed top-2 right-2 sm:top-3 sm:right-3 z-50"
+        className={`${legacyButtonStyles.surface} fixed top-2 right-2 sm:top-3 sm:right-3 z-50`}
         role="button"
         aria-label="사이드바 열기"
         title="사이드바 열기"

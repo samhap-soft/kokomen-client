@@ -8,7 +8,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React, { JSX, useEffect, useRef, useState } from "react";
-import { Button } from "@kokomen/ui";
+import { Button, Gnb, GnbMenuItem, GnbProfileButton } from "@kokomen/ui";
 import { useLogout } from "@/hooks/useLogout";
 import { UserInfo } from "@kokomen/types";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
@@ -117,56 +117,42 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
   };
 
   return (
-    <div className="flex items-center space-x-3">
-      <div className="hidden md:block relative">
-        <Button
-          onClick={handleUserClick}
-          variant="primary"
-          size="default"
-          round
-          className="w-10 h-10"
-        >
-          <UserIcon className="w-4 h-4 text-text-light-solid" />
-        </Button>
+    <div className="relative">
+      <GnbProfileButton onClick={handleUserClick} />
 
-        {/* 드롭다운 메뉴 */}
-        <div
-          className={`${isOpen ? "border" : "border-0"} absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border-gray-100 transition-all duration-200 overflow-hidden`}
-          ref={desktopDropdownRef}
-          style={{
-            height: isOpen ? `${desktopDropdownHeight}px` : "0px"
-          }}
-        >
-          <div className="px-4 py-3 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900">
-              {user?.nickname}
-            </p>
-            {user ? (
-              <p className="text-xs text-gray-500 mt-1">환영합니다!</p>
-            ) : (
-              <p className="text-xs text-gray-500 mt-1">
-                로그인 후 이용해주세요.
-              </p>
-            )}
-          </div>
-          <div className="py-1">
-            <Button
-              variant="none"
-              onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-bg-hover transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              마이페이지
-            </Button>
-            <Button
-              variant="none"
-              onClick={logout}
-              className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-bg-hover transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
-            >
-              <LogOut className="w-4 h-4" />
-              로그아웃
-            </Button>
-          </div>
+      {/* 드롭다운 메뉴. Figma GNB 명세에는 없는 앱 확장이다. */}
+      <div
+        className={`${isOpen ? "border" : "border-0"} absolute right-0 z-10 mt-2 w-56 overflow-hidden rounded-xl border-gray-100 bg-bg-base shadow-lg transition-all duration-200`}
+        ref={desktopDropdownRef}
+        style={{
+          height: isOpen ? `${desktopDropdownHeight}px` : "0px"
+        }}
+      >
+        <div className="px-4 py-3 border-b border-gray-100">
+          <p className="text-sm font-medium text-gray-900">{user?.nickname}</p>
+          {user ? (
+            <p className="text-xs text-gray-500 mt-1">환영합니다!</p>
+          ) : (
+            <p className="text-xs text-gray-500 mt-1">로그인 후 이용해주세요.</p>
+          )}
+        </div>
+        <div className="py-1">
+          <Button
+            variant="none"
+            onClick={() => router.push("/dashboard")}
+            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            마이페이지
+          </Button>
+          <Button
+            variant="none"
+            onClick={logout}
+            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
+          >
+            <LogOut className="w-4 h-4" />
+            로그아웃
+          </Button>
         </div>
       </div>
     </div>
@@ -284,48 +270,60 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
   const router = useExtendedRouter();
 
   return (
-    <header className="sticky top-0 z-50 bg-bg-base/95 backdrop-blur-xl border-b border-border shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 md:flex justify-between items-center">
-        <div className="flex justify-between items-center h-16 w-full">
-          {/* 로고 */}
-          <div className="flex items-center space-x-2">
+    <header className="sticky top-0 z-50">
+      {/* PC: Figma Component/GNB (완) */}
+      <div className="hidden px-4 pt-3 pb-1 md:block lg:px-8">
+        <Gnb
+          logo={
             <Link
               href="/"
-              className="flex items-center group transition-transform duration-200 hover:scale-105"
+              className="flex items-center transition-transform duration-200 hover:scale-105"
             >
               <Image
                 src="/logo.svg"
                 alt="꼬꼬면 로고"
-                width={160}
-                height={40}
+                width={148}
+                height={50}
                 priority
-                className="h-10 w-auto"
+                className="h-[50px] w-auto"
               />
             </Link>
-            <nav className="hidden md:flex items-center space-x-1">
-              {navigation(user?.is_admin || false).map((item) => {
-                const isActive = router.pathname === item.href;
-                if (!item.featureFlag) return null;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`relative px-4 py-2 text-base rounded-lg transition-all duration-200 font-bold hover:text-primary-text-hover ${
-                      isActive ? "text-primary" : "text-black"
-                    }`}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-          <div className="flex items-center space-x-2">
-            {/* <NotificationPanelIcon user={user} /> */}
-            <DesktopProfileDropdown user={user} />
-            <MobileProfileDropdown user={user} />
-          </div>
+          }
+          profile={<DesktopProfileDropdown user={user} />}
+        >
+          {navigation(user?.is_admin || false).map((item) => {
+            if (!item.featureFlag) return null;
+            return (
+              <GnbMenuItem
+                key={item.href}
+                as={Link}
+                href={item.href}
+                active={router.pathname === item.href}
+              >
+                {item.label}
+              </GnbMenuItem>
+            );
+          })}
+        </Gnb>
+      </div>
+
+      {/* 모바일: Figma 에 모바일 GNB 가 없어 기존 헤더를 유지한다 */}
+      <div className="border-b border-border bg-bg-base/95 shadow-sm backdrop-blur-xl md:hidden">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <Link
+            href="/"
+            className="flex items-center transition-transform duration-200 hover:scale-105"
+          >
+            <Image
+              src="/logo.svg"
+              alt="꼬꼬면 로고"
+              width={160}
+              height={40}
+              priority
+              className="h-10 w-auto"
+            />
+          </Link>
+          <MobileProfileDropdown user={user} />
         </div>
       </div>
     </header>

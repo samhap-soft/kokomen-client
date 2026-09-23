@@ -1,4 +1,4 @@
-import { Button } from "@kokomen/ui";
+import { Button, legacyButtonStyles } from "@kokomen/ui";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/router";
 import { useScreenSize } from "@/hooks/useScreenSize";
@@ -50,8 +50,12 @@ export default function PaginationButtons({
           role="button"
           name={`${pageNumber + 1} page`}
           aria-label="page"
-          variant={currentPage === pageNumber ? "primary" : "secondary"}
-          className={`${currentPage === pageNumber && "disabled:opacity-100 disabled:bg-primary-bg-hover disabled:text-primary"}`}
+          variant={currentPage === pageNumber ? "primary" : "none"}
+          className={
+            currentPage === pageNumber
+              ? "disabled:opacity-100 disabled:bg-primary-3 disabled:text-primary"
+              : legacyButtonStyles.glass
+          }
           onClick={() => {
             router.push(
               `/${basePath}?page=${pageNumber}${optionsString ? `&${optionsString}` : ""}`

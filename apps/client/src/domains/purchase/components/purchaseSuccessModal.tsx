@@ -1,4 +1,4 @@
-import { Button, Modal } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Modal } from "@kokomen/ui";
 import { useModal } from "@kokomen/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -38,12 +38,12 @@ export default function PurchaseSuccessModal() {
         인터뷰 보러가기
       </Button>
       <Button
-        variant={"secondary"}
+        variant={"none"}
         onClick={() => {
           closeModal();
           deletePurchaseSuccessParam();
         }}
-        className="w-full mt-4"
+        className={`${legacyButtonStyles.outline} w-full mt-4`}
         size={"large"}
       >
         닫기

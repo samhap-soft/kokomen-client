@@ -22,11 +22,11 @@ const inputVariants = cva(
     variants: {
       variant: {
         default:
-          "border-primary-border placeholder:text-text-quaternary hover:border-primary focus:border-primary disabled:border-border-secondary",
+          "border-primary-border placeholder:text-text-quaternary hover:border-primary focus:border-primary disabled:border-primary-2",
         red: "border-error-border placeholder:text-text-secondary hover:border-error-border-hover focus:border-error-border-hover disabled:border-error-border",
         /** @deprecated Figma 명세에 없다. `default` 를 사용한다. */
         outline:
-          "border-border placeholder:text-text-quaternary hover:border-primary focus:border-primary disabled:border-border-secondary"
+          "border-border placeholder:text-text-quaternary hover:border-primary focus:border-primary disabled:border-primary-2"
       },
       size: {
         default: "text-base",

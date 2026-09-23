@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Sidebar } from "./index";
+import { JSX, useState } from "react";
+import { Sidebar, SidebarProps } from "./index";
 import { Button } from "../button";
 
 const meta: Meta<typeof Sidebar> = {
@@ -29,7 +29,7 @@ const meta: Meta<typeof Sidebar> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const SidebarTemplate = (args: any) => {
+const SidebarTemplate = (args: Partial<SidebarProps>): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

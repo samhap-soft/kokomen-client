@@ -3,7 +3,7 @@ import { Heart } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
-import { AnswerContent, Button } from "@kokomen/ui";
+import { AnswerContent, Button, legacyButtonStyles } from "@kokomen/ui";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { MemberInterviewResult } from "@kokomen/types";
@@ -105,9 +105,9 @@ export default function MemberQuestionFeedback({
             type="button"
             name={`answer-like-button-${questionAndFeedback.answerId}`}
             role="button"
-            variant="secondary"
+            variant="none"
             optimistic={true}
-            className={`${answerLiked && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
+            className={`${legacyButtonStyles.glass} ${answerLiked && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
             aria-label={`답변 ${index + 1} 좋아요`}
           >
             <Heart

@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Button, Modal } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Modal } from "@kokomen/ui";
 import { useModal } from "@kokomen/utils";
 import { useRouter } from "next/router";
 import { Home } from "lucide-react";
@@ -20,12 +20,12 @@ export default function InterviewExitButton(): JSX.Element {
   return (
     <>
       <Button
-        variant={"secondary"}
+        variant={"none"}
         onClick={openModal}
         role="button"
         aria-label="면접 나가기"
         title="면접 나가기"
-        className="fixed top-2 left-2 sm:top-3 sm:left-3 z-50"
+        className={`${legacyButtonStyles.surface} fixed top-2 left-2 sm:top-3 sm:left-3 z-50`}
       >
         <Home />
       </Button>
@@ -47,9 +47,9 @@ export default function InterviewExitButton(): JSX.Element {
             role="button"
             aria-label="cancel-exit-button"
             onClick={closeModal}
-            variant={"secondary"}
+            variant={"none"}
             size={"xl"}
-            className="w-full"
+            className={`${legacyButtonStyles.surface} w-full`}
           >
             아니오
           </Button>
@@ -58,9 +58,9 @@ export default function InterviewExitButton(): JSX.Element {
             role="button"
             aria-label="confirm-exit-button"
             onClick={handleExit}
-            variant={"primary"}
+            variant={"none"}
             size={"xl"}
-            className="w-full"
+            className={`${legacyButtonStyles.gradient} w-full`}
           >
             네
           </Button>

@@ -5,6 +5,7 @@ import { useInterviewDraftGuard } from "@/domains/interview/hooks/useInterviewDr
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import {
   Button,
+  legacyButtonStyles,
   LoadingCircles,
   RoundSpinner,
   Textarea,
@@ -283,19 +284,19 @@ export function InterviewAnswerForm({
         {failedAnswer !== null && (
           <div
             role="alert"
-            className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 px-3 py-2 rounded-lg border border-error-border bg-error-bg"
+            className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 px-3 py-2 rounded-lg border border-red-2 bg-error-bg"
           >
             <span className="flex-1 text-sm text-error">
               답변을 제출하지 못했어요. 입력한 내용은 그대로 남아 있습니다.
             </span>
             <Button
               type="button"
-              variant={"secondary"}
+              variant={"none"}
               size={"small"}
               aria-label="interview-retry-submit"
               onClick={() => submitAnswer(failedAnswer)}
               disabled={isPending}
-              className="flex items-center gap-1.5 shrink-0"
+              className={`${legacyButtonStyles.surface} flex items-center gap-1.5 shrink-0`}
             >
               <RotateCcw className="w-4 h-4" aria-hidden="true" />
               다시 시도
@@ -367,7 +368,7 @@ export function InterviewAnswerForm({
                 className="absolute -top-1 sm:top-0 left-1/2 -translate-x-1/2 transition-all duration-300 ease-in-out overflow-hidden motion-safe:animate-fade-in-up"
               >
                 <div className="flex items-center justify-center">
-                  <div className="flex items-center gap-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-error-bg to-error-bg-hover rounded-full border border-error-border shadow-lg">
+                  <div className="flex items-center gap-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-error-bg to-error-bg-hover rounded-full border border-red-2 shadow-lg">
                     <span className="text-error font-semibold text-xs sm:text-sm tracking-wide whitespace-nowrap">
                       ❌ {voiceError}
                     </span>
@@ -426,8 +427,8 @@ function VoiceInputButton({
         role="button"
         aria-label="interview-voice-stop"
         name="interview-voice-stop"
-        variant={"secondary"}
-        className="flex items-center gap-2 text-text-tertiary"
+        variant={"none"}
+        className={`${legacyButtonStyles.glass} flex items-center gap-2 text-text-tertiary`}
         onClick={() => publishInterviewEvent("interview:stopVoiceRecognition")}
         disabled={disabled}
       >
@@ -448,8 +449,8 @@ function VoiceInputButton({
       role="button"
       aria-label="interview-voice-start"
       name="interview-voice-start"
-      variant={"secondary"}
-      className="flex items-center gap-2 text-text-tertiary"
+      variant={"none"}
+      className={`${legacyButtonStyles.glass} flex items-center gap-2 text-text-tertiary`}
       onClick={() => publishInterviewEvent("interview:startVoiceRecognition")}
       disabled={disabled}
     >
