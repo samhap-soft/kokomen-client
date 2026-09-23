@@ -6,7 +6,7 @@ import { useToast } from "@kokomen/ui";
 import { AxiosError } from "axios";
 import { updateUserProfile } from "@/domains/auth/api";
 import { Input } from "@kokomen/ui";
-import { Button } from "@kokomen/ui";
+import { Button, legacyButtonStyles } from "@kokomen/ui";
 import { captureFormSubmitEvent } from "@/utils/analytics";
 import { User } from "@kokomen/types";
 import z from "zod";
@@ -111,7 +111,8 @@ export default function ProfileSettingForm({
             onChange={(e) => setValue("nickname", e.target.value)}
           />
           <Button
-            variant={"secondary"}
+            variant={"none"}
+            className={legacyButtonStyles.glass}
             type="button"
             onClick={() => {
               setValue("nickname", getRandomNickname("animals"));

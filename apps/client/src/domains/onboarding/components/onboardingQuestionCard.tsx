@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Button } from "@kokomen/ui";
+import { Button, legacyButtonStyles } from "@kokomen/ui";
 import { Check } from "lucide-react";
 import { OnboardingQuestion } from "@/domains/onboarding/constants";
 
@@ -83,7 +83,7 @@ export default function OnboardingQuestionCard({
             <Button
               key={option.value}
               type="button"
-              variant={selected ? "primary" : "secondary"}
+              variant={selected ? "primary" : "none"}
               role={question.type === "single" ? "radio" : "checkbox"}
               aria-checked={selected}
               aria-selected={selected}
@@ -91,11 +91,11 @@ export default function OnboardingQuestionCard({
               onClick={() =>
                 onChange(getNextValue(question, value, option.value))
               }
-              className={
+              className={`${selected ? "" : legacyButtonStyles.surface} ${
                 isMobile
                   ? "w-full justify-start gap-3 px-4 py-3.5 text-sm font-medium"
                   : "w-full justify-center gap-2 px-4 py-3.5 text-sm font-medium text-center"
-              }
+              }`}
             >
               {isMobile && (
                 <span

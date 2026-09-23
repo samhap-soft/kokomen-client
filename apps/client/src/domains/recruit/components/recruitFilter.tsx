@@ -1,6 +1,6 @@
 import { useRecruitFilter } from "@/domains/recruit/components/recruitFilterContext";
 import { RecruitFilters } from "@kokomen/types";
-import { Button, Range, Select } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Range, Select } from "@kokomen/ui";
 import { CalendarSearch } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -129,8 +129,8 @@ function CareerRange() {
     <div className="relative" ref={careerRangeRef}>
       <Button
         type="button"
-        variant="secondary"
-        className="w-full"
+        variant="none"
+        className={`${legacyButtonStyles.text} w-full`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <CalendarSearch className="w-4 h-4" /> 경력

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Modal } from "./index";
+import { JSX, useState } from "react";
+import { Modal, ModalProps } from "./index";
 import { Button } from "../button";
 
 const meta: Meta<typeof Modal> = {
@@ -30,13 +30,18 @@ const meta: Meta<typeof Modal> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const ModalTemplate = (args: any) => {
+const ModalTemplate = (args: Partial<ModalProps>): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div>
       <Button onClick={() => setIsOpen(true)}>모달 열기</Button>
-      <Modal {...args} isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal
+        title="모달"
+        {...args}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      >
         <p>이것은 모달 내용입니다. 여기에 원하는 내용을 넣을 수 있습니다.</p>
         <div className="mt-4 flex gap-2">
           <Button onClick={() => setIsOpen(false)}>확인</Button>
@@ -120,7 +125,12 @@ export const ComplexContent: Story = {
     return (
       <div>
         <Button onClick={() => setIsOpen(true)}>복잡한 내용 모달 열기</Button>
-        <Modal {...args} isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <Modal
+          title="복잡한 내용 모달"
+          {...args}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+        >
           <div className="space-y-4">
             <h3 className="text-lg font-medium">복잡한 모달 내용</h3>
             <p className="text-gray-600">

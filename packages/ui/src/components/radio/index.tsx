@@ -45,7 +45,7 @@ const radioVariants = cva(
       },
       checked: {
         true: "",
-        false: "border-2 border-border-secondary bg-transparent"
+        false: "border-2 border-primary-2 bg-transparent"
       },
       disabled: {
         true: "cursor-not-allowed border-transparent bg-bg-container-disabled",

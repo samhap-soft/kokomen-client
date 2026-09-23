@@ -1,7 +1,7 @@
 import { FC, JSX, memo, MemoExoticComponent } from "react";
 import { Modal } from "@kokomen/ui";
 import { Interview } from "@kokomen/types";
-import { Button } from "@kokomen/ui";
+import { Button, legacyButtonStyles } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
 type InterviewFinishModalProps = {
@@ -32,9 +32,9 @@ const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
               role="button"
               aria-label="home-button"
               onClick={() => router.replace(`/`)}
-              variant={"primary"}
+              variant={"none"}
               size={"xl"}
-              className="w-full"
+              className={`${legacyButtonStyles.gradient} w-full`}
             >
               홈으로
             </Button>

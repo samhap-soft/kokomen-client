@@ -2,6 +2,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import React, { JSX, useCallback, useEffect } from "react";
 import { CloseIcon } from "../icon";
 import { Button } from "../button";
+import { legacyButtonStyles } from "../button/legacyStyles.ts";
 import { cn } from "../../utils/index.ts";
 
 type ModalVariants = VariantProps<typeof modalVariants>;
@@ -38,7 +39,7 @@ const modalBodyVariants = cva("p-6 overflow-y-auto", {
   }
 });
 
-interface ModalProps
+export interface ModalProps
   extends React.HTMLAttributes<HTMLDivElement>,
     ModalVariants {
   isOpen: boolean;
@@ -108,9 +109,9 @@ const Modal = ({
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           {closeButton && (
             <Button
-              variant={"secondary"}
+              variant={"none"}
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              className={`${legacyButtonStyles.text} text-gray-400 hover:text-gray-600 transition-colors`}
             >
               <CloseIcon size={24} />
             </Button>

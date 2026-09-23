@@ -2,6 +2,7 @@ import { Button } from "./index";
 import { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import { AddIcon, ChevronRightIcon } from "../icon";
+import { legacyButtonStyles } from "./legacyStyles.ts";
 
 const meta: Meta<typeof Button> = {
   title: "Common/Button",
@@ -84,4 +85,27 @@ export const Round: Story = {
     children: "Button",
     round: true
   }
+};
+
+/**
+ * Figma 명세 밖 모양이 필요한 기존 화면용 프리셋이다. `variant="none"` 과 함께
+ * className 으로 붙인다. 화면 디자인이 Figma 로 정리되는 대로 없앤다.
+ */
+export const LegacyStyles: Story = {
+  render: (args) => (
+    <div className="grid grid-cols-3 gap-3 bg-gradient-to-r from-primary-1 to-primary-3 p-6">
+      {(
+        Object.keys(legacyButtonStyles) as (keyof typeof legacyButtonStyles)[]
+      ).map((preset) => (
+        <Button
+          key={preset}
+          {...args}
+          variant="none"
+          className={legacyButtonStyles[preset]}
+        >
+          {preset}
+        </Button>
+      ))}
+    </div>
+  )
 };

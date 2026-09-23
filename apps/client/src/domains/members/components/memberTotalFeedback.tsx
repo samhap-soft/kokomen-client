@@ -4,7 +4,7 @@ import { CheckCircle, Eye, Heart, MessageCircle, Trophy } from "lucide-react";
 import { JSX, useState } from "react";
 import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
-import { Button } from "@kokomen/ui";
+import { Button, legacyButtonStyles } from "@kokomen/ui";
 import { MemberInterviewResult } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { captureButtonEvent } from "@/utils/analytics";
@@ -127,8 +127,8 @@ export default function MemberTotalFeedback({
             name={`interview-like-button-${interviewId}`}
             role="button"
             type="button"
-            variant="secondary"
-            className={`${isTotalLikedIncludesMine && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
+            variant="none"
+            className={`${legacyButtonStyles.glass} ${isTotalLikedIncludesMine && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
             aria-label="전체 인터뷰 좋아요"
           >
             <Heart

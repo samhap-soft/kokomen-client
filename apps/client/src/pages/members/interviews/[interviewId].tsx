@@ -7,7 +7,7 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Layout, Button } from "@kokomen/ui";
+import { Button, Layout, legacyButtonStyles } from "@kokomen/ui";
 import { JSX } from "react";
 import { HelpCircle, Info, Users, Share2, Eye } from "lucide-react";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
@@ -71,7 +71,8 @@ export default function MemberInterviewResultPage({
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button
-                      variant="secondary"
+                      variant="none"
+                      className={legacyButtonStyles.glass}
                       round
                       onClick={handleShare}
                       aria-label="공유하기"

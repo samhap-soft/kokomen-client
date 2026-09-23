@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Modal, useToast } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Modal, useToast } from "@kokomen/ui";
 import { AlertTriangle, Trash2, CheckCircle, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { deleteUser } from "@/domains/auth/api";
@@ -161,8 +161,8 @@ export default function Withdrawal() {
           <div className="flex gap-3">
             <Button
               onClick={handleCloseConfirmModal}
-              variant="secondary"
-              className="flex-1"
+              variant="none"
+              className={`${legacyButtonStyles.outline} flex-1`}
             >
               취소
             </Button>

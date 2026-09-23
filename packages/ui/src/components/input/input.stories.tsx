@@ -6,70 +6,86 @@ const meta: Meta<typeof Input> = {
   title: "Common/Input",
   component: Input,
   parameters: {
-    layout: "centered",
+    layout: "centered"
   },
   tags: ["autodocs"],
   args: {
-    onClick: fn(),
-  },
+    onChange: fn(),
+    placeholder: "입력해주세요"
+  }
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Input>;
 
-export const Primary: Story = {
+/** Figma 옵션 테이블의 variant 2종 */
+const VARIANTS = ["default", "red"] as const;
+/** Figma 옵션 테이블의 size 4종 */
+const SIZES = ["default", "lg", "xl", "2xl"] as const;
+
+export const Default: Story = {
   args: {
     type: "text",
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-  },
+    variant: "default",
+    size: "default"
+  }
 };
 
-export const Number: Story = {
+export const Red: Story = {
   args: {
-    type: "number",
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-  },
+    type: "text",
+    variant: "red",
+    size: "default"
+  }
 };
 
-export const Time: Story = {
-  args: {
-    type: "time",
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-  },
+/** variant 2종 x size 4종 */
+export const AllVariants: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-6">
+      {VARIANTS.map((variant) => (
+        <div key={variant} className="flex items-start gap-3">
+          {SIZES.map((size) => (
+            <Input
+              key={size}
+              {...args}
+              variant={variant}
+              size={size}
+              placeholder={`${variant} / ${size}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  )
 };
 
-export const Date: Story = {
-  args: {
-    type: "date",
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-  },
+/**
+ * Figma 의 state 는 default · hover · filled · disabled 다.
+ * hover 는 마우스 오버로만 볼 수 있어 나머지 3종만 세운다.
+ */
+export const States: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-3">
+      {VARIANTS.map((variant) => (
+        <div key={variant} className="flex items-center gap-3">
+          <Input {...args} variant={variant} placeholder="default" />
+          <Input {...args} variant={variant} defaultValue="filled" />
+          <Input {...args} variant={variant} defaultValue="disabled" disabled />
+        </div>
+      ))}
+    </div>
+  )
 };
 
-export const Password: Story = {
-  args: {
-    type: "password",
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-  },
-};
-
-export const Radio: Story = {
-  args: {
-    type: "radio",
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-  },
-};
-
-export const Checkbox: Story = {
-  args: {
-    type: "checkbox",
-    variant: "default", // 'primary'가 ButtonProps.variant의 유효한 값이라고 가정
-    size: "lg", // 'medium'이 ButtonProps.size의 유효한 값이라고 가정
-  },
+/** `type` 은 Figma 명세 밖이지만 실제 폼에서 쓰이는 조합이다. */
+export const InputTypes: Story = {
+  render: (args) => (
+    <div className="flex flex-col gap-3">
+      {(["text", "number", "time", "date", "password"] as const).map((type) => (
+        <Input key={type} {...args} type={type} placeholder={type} />
+      ))}
+    </div>
+  )
 };

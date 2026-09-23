@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { Button } from "@kokomen/ui";
+import { Button, legacyButtonStyles } from "@kokomen/ui";
 import {
   Html,
   OrbitControls,
@@ -51,8 +51,8 @@ const NormalViewButton = () => {
   return (
     <Html fullscreen>
       <Button
-        variant="secondary"
-        className="absolute top-4 left-4 z-10 px-4"
+        variant="none"
+        className={`${legacyButtonStyles.outline} absolute top-4 left-4 z-10 px-4`}
         onClick={handleClick}
       >
         일반으로 보기

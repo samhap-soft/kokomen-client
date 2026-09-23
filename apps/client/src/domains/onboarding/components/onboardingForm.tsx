@@ -1,7 +1,12 @@
 import { JSX, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
-import { Button, RoundSpinner, useToast } from "@kokomen/ui";
+import {
+  Button,
+  legacyButtonStyles,
+  RoundSpinner,
+  useToast
+} from "@kokomen/ui";
 import {
   CareerGoal,
   InterviewExperience,
@@ -200,8 +205,8 @@ export default function OnboardingForm({
         {!isFirstStep && (
           <Button
             type="button"
-            variant="secondary"
-            className="px-6 py-3 text-sm font-semibold"
+            variant="none"
+            className={`${legacyButtonStyles.surface} px-6 py-3 text-sm font-semibold`}
             onClick={handlePrevious}
             disabled={isPending}
           >

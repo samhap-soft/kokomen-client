@@ -208,7 +208,11 @@
 
   /* sys.color.stroke.default → gray/200, primary-muted → primary-light */
   --color-border: var(--color-gray-2); /* #f0f0f0 */
-  --color-border-secondary: var(--color-primary-2); /* #ffe6cc */
+  /* border-secondary 는 앱 전반에서 카드·구분선의 옅은 중립 테두리로 쓰인다.
+     Figma 의 primary/200(#ffe6cc)을 여기에 넣으면 전체가 주황빛으로 보이므로
+     기존 값(primary-light)을 유지하고, primary/200 이 필요한 폼 컴포넌트는
+     border-primary-2 를 직접 쓴다. */
+  --color-border-secondary: var(--color-primary-light); /* #f5f1dc */
   --color-split: rgba(0, 0, 0, 0.06);
 
   --color-fill: rgba(0, 0, 0, 0.15);

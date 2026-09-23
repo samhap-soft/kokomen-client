@@ -1,10 +1,11 @@
 import {
   Button,
-  useToast,
+  legacyButtonStyles,
+  Modal,
   Radio,
   RadioGroup,
-  Modal,
-  Textarea
+  Textarea,
+  useToast
 } from "@kokomen/ui";
 import { NotebookPen, Trash } from "lucide-react";
 import { Dispatch, JSX, SetStateAction, useState } from "react";
@@ -67,7 +68,11 @@ export default function AnswerMemoComponent({
       {answerMemo.content ? (
         <div className="flex flex-col gap-4">
           <div className="flex gap-2">
-            <Button variant={"secondary"} onClick={handleMemoEditButtonClick}>
+            <Button
+              variant={"none"}
+              className={legacyButtonStyles.glass}
+              onClick={handleMemoEditButtonClick}
+            >
               <NotebookPen />
               메모 편집하기
             </Button>
@@ -84,8 +89,8 @@ export default function AnswerMemoComponent({
         <div className="border border-border-secondary p-4 rounded-lg flex flex-col justify-between items-center gap-3">
           <p>보완이 필요하거나 학습한 내용을 메모해 보세요.</p>
           <Button
-            className="w-full"
-            variant={"secondary"}
+            className={`${legacyButtonStyles.glass} w-full`}
+            variant={"none"}
             onClick={handleMemoEditButtonClick}
             disabled={isMemoEditOpen}
           >
@@ -123,7 +128,8 @@ export default function AnswerMemoComponent({
               </Button>
               <Button
                 type="button"
-                variant={"primary"}
+                variant={"none"}
+                className={legacyButtonStyles.success}
                 onClick={() => {
                   setAnswerMemo((prev) => ({
                     content: tempMemo,
@@ -197,7 +203,8 @@ function AnswerMemoDeleteModal({
       <div className="grid grid-cols-2 gap-2 font-bold">
         <Button
           type="button"
-          variant={"secondary"}
+          variant={"none"}
+          className={legacyButtonStyles.surface}
           size={"large"}
           onClick={toggleModal}
         >
@@ -328,7 +335,8 @@ function AnswerMemoEdit({
           취소
         </Button>
         <Button
-          variant={"primary"}
+          variant={"none"}
+          className={legacyButtonStyles.success}
           type="submit"
           disabled={isPending}
           pendingSpinner

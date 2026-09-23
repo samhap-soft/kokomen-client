@@ -1,6 +1,6 @@
 import ProfileSettingForm from "@/domains/auth/components/profilesettingForm";
 import { UserInfo } from "@kokomen/types";
-import { Modal, Button } from "@kokomen/ui";
+import { Modal, Button, legacyButtonStyles } from "@kokomen/ui";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
@@ -93,7 +93,8 @@ export default function ChangeNickname({ userInfo }: ChangeNicknameProps) {
           </p>
           <div className="flex gap-3 justify-end">
             <Button
-              variant="secondary"
+              variant="none"
+              className={legacyButtonStyles.softWarning}
               onClick={() => setIsConfirmModalOpen(false)}
               disabled={isPending}
             >

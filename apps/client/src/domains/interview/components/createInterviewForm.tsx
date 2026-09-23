@@ -2,7 +2,7 @@ import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import { InterviewMode, InterviewQuestion } from "@kokomen/types";
 import { useModal } from "@kokomen/utils";
-import { Button, Modal } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Modal } from "@kokomen/ui";
 import { Keyboard, MicVocal, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import {
@@ -180,10 +180,10 @@ const InterviewStartModal = ({
         <div className="flex gap-3">
           <Button
             type="button"
-            variant="secondary"
+            variant="none"
             size={"large"}
             onClick={closeModal}
-            className="flex-1"
+            className={`${legacyButtonStyles.surface} flex-1`}
           >
             취소
           </Button>
@@ -368,8 +368,8 @@ const CreateInterviewForm = ({
           type="submit"
           disabled={isPending}
           size={"large"}
-          className="font-semibold w-full"
-          variant="primary"
+          className={`${legacyButtonStyles.submit} font-semibold w-full`}
+          variant="none"
         >
           {isPending ? "면접 시작 중..." : "랜덤 질문으로 시작하기"}
         </Button>

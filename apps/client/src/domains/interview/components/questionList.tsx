@@ -1,6 +1,6 @@
 import { getQuestions } from "@/domains/interview/api/questions";
 import { interviewQuestionKeys } from "@/utils/querykeys";
-import { Button, Modal, RoundSpinner } from "@kokomen/ui";
+import { Button, legacyButtonStyles, Modal, RoundSpinner } from "@kokomen/ui";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { InterviewQuestion } from "@kokomen/types";
@@ -83,11 +83,11 @@ function QuestionListContent({
         const label = isCode ? (question.title ?? question.content) : question.content;
         return (
           <Button
-            variant={"secondary"}
+            variant={"none"}
             size={"large"}
             key={question.id}
             onClick={() => onSelectQuestion(question)}
-            className="w-full whitespace-normal flex items-center gap-3 justify-start text-left"
+            className={`${legacyButtonStyles.outline} w-full whitespace-normal flex items-center gap-3 justify-start text-left`}
           >
             <span
               className={

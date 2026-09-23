@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import { Button, RoundSpinner } from "@kokomen/ui";
+import { Button, legacyButtonStyles, RoundSpinner } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { notificationKeys, useModal } from "@kokomen/utils";
 import {
@@ -58,7 +58,7 @@ const UnreadNotifications = () => {
             <div
               key={`${notification.type}-${notification.createdAt}-${index}`}
               className={`p-3 border-b border-gray-100 last:border-b-0 hover:bg-primary-bg cursor-pointer ${
-                !notification.isRead && "bg-primary-bg-hover"
+                !notification.isRead && "bg-primary-3"
               }`}
             >
               <div className="text-sm text-text-primary mb-1">
@@ -144,7 +144,7 @@ const ReadNotifications = () => {
             <div
               key={`${notification.type}-${notification.createdAt}-${index}`}
               className={`p-3 border-b border-gray-100 last:border-b-0 hover:bg-primary-bg cursor-pointer ${
-                !notification.isRead && "bg-primary-bg-hover"
+                !notification.isRead && "bg-primary-3"
               }`}
             >
               <div className="text-sm text-text-primary mb-1">
@@ -199,18 +199,18 @@ const NotificationPanel = () => {
       {/* 탭 버튼 */}
       <div className="flex border-b border-gray-200">
         <Button
-          variant={!showReadNotifications ? "primary" : "secondary"}
+          variant={!showReadNotifications ? "primary" : "none"}
           size="small"
           onClick={handleUnreadTabClick}
-          className="flex-1 p-4 text-base rounded-b-none"
+          className={`${showReadNotifications ? legacyButtonStyles.text : ""} flex-1 p-4 text-base rounded-b-none`}
         >
           안읽은 알림
         </Button>
         <Button
-          variant={showReadNotifications ? "primary" : "secondary"}
+          variant={showReadNotifications ? "primary" : "none"}
           size="small"
           onClick={handleReadTabClick}
-          className="flex-1 border-r border-gray-200 p-4 text-base rounded-b-none"
+          className={`${showReadNotifications ? "" : legacyButtonStyles.text} flex-1 border-r border-gray-200 p-4 text-base rounded-b-none`}
         >
           읽은 알림
         </Button>
@@ -255,7 +255,8 @@ const NotificationPanelIcon = ({ user }: { user: UserInfo | null }) => {
     <div className="relative" ref={notificationPanelRef}>
       <Button
         role="button"
-        variant={"secondary"}
+        variant={"none"}
+        className={legacyButtonStyles.text}
         size="small"
         onClick={handleToggleNotificationPanel}
         onKeyDown={handleKeyDown}
