@@ -8,7 +8,6 @@ import {
   loadTossPayments,
   TossPaymentsWidgets
 } from "@tosspayments/tosspayments-sdk";
-import { MessageCircleWarning } from "lucide-react";
 import Link from "next/link";
 
 export default function PurchaseSection({
@@ -17,7 +16,7 @@ export default function PurchaseSection({
 }: {
   userInfo: UserInfo;
   products: CamelCasedProperties<Product>[];
-}) {
+}): JSX.Element {
   const [selectedItem, setSelectedItem] =
     useState<CamelCasedProperties<Product> | null>(null);
   if (selectedItem)
@@ -111,10 +110,10 @@ function PurchaseMode({
   setSelectedItem: Dispatch<
     SetStateAction<CamelCasedProperties<Product> | null>
   >;
-}) {
+}): JSX.Element {
   const tossPaymentsWidgets = useRef<TossPaymentsWidgets | null>(null);
   useEffect(() => {
-    const fetchTossPayments = async () => {
+    const fetchTossPayments = async (): Promise<void> => {
       const tossPayments = await loadTossPayments(
         (process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY as string) || ""
       );
@@ -135,7 +134,7 @@ function PurchaseMode({
     fetchTossPayments().catch(console.error);
   }, [selectedItem.price]);
 
-  const handlePurchase = () => {
+  const handlePurchase = (): void => {
     tossPaymentsWidgets.current
       ?.requestPayment({
         orderId: crypto.randomUUID(),

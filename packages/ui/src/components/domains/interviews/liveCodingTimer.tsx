@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef, JSX } from "react";
 import { Clock } from "lucide-react";
 import { cn } from "../../../utils";
 
@@ -19,8 +19,8 @@ export default function LiveCodingTimer({
   totalSeconds,
   isRunning,
   onTimeUp,
-  className,
-}: LiveCodingTimerProps) {
+  className
+}: LiveCodingTimerProps): JSX.Element {
   const [elapsed, setElapsed] = useState(0);
   const onTimeUpRef = useRef(onTimeUp);
   onTimeUpRef.current = onTimeUp;

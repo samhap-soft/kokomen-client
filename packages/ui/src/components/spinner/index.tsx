@@ -1,6 +1,5 @@
-import { cva } from "class-variance-authority";
 import { cn } from "../../utils/index.ts";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, JSX } from "react";
 
 const sizeVariant = {
   sm: "size-4",
@@ -8,7 +7,11 @@ const sizeVariant = {
   lg: "size-6",
   xl: "size-10"
 };
-function RoundSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" | "xl" }) {
+function RoundSpinner({
+  size = "md"
+}: {
+  size?: "sm" | "md" | "lg" | "xl";
+}): JSX.Element {
   return (
     <div role="status">
       <svg
@@ -41,7 +44,11 @@ const loadingCircleSizes = {
   lg: "w-8 h-8"
 };
 
-function LoadingCircles({ size = "md" }: { size?: "sm" | "md" | "lg" | "xs" }) {
+function LoadingCircles({
+  size = "md"
+}: {
+  size?: "sm" | "md" | "lg" | "xs";
+}): JSX.Element {
   return (
     <div className="flex items-center justify-center space-x-2" role="status">
       <div
@@ -69,7 +76,7 @@ function LoadingCircles({ size = "md" }: { size?: "sm" | "md" | "lg" | "xs" }) {
 function LoadingFullScreen({
   className,
   ...props
-}: HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement>): JSX.Element {
   return (
     <div
       className={cn(
