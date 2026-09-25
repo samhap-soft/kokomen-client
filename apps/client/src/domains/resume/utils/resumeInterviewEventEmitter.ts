@@ -1,5 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { publishEvent, useSubscribeEvents } from "@/utils/eventEmitter";
+import {
+  publishEvent,
+  PublishEventFunction,
+  useSubscribeEvents
+} from "@/utils/eventEmitter";
 import {
   ResumeBasedInterviewEventPayloads,
   ResumeBasedInterviewEventType
@@ -15,13 +19,13 @@ export function useResumeBasedInterviewEvent<
     : (payload: ResumeBasedInterviewEventPayloads[K]) => void,
   deps: DependencyList = []
 ): void {
-  const eventEmitter = useSubscribeEvents<ResumeBasedInterviewEventType>(
-    [{ event, handler }],
-    []
-  );
+  useSubscribeEvents<ResumeBasedInterviewEventType>([{ event, handler }], []);
 }
 
-export const publishResumeBasedInterviewEvent = publishEvent<
+export const publishResumeBasedInterviewEvent: PublishEventFunction<
+  ResumeBasedInterviewEventType,
+  ResumeBasedInterviewEventPayloads
+> = publishEvent<
   ResumeBasedInterviewEventType,
   ResumeBasedInterviewEventPayloads
 >();
