@@ -45,6 +45,12 @@ const meta: Meta<typeof AiInterviewInterface> = {
 };
 
 export const AiInterviewInterfaceDemo: Story = {
+  // Chromatic capture-v9(2026-09-16 적용) 캡처 브라우저에서는 WebGL 컨텍스트를
+  // 만들 수 없어 react-three-fiber Canvas 가 렌더 도중 throw 한다. 3D 씬은
+  // 애니메이션이라 스냅샷 비교 자체가 무의미하므로 캡처 대상에서 제외한다.
+  parameters: {
+    chromatic: { disableSnapshot: true }
+  },
   render: () => {
     const [emotion, setEmotion] = useState<
       "neutral" | "happy" | "encouraging" | "angry"
