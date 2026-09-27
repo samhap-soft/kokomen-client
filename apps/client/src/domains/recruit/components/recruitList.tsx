@@ -43,7 +43,7 @@ function RecruitItem({
               className="w-full h-full rounded-lg object-contain"
             />
           ) : (
-            <div className="w-full h-full bg-primary-light rounded-lg flex items-center justify-center">
+            <div className="w-full h-full bg-primary-bg-light rounded-lg flex items-center justify-center">
               <Building2 className="w-8 h-8 text-primary" />
             </div>
           )}

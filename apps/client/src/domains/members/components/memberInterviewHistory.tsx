@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react";
-import { Button, legacyButtonStyles } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { MemberInterview } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { useRouter } from "next/router";
@@ -154,11 +154,11 @@ export default function InterviewHistory({
                   role="button"
                   name={`${pageNumber + 1} page`}
                   aria-label="page"
-                  variant={page === pageNumber ? "primary" : "none"}
+                  variant={page === pageNumber ? "primary" : "secondary"}
                   className={
                     page === pageNumber
                       ? "disabled:opacity-100 disabled:bg-primary-3 disabled:text-primary"
-                      : legacyButtonStyles.glass
+                      : undefined
                   }
                   onClick={() => {
                     router.push(

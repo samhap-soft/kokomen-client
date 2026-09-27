@@ -142,7 +142,7 @@ export default function MyInterviewResultPage({
                           </div>
                           <Link
                             href={`/members/interviews/${reference.interview_id}`}
-                            className="bg-primary-light text-primary text-sm hover:text-primary-text-hover transition-colors"
+                            className="bg-primary-bg-light text-primary text-sm hover:text-primary-text-hover transition-colors"
                           >
                             자세히 보기 →
                           </Link>

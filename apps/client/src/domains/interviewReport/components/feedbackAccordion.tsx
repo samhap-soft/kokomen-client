@@ -8,7 +8,7 @@ import { Accordion, AnswerContent, Tooltip } from "@kokomen/ui";
 import { MessageSquare, Star, Award, HelpCircle, LogIn } from "lucide-react";
 import { JSX } from "react";
 import AnswerMemoComponent from "@/domains/interviewReport/components/answerMemo";
-import { Button, legacyButtonStyles } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import Link from "next/link";
 
 function RankGuideTooltip(): JSX.Element {
@@ -133,7 +133,7 @@ function FeedBackAccordionItem({
                 내 답변
               </h4>
             </div>
-            <div className="bg-primary-light border border-primary-border rounded-xl p-4">
+            <div className="bg-primary-bg-light border border-primary-border rounded-xl p-4">
               <AnswerContent content={feedback.answer} parseCode={parseCode} />
             </div>
           </div>
@@ -182,8 +182,8 @@ function FeedBackAccordionItem({
               </p>
               <Link href="/login?redirectTo=/interviews" className="w-full">
                 <Button
-                  className={`${legacyButtonStyles.glass} w-full`}
-                  variant="none"
+                  className="w-full"
+                  variant="secondary"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   로그인하고 내 오답 정리하기

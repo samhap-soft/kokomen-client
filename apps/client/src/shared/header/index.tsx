@@ -272,7 +272,7 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
   return (
     <header className="sticky top-0 z-50">
       {/* PC: Figma Component/GNB (완) */}
-      <div className="hidden px-4 pt-3 pb-1 md:block lg:px-8">
+      <div className="hidden px-4 py-3 md:block lg:px-8">
         <Gnb
           logo={
             <Link

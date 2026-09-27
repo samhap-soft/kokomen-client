@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
 import {
   Button,
-  legacyButtonStyles,
   RoundSpinner,
   useToast
 } from "@kokomen/ui";
@@ -205,8 +204,8 @@ export default function OnboardingForm({
         {!isFirstStep && (
           <Button
             type="button"
-            variant="none"
-            className={`${legacyButtonStyles.surface} px-6 py-3 text-sm font-semibold`}
+            variant="secondary"
+            className="px-6 py-3 text-sm font-semibold"
             onClick={handlePrevious}
             disabled={isPending}
           >

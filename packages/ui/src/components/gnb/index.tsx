@@ -13,7 +13,7 @@ import { MyProfileIcon } from "../icon";
  *   bar       1182x82 · padding 16/48 · radius full · surface/neutral · shadow/base
  *   menu      좌우 묶음 사이 gap 20
  *   menu list gap 12 · 좌우 padding 8
- *   menu item padding 10 · base/medium(16/24) · onsurface/neutral
+ *   menu item padding 10 · gap 10 · base/medium(16/24) · onsurface/neutral
  *             hover 에서 orange/100 배경 + radius 8
  *   profile   icon_my_profile 48px · primary/600
  *
@@ -67,7 +67,7 @@ export const Gnb = ({
 }: GnbProps): JSX.Element => (
   <nav
     className={cn(
-      "mx-auto flex w-full max-w-[1182px] items-center justify-between gap-6 rounded-full bg-bg-base px-12 py-4 shadow-base",
+      "mx-auto flex w-full max-w-[1182px] items-center justify-between rounded-full bg-bg-base px-12 py-4 shadow-base",
       className
     )}
     {...props}
@@ -86,7 +86,7 @@ Gnb.displayName = "Gnb";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const gnbMenuItemVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center rounded-lg p-2.5 text-base leading-6 font-medium whitespace-nowrap transition-colors duration-200 ease-in-out hover:bg-orange-1",
+  "inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-lg p-2.5 text-base leading-6 font-medium whitespace-nowrap transition-colors duration-200 ease-in-out hover:bg-orange-1",
   {
     variants: {
       /** Figma 명세 밖 확장. 현재 경로를 표시한다. */

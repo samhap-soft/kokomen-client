@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import { Button, legacyButtonStyles, RoundSpinner } from "@kokomen/ui";
+import { Button, RoundSpinner } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { notificationKeys, useModal } from "@kokomen/utils";
 import {
@@ -199,18 +199,18 @@ const NotificationPanel = () => {
       {/* 탭 버튼 */}
       <div className="flex border-b border-gray-200">
         <Button
-          variant={!showReadNotifications ? "primary" : "none"}
+          variant={!showReadNotifications ? "primary" : "secondary"}
           size="small"
           onClick={handleUnreadTabClick}
-          className={`${showReadNotifications ? legacyButtonStyles.text : ""} flex-1 p-4 text-base rounded-b-none`}
+          className="flex-1 p-4 text-base rounded-b-none"
         >
           안읽은 알림
         </Button>
         <Button
-          variant={showReadNotifications ? "primary" : "none"}
+          variant={showReadNotifications ? "primary" : "secondary"}
           size="small"
           onClick={handleReadTabClick}
-          className={`${showReadNotifications ? "" : legacyButtonStyles.text} flex-1 border-r border-gray-200 p-4 text-base rounded-b-none`}
+          className="flex-1 border-r border-gray-200 p-4 text-base rounded-b-none"
         >
           읽은 알림
         </Button>
@@ -256,7 +256,7 @@ const NotificationPanelIcon = ({ user }: { user: UserInfo | null }) => {
       <Button
         role="button"
         variant={"none"}
-        className={legacyButtonStyles.text}
+        className="text-icon hover:text-icon-hover"
         size="small"
         onClick={handleToggleNotificationPanel}
         onKeyDown={handleKeyDown}

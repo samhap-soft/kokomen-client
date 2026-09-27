@@ -2,7 +2,7 @@ export * as Accordion from "./accordion";
 export * from "./modal";
 export * from "./button";
 export * from "./button/textButton.tsx";
-export * from "./button/legacyStyles.ts";
+export * from "./chip";
 export * from "./icon";
 export * from "./input";
 export * from "./layout";

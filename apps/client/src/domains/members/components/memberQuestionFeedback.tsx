@@ -3,7 +3,7 @@ import { Heart } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
-import { AnswerContent, Button, legacyButtonStyles } from "@kokomen/ui";
+import { AnswerContent, Button } from "@kokomen/ui";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { MemberInterviewResult } from "@kokomen/types";
@@ -105,9 +105,13 @@ export default function MemberQuestionFeedback({
             type="button"
             name={`answer-like-button-${questionAndFeedback.answerId}`}
             role="button"
-            variant="none"
+            variant="secondary"
             optimistic={true}
-            className={`${legacyButtonStyles.glass} ${answerLiked && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
+            className={
+              answerLiked
+                ? "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"
+                : undefined
+            }
             aria-label={`답변 ${index + 1} 좋아요`}
           >
             <Heart
@@ -142,10 +146,10 @@ export default function MemberQuestionFeedback({
         {/* AI 피드백 섹션 */}
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gradient-to-r from-cyan-4 to-cyan-5 rounded-full"></div>
+            <div className="w-3 h-3 bg-gradient-to-r from-blue-4 to-blue-5 rounded-full"></div>
             <h4 className="text-sm font-semibold text-gray-700">AI 피드백</h4>
           </div>
-          <div className="bg-gradient-to-r from-cyan-1 to-cyan-2 rounded-xl p-4 border border-cyan-3">
+          <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-xl p-4 border border-blue-3">
             <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
               {questionAndFeedback.answerFeedback}
             </p>

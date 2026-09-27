@@ -1,4 +1,4 @@
-import { Button, legacyButtonStyles, Modal } from "@kokomen/ui";
+import { Button, Modal } from "@kokomen/ui";
 import { startGuestInterview } from "@/domains/interview/api";
 import { useRouter } from "next/router";
 import { AlertTriangle, LogIn } from "lucide-react";
@@ -53,9 +53,9 @@ export default function GuestInterviewModal({
               </p>
             </div>
             <Button
-              variant="none"
+              variant="primary-soft"
               size="large"
-              className={`${legacyButtonStyles.softWarning} w-full font-semibold`}
+              className="w-full font-semibold"
               onClick={handleClose}
             >
               돌아가기

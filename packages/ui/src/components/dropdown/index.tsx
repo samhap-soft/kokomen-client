@@ -122,7 +122,7 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-2 rounded-lg border border-primary-light bg-bg-base px-4 py-2.5 text-sm",
+        "inline-flex items-center gap-2 rounded-lg border border-primary-2 bg-bg-base px-4 py-2.5 text-sm",
         className
       )}
     >

@@ -5,7 +5,6 @@ import { useInterviewDraftGuard } from "@/domains/interview/hooks/useInterviewDr
 import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import {
   Button,
-  legacyButtonStyles,
   LoadingCircles,
   RoundSpinner,
   Textarea,
@@ -291,12 +290,12 @@ export function InterviewAnswerForm({
             </span>
             <Button
               type="button"
-              variant={"none"}
+              variant={"secondary"}
               size={"small"}
               aria-label="interview-retry-submit"
               onClick={() => submitAnswer(failedAnswer)}
               disabled={isPending}
-              className={`${legacyButtonStyles.surface} flex items-center gap-1.5 shrink-0`}
+              className="flex items-center gap-1.5 shrink-0"
             >
               <RotateCcw className="w-4 h-4" aria-hidden="true" />
               다시 시도
@@ -427,8 +426,8 @@ function VoiceInputButton({
         role="button"
         aria-label="interview-voice-stop"
         name="interview-voice-stop"
-        variant={"none"}
-        className={`${legacyButtonStyles.glass} flex items-center gap-2 text-text-tertiary`}
+        variant={"secondary"}
+        className="flex items-center gap-2"
         onClick={() => publishInterviewEvent("interview:stopVoiceRecognition")}
         disabled={disabled}
       >
@@ -449,8 +448,8 @@ function VoiceInputButton({
       role="button"
       aria-label="interview-voice-start"
       name="interview-voice-start"
-      variant={"none"}
-      className={`${legacyButtonStyles.glass} flex items-center gap-2 text-text-tertiary`}
+      variant={"secondary"}
+      className="flex items-center gap-2"
       onClick={() => publishInterviewEvent("interview:startVoiceRecognition")}
       disabled={disabled}
     >

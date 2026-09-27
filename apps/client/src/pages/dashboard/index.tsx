@@ -62,7 +62,7 @@ export default function Dashboard({
                   </div>
 
                   {/* 토큰 표시 */}
-                  <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-gold-4 to-gold-6 text-text-light-solid rounded-xl px-4 py-2">
+                  <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-yellow-4 to-yellow-6 text-text-light-solid rounded-xl px-4 py-2">
                     <Coins className="w-5 h-5" />
                     <span>{userInfo?.token_count || 0} 토큰</span>
                   </div>

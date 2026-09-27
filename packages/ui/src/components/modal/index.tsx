@@ -2,7 +2,6 @@ import { cva, VariantProps } from "class-variance-authority";
 import React, { JSX, useCallback, useEffect } from "react";
 import { CloseIcon } from "../icon";
 import { Button } from "../button";
-import { legacyButtonStyles } from "../button/legacyStyles.ts";
 import { cn } from "../../utils/index.ts";
 
 type ModalVariants = VariantProps<typeof modalVariants>;
@@ -111,7 +110,7 @@ const Modal = ({
             <Button
               variant={"none"}
               onClick={onClose}
-              className={`${legacyButtonStyles.text} text-gray-400 hover:text-gray-600 transition-colors`}
+              className="text-icon hover:text-icon-hover"
             >
               <CloseIcon size={24} />
             </Button>
