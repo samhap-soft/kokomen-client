@@ -6,7 +6,7 @@ import ResumeBasedInterviewHistory from "@/domains/resume/components/resumeBased
 import ResumeEvaluationHistory from "@/domains/resume/components/resumeEvaluationHistory";
 import ArchivePreview from "@/domains/resume/components/archivePreview";
 import { UserInfo } from "@kokomen/types";
-import { Button, legacyButtonStyles } from "@kokomen/ui";
+import { Button, TextButton } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
 type Section =
@@ -126,20 +126,20 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             <p className="text-sm font-medium text-text-secondary">
               약관 및 정책
             </p>
-            <Button
-              variant={"none"}
+            <TextButton
+              variant={"primary"}
               onClick={() => router.push("/terms/termsofuse")}
-              className={`${legacyButtonStyles.link} justify-start`}
+              className="justify-start"
             >
               서비스 이용 약관
-            </Button>
-            <Button
-              variant={"none"}
+            </TextButton>
+            <TextButton
+              variant={"primary"}
               onClick={() => router.push("/terms/privacy")}
-              className={`${legacyButtonStyles.link} justify-start`}
+              className="justify-start"
             >
               개인정보 처리 방침
-            </Button>
+            </TextButton>
           </div>
         </nav>
       </div>

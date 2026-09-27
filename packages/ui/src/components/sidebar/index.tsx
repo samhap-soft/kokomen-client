@@ -1,7 +1,6 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Button } from "../button";
-import { legacyButtonStyles } from "../button/legacyStyles.ts";
 import { CloseIcon } from "../icon";
 import { cn } from "../../utils/index.ts";
 
@@ -165,7 +164,7 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
           <div className="absolute top-4 right-4 z-10">
             <Button
               variant="none"
-              className={legacyButtonStyles.text}
+              className="text-icon hover:text-icon-hover"
               onClick={onClose}
               aria-label="Close"
             >

@@ -5,7 +5,7 @@ import { ArchivedResumeAndPortfolio, CamelCasedProperties } from "@kokomen/types
 import { archiveKeys } from "@/utils/querykeys";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Button, legacyButtonStyles, Modal } from "@kokomen/ui";
+import { Button, Modal } from "@kokomen/ui";
 import { FileText, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -131,22 +131,22 @@ export default function ArchivePreview() {
           {/* 탭 */}
           <div className="flex gap-2 mb-4">
             <Button
-              variant={activeTab === "RESUME" ? "primary" : "none"}
+              variant={activeTab === "RESUME" ? "primary" : "secondary"}
               size="small"
               onClick={() => {
                 setActiveTab("RESUME");
               }}
-              className={`${activeTab === "RESUME" ? "" : legacyButtonStyles.glass} flex-1`}
+              className="flex-1"
             >
               이력서
             </Button>
             <Button
-              variant={activeTab === "PORTFOLIO" ? "primary" : "none"}
+              variant={activeTab === "PORTFOLIO" ? "primary" : "secondary"}
               size="small"
               onClick={() => {
                 setActiveTab("PORTFOLIO");
               }}
-              className={`${activeTab === "PORTFOLIO" ? "" : legacyButtonStyles.glass} flex-1`}
+              className="flex-1"
             >
               포트폴리오
             </Button>
@@ -213,8 +213,7 @@ export default function ArchivePreview() {
               />
               <div className="flex items-center gap-4">
                 <Button
-                  variant="none"
-                  className={legacyButtonStyles.glass}
+                  variant="secondary"
                   size="small"
                   onClick={goToPrevPage}
                   disabled={pageNumber <= 1}
@@ -225,8 +224,7 @@ export default function ArchivePreview() {
                   {pageNumber} / {numPages || "-"}
                 </span>
                 <Button
-                  variant="none"
-                  className={legacyButtonStyles.glass}
+                  variant="secondary"
                   size="small"
                   onClick={goToNextPage}
                   disabled={pageNumber >= (numPages || 0)}

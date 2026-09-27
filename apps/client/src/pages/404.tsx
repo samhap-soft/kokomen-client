@@ -1,5 +1,5 @@
 import { SEO } from "@/shared/seo";
-import { Button, legacyButtonStyles } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { Home, Search } from "lucide-react";
 import Link from "next/link";
 import { JSX } from "react";
@@ -41,9 +41,9 @@ export default function Custom404(): JSX.Element {
             </Link>
 
             <Button
-              variant="none"
+              variant="secondary"
               size="default"
-              className={`${legacyButtonStyles.surface} w-full sm:w-auto font-bold`}
+              className="w-full sm:w-auto font-bold"
               onClick={() => window.history.back()}
             >
               <Search className="w-5 h-5" />

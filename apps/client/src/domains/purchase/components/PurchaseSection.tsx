@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { CamelCasedProperties, Product, UserInfo } from "@kokomen/types";
 import { Token } from "@kokomen/ui/domains";
 import { useState, JSX } from "react";
-import { Button, legacyButtonStyles } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import {
   ANONYMOUS,
   loadTossPayments,
@@ -151,10 +151,10 @@ function PurchaseMode({
       <div id="tosspayments-agreement-container" />
       <div className="flex justify-center gap-4 w-full">
         <Button
-          variant={"none"}
+          variant={"secondary"}
           size={"large"}
           onClick={() => setSelectedItem(null)}
-          className={`${legacyButtonStyles.outline} flex-1`}
+          className="flex-1"
         >
           취소
         </Button>

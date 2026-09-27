@@ -1,4 +1,4 @@
-import { Button, Layout, legacyButtonStyles } from "@kokomen/ui";
+import { Button, Layout } from "@kokomen/ui";
 import { useRouter } from "next/router";
 import { JSX } from "react";
 
@@ -27,16 +27,16 @@ export function InterviewNotFoundError(): JSX.Element {
             {/* 보조 액션 */}
             <div className="flex gap-3">
               <Button
-                variant={"none"}
+                variant={"primary"}
                 onClick={() => router.back()}
-                className={`${legacyButtonStyles.gradient} flex-1 py-2 px-4 transition-colors duration-200 text-sm font-bold`}
+                className="flex-1"
               >
                 이전 페이지
               </Button>
               <Button
-                variant={"none"}
+                variant={"primary"}
                 onClick={() => router.push("/interviews")}
-                className={`${legacyButtonStyles.gradient} flex-1 py-2 px-4 transition-colors duration-200 text-sm font-bold`}
+                className="flex-1"
               >
                 면접 페이지로 돌아가기
               </Button>

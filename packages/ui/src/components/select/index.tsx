@@ -270,7 +270,7 @@ const Select: FC<SelectProps> = ({
                         option.disabled
                           ? "text-text-disabled cursor-not-allowed"
                           : isSelected
-                            ? "bg-primary-bg text-primary-light font-semibold"
+                            ? "bg-primary-bg text-text-light-solid font-semibold"
                             : index === focusedIndex
                               ? "bg-primary-bg-light text-text-primary"
                               : "text-text-primary hover:bg-primary-bg-light"
@@ -284,7 +284,7 @@ const Select: FC<SelectProps> = ({
                   >
                     <span className="truncate">{option.label}</span>
                     {isSelected && (
-                      <CheckIcon className="w-4 h-4 text-primary-light flex-shrink-0" />
+                      <CheckIcon className="w-4 h-4 text-text-light-solid flex-shrink-0" />
                     )}
                   </li>
                 );

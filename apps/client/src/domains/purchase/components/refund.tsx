@@ -4,7 +4,6 @@ import { getRefundReasons, requestRefund } from "../api";
 import {
   Button,
   Input,
-  legacyButtonStyles,
   Modal,
   RoundSpinner
 } from "@kokomen/ui";
@@ -77,8 +76,7 @@ function RefundModal({
           {refundReasons?.map((reason) => (
             <>
               <Button
-                variant={"none"}
-                className={legacyButtonStyles.softWarning}
+                variant={"secondary"}
                 key={reason.code}
                 onClick={() => {
                   setSelectedReason(
@@ -231,8 +229,8 @@ function ReasonForm({
         <Button
           type="button"
           size={"large"}
-          variant={"none"}
-          className={`${legacyButtonStyles.softWarning} flex-1`}
+          variant={"danger"}
+          className="flex-1"
           onClick={() => {
             requestRefundMutation({
               refundReasonText: ""

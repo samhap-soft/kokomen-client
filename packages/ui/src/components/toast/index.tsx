@@ -119,11 +119,11 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        /* Figma 는 테두리를 팔레트 단계에 직접 바인딩한다(primary-light · red/200 ·
+        /* Figma 는 테두리를 팔레트 단계에 직접 바인딩한다(primary/200 · red/200 ·
            volcano/300). 시맨틱 토큰 --color-*-border 는 sys/color/stroke/* 를
            따라가므로 여기서는 팔레트를 그대로 참조한다. */
         default:
-          "border-primary-light bg-bg-base text-text-primary shadow-base",
+          "border-primary-2 bg-bg-base text-text-primary shadow-base",
         success:
           "border-success-border bg-bg-base text-success-text shadow-base",
         error: "border-red-2 bg-error-bg text-error-text shadow-base",

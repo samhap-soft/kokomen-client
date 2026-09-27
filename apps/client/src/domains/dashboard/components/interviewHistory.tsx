@@ -204,7 +204,7 @@ export default function InterviewHistory() {
                         <div
                           className={`flex items-center gap-1 ${
                             interview.submitted_answer_memo_count > 0 &&
-                            "text-gold-6"
+                            "text-yellow-6"
                           }`}
                         >
                           <NotebookPen className="w-4 h-4" />
@@ -231,7 +231,7 @@ export default function InterviewHistory() {
                   {interview.interview_state === "FINISHED" && (
                     <Link
                       href={`/members/interviews/${interview.interview_id}`}
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary text-primary-light md:w-auto w-full justify-center"
+                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary text-text-light-solid md:w-auto w-full justify-center"
                     >
                       공개된 결과 보기
                     </Link>
