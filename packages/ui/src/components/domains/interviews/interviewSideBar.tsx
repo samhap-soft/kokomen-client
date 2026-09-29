@@ -27,9 +27,10 @@ export default function InterviewSideBar({
   return (
     <>
       <Button
+        size={"large"}
         variant={"secondary"}
         onClick={openSidebar}
-        className="fixed top-2 right-2 sm:top-3 sm:right-3 z-50"
+        className="fixed top-2 right-2 sm:top-3 sm:right-3 z-20"
         role="button"
         aria-label="사이드바 열기"
         title="사이드바 열기"

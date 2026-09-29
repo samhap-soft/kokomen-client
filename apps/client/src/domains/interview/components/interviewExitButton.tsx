@@ -20,6 +20,7 @@ export default function InterviewExitButton(): JSX.Element {
   return (
     <>
       <Button
+        size={"large"}
         variant={"secondary"}
         onClick={openModal}
         role="button"

@@ -43,6 +43,7 @@ export default function InterviewSettingsButton({
   return (
     <>
       <Button
+        size={"large"}
         variant={"secondary"}
         onClick={openModal}
         role="button"

@@ -27,10 +27,6 @@ const interviewSections: { label: string; value: Section }[] = [
     value: "interview"
   },
   {
-    label: "이력서 기반 면접 질문",
-    value: "resumeBasedInterview"
-  },
-  {
     label: "이력서 평가 결과",
     value: "resumeEvaluation"
   }

@@ -67,7 +67,7 @@ export const Gnb = ({
 }: GnbProps): JSX.Element => (
   <nav
     className={cn(
-      "mx-auto flex w-full max-w-[1182px] items-center justify-between rounded-full bg-bg-base px-12 py-4 shadow-base",
+      "mx-auto flex w-full max-w-[1182px] items-center justify-between rounded-full bg-bg-base px-12 py-16 shadow-base",
       className
     )}
     {...props}

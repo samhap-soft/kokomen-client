@@ -29,7 +29,8 @@ export default function CameraPreview({
   // 안내를 한 번 닫으면 이 면접 동안 다시 띄우지 않는다
   const [isHintDismissed, setIsHintDismissed] = useState<boolean>(false);
 
-  const showHint = !isCameraOn && enabled && !isModelLoading && !isHintDismissed;
+  const showHint =
+    !isCameraOn && enabled && !isModelLoading && !isHintDismissed;
 
   return (
     <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 z-30 flex flex-col items-end">
@@ -79,7 +80,7 @@ export default function CameraPreview({
           onClick={toggleCamera}
           disabled={!enabled || isModelLoading}
           aria-pressed={isCameraOn}
-          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full border shadow-sm text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
+          className={`flex items-center gap-2 px-12 sm:px-4 py-2 rounded-full border shadow-sm text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
             isCameraOn
               ? "bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
               : "bg-blue-50 border-blue-300 text-blue-600 hover:bg-blue-100"
@@ -87,12 +88,12 @@ export default function CameraPreview({
         >
           {isCameraOn ? (
             <>
-              <CameraOff className="w-4 h-4" aria-hidden="true" />
+              <CameraOff size={16} aria-hidden="true" />
               카메라 끄기
             </>
           ) : (
             <>
-              <Camera className="w-4 h-4" aria-hidden="true" />
+              <Camera size={16} aria-hidden="true" />
               표정 인식
             </>
           )}

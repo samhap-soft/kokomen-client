@@ -56,7 +56,7 @@ function Recommendations(): React.ReactElement {
                   {recommendation.recommendation}
                 </p>
               </div>
-              <div className="border-t border-border-secondary p-4 bg-gray-50/50">
+              <div className="border-t border-border-secondary p-16 bg-gray-50/50">
                 <h3 className="font-bold text-text-primary text-base">
                   {maskName(recommendation.name)}
                 </h3>

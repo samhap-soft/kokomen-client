@@ -128,29 +128,31 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
           height: isOpen ? `${desktopDropdownHeight}px` : "0px"
         }}
       >
-        <div className="px-4 py-3 border-b border-gray-100">
+        <div className="px-16 py-3 border-b border-gray-100">
           <p className="text-sm font-medium text-gray-900">{user?.nickname}</p>
           {user ? (
             <p className="text-xs text-gray-500 mt-1">환영합니다!</p>
           ) : (
-            <p className="text-xs text-gray-500 mt-1">로그인 후 이용해주세요.</p>
+            <p className="text-xs text-gray-500 mt-1">
+              로그인 후 이용해주세요.
+            </p>
           )}
         </div>
-        <div className="py-1">
+        <div>
           <Button
             variant="none"
             onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
+            className="flex items-center gap-3 w-full px-8 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start rounded-none"
           >
-            <LayoutDashboard className="w-4 h-4" />
+            <LayoutDashboard size={10} />
             마이페이지
           </Button>
           <Button
             variant="none"
             onClick={logout}
-            className="flex items-center gap-3 w-full px-4 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start [&_svg]:size-4 rounded-none"
+            className="flex items-center gap-3 w-full px-8 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start rounded-none"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut size={10} />
             로그아웃
           </Button>
         </div>
@@ -275,17 +277,13 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
       <div className="hidden px-4 py-3 md:block lg:px-8">
         <Gnb
           logo={
-            <Link
-              href="/"
-              className="flex items-center transition-transform duration-200 hover:scale-105"
-            >
+            <Link href="/" className="flex items-center">
               <Image
                 src="/logo.svg"
                 alt="꼬꼬면 로고"
                 width={148}
                 height={50}
                 priority
-                className="h-[50px] w-auto"
               />
             </Link>
           }
