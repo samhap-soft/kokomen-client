@@ -1,7 +1,12 @@
 import { useModal } from "@kokomen/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getRefundReasons, requestRefund } from "../api";
-import { Button, Input, Modal, RoundSpinner } from "@kokomen/ui";
+import {
+  Button,
+  Input,
+  Modal,
+  RoundSpinner
+} from "@kokomen/ui";
 import { CamelCasedProperties, RefundReason } from "@kokomen/types";
 import { Dispatch, SetStateAction, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -15,7 +20,7 @@ export default function Refund({ purchaseId }: { purchaseId: number }) {
 
   return (
     <>
-      <Button variant="text" onClick={openModal} type="button" danger>
+      <Button variant="danger" onClick={openModal} type="button">
         환불하기
       </Button>
       <Modal
@@ -71,7 +76,7 @@ function RefundModal({
           {refundReasons?.map((reason) => (
             <>
               <Button
-                variant={"softWarning"}
+                variant={"secondary"}
                 key={reason.code}
                 onClick={() => {
                   setSelectedReason(
@@ -196,7 +201,7 @@ function ReasonForm({
           <Button
             type="submit"
             size={"large"}
-            variant="warning"
+            variant="danger"
             disabled={isRequestRefundPending}
           >
             환불하기
@@ -212,7 +217,7 @@ function ReasonForm({
         <Button
           type="button"
           size={"large"}
-          variant={"soft"}
+          variant={"primary-soft"}
           onClick={() => {
             modalClose();
             setSelectedReason(null);
@@ -224,7 +229,7 @@ function ReasonForm({
         <Button
           type="button"
           size={"large"}
-          variant={"softWarning"}
+          variant={"danger"}
           className="flex-1"
           onClick={() => {
             requestRefundMutation({

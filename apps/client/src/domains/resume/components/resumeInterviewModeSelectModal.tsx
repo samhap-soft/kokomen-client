@@ -1,6 +1,10 @@
-import { Modal } from "@kokomen/ui";
+import { Modal, Tooltip } from "@kokomen/ui";
 import { InterviewMode } from "@kokomen/types";
 import { Mic, FileText } from "lucide-react";
+import {
+  IS_VOICE_MODE_DISABLED,
+  VOICE_MODE_DISABLED_MESSAGE
+} from "@/domains/interview/constants";
 
 interface ResumeInterviewModeSelectModalProps {
   isOpen: boolean;
@@ -45,23 +49,32 @@ export default function ResumeInterviewModeSelectModal({
             </div>
           </button>
 
-          <button
-            type="button"
-            onClick={() => handleSelectMode("VOICE")}
-            className="flex items-start gap-4 p-4 border-2 border-border rounded-lg hover:border-primary transition-colors text-left"
+          <Tooltip
+            className="block w-full"
+            tabIndex={IS_VOICE_MODE_DISABLED ? 0 : undefined}
           >
-            <div className="flex-shrink-0 w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-              <Mic className="w-6 h-6 text-purple-600" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-text-heading mb-1">
-                음성 모드
-              </h3>
-              <p className="text-sm text-text-secondary">
-                질문을 듣고 음성으로 답변하는 면접 모드입니다.
-              </p>
-            </div>
-          </button>
+            <button
+              type="button"
+              disabled={IS_VOICE_MODE_DISABLED}
+              onClick={() => handleSelectMode("VOICE")}
+              className="flex w-full items-start gap-4 p-4 border-2 border-border rounded-lg hover:border-primary transition-colors text-left disabled:pointer-events-none disabled:opacity-50"
+            >
+              <div className="flex-shrink-0 w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                <Mic className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-text-heading mb-1">
+                  음성 모드
+                </h3>
+                <p className="text-sm text-text-secondary">
+                  질문을 듣고 음성으로 답변하는 면접 모드입니다.
+                </p>
+              </div>
+            </button>
+            {IS_VOICE_MODE_DISABLED && (
+              <Tooltip.Content>{VOICE_MODE_DISABLED_MESSAGE}</Tooltip.Content>
+            )}
+          </Tooltip>
         </div>
       </div>
     </Modal>

@@ -15,3 +15,9 @@ export const TIMER_LOW_THRESHOLD_SECONDS: number = 10;
  * 그래서 세션 종료와 무관하게 실제 침묵 시간을 따로 재서 판단한다.
  */
 export const VOICE_SILENCE_HINT_MS: number = 12000;
+
+// 음성 면접 점검 기간 동안 음성 모드 선택을 막는다. 점검이 끝나면 false 로 되돌린다.
+export const IS_VOICE_MODE_DISABLED: boolean = true;
+
+export const VOICE_MODE_DISABLED_MESSAGE: string =
+  "음성 면접은 현재 점검 중입니다";

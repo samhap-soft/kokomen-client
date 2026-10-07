@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
-import { Sidebar } from "./index";
+import { JSX, useState } from "react";
+import { Sidebar, SidebarProps } from "./index";
 import { Button } from "../button";
 
 const meta: Meta<typeof Sidebar> = {
@@ -29,7 +29,7 @@ const meta: Meta<typeof Sidebar> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const SidebarTemplate = (args: any) => {
+const SidebarTemplate = (args: Partial<SidebarProps>): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -200,7 +200,7 @@ export const ComplexContent: Story = {
               </div>
 
               <div className="pt-4 border-t">
-                <Button variant="outline" className="w-full">
+                <Button variant="secondary" className="w-full">
                   설정 저장
                 </Button>
               </div>

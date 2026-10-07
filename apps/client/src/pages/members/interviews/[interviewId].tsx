@@ -7,7 +7,7 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Layout, Button } from "@kokomen/ui";
+import { Button, Layout } from "@kokomen/ui";
 import { JSX } from "react";
 import { HelpCircle, Info, Users, Share2, Eye } from "lucide-react";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
@@ -71,15 +71,13 @@ export default function MemberInterviewResultPage({
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button
-                      variant="glass"
+                      variant="secondary"
                       round
                       onClick={handleShare}
                       aria-label="공유하기"
                     >
-                      <Share2 className="w-4 h-4 text-white mr-2" />
-                      <span className="text-sm font-medium text-white">
-                        공유하기
-                      </span>
+                      <Share2 className="w-4 h-4" />
+                      <span className="text-sm font-medium">공유하기</span>
                     </Button>
                   </div>
                 </div>
@@ -120,16 +118,16 @@ export default function MemberInterviewResultPage({
 
             {/* 커뮤니티 안내 메시지 */}
             <div className="mt-12">
-              <div className="bg-gradient-to-r from-geek-blue-1 to-geek-blue-2 rounded-2xl p-6 border border-geek-blue-3">
+              <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-2xl p-6 border border-blue-3">
                 <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-geek-blue-5 to-geek-blue-6 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-5 to-blue-6 rounded-full flex items-center justify-center">
                     <Info className="w-4 h-4 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-geek-blue-8">
+                  <h3 className="text-lg font-semibold text-blue-8">
                     커뮤니티 공유 안내
                   </h3>
                 </div>
-                <div className="space-y-2 text-sm text-geek-blue-7">
+                <div className="space-y-2 text-sm text-blue-7">
                   <p>
                     • 이 결과는 AI가 분석한 내용이며, 학습 목적으로 커뮤니티에
                     공유됩니다.

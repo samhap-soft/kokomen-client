@@ -93,7 +93,7 @@ export default function ChangeNickname({ userInfo }: ChangeNicknameProps) {
           </p>
           <div className="flex gap-3 justify-end">
             <Button
-              variant="softWarning"
+              variant="secondary"
               onClick={() => setIsConfirmModalOpen(false)}
               disabled={isPending}
             >

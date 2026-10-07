@@ -1,10 +1,10 @@
 import {
   Button,
-  useToast,
+  Modal,
   Radio,
   RadioGroup,
-  Modal,
-  Textarea
+  Textarea,
+  useToast
 } from "@kokomen/ui";
 import { NotebookPen, Trash } from "lucide-react";
 import { Dispatch, JSX, SetStateAction, useState } from "react";
@@ -67,11 +67,14 @@ export default function AnswerMemoComponent({
       {answerMemo.content ? (
         <div className="flex flex-col gap-4">
           <div className="flex gap-2">
-            <Button variant={"glass"} onClick={handleMemoEditButtonClick}>
+            <Button
+              variant={"secondary"}
+              onClick={handleMemoEditButtonClick}
+            >
               <NotebookPen />
               메모 편집하기
             </Button>
-            <Button variant={"warning"} onClick={openMemoDeleteModal}>
+            <Button variant={"danger"} onClick={openMemoDeleteModal}>
               <Trash />
               메모 삭제하기
             </Button>
@@ -85,7 +88,7 @@ export default function AnswerMemoComponent({
           <p>보완이 필요하거나 학습한 내용을 메모해 보세요.</p>
           <Button
             className="w-full"
-            variant={"glass"}
+            variant={"secondary"}
             onClick={handleMemoEditButtonClick}
             disabled={isMemoEditOpen}
           >
@@ -113,7 +116,7 @@ export default function AnswerMemoComponent({
             <div>
               <Button
                 type="button"
-                variant={"warning"}
+                variant={"danger"}
                 onClick={() => {
                   setIsTempMemoModalOpen(false);
                   setIsMemoEditOpen(true);
@@ -123,7 +126,7 @@ export default function AnswerMemoComponent({
               </Button>
               <Button
                 type="button"
-                variant={"success"}
+                variant={"primary"}
                 onClick={() => {
                   setAnswerMemo((prev) => ({
                     content: tempMemo,
@@ -197,7 +200,7 @@ function AnswerMemoDeleteModal({
       <div className="grid grid-cols-2 gap-2 font-bold">
         <Button
           type="button"
-          variant={"default"}
+          variant={"secondary"}
           size={"large"}
           onClick={toggleModal}
         >
@@ -206,7 +209,7 @@ function AnswerMemoDeleteModal({
         <Button
           type="button"
           size={"large"}
-          variant={"warning"}
+          variant={"danger"}
           onClick={() => deleteAnswerMemoMutate()}
         >
           삭제하기
@@ -321,14 +324,14 @@ function AnswerMemoEdit({
       )}
       <div className="grid grid-cols-2 gap-2">
         <Button
-          variant={"warning"}
+          variant={"danger"}
           type="button"
           onClick={() => setIsMemoEditOpen(false)}
         >
           취소
         </Button>
         <Button
-          variant={"success"}
+          variant={"primary"}
           type="submit"
           disabled={isPending}
           pendingSpinner

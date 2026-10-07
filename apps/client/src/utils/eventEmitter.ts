@@ -3,6 +3,10 @@ import { useEffect } from "react";
 
 type EventType = string;
 interface EventPayloads {
+  // `EventPayloads[K] extends undefined` 조건부 타입이 페이로드 없는 이벤트와
+  // 있는 이벤트를 동시에 허용하려면 `any` 여야 한다. `unknown` 으로 바꾸면
+  // 조건이 항상 거짓이 되어 페이로드 없는 emit 이 막힌다.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: EventType]: any;
 }
 class TypedEventEmitter extends EventEmitter {
@@ -45,7 +49,7 @@ class TypedEventEmitter extends EventEmitter {
 }
 
 // 중앙화된 싱글톤 인스턴스
-export const GlobalEventBus = new TypedEventEmitter();
+export const GlobalEventBus: TypedEventEmitter = new TypedEventEmitter();
 
 // useEventEmitter.ts
 
@@ -65,7 +69,7 @@ type EventEmitterContext<K extends EventType> = {
 // 이벤트 구독의 경우 컴포넌트가 마운트되었을 시기에 구독한 후 언마운트 시 이에 대해 해제해야 하므로 훅으로 개발
 export function useSubscribeEvents<K extends EventType>(
   events: EventEmitterContext<K>[],
-  deps: any[] = []
+  deps: unknown[] = []
 ): void {
   useEffect(() => {
     events.forEach(({ event, handler }) => {
@@ -83,7 +87,7 @@ export function useSubscribeEvents<K extends EventType>(
 }
 
 //  제네릭을 받는 PublishEventFunctio
-type PublishEventFunction<
+export type PublishEventFunction<
   TEvent extends string, // TEvent는 문자열 리터럴 타입의 유니온이어야 함
   TPayloads extends Record<TEvent, unknown> // TPayloads는 TEvent의 각 항목을 키로 가져야 함
 > = <K extends TEvent>(

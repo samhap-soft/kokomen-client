@@ -81,7 +81,7 @@ export default function InterviewMainPage({
           <aside className="w-full lg:w-80 lg:sticky lg:top-8 shrink-0">
             <div>
               <div className="rounded-2xl border border-border overflow-hidden">
-                <div className="px-4 py-3 border-b border-border flex items-center gap-3">
+                <div className="px-8 py-3 border-b border-border flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full flex items-center justify-center border border-border">
                     <UserIcon className="w-4 h-4 text-text-tertiary" />
                   </div>
@@ -90,7 +90,7 @@ export default function InterviewMainPage({
                   </span>
                   {!userInfo && (
                     <Button
-                      variant="soft"
+                      variant="primary-soft"
                       className="text-xs font-semibold"
                       type="button"
                       onClick={() => router.navigateToLogin()}

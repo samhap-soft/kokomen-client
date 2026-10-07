@@ -1,6 +1,9 @@
 export * as Accordion from "./accordion";
 export * from "./modal";
 export * from "./button";
+export * from "./button/textButton.tsx";
+export * from "./chip";
+export * from "./icon";
 export * from "./input";
 export * from "./layout";
 export * from "./radio";
@@ -13,6 +16,7 @@ export * from "./toast";
 export * from "./statusBadge";
 export * from "./marquee";
 export * from "./form";
+export * from "./gnb";
 export * from "./range";
 export { default as Tooltip } from "./tooltip";
 export { default as Skeleton } from "./skeleton";

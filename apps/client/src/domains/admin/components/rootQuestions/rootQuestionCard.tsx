@@ -24,7 +24,7 @@ const RootQuestionCard = ({
       </div>
       <div className="flex items-center gap-2 shrink-0">
         <Button
-          variant="soft"
+          variant="primary-soft"
           size="small"
           onClick={() => onEdit(question)}
           className="[&_svg]:size-4"
@@ -32,7 +32,7 @@ const RootQuestionCard = ({
           <Pencil className="w-4 h-4" />
         </Button>
         <Button
-          variant="soft"
+          variant="primary-soft"
           size="small"
           onClick={() => onDelete(question)}
           className="[&_svg]:size-4 text-red-500 hover:text-red-600"

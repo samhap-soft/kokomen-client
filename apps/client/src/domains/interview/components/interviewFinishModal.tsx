@@ -32,7 +32,7 @@ const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
               role="button"
               aria-label="home-button"
               onClick={() => router.replace(`/`)}
-              variant={"gradient"}
+              variant={"primary"}
               size={"xl"}
               className="w-full"
             >
@@ -45,7 +45,7 @@ const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
               onClick={() =>
                 router.replace(`/interviews/${interviewId}/result`)
               }
-              variant={"success"}
+              variant={"primary"}
               size={"xl"}
               className="w-full"
             >

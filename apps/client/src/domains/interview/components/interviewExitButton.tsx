@@ -20,7 +20,8 @@ export default function InterviewExitButton(): JSX.Element {
   return (
     <>
       <Button
-        variant={"default"}
+        size={"large"}
+        variant={"secondary"}
         onClick={openModal}
         role="button"
         aria-label="면접 나가기"
@@ -47,7 +48,7 @@ export default function InterviewExitButton(): JSX.Element {
             role="button"
             aria-label="cancel-exit-button"
             onClick={closeModal}
-            variant={"default"}
+            variant={"secondary"}
             size={"xl"}
             className="w-full"
           >
@@ -58,7 +59,7 @@ export default function InterviewExitButton(): JSX.Element {
             role="button"
             aria-label="confirm-exit-button"
             onClick={handleExit}
-            variant={"gradient"}
+            variant={"primary"}
             size={"xl"}
             className="w-full"
           >

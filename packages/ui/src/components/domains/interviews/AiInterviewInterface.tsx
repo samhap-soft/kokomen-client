@@ -41,7 +41,7 @@ export default function AiInterviewInterface({
       <Suspense
         fallback={
           <Html fullscreen zIndexRange={[40, 49]}>
-            <div className="w-full h-full flex items-center justify-center text-xl font-bold text-nowrap bg-gradient-to-r from-blue-50 to-primary-bg-hover bg-opacity-80">
+            <div className="w-full h-full flex items-center justify-center text-xl font-bold text-nowrap bg-gradient-to-r from-blue-50 to-primary-3 bg-opacity-80">
               면접장을 준비하는 중...
             </div>
           </Html>

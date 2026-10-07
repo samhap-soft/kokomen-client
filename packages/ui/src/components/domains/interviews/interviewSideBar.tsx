@@ -27,9 +27,10 @@ export default function InterviewSideBar({
   return (
     <>
       <Button
-        variant={"default"}
+        size={"large"}
+        variant={"secondary"}
         onClick={openSidebar}
-        className="fixed top-2 right-2 sm:top-3 sm:right-3 z-50"
+        className="fixed top-2 right-2 sm:top-3 sm:right-3 z-20"
         role="button"
         aria-label="사이드바 열기"
         title="사이드바 열기"
@@ -76,7 +77,7 @@ export default function InterviewSideBar({
                             질문
                           </p>
                         </div>
-                        <div className="bg-bg-elevated border border-border-input rounded-xl p-5">
+                        <div className="bg-bg-elevated border border-primary-border rounded-xl p-5">
                           <AnswerContent
                             content={feedback.question}
                             parseCode
@@ -96,7 +97,7 @@ export default function InterviewSideBar({
                         내 답변
                       </p>
                     </div>
-                    <div className="bg-white border border-border-input rounded-xl shadow-md p-5 transition-all duration-200 hover:shadow-lg">
+                    <div className="bg-white border border-primary-border rounded-xl shadow-md p-5 transition-all duration-200 hover:shadow-lg">
                       <AnswerContent
                         content={feedback.answer}
                         className="text-base text-gray-700"

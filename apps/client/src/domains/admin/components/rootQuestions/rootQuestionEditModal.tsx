@@ -38,7 +38,7 @@ const RootQuestionEditModal = ({
           placeholder="질문 내용을 입력하세요"
         />
         <div className="flex justify-end gap-2">
-          <Button variant="soft" onClick={onClose}>
+          <Button variant="primary-soft" onClick={onClose}>
             취소
           </Button>
           <Button variant="primary" onClick={handleSave}>

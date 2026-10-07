@@ -127,8 +127,12 @@ export default function MemberTotalFeedback({
             name={`interview-like-button-${interviewId}`}
             role="button"
             type="button"
-            variant="glass"
-            className={`${isTotalLikedIncludesMine && "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"}`}
+            variant="secondary"
+            className={
+              isTotalLikedIncludesMine
+                ? "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"
+                : undefined
+            }
             aria-label="전체 인터뷰 좋아요"
           >
             <Heart

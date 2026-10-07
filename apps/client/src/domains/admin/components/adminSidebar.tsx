@@ -29,7 +29,7 @@ const AdminSidebar = (): JSX.Element => {
               className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-150 justify-start [&_svg]:size-4 ${
                 isActive
                   ? "bg-primary-bg-light text-primary border border-primary-border"
-                  : "text-text-primary hover:bg-primary-bg-hover"
+                  : "text-text-primary hover:bg-primary-3"
               }`}
             >
               <Icon className="w-4 h-4" />

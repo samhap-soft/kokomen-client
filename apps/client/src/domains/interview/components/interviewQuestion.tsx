@@ -11,7 +11,7 @@ const WELCOME_TEXT: string =
 
 // 질문 말풍선의 공통 레이아웃. 좁은 화면에서는 폭을 넓게, 글자를 작게 쓴다.
 const BUBBLE_CLASS: string =
-  "p-3 sm:p-4 absolute top-14 sm:top-20 left-[4%] w-[92%] sm:left-[10%] sm:w-[80%] " +
+  "p-12 sm:p-16 absolute top-14 sm:top-20 left-[4%] w-[92%] sm:left-[10%] sm:w-[80%] " +
   "max-h-[120px] sm:max-h-[150px] text-center border flex items-center justify-center " +
   "z-20 border-border rounded-xl bg-bg-base";
 
@@ -63,7 +63,7 @@ export function InterviewQuestion({
         </span>
         {/* 재생이 끝난 뒤에만 보여주면 중간에 놓친 질문을 다시 들을 수 없다 */}
         <Button
-          variant={"soft"}
+          variant={"primary-soft"}
           onClick={() => {
             playAudio().catch(() => {});
           }}

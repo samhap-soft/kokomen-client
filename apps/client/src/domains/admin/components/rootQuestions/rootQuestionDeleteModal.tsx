@@ -30,7 +30,7 @@ const RootQuestionDeleteModal = ({
           </div>
         )}
         <div className="flex justify-end gap-2">
-          <Button variant="soft" onClick={onClose}>
+          <Button variant="primary-soft" onClick={onClose}>
             취소
           </Button>
           <Button

@@ -41,7 +41,7 @@ export default function Custom404(): JSX.Element {
             </Link>
 
             <Button
-              variant="default"
+              variant="secondary"
               size="default"
               className="w-full sm:w-auto font-bold"
               onClick={() => window.history.back()}

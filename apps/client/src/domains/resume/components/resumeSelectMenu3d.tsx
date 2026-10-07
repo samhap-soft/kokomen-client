@@ -51,7 +51,7 @@ const NormalViewButton = () => {
   return (
     <Html fullscreen>
       <Button
-        variant="outline"
+        variant="secondary"
         className="absolute top-4 left-4 z-10 px-4"
         onClick={handleClick}
       >

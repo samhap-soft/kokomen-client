@@ -106,7 +106,7 @@ export default function Withdrawal() {
 
             <Button
               onClick={handleWithdrawalClick}
-              variant="warning"
+              variant="danger"
               className="w-full"
             >
               <Trash2 className="w-4 h-4 mr-2" />
@@ -161,14 +161,14 @@ export default function Withdrawal() {
           <div className="flex gap-3">
             <Button
               onClick={handleCloseConfirmModal}
-              variant="outline"
+              variant="secondary"
               className="flex-1"
             >
               취소
             </Button>
             <Button
               onClick={handleConfirmWithdraw}
-              variant="warning"
+              variant="danger"
               className="flex-1"
               disabled={!isConfirmTextValid}
             >

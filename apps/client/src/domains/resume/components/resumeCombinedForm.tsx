@@ -226,7 +226,7 @@ export default function ResumeCombinedForm({
                     variant={
                       form.getValues("job_career") === career
                         ? "primary"
-                        : "glass"
+                        : "secondary"
                     }
                     key={career}
                     onClick={() => {

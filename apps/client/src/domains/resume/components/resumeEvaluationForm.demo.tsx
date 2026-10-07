@@ -132,7 +132,7 @@ export default function ResumeEvaluationDemoForm({
                     variant={
                       form.getValues("job_career") === career
                         ? "primary"
-                        : "glass"
+                        : "secondary"
                     }
                     key={career}
                   >

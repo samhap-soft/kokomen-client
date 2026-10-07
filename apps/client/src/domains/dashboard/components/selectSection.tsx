@@ -6,7 +6,7 @@ import ResumeBasedInterviewHistory from "@/domains/resume/components/resumeBased
 import ResumeEvaluationHistory from "@/domains/resume/components/resumeEvaluationHistory";
 import ArchivePreview from "@/domains/resume/components/archivePreview";
 import { UserInfo } from "@kokomen/types";
-import { Button } from "@kokomen/ui";
+import { Button, TextButton } from "@kokomen/ui";
 import { useRouter } from "next/router";
 
 type Section =
@@ -25,10 +25,6 @@ const interviewSections: { label: string; value: Section }[] = [
   {
     label: "면접 기록",
     value: "interview"
-  },
-  {
-    label: "이력서 기반 면접 질문",
-    value: "resumeBasedInterview"
   },
   {
     label: "이력서 평가 결과",
@@ -72,7 +68,7 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             {/* 면접 기록 탭 */}
             {interviewSections.map((sec) => (
               <Button
-                variant={"link"}
+                variant={"none"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
                   sec.value === section
                     ? "bg-primary-bg-light text-primary border border-primary-border"
@@ -89,7 +85,7 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             <p className="text-sm font-medium text-text-secondary">아카이브</p>
             {archiveSections.map((sec) => (
               <Button
-                variant={"link"}
+                variant={"none"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg font-medium transition-colors ${
                   sec.value === section
                     ? "bg-primary-bg-light text-primary border border-primary-border"
@@ -109,7 +105,7 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             {/* 유저 설정 탭 */}
             {userSections.map((sec) => (
               <Button
-                variant={"link"}
+                variant={"none"}
                 className={`w-full justify-start text-left px-4 py-3 rounded-lg  ${
                   sec.value === section
                     ? "bg-primary-bg-light text-primary border border-primary-border"
@@ -126,20 +122,20 @@ export default function SelectSection({ userInfo }: SelectSectionProps) {
             <p className="text-sm font-medium text-text-secondary">
               약관 및 정책
             </p>
-            <Button
-              variant={"link"}
+            <TextButton
+              variant={"primary"}
               onClick={() => router.push("/terms/termsofuse")}
               className="justify-start"
             >
               서비스 이용 약관
-            </Button>
-            <Button
-              variant={"link"}
+            </TextButton>
+            <TextButton
+              variant={"primary"}
               onClick={() => router.push("/terms/privacy")}
               className="justify-start"
             >
               개인정보 처리 방침
-            </Button>
+            </TextButton>
           </div>
         </nav>
       </div>

@@ -111,7 +111,7 @@ export default function ProfileSettingForm({
             onChange={(e) => setValue("nickname", e.target.value)}
           />
           <Button
-            variant={"glass"}
+            variant={"secondary"}
             type="button"
             onClick={() => {
               setValue("nickname", getRandomNickname("animals"));

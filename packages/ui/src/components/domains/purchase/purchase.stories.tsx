@@ -58,7 +58,7 @@ export const TokenHistoryComponent = {
           paymentMethod="easypay"
           easyPayProvider="카카오페이"
           RefundComponent={
-            <Button variant="warning" danger>
+            <Button variant="danger">
               환불하기
             </Button>
           }

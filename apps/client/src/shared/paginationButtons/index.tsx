@@ -50,8 +50,12 @@ export default function PaginationButtons({
           role="button"
           name={`${pageNumber + 1} page`}
           aria-label="page"
-          variant={currentPage === pageNumber ? "primary" : "glass"}
-          className={`${currentPage === pageNumber && "disabled:opacity-100 disabled:bg-primary-bg-hover disabled:text-primary"}`}
+          variant={currentPage === pageNumber ? "primary" : "secondary"}
+          className={
+            currentPage === pageNumber
+              ? "disabled:opacity-100 disabled:bg-primary-3 disabled:text-primary"
+              : undefined
+          }
           onClick={() => {
             router.push(
               `/${basePath}?page=${pageNumber}${optionsString ? `&${optionsString}` : ""}`

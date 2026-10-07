@@ -196,7 +196,7 @@ export default function ResumeBasedInterviewForm({ user }: { user: UserInfo }) {
                     variant={
                       form.getValues("job_career") === career
                         ? "primary"
-                        : "glass"
+                        : "secondary"
                     }
                     key={career}
                     onClick={() => {

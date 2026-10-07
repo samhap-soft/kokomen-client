@@ -17,6 +17,13 @@ export function TooltipContainer({
   );
 }
 
+/**
+ * Figma: Component/Tooltip (완) — component set 166:69
+ *
+ * placement(top · bottom · left · right). content 는 padding 8/12 · radius 6 ·
+ * neutral/800 배경 · sm/regular 흰 글자 · shadow/lg 이고, arrow 는 9x9 사각형을
+ * 45도 회전한 모양이다.
+ */
 interface TooltipContentProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   placement?: "top" | "bottom" | "left" | "right";
@@ -43,18 +50,18 @@ export function TooltipContent({
     }
   };
 
+  // Figma 의 arrow 는 9x9 사각형을 45도 돌린 모양이다 (삼각형 border 가 아님).
   const getArrowClasses = (): string => {
     switch (placement) {
-      case "top":
-        return "top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-800";
       case "bottom":
-        return "bottom-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-t-transparent border-b-gray-800";
+        return "bottom-full left-1/2 -translate-x-1/2 translate-y-1/2";
       case "left":
-        return "left-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-r-transparent border-l-gray-800";
+        return "left-full top-1/2 -translate-x-1/2 -translate-y-1/2";
       case "right":
-        return "right-full top-1/2 -translate-y-1/2 border-t-transparent border-b-transparent border-l-transparent border-r-gray-800";
+        return "right-full top-1/2 translate-x-1/2 -translate-y-1/2";
+      case "top":
       default:
-        return "top-full left-1/2 -translate-x-1/2 border-l-transparent border-r-transparent border-b-transparent border-t-gray-800";
+        return "top-full left-1/2 -translate-x-1/2 -translate-y-1/2";
     }
   };
 
@@ -71,7 +78,12 @@ export function TooltipContent({
       {...props}
     >
       {children}
-      <div className={cn("absolute w-0 h-0 border-4", getArrowClasses())} />
+      <div
+        className={cn(
+          "absolute size-[9px] rotate-45 bg-gray-800",
+          getArrowClasses()
+        )}
+      />
     </div>
   );
 }

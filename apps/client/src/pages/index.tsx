@@ -16,6 +16,7 @@ import { motion } from "motion/react";
 import { captureButtonEvent } from "@/utils/analytics";
 import GuestInterviewModal from "@/domains/interview/components/guestInterviewModal";
 import { useModal } from "@kokomen/utils";
+import { Button } from "@kokomen/ui";
 
 export default function Home({
   user
@@ -104,16 +105,16 @@ export default function Home({
 
               {/* Free Trial Button */}
               <div className="mt-8">
-                <button
-                  type="button"
+                <Button
+                  variant={"primary"}
+                  size={"large"}
                   onClick={() => {
                     captureButtonEvent({ name: "LandingFreeTrialClicked" });
                     openGuestModal();
                   }}
-                  className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-full text-white bg-primary hover:bg-primary-7 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer"
                 >
                   무료로 체험하기
-                </button>
+                </Button>
                 <p className="mt-2 text-sm text-gray-400">
                   회원가입 없이 바로 시작
                 </p>
@@ -281,16 +282,16 @@ export default function Home({
               꾸준한 면접 연습을 통해 소중한 기회를 잡아보세요
             </p>
             <div className="mt-8">
-              <button
-                type="button"
+              <Button
+                variant={"secondary"}
+                size={"large"}
                 onClick={() => {
                   captureButtonEvent({ name: "LandingBottomCTAClicked" });
                   openGuestModal();
                 }}
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-full text-primary bg-white hover:bg-primary-hover transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer"
               >
                 무료로 체험하기
-              </button>
+              </Button>
             </div>
           </div>
         </section>

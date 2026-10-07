@@ -2,7 +2,7 @@ import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import { InterviewMode, InterviewQuestion } from "@kokomen/types";
 import { useModal } from "@kokomen/utils";
-import { Button, Modal } from "@kokomen/ui";
+import { Button, Modal, Tooltip } from "@kokomen/ui";
 import { Keyboard, MicVocal, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import {
@@ -15,6 +15,10 @@ import {
   useState
 } from "react";
 import QuestionList from "@/domains/interview/components/questionList";
+import {
+  IS_VOICE_MODE_DISABLED,
+  VOICE_MODE_DISABLED_MESSAGE
+} from "@/domains/interview/constants";
 
 type QuestionCountSelectorProps = {
   questionCount: number;
@@ -38,7 +42,7 @@ const QuestionCountSelector: MemoExoticComponent<
             type="button"
             onClick={() => handleQuestionCountChange("minus")}
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-bold"
-            variant="soft"
+            variant="primary-soft"
           >
             -
           </Button>
@@ -52,7 +56,7 @@ const QuestionCountSelector: MemoExoticComponent<
             type="button"
             onClick={() => handleQuestionCountChange("plus")}
             className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-bold"
-            variant="soft"
+            variant="primary-soft"
           >
             +
           </Button>
@@ -80,31 +84,45 @@ const InterviewTypeSelector: MemoExoticComponent<
         <h3 className="text-sm font-semibold text-text-secondary mb-4">
           면접 방식
         </h3>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2">
           <Button
             type="button"
+            size={"large"}
             aria-selected={selectedInterviewType === "TEXT"}
             onClick={() => handleInterviewTypeChange("TEXT")}
-            className="py-4"
-            variant={selectedInterviewType === "TEXT" ? "primary" : "soft"}
+            variant={
+              selectedInterviewType === "TEXT" ? "primary" : "primary-soft"
+            }
           >
-            <div className="flex flex-col items-center gap-1.5">
+            <div className="flex items-center gap-1.5">
               <Keyboard className="w-5 h-5" />
               <span className="text-sm font-medium">텍스트</span>
             </div>
           </Button>
-          <Button
-            type="button"
-            aria-selected={selectedInterviewType === "VOICE"}
-            onClick={() => handleInterviewTypeChange("VOICE")}
-            className="py-4"
-            variant={selectedInterviewType === "VOICE" ? "primary" : "soft"}
+          <Tooltip
+            className="block w-full"
+            tabIndex={IS_VOICE_MODE_DISABLED ? 0 : undefined}
           >
-            <div className="flex flex-col items-center gap-1.5">
-              <MicVocal className="w-5 h-5" />
-              <span className="text-sm font-medium">음성</span>
-            </div>
-          </Button>
+            <Button
+              type="button"
+              size={"large"}
+              className="w-full"
+              disabled={IS_VOICE_MODE_DISABLED}
+              aria-selected={selectedInterviewType === "VOICE"}
+              onClick={() => handleInterviewTypeChange("VOICE")}
+              variant={
+                selectedInterviewType === "VOICE" ? "primary" : "primary-soft"
+              }
+            >
+              <div className="flex items-center gap-1.5">
+                <MicVocal className="w-5 h-5" />
+                <span className="text-sm font-medium">음성</span>
+              </div>
+            </Button>
+            {IS_VOICE_MODE_DISABLED && (
+              <Tooltip.Content>{VOICE_MODE_DISABLED_MESSAGE}</Tooltip.Content>
+            )}
+          </Tooltip>
         </div>
       </div>
     );
@@ -180,7 +198,7 @@ const InterviewStartModal = ({
         <div className="flex gap-3">
           <Button
             type="button"
-            variant="cancel"
+            variant="secondary"
             size={"large"}
             onClick={closeModal}
             className="flex-1"
@@ -299,16 +317,17 @@ const CreateInterviewForm = ({
     >
       {/* 카테고리 탭 */}
       <nav className="w-full">
-        <div className="flex overflow-x-auto gap-1 border-b border-border pb-1">
+        <div className="flex overflow-x-auto gap-1 pb-1 py-4">
           {categories.map((category) => (
             <Button
               type="button"
+              size={"large"}
               key={category.key}
               role="tab"
-              className="text-sm font-semibold whitespace-nowrap"
+              className="text-sm font-semibold whitespace-nowrap py-2"
               aria-selected={selectedCategory.key === category.key}
               variant={
-                selectedCategory.key === category.key ? "primary" : "text"
+                selectedCategory.key === category.key ? "primary" : "secondary"
               }
               onClick={() => setSelectedCategory(category)}
             >
@@ -356,7 +375,7 @@ const CreateInterviewForm = ({
       <div className="flex flex-col gap-3">
         <Button
           type="button"
-          variant={"soft"}
+          variant={"primary-soft"}
           disabled={isPending}
           size={"large"}
           className="font-semibold w-full"
@@ -369,7 +388,7 @@ const CreateInterviewForm = ({
           disabled={isPending}
           size={"large"}
           className="font-semibold w-full"
-          variant="submit"
+          variant="primary"
         >
           {isPending ? "면접 시작 중..." : "랜덤 질문으로 시작하기"}
         </Button>

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
 import { Dropdown, DropdownItem, DropdownTrigger } from "./index";
 import { Button } from "../button";
 
@@ -40,30 +39,30 @@ export const Default: Story = {
   )
 };
 
+/**
+ * `Dropdown` 이 open 상태를 내부에서만 들고 있어 트리거에 전달할 방법이 없다.
+ * `DropdownTrigger` 의 `isOpen` 은 chevron 방향만 정하는 표시용 prop 이다.
+ */
 export const WithTrigger: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-      <Dropdown
-        trigger={
-          <DropdownTrigger isOpen={isOpen}>
-            <Button>커스텀 트리거</Button>
-          </DropdownTrigger>
-        }
-      >
-        <DropdownItem onClick={() => console.log("메뉴 1 클릭")}>
-          메뉴 1
-        </DropdownItem>
-        <DropdownItem onClick={() => console.log("메뉴 2 클릭")}>
-          메뉴 2
-        </DropdownItem>
-        <DropdownItem onClick={() => console.log("메뉴 3 클릭")}>
-          메뉴 3
-        </DropdownItem>
-      </Dropdown>
-    );
-  }
+  render: () => (
+    <Dropdown
+      trigger={
+        <DropdownTrigger>
+          <Button>커스텀 트리거</Button>
+        </DropdownTrigger>
+      }
+    >
+      <DropdownItem onClick={() => console.log("메뉴 1 클릭")}>
+        메뉴 1
+      </DropdownItem>
+      <DropdownItem onClick={() => console.log("메뉴 2 클릭")}>
+        메뉴 2
+      </DropdownItem>
+      <DropdownItem onClick={() => console.log("메뉴 3 클릭")}>
+        메뉴 3
+      </DropdownItem>
+    </Dropdown>
+  )
 };
 
 export const TopPlacement: Story = {

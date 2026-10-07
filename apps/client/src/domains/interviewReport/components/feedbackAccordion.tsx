@@ -133,7 +133,7 @@ function FeedBackAccordionItem({
                 내 답변
               </h4>
             </div>
-            <div className="bg-primary-light border border-primary-border rounded-xl p-4">
+            <div className="bg-primary-bg-light border border-primary-border rounded-xl p-4">
               <AnswerContent content={feedback.answer} parseCode={parseCode} />
             </div>
           </div>
@@ -181,7 +181,10 @@ function FeedBackAccordionItem({
                 로그인하면 메모를 작성하고 나만의 오답노트를 정리할 수 있어요.
               </p>
               <Link href="/login?redirectTo=/interviews" className="w-full">
-                <Button className="w-full" variant="glass">
+                <Button
+                  className="w-full"
+                  variant="secondary"
+                >
                   <LogIn className="w-4 h-4 mr-2" />
                   로그인하고 내 오답 정리하기
                 </Button>

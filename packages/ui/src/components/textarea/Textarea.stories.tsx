@@ -43,6 +43,41 @@ export const Default: Story = {
   }
 };
 
+/** Figma 옵션 테이블의 variant 2종 x size 4종 */
+export const AllVariants: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      {(["default", "red"] as const).map((variant) => (
+        <div key={variant} className="flex items-start gap-3">
+          {(["default", "sm", "lg", "xl"] as const).map((size) => (
+            <Textarea
+              key={size}
+              name={`textarea-${variant}-${size}`}
+              variant={variant}
+              size={size}
+              placeholder={`${variant} / ${size}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+};
+
+/**
+ * Figma 의 state 는 default · hover · filled · disabled 다.
+ * hover 는 마우스 오버로만 볼 수 있어 나머지 3종만 세운다.
+ */
+export const States: Story = {
+  render: () => (
+    <div className="flex items-start gap-3">
+      <Textarea name="textarea-state-default" placeholder="default" />
+      <Textarea name="textarea-state-filled" defaultValue="filled" />
+      <Textarea name="textarea-state-disabled" defaultValue="disabled" disabled />
+    </div>
+  )
+};
+
 export const Small: Story = {
   args: {
     name: "small-textarea",

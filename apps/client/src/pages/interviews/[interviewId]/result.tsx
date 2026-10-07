@@ -98,7 +98,7 @@ export default function MyInterviewResultPage({
                       className={`inline-flex items-center gap-3 px-6 py-3 rounded-full text-base font-semibold shadow-sm ${
                         isScoreImproved
                           ? "bg-success-bg text-success-text border border-success-border"
-                          : "bg-error-bg text-error-text border border-error-border"
+                          : "bg-error-bg text-error-text border border-red-2"
                       }`}
                     >
                       {isScoreImproved ? (
@@ -142,7 +142,7 @@ export default function MyInterviewResultPage({
                           </div>
                           <Link
                             href={`/members/interviews/${reference.interview_id}`}
-                            className="bg-primary-light text-primary text-sm hover:text-primary-text-hover transition-colors"
+                            className="bg-primary-bg-light text-primary text-sm hover:text-primary-text-hover transition-colors"
                           >
                             자세히 보기 →
                           </Link>
@@ -239,7 +239,7 @@ export default function MyInterviewResultPage({
               <Button
                 size="large"
                 onClick={() => navigate.push("/")}
-                variant={"soft"}
+                variant={"primary-soft"}
                 className="w-full"
               >
                 홈으로 돌아가기

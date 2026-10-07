@@ -43,7 +43,7 @@ function RecruitItem({
               className="w-full h-full rounded-lg object-contain"
             />
           ) : (
-            <div className="w-full h-full bg-primary-light rounded-lg flex items-center justify-center">
+            <div className="w-full h-full bg-primary-bg-light rounded-lg flex items-center justify-center">
               <Building2 className="w-8 h-8 text-primary" />
             </div>
           )}
@@ -99,7 +99,7 @@ function RecruitListError({ refetch }: { refetch: () => void }) {
     <div className="flex flex-col items-center gap-2">
       <Bug />
       <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
-      <Button variant="soft" className="font-bold" onClick={() => refetch()}>
+      <Button variant="primary-soft" className="font-bold" onClick={() => refetch()}>
         다시 시도하기
       </Button>
     </div>

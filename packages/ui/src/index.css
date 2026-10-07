@@ -14,39 +14,6 @@
   --color-blue-9: #001e66;
   --color-blue-10: #001d66;
 
-  --color-cyan-1: #e6fffb;
-  --color-cyan-2: #b5f5ec;
-  --color-cyan-3: #87e8de;
-  --color-cyan-4: #5cdbd3;
-  --color-cyan-5: #36cfc9;
-  --color-cyan-6: #13c2c2;
-  --color-cyan-7: #08979c;
-  --color-cyan-8: #006d75;
-  --color-cyan-9: #00474f;
-  --color-cyan-10: #002329;
-
-  --color-geek-blue-1: #f0f5ff;
-  --color-geek-blue-2: #d6e4ff;
-  --color-geek-blue-3: #adc6ff;
-  --color-geek-blue-4: #85a5ff;
-  --color-geek-blue-5: #597ef7;
-  --color-geek-blue-6: #2f54eb;
-  --color-geek-blue-7: #1d39c4;
-  --color-geek-blue-8: #10239e;
-  --color-geek-blue-9: #061178;
-  --color-geek-blue-10: #030852;
-
-  --color-gold-1: #fffbe6;
-  --color-gold-2: #fff1b8;
-  --color-gold-3: #ffe58f;
-  --color-gold-4: #ffd666;
-  --color-gold-5: #ffc53d;
-  --color-gold-6: #faad14;
-  --color-gold-7: #d48806;
-  --color-gold-8: #ad6800;
-  --color-gold-9: #874d00;
-  --color-gold-10: #613400;
-
   --color-green-1: #f6ffed;
   --color-green-2: #d9f7be;
   --color-green-3: #b7eb8f;
@@ -57,29 +24,6 @@
   --color-green-8: #237804;
   --color-green-9: #135200;
   --color-green-10: #092b00;
-
-  --color-lime-1: #fcffe6;
-  --color-lime-2: #f4ffb8;
-  --color-lime-3: #eaff8f;
-  --color-lime-4: #d3f261;
-  --color-lime-5: #bae637;
-  --color-lime-6: #a0d911;
-  --color-lime-7: #7cb305;
-  --color-lime-8: #5b8c00;
-  --color-lime-9: #3f6600;
-  --color-lime-10: #254000;
-
-  /* Magenta Colors */
-  --color-magenta-1: #fff0f6;
-  --color-magenta-2: #ffd6e7;
-  --color-magenta-3: #ffadd2;
-  --color-magenta-4: #ff85c0;
-  --color-magenta-5: #f759ab;
-  --color-magenta-6: #eb2f96;
-  --color-magenta-7: #c41d7f;
-  --color-magenta-8: #9e1068;
-  --color-magenta-9: #780650;
-  --color-magenta-10: #520339;
 
   /* Orange Colors */
   --color-orange-1: #fff7e6;
@@ -169,7 +113,6 @@
 
   --color-primary: #ff9013;
   --color-secondary: #73c8d2;
-  --color-primary-light: #f5f1dc;
 
   /* Figma Foundation/Typography 의 font family.
      --font-pretendard 는 apps/client 의 _app.tsx 에서 next/font(localFont)가
@@ -190,7 +133,7 @@
   --color-text-heading: var(--color-text-primary);
   --color-text-label: var(--color-text-secondary);
   --color-text-description: var(--color-text-tertiary);
-  --color-text-disabled: var(--color-text-quaternary);
+  --color-text-disabled: var(--color-gray-5); /* sys onsurface/neutral-disabled */
   --color-text-placeholder: var(--color-text-quaternary);
 
   --color-icon: var(--color-text-secondary); /* #595959 */
@@ -201,14 +144,19 @@
   --color-bg-layout: #f5f5f5;
   --color-bg-mask: rgba(0, 0, 0, 0.45);
   --color-bg-spotlight: rgba(0, 0, 0, 0.85);
-  --color-bg-container-disabled: var(--color-text-tertiary);
+  --color-bg-container-disabled: var(--color-gray-3); /* #d9d9d9 */
   --color-bg-text-active: var(--color-fill);
   --color-bg-text-hover: var(--color-fill-secondary);
   --color-bg-border-bg: var(--color-base-white); /* #ffffff */
 
-  /* sys.color.stroke.default → gray/200, primary-muted → primary-light */
+  /* sys.color.stroke.default → gray/200 */
   --color-border: var(--color-gray-2); /* #f0f0f0 */
-  --color-border-secondary: var(--color-primary-light); /* #f5f1dc */
+  /* border-secondary 는 앱 전반에서 카드·구분선의 옅은 중립 테두리로 쓰이고,
+     `hover:border-border` 와 짝지어 border 보다 한 단계 옅어야 한다.
+     Figma 의 stroke/primary-light(= primary/200 #ffe6cc)을 넣으면 화면 전체가
+     주황빛으로 보이므로 중립 프리미티브 gray/100 을 쓴다. primary/200 이
+     필요한 폼 컴포넌트는 border-primary-2 를 직접 쓴다. */
+  --color-border-secondary: var(--color-gray-1); /* #fafafa */
   --color-split: rgba(0, 0, 0, 0.06);
 
   --color-fill: rgba(0, 0, 0, 0.15);
@@ -220,9 +168,9 @@
   --color-fill-alter: var(--color-fill-quaternary);
 
   --color-primary-bg: var(--color-primary-6);
-  --color-primary-bg-light: var(--color-primary-light);
-  --color-primary-bg-hover: var(--color-primary-3);
-  --color-primary-bg-light-hover: var(--color-primary-2); /* #ffe6cc */
+  --color-primary-bg-light: var(--color-primary-2); /* #ffe6cc */
+  --color-primary-bg-hover: var(--color-primary-5); /* #ffa64d */
+  --color-primary-bg-light-hover: var(--color-primary-1); /* #fff3e6 */
   --color-primary-border: var(--color-primary-3);
   --color-primary-border-hover: var(--color-primary-4);
   --color-primary-hover: var(--color-primary-4);
@@ -246,9 +194,9 @@
 
   --color-warning-bg: var(--color-volcano-1);
   --color-warning-bg-hover: var(--color-volcano-2);
-  --color-warning-border: var(--color-volcano-3);
+  --color-warning-border: var(--color-volcano-7);
   --color-warning-border-hover: var(--color-volcano-4);
-  --color-warning-hover: var(--color-volcano-4);
+  --color-warning-hover: var(--color-volcano-5);
   --color-warning: var(--color-volcano-6);
   --color-warning-active: var(--color-volcano-7);
   --color-warning-text-hover: var(--color-volcano-8);
@@ -258,7 +206,7 @@
   /* Error Color Tokens - 기존 red 팔레트 활용 */
   --color-error-bg: var(--color-red-1); /* #fff1f0 */
   --color-error-bg-hover: var(--color-red-2); /* #ffccc7 */
-  --color-error-border: var(--color-red-2); /* #ffccc7 */
+  --color-error-border: var(--color-red-7); /* #cf1322 */
   --color-error-border-hover: var(--color-red-3); /* #ffa39e */
   --color-error-hover: var(--color-red-4); /* #ff7875 */
   --color-error: var(--color-red-5); /* #ff4d4f */
@@ -269,7 +217,7 @@
 
   /* Info(informative) Color Tokens — 기존에는 .dark 에만 있어서 라이트 모드에서
      bg-info / text-info-text 같은 유틸리티가 생성되지 않았다. Figma 기준으로 보완. */
-  --color-info: var(--color-blue-6); /* #0046ff */
+  --color-info: var(--color-blue-5); /* #4096ff */
   --color-info-bg: var(--color-blue-1); /* #e6f4ff */
   --color-info-bg-hover: var(--color-blue-2); /* #bae0ff */
   --color-info-border: var(--color-blue-3); /* #91caff */
@@ -281,24 +229,29 @@
   --color-info-text-active: var(--color-blue-10); /* #001d66 */
 }
 @theme {
-  /* Size tokens */
-  --size-xxs: 4px;
-  --size-xs: 8px;
-  --size-sm: 12px;
-  --size: 16px;
-  --size-ms: 16px;
-  --size-md: 20px;
-  --size-lg: 24px;
-  --size-xl: 32px;
-  --size-xxl: 48px;
+  /* ── Foundation/Sizing (collection "Sizing") ─────────────────────────────
+     Figma 가 t-shirt 이름(xxs/xs/sm/…)에서 실측 px 이름으로 바꿨기 때문에
+     토큰 이름도 size/<px> 로 맞췄다. 10px, 40px 단계가 새로 추가되었다. */
+  --size-4: 4px;
+  --size-8: 8px;
+  --size-10: 10px;
+  --size-12: 12px;
+  --size-16: 16px;
+  --size-20: 20px;
+  --size-24: 24px;
+  --size-32: 32px;
+  --size-40: 40px;
+  --size-48: 48px;
 
-  /* Height tokens */
-  --control-height-xs: 16px;
-  --control-height-sm: 24px;
-  --control-height: 32px;
-  --control-height-lg: 40px;
+  --control-height-16: 16px;
+  --control-height-24: 24px;
+  --control-height-32: 32px;
+  --control-height-40: 40px;
 
-  /* Screen size tokens */
+  /* ── Foundation/Layout (collection "Layout") ─────────────────────────────
+     값은 Figma breakpoint/* 와 동일하다. Tailwind 의 실제 브레이크포인트
+     네임스페이스(--breakpoint-*)로 옮기면 sm:/md: 유틸리티의 기준값이
+     통째로 바뀌므로, 문서용 토큰인 --screen-* 이름을 그대로 유지한다. */
   --screen-xs: 480px;
   --screen-sm: 576px;
   --screen-md: 768px;
@@ -306,51 +259,75 @@
   --screen-xl: 1200px;
   --screen-xxl: 1600px;
 
-  /* Margin tokens */
-  --margin-xxs: var(--size-xxs); /* 4px */
-  --margin-xs: var(--size-xs); /* 8px */
-  --margin-sm: var(--size-sm); /* 12px */
-  --margin: var(--size); /* 16px */
-  --margin-md: var(--size-md); /* 20px */
-  --margin-lg: var(--size-lg); /* 24px */
-  --margin-xl: var(--size-xl); /* 32px */
-  --margin-xxl: var(--size-xxl); /* 48px */
+  --z-index-sidebar-default: 30;
+  --z-index-sidebar-high: 40;
+  --z-index-overlay: 50;
+  --z-index-toast: 100;
 
-  /* Padding tokens */
-  --padding-xxs: var(--size-xxs); /* 4px */
-  --padding-xs: var(--size-xs); /* 8px */
-  --padding-sm: var(--size-sm); /* 12px */
-  --padding: var(--size); /* 16px */
-  --padding-md: var(--size-md); /* 20px */
-  --padding-lg: var(--size-lg); /* 24px */
-  --padding-xl: var(--size-xl); /* 32px */
+  --sidebar-width: 500px;
+  --layout-min-height: 720px;
 
-  /* Content padding tokens for different screen sizes */
-  --padding-content-horizontal-sm: var(--size); /* 16px */
-  --padding-content-vertical-sm: var(--size-xs); /* 8px */
-  --padding-content-horizontal: var(--size-sm); /* 12px */
-  --padding-content-vertical: var(--size-sm); /* 12px */
-  --padding-content-horizontal-lg: var(--size-lg); /* 24px */
-  --padding-content-vertical-lg: var(--size); /* 16px */
+  /* ── Foundation/Spacing & Radius (collection "Spacing & Radius") ───────── */
+  --margin-4: var(--size-4);
+  --margin-8: var(--size-8);
+  --margin-10: var(--size-10);
+  --margin-12: var(--size-12);
+  --margin-16: var(--size-16);
+  --margin-20: var(--size-20);
+  --margin-24: var(--size-24);
+  --margin-32: var(--size-32);
+  --margin-40: var(--size-40);
+  --margin-48: var(--size-48);
 
-  /* Border radius tokens */
-  --border-radius: 6px;
-  --border-radius-lg: 8px;
-  --border-radius-sm: 4px;
-  --border-radius-xs: 2px;
+  --padding-4: var(--size-4);
+  --padding-8: var(--size-8);
+  --padding-12: var(--size-12);
+  --padding-16: var(--size-16);
+  --padding-20: var(--size-20);
+  --padding-24: var(--size-24);
+  --padding-32: var(--size-32);
+  --padding-40: var(--size-40);
 
-  /* Box shadow tokens */
-  --box-shadow:
-    0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+  --padding-content-horizontal-sm: var(--size-16);
+  --padding-content-vertical-sm: var(--size-8);
+  --padding-content-horizontal: var(--size-12);
+  --padding-content-vertical: var(--size-12);
+  --padding-content-horizontal-lg: var(--size-24);
+  --padding-content-vertical-lg: var(--size-16);
+
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-30: 30px;
+  /* radius/full(9999) 은 Tailwind 가 이미 `rounded-full` 로 제공하므로
+     --radius-full 로 다시 정의하지 않는다. 정의하면 내장 유틸리티의 값을
+     덮어써서 같은 클래스가 파일마다 다른 값이 된다. */
+
+  /* ── Foundation/Opacity & Shadow ─────────────────────────────────────────
+     Opacity 컬렉션은 Figma 에서 퍼센트 정수로 관리한다. */
+  --opacity-fill-quaternary: 0.02;
+  --opacity-fill-tertiary: 0.04;
+  --opacity-split: 0.06;
+  --opacity-fill-secondary: 0.06;
+  --opacity-fill: 0.15;
+  --opacity-fill-dark: 0.18;
+  --opacity-text-quaternary: 0.25;
+  --opacity-text-tertiary: 0.45;
+  --opacity-mask: 0.45;
+  --opacity-disabled: 0.5;
+  --opacity-text-secondary: 0.65;
+  --opacity-spotlight: 0.85;
+  --opacity-toast-description: 0.9;
+
+  /* shadow/sm · shadow/md · shadow/lg 는 Tailwind 기본값과 값이 같아서
+     재정의하지 않는다. shadow/base 만 Figma 전용이라 추가한다. */
+  --shadow-base:
+    0 4px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
     0 9px 28px 8px rgba(0, 0, 0, 0.05);
-
-  --box-shadow-secondary:
-    0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0 9px 28px 8px rgba(0, 0, 0, 0.05);
-
-  --box-shadow-tertiary:
-    0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02),
-    0 2px 4px 0 rgba(0, 0, 0, 0.02);
 }
 
 .dark {
@@ -379,6 +356,7 @@
   --color-bg-border-bg: var(--color-bg-base); /* #141414 */
 
   --color-border: #424242;
+  --color-base-black: #000000;
   --color-border-secondary: #303030;
   --color-split: rgba(255, 255, 255, 0.06);
 
@@ -392,6 +370,8 @@
 
   --color-primary-bg: var(--color-blue-1);
   --color-primary-bg-hover: var(--color-blue-2);
+  --color-primary-bg-light: var(--color-primary-2);
+  --color-primary-bg-light-hover: var(--color-primary-2);
   --color-primary-border: var(--color-blue-3);
   --color-primary-border-hover: var(--color-blue-4);
   --color-primary-hover: var(--color-blue-5);
@@ -413,17 +393,19 @@
   --color-success-text: var(--color-green-9);
   --color-success-text-active: var(--color-green-10);
 
-  /* Warning colors — Figma: light → Volcano, dark → Gold */
-  --color-warning: var(--color-gold-6);
-  --color-warning-bg: var(--color-gold-1);
-  --color-warning-bg-hover: var(--color-gold-2);
-  --color-warning-border: var(--color-gold-3);
-  --color-warning-border-hover: var(--color-gold-4);
-  --color-warning-hover: var(--color-gold-4);
-  --color-warning-active: var(--color-gold-7);
-  --color-warning-text-hover: var(--color-gold-8);
-  --color-warning-text: var(--color-gold-9);
-  --color-warning-text-active: var(--color-gold-10);
+  /* Warning colors — Figma 가 Gold 팔레트를 지워서 다크도 Volcano 를 쓴다.
+     Volcano 프리미티브 자체가 이 블록 아래에서 다크 값으로 덮이므로 단계
+     구성은 라이트와 동일하게 둔다. */
+  --color-warning: var(--color-volcano-6);
+  --color-warning-bg: var(--color-volcano-1);
+  --color-warning-bg-hover: var(--color-volcano-2);
+  --color-warning-border: var(--color-volcano-7);
+  --color-warning-border-hover: var(--color-volcano-4);
+  --color-warning-hover: var(--color-volcano-5);
+  --color-warning-active: var(--color-volcano-7);
+  --color-warning-text-hover: var(--color-volcano-8);
+  --color-warning-text: var(--color-volcano-9);
+  --color-warning-text-active: var(--color-volcano-10);
 
   /* Info colors */
   --color-info: var(--color-blue-6);
@@ -460,39 +442,6 @@
   --color-blue-9: #8dc5f8;
   --color-blue-10: #b7dcfa;
 
-  --color-cyan-1: #112123;
-  --color-cyan-2: #113536;
-  --color-cyan-3: #144848;
-  --color-cyan-4: #146262;
-  --color-cyan-5: #138585;
-  --color-cyan-6: #13a8a8;
-  --color-cyan-7: #33bcb7;
-  --color-cyan-8: #58d1c9;
-  --color-cyan-9: #84e2d8;
-  --color-cyan-10: #b2f1e8;
-
-  --color-geek-blue-1: #131629;
-  --color-geek-blue-2: #161d40;
-  --color-geek-blue-3: #1c2755;
-  --color-geek-blue-4: #203175;
-  --color-geek-blue-5: #263ea0;
-  --color-geek-blue-6: #2b4acb;
-  --color-geek-blue-7: #5273e0;
-  --color-geek-blue-8: #7f9ef3;
-  --color-geek-blue-9: #a8c1f8;
-  --color-geek-blue-10: #d2e0fa;
-
-  --color-gold-1: #2b2111;
-  --color-gold-2: #443111;
-  --color-gold-3: #594214;
-  --color-gold-4: #7c5914;
-  --color-gold-5: #aa7714;
-  --color-gold-6: #d89614;
-  --color-gold-7: #e8b339;
-  --color-gold-8: #f3cc62;
-  --color-gold-9: #f8dfbb;
-  --color-gold-10: #fae0b5;
-
   --color-green-1: #162312;
   --color-green-2: #1d3712;
   --color-green-3: #274916;
@@ -503,29 +452,6 @@
   --color-green-8: #8fd460;
   --color-green-9: #b2e58b;
   --color-green-10: #d5f2bb;
-
-  --color-lime-1: #1f2611;
-  --color-lime-2: #2e3c10;
-  --color-lime-3: #3e4f13;
-  --color-lime-4: #566d13;
-  --color-lime-5: #6f9412;
-  --color-lime-6: #8bbb11;
-  --color-lime-7: #a9d134;
-  --color-lime-8: #c9e75d;
-  --color-lime-9: #e4f88b;
-  --color-lime-10: #f0fab5;
-
-  /* Magenta Colors - Dark Theme */
-  --color-magenta-1: #2a1215;
-  --color-magenta-2: #431418;
-  --color-magenta-3: #58181c;
-  --color-magenta-4: #75204f;
-  --color-magenta-5: #a02669;
-  --color-magenta-6: #cb2b83;
-  --color-magenta-7: #e0529c;
-  --color-magenta-8: #f37fb7;
-  --color-magenta-9: #f8a5cc;
-  --color-magenta-10: #fad2e3;
 
   /* Orange Colors - Dark Theme */
   --color-orange-1: #2b1d11;

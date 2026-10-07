@@ -76,7 +76,7 @@ export default function ResumeEvaluationResult({
             </Link>
             <Link
               href="/resume/eval"
-              className="bg-primary-light text-primary px-4 py-2 rounded-md font-bold"
+              className="bg-primary-bg-light text-primary px-4 py-2 rounded-md font-bold"
             >
               내 이력서 분석하기
             </Link>
