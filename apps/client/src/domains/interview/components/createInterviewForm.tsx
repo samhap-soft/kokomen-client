@@ -2,7 +2,7 @@ import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import { InterviewMode, InterviewQuestion } from "@kokomen/types";
 import { useModal } from "@kokomen/utils";
-import { Button, Modal } from "@kokomen/ui";
+import { Button, Modal, Tooltip } from "@kokomen/ui";
 import { Keyboard, MicVocal, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import {
@@ -15,6 +15,10 @@ import {
   useState
 } from "react";
 import QuestionList from "@/domains/interview/components/questionList";
+import {
+  IS_VOICE_MODE_DISABLED,
+  VOICE_MODE_DISABLED_MESSAGE
+} from "@/domains/interview/constants";
 
 type QuestionCountSelectorProps = {
   questionCount: number;
@@ -95,20 +99,30 @@ const InterviewTypeSelector: MemoExoticComponent<
               <span className="text-sm font-medium">텍스트</span>
             </div>
           </Button>
-          <Button
-            type="button"
-            size={"large"}
-            aria-selected={selectedInterviewType === "VOICE"}
-            onClick={() => handleInterviewTypeChange("VOICE")}
-            variant={
-              selectedInterviewType === "VOICE" ? "primary" : "primary-soft"
-            }
+          <Tooltip
+            className="block w-full"
+            tabIndex={IS_VOICE_MODE_DISABLED ? 0 : undefined}
           >
-            <div className="flex items-center gap-1.5">
-              <MicVocal className="w-5 h-5" />
-              <span className="text-sm font-medium">음성</span>
-            </div>
-          </Button>
+            <Button
+              type="button"
+              size={"large"}
+              className="w-full"
+              disabled={IS_VOICE_MODE_DISABLED}
+              aria-selected={selectedInterviewType === "VOICE"}
+              onClick={() => handleInterviewTypeChange("VOICE")}
+              variant={
+                selectedInterviewType === "VOICE" ? "primary" : "primary-soft"
+              }
+            >
+              <div className="flex items-center gap-1.5">
+                <MicVocal className="w-5 h-5" />
+                <span className="text-sm font-medium">음성</span>
+              </div>
+            </Button>
+            {IS_VOICE_MODE_DISABLED && (
+              <Tooltip.Content>{VOICE_MODE_DISABLED_MESSAGE}</Tooltip.Content>
+            )}
+          </Tooltip>
         </div>
       </div>
     );
