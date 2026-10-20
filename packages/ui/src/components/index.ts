@@ -3,6 +3,8 @@ export * from "./modal";
 export * from "./button";
 export * from "./button/textButton.tsx";
 export * from "./chip";
+export * from "./badge";
+export * from "./tab";
 export * from "./icon";
 export * from "./input";
 export * from "./layout";

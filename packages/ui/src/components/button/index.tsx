@@ -21,7 +21,7 @@ type ButtonVariantsProps = VariantProps<typeof buttonVariants>;
  * gap 은 모든 size 에서 4px 이다.
  */
 // eslint-disable-next-line @rushstack/typedef-var
-const buttonVariants = cva(
+export const buttonVariants = cva(
   `inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap text-center transition-colors duration-200 ease-in-out [&_svg]:pointer-events-none [&_svg]:shrink-0 disabled:pointer-events-none disabled:bg-bg-container-disabled disabled:text-text-disabled disabled:border-transparent disabled:shadow-none`,
   {
     variants: {

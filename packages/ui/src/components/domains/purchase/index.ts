@@ -1,2 +1,2 @@
 export { default as Token } from "./token";
-export { default as TokenHistory } from "./tokenHistory";
+export { default as TokenHistory, TokenHistoryHeader } from "./tokenHistory";

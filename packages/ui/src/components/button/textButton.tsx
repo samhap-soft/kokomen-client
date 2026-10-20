@@ -25,7 +25,7 @@ type TextButtonVariantsProps = VariantProps<typeof textButtonVariants>;
  * 클릭 가능함을 알리기 위한 최소한의 피드백으로 opacity 만 사용한다.
  */
 // eslint-disable-next-line @rushstack/typedef-var
-const textButtonVariants = cva(
+export const textButtonVariants = cva(
   `inline-flex cursor-pointer items-center justify-center gap-1 whitespace-nowrap bg-transparent transition-opacity duration-200 ease-in-out hover:opacity-80 [&_svg]:pointer-events-none [&_svg]:shrink-0 disabled:pointer-events-none disabled:text-text-disabled disabled:opacity-100`,
   {
     variants: {

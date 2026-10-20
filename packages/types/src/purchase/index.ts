@@ -19,6 +19,8 @@ type PurchaseHistory = {
   state: string;
   payment_method: string;
   easy_pay_provider?: string;
+  // 구매 일시(ISO 8601). 백엔드가 아직 내려주지 않아 optional 이고, 없으면 "-" 로 표시한다.
+  purchased_at?: string;
 };
 
 type RefundCode =
