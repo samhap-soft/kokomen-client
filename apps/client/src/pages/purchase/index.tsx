@@ -56,16 +56,16 @@ export default function PurchasePage({
       />
       <main className="min-h-screen">
         <Header user={userInfo} />
-        <div className="container mx-auto px-6 pt-6">
-          <div className="relative flex gap-4 border-b border-border mb-6">
+        <div className="mx-auto w-full max-w-[1182px] px-5 xl:px-0">
+          <nav className="relative flex border-b border-border">
             {sections.map((section) => (
               <Link
                 key={section.param}
                 href={`/purchase?section=${section.param}`}
-                className={`relative pb-2 px-4 transition-colors ${
+                className={`relative px-3 py-1 text-2xl font-semibold transition-colors ${
                   currentSection === section.param
-                    ? "text-primary font-medium"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "text-text-primary"
+                    : "text-text-quaternary hover:text-text-tertiary"
                 }`}
               >
                 {section.label}
@@ -82,7 +82,7 @@ export default function PurchasePage({
                 )}
               </Link>
             ))}
-          </div>
+          </nav>
         </div>
         {renderSection()}
         <PurchaseSuccessModal />

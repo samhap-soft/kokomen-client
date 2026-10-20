@@ -20,7 +20,7 @@ export default function Refund({ purchaseId }: { purchaseId: number }) {
 
   return (
     <>
-      <Button variant="danger" onClick={openModal} type="button">
+      <Button variant="secondary" onClick={openModal} type="button">
         환불하기
       </Button>
       <Modal

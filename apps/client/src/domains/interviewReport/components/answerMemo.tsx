@@ -6,7 +6,6 @@ import {
   Textarea,
   useToast
 } from "@kokomen/ui";
-import { NotebookPen, Trash } from "lucide-react";
 import { Dispatch, JSX, SetStateAction, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -52,48 +51,60 @@ export default function AnswerMemoComponent({
       setIsMemoEditOpen(true);
     }
   };
-  if (isMemoEditOpen)
-    return (
-      <AnswerMemoEdit
-        answerId={answerId}
-        answerMemo={answerMemo}
-        visibility={visibility}
-        setAnswerMemo={setAnswerMemo}
-        setIsMemoEditOpen={setIsMemoEditOpen}
-      />
-    );
   return (
-    <>
-      {answerMemo.content ? (
-        <div className="flex flex-col gap-4">
-          <div className="flex gap-2">
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <h4 className="text-base font-semibold text-text-primary">학습 메모</h4>
+        <p className="text-sm text-text-secondary">내 학습 기록</p>
+      </div>
+      {isMemoEditOpen ? (
+        <AnswerMemoEdit
+          answerId={answerId}
+          answerMemo={answerMemo}
+          visibility={visibility}
+          setAnswerMemo={setAnswerMemo}
+          setIsMemoEditOpen={setIsMemoEditOpen}
+        />
+      ) : answerMemo.content ? (
+        <div className="flex flex-col gap-1.5">
+          <p className="min-h-24 whitespace-pre-line rounded-xl border border-primary-border bg-bg-base p-3 text-base text-text-primary">
+            {answerMemo.content}
+          </p>
+          <div className="flex justify-end gap-2">
             <Button
               variant={"secondary"}
+              size={"small"}
               onClick={handleMemoEditButtonClick}
             >
-              <NotebookPen />
               메모 편집하기
             </Button>
-            <Button variant={"danger"} onClick={openMemoDeleteModal}>
-              <Trash />
+            <Button
+              variant={"danger"}
+              size={"small"}
+              onClick={openMemoDeleteModal}
+            >
               메모 삭제하기
             </Button>
           </div>
-          <p className="border border-border-secondary p-4 rounded-lg">
-            {answerMemo.content}
-          </p>
         </div>
       ) : (
-        <div className="border border-border-secondary p-4 rounded-lg flex flex-col justify-between items-center gap-3">
-          <p>보완이 필요하거나 학습한 내용을 메모해 보세요.</p>
-          <Button
-            className="w-full"
-            variant={"secondary"}
+        <div className="flex flex-col gap-1.5">
+          <button
+            type="button"
             onClick={handleMemoEditButtonClick}
-            disabled={isMemoEditOpen}
+            className="min-h-24 cursor-text rounded-xl border border-primary-border bg-bg-base p-3 text-left text-base text-text-placeholder transition-colors hover:border-primary-border-hover"
           >
-            <NotebookPen /> 메모 작성하기
-          </Button>
+            보완할 개념이나 다음 답변에 넣을 내용을 적어보세요.
+          </button>
+          <div className="flex justify-end">
+            <Button
+              variant={"secondary"}
+              size={"small"}
+              onClick={handleMemoEditButtonClick}
+            >
+              메모 작성하기
+            </Button>
+          </div>
         </div>
       )}
       {isMemoDeleteModalOpen && (
@@ -141,7 +152,7 @@ export default function AnswerMemoComponent({
           </div>
         </Modal>
       )}
-    </>
+    </div>
   );
 }
 
@@ -299,7 +310,7 @@ function AnswerMemoEdit({
       className="flex flex-col gap-2 w-full"
       onSubmit={handleSubmit(handleEditSubmitButtonClick)}
     >
-      <div className="flex justify-between">
+      <div className="flex items-center justify-between text-sm text-text-secondary">
         <p>공개 범위</p>
         <RadioGroup
           onChange={(value) =>
@@ -311,20 +322,24 @@ function AnswerMemoEdit({
           <Radio value="PRIVATE">비공개</Radio>
         </RadioGroup>
       </div>
-      <p className="mt-4">메모 작성하기</p>
       <Textarea
         name="memo"
         variant={"default"}
-        className="border border-border-secondary"
+        aria-label="메모 작성하기"
+        placeholder="보완할 개념이나 다음 답변에 넣을 내용을 적어보세요."
+        className="h-24 w-full"
         value={watch("content")}
         onChange={(e) => setValue("content", e.target.value)}
       />
       {answerMemoFormErrors.content && (
-        <p className="text-red-500">{answerMemoFormErrors.content.message}</p>
+        <p className="text-sm text-error">
+          {answerMemoFormErrors.content.message}
+        </p>
       )}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="flex justify-end gap-2">
         <Button
-          variant={"danger"}
+          variant={"secondary"}
+          size={"small"}
           type="button"
           onClick={() => setIsMemoEditOpen(false)}
         >
@@ -332,12 +347,13 @@ function AnswerMemoEdit({
         </Button>
         <Button
           variant={"primary"}
+          size={"small"}
           type="submit"
           disabled={isPending}
           pendingSpinner
           pendingText="저장중..."
         >
-          저장
+          메모 저장
         </Button>
       </div>
     </form>

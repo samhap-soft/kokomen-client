@@ -78,7 +78,7 @@ describe("면접 메인 페이지 버튼 테스트", () => {
         userInfo={null}
       />
     );
-    const plusButton = screen.getByRole("button", { name: "+" });
+    const plusButton = screen.getByRole("button", { name: "문제 수 늘리기" });
     expect(plusButton).toBeEnabled();
 
     fireEvent.click(plusButton);
@@ -93,7 +93,7 @@ describe("면접 메인 페이지 버튼 테스트", () => {
 
     expect(screen.getByTestId("question-count")).toHaveTextContent("6");
 
-    const minusButton = screen.getByRole("button", { name: "-" });
+    const minusButton = screen.getByRole("button", { name: "문제 수 줄이기" });
 
     expect(minusButton).toBeEnabled();
 
