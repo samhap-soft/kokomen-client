@@ -229,19 +229,16 @@
   --color-info-text-active: var(--color-blue-10); /* #001d66 */
 }
 @theme {
-  /* ── Foundation/Sizing (collection "Sizing") ─────────────────────────────
-     Figma 가 t-shirt 이름(xxs/xs/sm/…)에서 실측 px 이름으로 바꿨기 때문에
-     토큰 이름도 size/<px> 로 맞췄다. 10px, 40px 단계가 새로 추가되었다. */
-  --size-4: 4px;
-  --size-8: 8px;
-  --size-10: 10px;
-  --size-12: 12px;
-  --size-16: 16px;
-  --size-20: 20px;
-  --size-24: 24px;
-  --size-32: 32px;
-  --size-40: 40px;
-  --size-48: 48px;
+  /* ── Foundation/Sizing · Spacing (collection "Sizing", "Spacing & Radius") ──
+     Figma 의 size/<px> · margin/<px> · padding/<px> 는 모두 4px 배수라서
+     Tailwind 기본 spacing 스케일(--spacing: 0.25rem)과 같은 값이다.
+     그래서 숫자형 간격 토큰은 @theme 에 따로 등록하지 않고 Tailwind 기본
+     클래스를 쓴다. 클래스 숫자는 px / 4 다.
+       padding/16 → p-4 · margin/48 → m-12 · size/10 → size-2.5
+
+     NOTE --padding-16 같은 이름으로 @theme 에 등록하면 Tailwind v4 가
+     p-* · m-* · size-* 를 그 토큰으로 해석해 px-4 가 16px 가 아니라 4px 가
+     된다(#221 에서 생긴 회귀). 숫자 이름의 간격 토큰을 다시 추가하지 않는다. */
 
   --control-height-16: 16px;
   --control-height-24: 24px;
@@ -267,33 +264,15 @@
   --sidebar-width: 500px;
   --layout-min-height: 720px;
 
-  /* ── Foundation/Spacing & Radius (collection "Spacing & Radius") ───────── */
-  --margin-4: var(--size-4);
-  --margin-8: var(--size-8);
-  --margin-10: var(--size-10);
-  --margin-12: var(--size-12);
-  --margin-16: var(--size-16);
-  --margin-20: var(--size-20);
-  --margin-24: var(--size-24);
-  --margin-32: var(--size-32);
-  --margin-40: var(--size-40);
-  --margin-48: var(--size-48);
-
-  --padding-4: var(--size-4);
-  --padding-8: var(--size-8);
-  --padding-12: var(--size-12);
-  --padding-16: var(--size-16);
-  --padding-20: var(--size-20);
-  --padding-24: var(--size-24);
-  --padding-32: var(--size-32);
-  --padding-40: var(--size-40);
-
-  --padding-content-horizontal-sm: var(--size-16);
-  --padding-content-vertical-sm: var(--size-8);
-  --padding-content-horizontal: var(--size-12);
-  --padding-content-vertical: var(--size-12);
-  --padding-content-horizontal-lg: var(--size-24);
-  --padding-content-vertical-lg: var(--size-16);
+  /* ── Foundation/Spacing & Radius — 의미 있는 이름의 간격 토큰 ─────────────
+     숫자 이름이 아니라 Tailwind 기본 스케일과 겹치지 않는다.
+     px-content-horizontal 처럼 클래스로 쓸 수 있다. */
+  --padding-content-horizontal-sm: 16px;
+  --padding-content-vertical-sm: 8px;
+  --padding-content-horizontal: 12px;
+  --padding-content-vertical: 12px;
+  --padding-content-horizontal-lg: 24px;
+  --padding-content-vertical-lg: 16px;
 
   --radius-2: 2px;
   --radius-4: 4px;

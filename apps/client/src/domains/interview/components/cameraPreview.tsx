@@ -80,7 +80,7 @@ export default function CameraPreview({
           onClick={toggleCamera}
           disabled={!enabled || isModelLoading}
           aria-pressed={isCameraOn}
-          className={`flex items-center gap-2 px-12 sm:px-4 py-2 rounded-full border shadow-sm text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full border shadow-sm text-xs sm:text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
             isCameraOn
               ? "bg-white/90 border-gray-200 text-gray-700 hover:bg-white"
               : "bg-blue-50 border-blue-300 text-blue-600 hover:bg-blue-100"
