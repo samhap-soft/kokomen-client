@@ -2,13 +2,9 @@ import { JSX } from "react";
 import { captureButtonEvent } from "@/utils/analytics";
 import Link from "next/link";
 import { CamelCasedProperties, Rank } from "@kokomen/types";
-import { Crown } from "lucide-react";
+import { textButtonVariants } from "@kokomen/ui";
 
-const MEDAL_STYLES = [
-  "bg-amber-100 text-amber-700 border-amber-300",
-  "bg-gray-100 text-gray-500 border-gray-300",
-  "bg-orange-100 text-orange-700 border-orange-300"
-] as const;
+export const RANK_CARD_SIZE: number = 3;
 
 export default function RankCard({
   rankList
@@ -18,47 +14,52 @@ export default function RankCard({
   if (!rankList.length) return null;
 
   return (
-    <div className="bg-bg-elevated rounded-3xl border border-border overflow-hidden mt-5">
-      <div className="flex items-center gap-2 px-5 py-4 border-b border-border">
-        <Crown className="w-5 h-5 text-amber-500" />
-        <h3 className="text-lg font-bold text-text-primary">랭킹</h3>
+    <div className="flex flex-col justify-center gap-4 rounded-[20px] border border-border bg-bg-elevated px-6 py-[30px]">
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-semibold text-text-primary">
+          랭킹 TOP{RANK_CARD_SIZE}
+        </h3>
+        <Link
+          href="/rank"
+          className={textButtonVariants({ variant: "primary" })}
+        >
+          전체 보기
+        </Link>
       </div>
-      <div className="divide-y divide-border">
-        {rankList.map((rank, index) => (
-          <Link
-            key={rank.id}
-            href={`/members/${rank.id}`}
-            className="flex items-center gap-3 px-5 py-3.5 hover:bg-bg-base-hover transition-colors"
-            aria-label={`rank-card-${rank.id}-${rank.nickname}`}
-            onClick={() => {
-              captureButtonEvent({
-                name: "MemberDashboard",
-                properties: {
-                  rank: rank.id,
-                  nickname: rank.nickname
-                }
-              });
-            }}
-          >
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold shrink-0 border ${
-                index < 3
-                  ? MEDAL_STYLES[index]
-                  : "bg-bg-base text-text-tertiary border-border"
-              }`}
+      <ol className="flex flex-col gap-2">
+        {rankList.slice(0, RANK_CARD_SIZE).map((rank, index) => (
+          <li key={rank.id}>
+            <Link
+              href={`/members/${rank.id}`}
+              className="flex items-center gap-1.5 rounded-md text-text-primary transition-opacity hover:opacity-80"
+              aria-label={`rank-card-${rank.id}-${rank.nickname}`}
+              onClick={() => {
+                captureButtonEvent({
+                  name: "MemberDashboard",
+                  properties: {
+                    rank: rank.id,
+                    nickname: rank.nickname
+                  }
+                });
+              }}
             >
-              {index + 1}
-            </div>
-            <p className="font-medium text-sm text-text-primary truncate min-w-0 flex-1">
-              {rank.nickname ?? "탈퇴한 사용자"}
-            </p>
-            <p className="text-sm font-semibold text-text-secondary tabular-nums">
-              {rank.score.toLocaleString()}
-              <span className="text-text-tertiary font-normal ml-0.5">점</span>
-            </p>
-          </Link>
+              <span
+                className={`flex size-6 shrink-0 items-center justify-center rounded-full text-base font-bold ${
+                  index === 0 ? "bg-primary-bg" : "bg-gray-3"
+                }`}
+              >
+                {index + 1}
+              </span>
+              <span className="min-w-0 flex-1 truncate text-base font-medium">
+                {rank.nickname ?? "탈퇴한 사용자"}
+              </span>
+              <span className="text-lg font-semibold tabular-nums">
+                {rank.score.toLocaleString()}점
+              </span>
+            </Link>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   );
 }

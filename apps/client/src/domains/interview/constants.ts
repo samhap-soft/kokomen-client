@@ -21,3 +21,27 @@ export const IS_VOICE_MODE_DISABLED: boolean = true;
 
 export const VOICE_MODE_DISABLED_MESSAGE: string =
   "음성 면접은 현재 점검 중입니다";
+
+/**
+ * 면접 메인에서 카테고리 칩을 묶어 보여주는 그룹. Category API 에는 그룹 정보가 없어서
+ * 프론트에서 key 로 매핑한다. 여기에 없는 key 는 "기타" 그룹으로 모인다.
+ */
+export const CATEGORY_GROUPS: readonly { title: string; keys: readonly string[] }[] = [
+  {
+    title: "CS 기초",
+    keys: ["ALGORITHM_DATA_STRUCTURE", "DATABASE", "NETWORK", "OPERATING_SYSTEM"]
+  },
+  {
+    title: "기술 스택",
+    keys: ["JAVA_SPRING", "JAVASCRIPT_TYPESCRIPT", "REACT", "FRONTEND", "INFRA"]
+  },
+  { title: "인성", keys: ["PERSONALITY"] }
+];
+
+export const ETC_CATEGORY_GROUP_TITLE: string = "기타";
+
+// 면접 메인의 "예상 소요" 계산에 쓰는 질문당 평균 소요 시간(분).
+export const MINUTES_PER_QUESTION: number = 3;
+
+// 면접 메인의 "이런 질문이 나와요"에 보여줄 예시 질문 개수.
+export const SAMPLE_QUESTION_COUNT: number = 3;

@@ -128,7 +128,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
           height: isOpen ? `${desktopDropdownHeight}px` : "0px"
         }}
       >
-        <div className="px-16 py-3 border-b border-gray-100">
+        <div className="px-4 py-3 border-b border-gray-100">
           <p className="text-sm font-medium text-gray-900">{user?.nickname}</p>
           {user ? (
             <p className="text-xs text-gray-500 mt-1">환영합니다!</p>
@@ -142,7 +142,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
           <Button
             variant="none"
             onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-3 w-full px-8 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start rounded-none"
+            className="flex items-center gap-3 w-full px-2 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start rounded-none"
           >
             <LayoutDashboard size={10} />
             마이페이지
@@ -150,7 +150,7 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
           <Button
             variant="none"
             onClick={logout}
-            className="flex items-center gap-3 w-full px-8 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start rounded-none"
+            className="flex items-center gap-3 w-full px-2 py-2 text-sm text-text-primary hover:bg-primary-3 transition-colors duration-150 justify-start rounded-none"
           >
             <LogOut size={10} />
             로그아웃

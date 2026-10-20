@@ -1,20 +1,29 @@
 import { PrivateFeedback } from "@kokomen/types";
 import {
-  getScoreColor,
-  getScoreIcon,
-  getScoreLabel
-} from "@/utils/rankDisplay";
-import { Accordion, AnswerContent, Tooltip } from "@kokomen/ui";
-import { MessageSquare, Star, Award, HelpCircle, LogIn } from "lucide-react";
+  Accordion,
+  AnswerContent,
+  Badge,
+  buttonVariants,
+  HelpIcon,
+  Tooltip
+} from "@kokomen/ui";
 import { JSX } from "react";
 import AnswerMemoComponent from "@/domains/interviewReport/components/answerMemo";
-import { Button } from "@kokomen/ui";
+import {
+  getRankBadgeLabel,
+  getRankBadgeType,
+  RankLabel
+} from "@/domains/interviewReport/components/rankLabel";
 import Link from "next/link";
 
 function RankGuideTooltip(): JSX.Element {
   return (
     <Tooltip className="cursor-help" onClick={(e) => e.stopPropagation()}>
-      <HelpCircle className="w-4 h-4 text-text-tertiary hover:text-text-secondary transition-colors" />
+      <HelpIcon
+        size={16}
+        aria-label="등급 가이드"
+        className="text-text-tertiary transition-colors hover:text-text-secondary"
+      />
       <Tooltip.Content
         placement="top"
         className="!whitespace-normal w-72 !pointer-events-auto"
@@ -52,23 +61,33 @@ function RankGuideTooltip(): JSX.Element {
 export function FeedbackAccordion({
   feedbacks,
   isGuest,
-  parseCode = false
+  parseCode = false,
+  startIndex = 0,
+  defaultOpenFirst = true
 }: {
   feedbacks: PrivateFeedback[];
   isGuest?: boolean;
   parseCode?: boolean;
+  /** 질문 번호를 이어서 매길 때의 시작 인덱스(게스트 블러 영역용). */
+  startIndex?: number;
+  defaultOpenFirst?: boolean;
 }): JSX.Element {
+  const firstItemKey =
+    defaultOpenFirst && feedbacks[0]
+      ? `feedback-${feedbacks[0].question_id}`
+      : undefined;
+
   return (
     <Accordion.Accordion
       allowMultiple
-      defaultActiveKey={["feedback-1"]}
-      className="w-full space-y-4"
+      defaultActiveKey={firstItemKey}
+      className="flex w-full flex-col gap-5 divide-y-0"
     >
       {feedbacks.map((feedback, idx) => (
         <FeedBackAccordionItem
           key={feedback.question_id}
           feedback={feedback}
-          idx={idx}
+          number={startIndex + idx + 1}
           isGuest={isGuest}
           parseCode={parseCode}
         />
@@ -79,115 +98,79 @@ export function FeedbackAccordion({
 
 function FeedBackAccordionItem({
   feedback,
-  idx,
+  number,
   isGuest,
   parseCode
 }: {
   feedback: PrivateFeedback;
-  idx: number;
+  number: number;
   isGuest?: boolean;
   parseCode?: boolean;
 }): JSX.Element {
   return (
     <Accordion.AccordionItem
-      key={feedback.question_id}
       itemKey={`feedback-${feedback.question_id}`}
-      className="border-border rounded-xl  bg-bg-elevated shadow-sm hover:shadow-md transition-shadow duration-200"
+      className="overflow-hidden rounded-[20px] border border-border bg-bg-elevated"
     >
-      <Accordion.AccordionTrigger className="px-6 py-4 hover:bg-fill-secondary transition-colors duration-200 rounded-xl">
-        <div className="flex items-center gap-3 w-full">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full">
-            <span className="text-sm font-semibold text-primary">
-              {idx + 1}
-            </span>
-          </div>
-          <div className="flex flex-col justify-center gap-1 w-full">
-            <div className="flex items-center gap-2">
-              <div
-                className={`flex items-center gap-2 py-1 rounded-full text-sm font-semibold ${getScoreColor(
-                  feedback.answer_rank
-                )}`}
-              >
-                {getScoreIcon(feedback.answer_rank)}
-                {feedback.answer_rank}등급
-              </div>
-              <RankGuideTooltip />
-            </div>
-            <span className="text-text-heading font-medium text-left flex-1">
-              <AnswerContent
-                content={feedback.question}
-                parseCode={parseCode}
-                inline
-              />
-            </span>
-          </div>
-        </div>
+      <Accordion.AccordionTrigger className="gap-3">
+        <span className="flex flex-1 gap-2 text-left">
+          <span className="shrink-0">{number}.</span>
+          <AnswerContent
+            content={feedback.question}
+            parseCode={parseCode}
+            inline
+          />
+        </span>
       </Accordion.AccordionTrigger>
-      <Accordion.AccordionContent className="px-6">
-        <div className="flex flex-col gap-6">
-          {/* 내 답변 섹션 */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              <h4 className="text-lg font-semibold text-text-heading">
-                내 답변
-              </h4>
-            </div>
-            <div className="bg-primary-bg-light border border-primary-border rounded-xl p-4">
+      {/* Figma 에서 접힌 상태에도 등급 행이 보이므로 Content 밖에 둔다. */}
+      <div className="flex items-center gap-3 px-4 py-4 sm:px-6">
+        <span className="flex items-center gap-1 text-sm text-text-secondary">
+          이 질문의 평가
+          <RankGuideTooltip />
+        </span>
+        <RankLabel rank={feedback.answer_rank} />
+      </div>
+      <Accordion.AccordionContent>
+        <div className="flex flex-col gap-5 px-0 pb-2 sm:px-2">
+          <div className="flex flex-col gap-1.5">
+            <h4 className="text-base font-semibold text-text-primary">
+              내 답변
+            </h4>
+            <div className="rounded-xl bg-bg-layout p-5 text-base text-text-secondary">
               <AnswerContent content={feedback.answer} parseCode={parseCode} />
             </div>
           </div>
 
-          {/* 피드백 섹션 */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-success" />
-              <h4 className="text-lg font-semibold text-text-heading">
-                피드백
-              </h4>
-            </div>
-            <div className="bg-success-bg border border-success-border rounded-xl p-4">
-              <p className="text-text-primary leading-relaxed">
+          <div className="flex flex-col gap-1.5">
+            <h4 className="text-base font-semibold text-text-primary">
+              AI 피드백
+            </h4>
+            <div className="flex flex-col items-start gap-3 rounded-xl bg-primary-1 p-5">
+              <Badge
+                appearance="weak"
+                type={getRankBadgeType(feedback.answer_rank)}
+              >
+                {getRankBadgeLabel(feedback.answer_rank)}
+              </Badge>
+              <p className="whitespace-pre-line text-base text-text-secondary">
                 {feedback.answer_feedback}
               </p>
             </div>
           </div>
 
-          {/* 점수 요약 */}
-          <div className="flex items-center pt-4 border-t border-border gap-4">
-            <div className="flex gap-2">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-warning" />
-                <span className="text-text-description font-medium">
-                  이 질문의 평가
-                </span>
-              </div>
-              <div
-                className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold ${getScoreColor(
-                  feedback.answer_rank
-                )}`}
-              >
-                {getScoreIcon(feedback.answer_rank)}
-                <span className="text-lg">
-                  {feedback.answer_rank}등급 (
-                  {getScoreLabel(feedback.answer_rank)})
-                </span>
-              </div>
-            </div>
-          </div>
           {isGuest ? (
-            <div className="border border-border-secondary p-4 rounded-lg flex flex-col justify-between items-center gap-3">
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-border p-4">
               <p className="text-sm text-text-secondary">
                 로그인하면 메모를 작성하고 나만의 오답노트를 정리할 수 있어요.
               </p>
-              <Link href="/login?redirectTo=/interviews" className="w-full">
-                <Button
-                  className="w-full"
-                  variant="secondary"
-                >
-                  <LogIn className="w-4 h-4 mr-2" />
-                  로그인하고 내 오답 정리하기
-                </Button>
+              <Link
+                href="/login?redirectTo=/interviews"
+                className={buttonVariants({
+                  variant: "secondary",
+                  className: "w-full"
+                })}
+              >
+                로그인하고 내 오답 정리하기
               </Link>
             </div>
           ) : (

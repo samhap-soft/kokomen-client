@@ -7,14 +7,15 @@ import {
 import { JSX, useEffect, useState } from "react";
 import Header from "@/shared/header";
 import { withCheckInServer } from "@/utils/auth";
-import { User as UserIcon, Play } from "lucide-react";
 import { getUserInfo } from "@/domains/auth/api";
 
 import CreateInterviewForm from "@/domains/interview/components/createInterviewForm";
 import useRouterPrefetch from "@/hooks/useRouterPrefetch";
-import RankCard from "@/domains/members/components/rankCard";
+import RankCard, {
+  RANK_CARD_SIZE
+} from "@/domains/members/components/rankCard";
 import { SEO } from "@/shared/seo";
-import { Button, Modal } from "@kokomen/ui";
+import { Button, Modal, TextButton } from "@kokomen/ui";
 import { CamelCasedProperties, Rank, UserInfo } from "@kokomen/types";
 import { Footer } from "@/shared/footer";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
@@ -23,6 +24,32 @@ import GuestInterviewModal from "@/domains/interview/components/guestInterviewMo
 import { useModal } from "@kokomen/utils";
 import Image from "next/image";
 import { captureButtonEvent } from "@/utils/analytics";
+
+function InfoCard({
+  title,
+  description,
+  actionLabel,
+  onAction
+}: {
+  title: string;
+  description: string;
+  actionLabel: string;
+  onAction: () => void;
+}): JSX.Element {
+  return (
+    <div className="flex flex-col items-start gap-5 rounded-[20px] border border-border bg-bg-elevated px-6 py-[30px]">
+      <div className="flex flex-col gap-4">
+        <h3 className="text-2xl font-semibold text-text-primary">{title}</h3>
+        <p className="text-lg font-medium text-text-secondary">
+          {description}
+        </p>
+      </div>
+      <TextButton type="button" variant="primary" onClick={onAction}>
+        {actionLabel}
+      </TextButton>
+    </div>
+  );
+}
 
 export default function InterviewMainPage({
   categories,
@@ -67,7 +94,63 @@ export default function InterviewMainPage({
       </SEO>
       <div className="min-h-screen">
         <Header user={userInfo} />
-        <main className="flex flex-col-reverse lg:flex-row mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 gap-8 mb-16">
+        <main className="mx-auto mb-16 flex w-full max-w-[1182px] flex-col gap-[72px] px-5 pt-8 xl:px-0">
+          <section className="flex flex-col gap-[50px]">
+            <div className="flex flex-col gap-5">
+              <h2 className="text-3xl font-bold text-text-primary md:text-4xl">
+                오늘은 어떤 분야를 연습해볼까요?
+              </h2>
+              <p className="text-xl font-medium text-text-secondary">
+                분야를 고르면 오른쪽에서 바로 시작할 수 있어요.
+              </p>
+            </div>
+            <CreateInterviewForm categories={categories} />
+          </section>
+
+          <hr className="border-border" />
+
+          <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {userInfo ? (
+              <>
+                <InfoCard
+                  title="내 기록 보기"
+                  description={`현재 ${(userInfo.score ?? 0).toLocaleString()}점 · 남은 토큰 ${(userInfo.token_count ?? 0).toLocaleString()}개`}
+                  actionLabel="마이페이지"
+                  onAction={() => router.push("/dashboard")}
+                />
+                <InfoCard
+                  title="토큰 충전하기"
+                  description="면접에 필요한 토큰을 미리 충전해 두세요."
+                  actionLabel="충전하기"
+                  onAction={() => router.push("/purchase")}
+                />
+              </>
+            ) : (
+              <>
+                <InfoCard
+                  title="로그인하고 기록 남기기"
+                  description="면접 결과와 피드백이 마이페이지에 저장돼요."
+                  actionLabel="로그인하기"
+                  onAction={() => router.navigateToLogin()}
+                />
+                <InfoCard
+                  title="데모 면접 체험하기"
+                  description="로그인 없이 꼬꼬면을 먼저 경험해 보세요."
+                  actionLabel="체험하기"
+                  onAction={() => {
+                    captureButtonEvent({ name: "DemoInterviewCTAClicked" });
+                    openGuestModal();
+                  }}
+                />
+                <GuestInterviewModal
+                  isOpen={isGuestModalOpen}
+                  onClose={closeGuestModal}
+                />
+              </>
+            )}
+            <RankCard rankList={rankList} />
+          </section>
+
           <ins
             className="adsbygoogle"
             style={{ display: "block" }}
@@ -76,85 +159,6 @@ export default function InterviewMainPage({
             data-ad-format="auto"
             data-full-width-responsive="true"
           ></ins>
-          <CreateInterviewForm categories={categories} />
-
-          <aside className="w-full lg:w-80 lg:sticky lg:top-8 shrink-0">
-            <div>
-              <div className="rounded-2xl border border-border overflow-hidden">
-                <div className="px-8 py-3 border-b border-border flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center border border-border">
-                    <UserIcon className="w-4 h-4 text-text-tertiary" />
-                  </div>
-                  <span className="text-sm font-semibold text-text-primary flex-1 truncate">
-                    {userInfo?.nickname || "로그인 후 이용해주세요"}
-                  </span>
-                  {!userInfo && (
-                    <Button
-                      variant="primary-soft"
-                      className="text-xs font-semibold"
-                      type="button"
-                      onClick={() => router.navigateToLogin()}
-                    >
-                      로그인
-                    </Button>
-                  )}
-                </div>
-                {userInfo && (
-                  <div className="grid grid-cols-2 divide-x divide-border">
-                    <div className="px-4 py-3 text-center">
-                      <p className="text-xs text-text-tertiary mb-0.5">
-                        총 점수
-                      </p>
-                      <p className="text-lg font-bold text-text-primary tabular-nums">
-                        {userInfo.score?.toLocaleString() || 0}
-                      </p>
-                    </div>
-                    <div className="px-4 py-3 text-center">
-                      <p className="text-xs text-text-tertiary mb-0.5">
-                        남은 토큰
-                      </p>
-                      <p className="text-lg font-bold text-text-primary tabular-nums">
-                        {userInfo.token_count?.toLocaleString() || 0}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            {!userInfo && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    captureButtonEvent({ name: "DemoInterviewCTAClicked" });
-                    openGuestModal();
-                  }}
-                  className="block mt-4 w-full text-left"
-                >
-                  <div className="bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                        <Play className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-base font-bold">
-                          데모 면접 체험하기
-                        </p>
-                        <p className="text-xs text-white/80 mt-0.5">
-                          로그인 없이 텍스트 면접을 체험해보세요
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </button>
-                <GuestInterviewModal
-                  isOpen={isGuestModalOpen}
-                  onClose={closeGuestModal}
-                />
-              </>
-            )}
-            <RankCard rankList={rankList} />
-          </aside>
         </main>
         {showWelcome && (
           <Modal
@@ -217,7 +221,7 @@ export const getServerSideProps = async (
         await Promise.allSettled([
           getCategories(context),
           getUserInfo(context),
-          getRankList()
+          getRankList(0, RANK_CARD_SIZE)
         ]);
 
       if (categoriesResponse.status === "rejected") {

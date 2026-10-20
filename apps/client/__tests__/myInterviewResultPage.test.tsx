@@ -215,7 +215,7 @@ describe("내 면접결과 메모 테스트", () => {
     });
 
     const saveMemoButton = screen.getByRole("button", {
-      name: "저장"
+      name: "메모 저장"
     });
     fireEvent.click(saveMemoButton);
 
