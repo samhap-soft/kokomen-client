@@ -27,10 +27,10 @@ export const Footer = (): JSX.Element => {
   return (
     <footer className="bg-bg-layout">
       <div className="mx-auto flex max-w-[1220px] flex-col gap-2 px-5 py-16 xl:px-0">
-        {/* 로고 이미지에서 캐릭터를 잘라내고 "꼬꼬면" 글자만 보여준다 (Figma 942:1318) */}
+        {/* 배경이 투명한 로고에서 캐릭터를 잘라내고 "꼬꼬면" 글자만 보여준다 (Figma 942:1318) */}
         <div className="relative h-[50px] w-[84px] overflow-hidden">
           <Image
-            src="/logo.svg"
+            src="/logo-transparent.png"
             alt="꼬꼬면"
             width={148}
             height={50}
