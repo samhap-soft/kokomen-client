@@ -80,7 +80,7 @@ describe("면접 결과 페이지 테스트", () => {
     });
     fireEvent.click(interviewLikeButton);
     await waitFor(() => {
-      expect(interviewLikeButton).toHaveClass("bg-volcano-3 text-volcano-6");
+      expect(interviewLikeButton).toHaveAttribute("aria-pressed", "true");
     });
     //좋아요 눌렀을 경우
     server.use(
@@ -95,9 +95,7 @@ describe("면접 결과 페이지 테스트", () => {
     );
     fireEvent.click(interviewLikeButton);
     await waitFor(() => {
-      expect(interviewLikeButton).not.toHaveClass(
-        "bg-volcano-3 text-volcano-6"
-      );
+      expect(interviewLikeButton).toHaveAttribute("aria-pressed", "false");
     });
   });
   it("질문 좋아요 버튼 클릭 테스트", async () => {
@@ -131,7 +129,7 @@ describe("면접 결과 페이지 테스트", () => {
     });
     fireEvent.click(answerLikeButton);
     await waitFor(() => {
-      expect(answerLikeButton).toHaveClass("bg-volcano-3 text-volcano-6");
+      expect(answerLikeButton).toHaveAttribute("aria-pressed", "true");
     });
 
     //좋아요 눌렀을 경우
@@ -147,7 +145,7 @@ describe("면접 결과 페이지 테스트", () => {
     );
     fireEvent.click(answerLikeButton);
     await waitFor(() => {
-      expect(answerLikeButton).not.toHaveClass("bg-volcano-3 text-volcano-6");
+      expect(answerLikeButton).toHaveAttribute("aria-pressed", "false");
     });
   });
 });

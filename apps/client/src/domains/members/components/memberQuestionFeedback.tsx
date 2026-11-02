@@ -1,9 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
-import { Heart } from "lucide-react";
-import { useMemo, useState } from "react";
-import { useToast } from "@kokomen/ui";
+import { useState } from "react";
 import { isAxiosError } from "axios";
-import { AnswerContent, Button } from "@kokomen/ui";
+import {
+  AnswerContent,
+  Badge,
+  Button,
+  HeartFilledIcon,
+  HeartIcon,
+  useToast
+} from "@kokomen/ui";
+import { getRankBadgeType } from "@/domains/interviewReport/components/rankLabel";
 import { toggleMemberInterviewAnswerLike } from "@/domains/members/api";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { MemberInterviewResult } from "@kokomen/types";
@@ -60,119 +66,67 @@ export default function MemberQuestionFeedback({
     }
   });
 
-  const badgeColor = useMemo(() => {
-    switch (questionAndFeedback.answerRank.toLowerCase()) {
-      case "A":
-        return "bg-purple-100 text-purple-800 border-purple-300";
-      case "B":
-        return "bg-blue-100 text-blue-800 border-blue-300";
-      case "C":
-        return "bg-yellow-100 text-yellow-800 border-yellow-300";
-      case "D":
-        return "bg-red-100 text-red-800 border-red-300";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-300";
-    }
-  }, [questionAndFeedback.answerRank]);
-
   return (
-    <div
-      key={questionAndFeedback.answerId}
-      className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300"
-    >
-      {/* 질문 헤더 */}
-      <div className="bg-gradient-to-r from-blue-1 to-blue-2 p-6 border-b border-gray-100">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center space-x-3 mb-3">
-              <span className="bg-gradient-to-r from-blue-5 to-blue-6 text-white px-3 py-1 rounded-full text-sm font-medium">
-                Q{index + 1}
-              </span>
-              <span
-                className={`px-3 py-1 rounded-full text-sm font-medium border ${badgeColor}`}
-              >
-                {questionAndFeedback.answerRank}
-              </span>
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              {questionAndFeedback.question}
-            </h3>
-          </div>
-          <Button
-            aria-busy={isPending}
-            disabled={isPending}
-            onClick={() => toggleInterviewLikeMutation(answerLiked)}
-            type="button"
-            name={`answer-like-button-${questionAndFeedback.answerId}`}
-            role="button"
-            variant="secondary"
-            optimistic={true}
-            className={
-              answerLiked
-                ? "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"
-                : undefined
-            }
-            aria-label={`답변 ${index + 1} 좋아요`}
+    <article className="flex flex-col gap-4 border-b border-border py-5">
+      <div className="flex items-start justify-between gap-4">
+        <h3 className="flex flex-wrap items-center gap-1 text-lg font-semibold text-text-primary">
+          <Badge
+            appearance="weak"
+            type={getRankBadgeType(questionAndFeedback.answerRank)}
           >
-            <Heart
-              className={`w-4 h-4 mr-2 ${answerLiked ? "fill-current" : ""}`}
-            />
-            <span className="text-sm font-medium">
-              {answerLiked
-                ? questionAndFeedback.answerLikeCount + 1
-                : questionAndFeedback.answerLikeCount}
-            </span>
-          </Button>
-        </div>
+            {questionAndFeedback.answerRank}등급
+          </Badge>
+          {questionAndFeedback.question}
+        </h3>
+        <Button
+          variant="secondary"
+          type="button"
+          name={`answer-like-button-${questionAndFeedback.answerId}`}
+          aria-busy={isPending}
+          aria-pressed={answerLiked}
+          aria-label={`답변 ${index + 1} 좋아요`}
+          onClick={() => !isPending && toggleInterviewLikeMutation(answerLiked)}
+          prefixIcon={
+            answerLiked ? (
+              <HeartFilledIcon className="text-primary" />
+            ) : (
+              <HeartIcon />
+            )
+          }
+        >
+          {answerLiked
+            ? questionAndFeedback.answerLikeCount + 1
+            : questionAndFeedback.answerLikeCount}
+        </Button>
       </div>
 
-      {/* 답변 및 피드백 내용 */}
-      <div className="p-6 space-y-6">
-        {/* 답변 섹션 */}
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gradient-to-r from-blue-4 to-blue-5 rounded-full"></div>
-            <h4 className="text-sm font-semibold text-gray-700">응답 내용</h4>
-          </div>
-          <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-xl p-4 border border-blue-3">
-            <AnswerContent
-              content={questionAndFeedback.answer}
-              className="text-gray-800"
-              parseCode={parseCode}
-            />
-          </div>
-        </div>
-
-        {/* AI 피드백 섹션 */}
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gradient-to-r from-blue-4 to-blue-5 rounded-full"></div>
-            <h4 className="text-sm font-semibold text-gray-700">AI 피드백</h4>
-          </div>
-          <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-xl p-4 border border-blue-3">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-              {questionAndFeedback.answerFeedback}
-            </p>
-          </div>
-        </div>
-
-        {/* 사용자 메모 섹션 */}
-        {questionAndFeedback.submittedAnswerMemoContent && (
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-gradient-to-r from-green-4 to-green-5 rounded-full"></div>
-              <h4 className="text-sm font-semibold text-gray-700">
-                사용자 메모
-              </h4>
-            </div>
-            <div className="bg-gradient-to-r from-green-1 to-green-2 rounded-xl p-4 border border-green-3">
-              <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-                {questionAndFeedback.submittedAnswerMemoContent}
-              </p>
-            </div>
-          </div>
-        )}
+      <div className="flex flex-col gap-2">
+        <h4 className="text-base font-semibold text-text-primary">응답 내용</h4>
+        <AnswerContent
+          content={questionAndFeedback.answer}
+          className="text-lg text-text-secondary"
+          parseCode={parseCode}
+        />
       </div>
-    </div>
+
+      <div className="flex flex-col gap-3 rounded-xl bg-fill-content p-5">
+        <h4 className="text-base font-semibold text-text-primary">AI 피드백</h4>
+        <p className="text-lg whitespace-pre-wrap text-text-secondary">
+          {questionAndFeedback.answerFeedback}
+        </p>
+      </div>
+
+      {/* Figma 에는 없지만 작성자가 공개한 메모가 있으면 AI 피드백과 같은 모양으로 보여준다 */}
+      {questionAndFeedback.submittedAnswerMemoContent && (
+        <div className="flex flex-col gap-3 rounded-xl bg-fill-content p-5">
+          <h4 className="text-base font-semibold text-text-primary">
+            사용자 메모
+          </h4>
+          <p className="text-lg whitespace-pre-wrap text-text-secondary">
+            {questionAndFeedback.submittedAnswerMemoContent}
+          </p>
+        </div>
+      )}
+    </article>
   );
 }
