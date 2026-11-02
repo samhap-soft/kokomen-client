@@ -31,13 +31,14 @@ const DESIGN_SYSTEM_IN_USE: [string, string][] = [
   ["CheckCircleIcon", "toast"],
   ["CheckIcon", "select"],
   ["ChevronDownIcon", "dropdown · select"],
-  ["ChevronRightIcon", "textButton"],
+  ["ChevronLeftIcon", "pagination"],
+  ["ChevronRightIcon", "textButton · pagination"],
   ["ChevronUpIcon", "dropdown"],
   ["CloseIcon", "modal · sidebar · toast"],
-  ["HeartFilledIcon", "면접 기록 · 공개 면접 결과 좋아요"],
-  ["HeartIcon", "면접 기록 · 공개 면접 결과 좋아요"],
+  ["HeartFilledIcon", "멤버 면접 기록 · 공개 면접 결과 좋아요"],
+  ["HeartIcon", "멤버 면접 기록 · 공개 면접 결과 좋아요"],
   ["InfoIcon", "toast"],
-  ["MyProfileIcon", "gnb"],
+  ["MyProfileIcon", "gnb · 마이페이지"],
   ["SearchIcon", "select"],
   ["ShareIcon", "공개 면접 결과"]
 ];
