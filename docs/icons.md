@@ -4,7 +4,7 @@
 
 | 갈래 | 개수 | 위치 | 성격 |
 |---|---|---|---|
-| 디자인 시스템 아이콘 | 30 | `packages/ui/src/components/icon/index.tsx` | Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24 |
+| 디자인 시스템 아이콘 | 32 | `packages/ui/src/components/icon/index.tsx` | Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24 |
 | lucide-react | 71 | `lucide-react` 패키지 | stroke 기반. 앱 화면에서 주로 사용 |
 | SVG 에셋 | 19 | `apps/client/public/` | 로고·일러스트. 아이콘 컴포넌트가 아님 |
 
@@ -16,7 +16,7 @@ Storybook: `Foundation/Icon`
 
 ---
 
-## 1. 디자인 시스템 아이콘 (30개)
+## 1. 디자인 시스템 아이콘 (32개)
 
 `@kokomen/ui` 에서 export 된다. 모두 `size`(기본 24)와 `className` 을 받고 색은 `currentColor` 를 따른다.
 
@@ -33,11 +33,13 @@ Storybook: `Foundation/Icon`
 | `CheckIcon` | `icon_check` | 1 |
 | `CheckCircleIcon` | `icon_check-circle` | 1 |
 | `ChevronDownIcon` | `icon_chevron-down` | 2 |
-| `ChevronLeftIcon` | `icon_chevron_left` | – |
+| `ChevronLeftIcon` | `icon_chevron_left` | 1 |
 | `ChevronRightIcon` | `icon_chevron_right` | 1 |
 | `ChevronUpIcon` | `icon_chevron-up` | 1 |
 | `ClockIcon` | `icon_clock` | – |
 | `CloseIcon` | `icon_close` | 3 |
+| `HeartFilledIcon` | `icon_heart` (state=filled) | 3 |
+| `HeartIcon` | `icon_heart` (state=default) | 3 |
 | `HelpIcon` | `icon_help` | – |
 | `InfoIcon` | `icon_info` | 1 |
 | `MedalIcon` | `icon_medal` | – |
@@ -47,6 +49,7 @@ Storybook: `Foundation/Icon`
 | `MyProfileIcon` | `icon_my_profile` | 1 |
 | `SearchIcon` | `icon_search` | 1 |
 | `StarIcon` | `icon_star` | – |
+| `ShareIcon` | `icon_share` | 1 |
 | `SubtractCircleIcon` | `icon_subtract_circle` | – |
 | `SubtractionIcon` | `icon_subtraction` | – |
 | `UploadIcon` | `icon_upload` | – |
@@ -59,6 +62,9 @@ Storybook: `Foundation/Icon`
 ---
 
 ## 2. lucide-react (71개)
+
+> 2026-11-02: `Heart` 는 `HeartIcon` · `HeartFilledIcon` 으로, 공개 면접 결과의 `Share2` 는 `ShareIcon` 으로 옮겼다.
+> 아래 표의 나머지 개수는 이전 집계 기준이다.
 
 앱과 `packages/ui` 양쪽에서 import 해 쓰는 아이콘이다. 사용 파일 수 순.
 스토리 파일은 집계에서 뺐다.
@@ -74,7 +80,6 @@ Storybook: `Foundation/Icon`
 | `AlertTriangle` | 4 |
 | `Calendar` | 4 |
 | `Eye` | 4 |
-| `Heart` | 4 |
 | `Loader2` | 4 |
 | `MessageSquare` | 4 |
 | `Star` | 4 |
