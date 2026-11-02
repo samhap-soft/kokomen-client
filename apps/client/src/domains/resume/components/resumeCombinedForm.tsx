@@ -1,7 +1,14 @@
 import { ArchiveButton } from "@/domains/resume/components/resumeArchiveButton";
 import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { ResumeAnalysisSubmitResult, UserInfo } from "@kokomen/types";
-import { Button, FileField, Input, useToast } from "@kokomen/ui";
+import {
+  Button,
+  Chip,
+  FileField,
+  Input,
+  Textarea,
+  useToast
+} from "@kokomen/ui";
 import { generateFormData } from "@kokomen/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
@@ -16,6 +23,21 @@ import { isAxiosError } from "axios";
 import { useResumeAnalysisStore } from "@/domains/resume/context/resumeAnalysisStore";
 
 const jobCareers = ["0-1년", "1-3년", "3-5년", "5-10년", "10년 이상"];
+
+const ANALYSIS_GUIDES: readonly { title: string; description: string }[] = [
+  {
+    title: "이력서 평가",
+    description: "기술 역량과 프로젝트 경험 등 항목별 강점과 보완점을 확인해요."
+  },
+  {
+    title: "맞춤 면접 질문",
+    description: "이력서에 담긴 경험을 바탕으로 면접 질문을 받아요."
+  },
+  {
+    title: "면접 연습",
+    description: "분석 결과에서 바로 실전 답변을 연습해 보세요."
+  }
+];
 
 // SSR 환경에서 FileList가 정의되지 않을 수 있으므로 custom 검증 사용
 const fileListSchema: z.ZodTypeAny =
@@ -150,121 +172,131 @@ export default function ResumeCombinedForm({
   const isPending = mutation.isPending || analysisState === "PENDING";
 
   return (
-    <div className="w-full max-w-3xl mx-auto py-8">
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-text-heading">이력서 분석</h1>
-          <p className="text-text-secondary">
-            이력서와 포트폴리오를 업로드하고 지원하려는 직무 정보를 입력하면,
-            이력서 평가와 이력서 기반 면접 질문을 한 번에 받아볼 수 있어요.
-          </p>
-        </div>
+    <div className="flex flex-col gap-[50px]">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-bold text-text-primary">이력서 분석</h1>
+        <p className="text-lg text-text-secondary">
+          이력서 평가부터 맞춤 면접 질문까지, 한 번에 준비하세요.
+        </p>
+      </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <FileField
-                label="이력서"
-                required
-                register={form.register("resume")}
-                error={form.formState.errors.resume?.message as string}
-                hint="PDF 파일만 업로드 가능합니다"
-                displayName={displayName.resume}
-              />
-              <ArchiveButton
-                type="RESUME"
-                onClickResume={onclickArchiveButton}
-                isLoggedIn={user !== null}
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <FileField
-                label="포트폴리오"
-                register={form.register("portfolio")}
-                hint="선택사항입니다"
-                displayName={displayName.portfolio}
-              />
-              <ArchiveButton
-                type="PORTFOLIO"
-                onClickResume={onclickArchiveButton}
-                isLoggedIn={user !== null}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label
-                className="block text-sm font-medium text-text-heading"
-                htmlFor="job_position"
-              >
-                지원 직무 <span className="text-error">*</span>
-              </label>
-              <Input
-                type="text"
-                placeholder="예: 프론트엔드 개발자"
-                {...form.register("job_position")}
-                className="w-full"
-              />
-              {form.formState.errors.job_position && (
-                <p className="text-xs text-error">
-                  {form.formState.errors.job_position.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
-                className="block text-sm font-medium text-text-heading"
-                htmlFor="job_career"
-              >
-                연차
-              </label>
-              <div className="flex gap-2">
-                {jobCareers.map((career) => (
-                  <Button
-                    type="button"
-                    variant={
-                      form.getValues("job_career") === career
-                        ? "primary"
-                        : "secondary"
-                    }
-                    key={career}
-                    onClick={() => {
-                      form.setValue("job_career", career);
-                      form.trigger("job_career");
-                    }}
-                  >
-                    {career}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label
-                className="block text-sm font-medium text-text-heading"
-                htmlFor="job_description"
-              >
-                채용 공고
-              </label>
-              <textarea
-                placeholder="채용 공고의 직무 설명을 입력해주세요"
-                {...form.register("job_description")}
-                className="w-full min-h-32 px-3 py-2 border border-border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-6 rounded-[20px] border border-border bg-bg-elevated p-5 md:p-7 lg:w-[758px] lg:shrink-0"
+        >
+          <div className="flex items-center gap-2">
+            <FileField
+              label="이력서"
+              required
+              register={form.register("resume")}
+              error={form.formState.errors.resume?.message as string}
+              hint="PDF 파일을 업로드해 주세요."
+              displayName={displayName.resume}
+            />
+            <ArchiveButton
+              type="RESUME"
+              onClickResume={onclickArchiveButton}
+              isLoggedIn={user !== null}
+            />
           </div>
+
+          <div className="flex items-end gap-2">
+            <FileField
+              label="포트폴리오"
+              register={form.register("portfolio")}
+              displayName={displayName.portfolio}
+            />
+            <ArchiveButton
+              type="PORTFOLIO"
+              onClickResume={onclickArchiveButton}
+              isLoggedIn={user !== null}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label
+              className="text-sm font-medium text-text-primary"
+              htmlFor="job_position"
+            >
+              지원 직무 <span className="text-error">*</span>
+            </label>
+            <Input
+              id="job_position"
+              type="text"
+              placeholder="예: 프론트엔드 개발자"
+              {...form.register("job_position")}
+              className="h-11 w-full text-sm"
+            />
+            {form.formState.errors.job_position && (
+              <p className="text-xs text-error">
+                {form.formState.errors.job_position.message}
+              </p>
+            )}
+          </div>
+
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-2 text-base font-semibold text-text-primary">
+              연차
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {jobCareers.map((career) => (
+                <Chip
+                  key={career}
+                  size="large"
+                  active={form.watch("job_career") === career}
+                  onClick={() => {
+                    form.setValue("job_career", career);
+                    form.trigger("job_career");
+                  }}
+                >
+                  {career}
+                </Chip>
+              ))}
+            </div>
+          </fieldset>
+
+          <div className="flex flex-col gap-2">
+            <label
+              className="text-base font-semibold text-text-primary"
+              htmlFor="job_description"
+            >
+              채용 공고
+            </label>
+            <Textarea
+              id="job_description"
+              size="lg"
+              placeholder="지원하는 채용 공고의 직무 설명을 입력해 주세요."
+              {...form.register("job_description")}
+              className="h-40 w-full"
+            />
+          </div>
+
           <Button
             type="submit"
-            size={"large"}
+            size="large"
             className="w-full"
             disabled={isPending}
           >
             {isPending
               ? "이력서 분석 중입니다..."
-              : "이력서 분석하고 평가 · 면접 질문 받기"}
+              : "이력서 분석하고 면접 질문 받기"}
           </Button>
         </form>
+
+        <aside className="flex flex-col gap-5 rounded-[20px] border border-border bg-bg-elevated p-7 lg:w-[392px] lg:shrink-0">
+          <h2 className="text-xl font-semibold text-text-primary">
+            이런 도움을 받을 수 있어요
+          </h2>
+          {ANALYSIS_GUIDES.map((guide, index) => (
+            <div key={guide.title} className="flex flex-col gap-1.5 text-base">
+              <p className="font-semibold text-primary">
+                {String(index + 1).padStart(2, "0")} · {guide.title}
+              </p>
+              <p className="text-text-secondary">{guide.description}</p>
+            </div>
+          ))}
+        </aside>
       </div>
     </div>
   );

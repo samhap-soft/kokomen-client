@@ -1,6 +1,6 @@
 import { cn } from "../../utils/index.ts";
 import { cva, VariantProps } from "class-variance-authority";
-import React, { JSX, RefObject, useCallback } from "react";
+import React, { JSX, useCallback } from "react";
 
 type TextareaVariantProps = VariantProps<typeof textareaVariants>;
 
@@ -63,7 +63,7 @@ interface TextareaProps
       "size" | "children" | "dangerouslySetInnerHTML"
     >,
     TextareaVariantProps {
-  ref?: RefObject<HTMLTextAreaElement | null>;
+  ref?: React.Ref<HTMLTextAreaElement>;
   autoAdjust?: boolean;
   name: string;
 }
