@@ -34,6 +34,8 @@ const DESIGN_SYSTEM_IN_USE: [string, string][] = [
   ["ChevronRightIcon", "textButton"],
   ["ChevronUpIcon", "dropdown"],
   ["CloseIcon", "modal · sidebar · toast"],
+  ["HeartFilledIcon", "면접 기록 좋아요"],
+  ["HeartIcon", "면접 기록 좋아요"],
   ["InfoIcon", "toast"],
   ["MyProfileIcon", "gnb"],
   ["SearchIcon", "select"]
@@ -208,7 +210,7 @@ export const DesignSystem: Story = {
     <div className="bg-bg-base p-8">
       <Section
         title={`디자인 시스템 아이콘 (${DESIGN_SYSTEM_IN_USE.length}개)`}
-        description="Figma Foundation/Icon 30개 중 실제 호출부가 있는 것만 추렸다."
+        description="Figma Foundation/Icon 31개 중 실제 호출부가 있는 것만 추렸다."
       >
         <Grid>
           {DESIGN_SYSTEM_IN_USE.map(([name, where]) => {

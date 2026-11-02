@@ -1,13 +1,12 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
 import { useInfiniteObserver } from "@kokomen/utils";
 import { interviewHistoryKeys } from "@/utils/querykeys";
-import { RoundSpinner, Select } from "@kokomen/ui";
+import { HeartFilledIcon, HeartIcon, RoundSpinner, Select } from "@kokomen/ui";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   Calendar,
   Clock,
   Eye,
-  Heart,
   NotebookPen,
   TrendingUp,
   Trophy
@@ -198,7 +197,11 @@ export default function InterviewHistory() {
                             "text-volcano-6"
                           }`}
                         >
-                          <Heart className="w-4 h-4" />
+                          {interview.interview_already_liked ? (
+                            <HeartFilledIcon size={16} />
+                          ) : (
+                            <HeartIcon size={16} />
+                          )}
                           {interview.interview_like_count}
                         </div>
                         <div
