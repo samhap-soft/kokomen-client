@@ -1,7 +1,7 @@
 import { JSX } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRightIcon, textButtonVariants } from "@kokomen/ui";
+import { ChevronRightIcon } from "@kokomen/ui";
 
 const COMPANY_INFO_COLUMNS = [
   [
@@ -22,18 +22,21 @@ const POLICY_LINKS = [
   { href: "/terms/privacy", label: "개인정보 처리방침" }
 ] as const;
 
-/** Figma: Footer — 733:1361 */
+/** Figma: Component/Footer — 942:1387 */
 export const Footer = (): JSX.Element => {
   return (
     <footer className="bg-bg-layout">
       <div className="mx-auto flex max-w-[1220px] flex-col gap-2 px-5 py-16 xl:px-0">
-        <Image
-          src="/logo.png"
-          alt="꼬꼬면"
-          width={140}
-          height={35}
-          className="mb-2"
-        />
+        {/* 로고 이미지에서 캐릭터를 잘라내고 "꼬꼬면" 글자만 보여준다 (Figma 942:1318) */}
+        <div className="relative h-[50px] w-[84px] overflow-hidden">
+          <Image
+            src="/logo.svg"
+            alt="꼬꼬면"
+            width={148}
+            height={50}
+            className="absolute top-0 left-[-53px] h-full w-auto max-w-none"
+          />
+        </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-3">
           {COMPANY_INFO_COLUMNS.map((column, index) => (
             <dl key={index} className="flex flex-col gap-2 text-sm">
@@ -47,19 +50,15 @@ export const Footer = (): JSX.Element => {
               ))}
             </dl>
           ))}
-          <div className="flex flex-col md:items-end md:pt-4">
+          <div className="flex flex-col gap-2 md:items-end md:pt-4">
             {POLICY_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={textButtonVariants({
-                  variant: "primary",
-                  size: "small",
-                  className: "self-start md:self-end"
-                })}
+                className="inline-flex items-center gap-1 self-start text-sm text-primary transition-opacity hover:opacity-80 md:self-end"
               >
                 {link.label}
-                <ChevronRightIcon />
+                <ChevronRightIcon size={16} />
               </Link>
             ))}
           </div>

@@ -2,12 +2,13 @@ import { getUserInfo } from "@/domains/auth/api";
 import { getMemberInterviewResult } from "@/domains/members/api";
 import { MemberInterviewResult } from "@kokomen/types";
 import Header from "@/shared/header";
+import { Footer } from "@/shared/footer";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Button, Layout } from "@kokomen/ui";
+import { Button } from "@kokomen/ui";
 import { JSX } from "react";
 import { HelpCircle, Info, Users, Share2, Eye } from "lucide-react";
 import MemberTotalFeedback from "@/domains/members/components/memberTotalFeedback";
@@ -47,7 +48,7 @@ export default function MemberInterviewResultPage({
         pathname={`/members/interviews/${interviewId}`}
         image="/interviewResult.png"
       />
-      <Layout>
+      <main className="min-h-screen">
         <Header user={user} />
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -142,7 +143,8 @@ export default function MemberInterviewResultPage({
             </div>
           </div>
         </div>
-      </Layout>
+        <Footer />
+      </main>
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { getUserInfo } from "@/domains/auth/api";
 import Header from "@/shared/header";
+import { Footer } from "@/shared/footer";
 import { withCheckInServer } from "@/utils/auth";
 import {
   GetServerSidePropsContext,
@@ -99,6 +100,7 @@ export default function Dashboard({
           <Streak />
         </div>
         <SelectSection userInfo={userInfo} />
+        <Footer />
       </main>
     </>
   );

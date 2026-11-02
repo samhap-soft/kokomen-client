@@ -5,8 +5,8 @@ import {
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Layout } from "@kokomen/ui";
 import Header from "@/shared/header";
+import { Footer } from "@/shared/footer";
 import { JSX } from "react";
 import { getMemberInterviews } from "@/domains/members/api";
 import { MemberInterview } from "@kokomen/types";
@@ -39,7 +39,7 @@ export default function MemberInterviewPage({
         robots="index, follow"
         pathname={`/members/${memberId}`}
       />
-      <Layout>
+      <main className="min-h-screen">
         <Header user={user} />
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 ">
           {/* 멤버 정보 카드 */}
@@ -136,7 +136,8 @@ export default function MemberInterviewPage({
             />
           </div>
         </div>
-      </Layout>
+        <Footer />
+      </main>
     </>
   );
 }
