@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { Button, Modal, useToast } from "@kokomen/ui";
-import { AlertTriangle, Trash2, CheckCircle, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { deleteUser } from "@/domains/auth/api";
 import { useRouter } from "next/router";
 import { AxiosError } from "axios";
+
+const WITHDRAWAL_NOTICES: readonly string[] = [
+  "개인정보는 삭제되지만, 면접 기록은 삭제되지 않습니다.",
+  "누적 점수와 랭킹 정보는 삭제됩니다.",
+  "다른 사용자에게 공개된 면접 결과는 삭제됩니다.",
+  "탈퇴한 계정은 복구할 수 없습니다."
+];
 
 export default function Withdrawal() {
   const [confirmText, setConfirmText] = useState("");
@@ -58,63 +65,41 @@ export default function Withdrawal() {
   };
 
   return (
-    <div className="flex-1">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">회원 탈퇴</h1>
-        <p className="text-gray-600">계정을 영구적으로 삭제할 수 있습니다</p>
-      </div>
+    <div className="flex flex-col gap-6">
+      <h2 className="text-2xl font-bold text-text-primary">회원 탈퇴</h2>
 
-      <div className="w-full h-full flex justify-center items-center">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl w-3/4 min-w-[300px]">
-          <div className="space-y-6">
-            <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 className="font-semibold text-red-800 mb-2">주의사항</h3>
-                <ul className="text-sm text-red-700 space-y-1">
-                  <li>
-                    • 회원 탈퇴 시 개인정보는 삭제되지만, 면접 기록은 삭제되지
-                    않습니다
-                  </li>
-                  <li>• 점수, 랭킹 등 개인 정보가 모두 삭제됩니다</li>
-                  <li>• 탈퇴 후에는 복구가 불가능합니다</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                탈퇴 전 확인사항
-              </h3>
-              <div className="space-y-3 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                  <span>
-                    개인정보는 삭제되지만, 면접 기록은 삭제되지 않습니다
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                  <span>누적 점수와 랭킹이 초기화됩니다</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                  <span>다른 사용자에게 공개된 면접 결과도 삭제됩니다</span>
-                </div>
-              </div>
-            </div>
-
-            <Button
-              onClick={handleWithdrawalClick}
-              variant="danger"
-              className="w-full"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              회원 탈퇴 진행
-            </Button>
-          </div>
+      <section className="flex flex-col gap-6 rounded-[20px] border border-border bg-bg-elevated p-6 md:p-8">
+        <p className="text-xs font-medium text-error-text">
+          탈퇴 후에는 복구할 수 없어요
+        </p>
+        <div className="flex flex-col gap-2">
+          <h3 className="text-2xl font-semibold text-text-primary">
+            꼭 확인해 주세요
+          </h3>
+          <ul className="text-lg text-text-secondary">
+            {WITHDRAWAL_NOTICES.map((notice) => (
+              <li key={notice}>• {notice}</li>
+            ))}
+          </ul>
         </div>
-      </div>
+        <div className="flex justify-end gap-3">
+          <Button
+            size="large"
+            variant="none"
+            className="rounded-xl bg-error-bg text-text-primary hover:bg-error-bg-hover"
+            onClick={handleWithdrawalClick}
+          >
+            회원 탈퇴 진행
+          </Button>
+          <Button
+            size="large"
+            variant="secondary"
+            onClick={() => router.push("/dashboard")}
+          >
+            돌아가기
+          </Button>
+        </div>
+      </section>
 
       {/* 탈퇴 확인 모달 */}
       <Modal

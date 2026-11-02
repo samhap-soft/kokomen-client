@@ -1,4 +1,5 @@
 import { ResumeAnalysis, UserInfo } from "@kokomen/types";
+import { formatDotDate } from "@/utils/date";
 import {
   parseResumeAnalysisCategoryData,
   resumeEvaluation,
@@ -22,12 +23,6 @@ const SCORE_TICKS: readonly number[] = [0, 25, 50, 75, 100];
 // 종합 점수 도넛의 지름과 두께(px). Figma 938:1826 기준.
 const DONUT_SIZE: number = 264;
 const DONUT_STROKE: number = 24;
-
-const formatReportDate = (date: string): string => {
-  const d = new Date(date);
-  const pad = (n: number): string => String(n).padStart(2, "0");
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
-};
 
 function ScoreDonut({ score }: { score: number }): React.JSX.Element {
   const radius = (DONUT_SIZE - DONUT_STROKE) / 2;
@@ -226,7 +221,7 @@ export default function ResumeCombinedResult({
             {[
               analysis.jobPosition,
               analysis.jobCareer,
-              formatReportDate(analysis.createdAt)
+              formatDotDate(analysis.createdAt)
             ].map((label) => (
               <li key={label}>
                 <Chip

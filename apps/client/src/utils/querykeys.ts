@@ -18,14 +18,18 @@ interface InterviewHistoryParams {
 }
 
 type InterviewHistoryMethods = {
-  infinite: (
-    filters: [InterviewHistoryParams["sort"], InterviewHistoryParams["range"]]
+  page: (
+    filters: [
+      InterviewHistoryParams["sort"],
+      InterviewHistoryParams["range"],
+      number
+    ]
   ) => QueryKey;
 };
 const interviewHistoryKeys: QueryKeyFactory<InterviewHistoryMethods> = {
   all: ["interviewHistory"] as const,
-  infinite: (filters: string[]): QueryKey =>
-    [...interviewHistoryKeys.all, "infinite", ...filters] as const
+  page: (filters: (string | number)[]): QueryKey =>
+    [...interviewHistoryKeys.all, "page", ...filters] as const
 };
 
 // 인터뷰 관련 도메인
