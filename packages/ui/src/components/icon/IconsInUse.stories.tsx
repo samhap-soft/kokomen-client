@@ -206,7 +206,7 @@ export const DesignSystem: Story = {
     <div className="bg-bg-base p-8">
       <Section
         title={`디자인 시스템 아이콘 (${DESIGN_SYSTEM_IN_USE.length}개)`}
-        description="Figma Foundation/Icon 32개 중 실제 호출부가 있는 것만 추렸다."
+        description="Figma Foundation/Icon 43개 중 실제 호출부가 있는 것만 추렸다."
       >
         <Grid>
           {DESIGN_SYSTEM_IN_USE.map(([name, where]) => {

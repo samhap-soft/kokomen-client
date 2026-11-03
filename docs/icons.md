@@ -4,7 +4,7 @@
 
 | 갈래 | 개수 | 위치 | 성격 |
 |---|---|---|---|
-| 디자인 시스템 아이콘 | 32 | `packages/ui/src/components/icon/index.tsx` | Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24 |
+| 디자인 시스템 아이콘 | 43 | `packages/ui/src/components/icon/index.tsx` | Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24 |
 | lucide-react | 71 | `lucide-react` 패키지 | stroke 기반. 앱 화면에서 주로 사용 |
 | SVG 에셋 | 19 | `apps/client/public/` | 로고·일러스트. 아이콘 컴포넌트가 아님 |
 
@@ -16,7 +16,7 @@ Storybook: `Foundation/Icon`
 
 ---
 
-## 1. 디자인 시스템 아이콘 (32개)
+## 1. 디자인 시스템 아이콘 (43개)
 
 `@kokomen/ui` 에서 export 된다. 모두 `size`(기본 24)와 `className` 을 받고 색은 `currentColor` 를 따른다.
 
@@ -29,6 +29,8 @@ Storybook: `Foundation/Icon`
 | `ArrowDownwardIcon` | `icon_arrow-downward` | – |
 | `ArrowForwardIcon` | `icon_arrow-forward` | – |
 | `ArrowUpwardIcon` | `icon_arrow-upward` | – |
+| `BellIcon` | `icon_bell` | – |
+| `CameraIcon` | `icon_camera` | – |
 | `ChartIcon` | `icon_chart` | – |
 | `CheckIcon` | `icon_check` | 1 |
 | `CheckCircleIcon` | `icon_check-circle` | 1 |
@@ -38,25 +40,34 @@ Storybook: `Foundation/Icon`
 | `ChevronUpIcon` | `icon_chevron-up` | 1 |
 | `ClockIcon` | `icon_clock` | – |
 | `CloseIcon` | `icon_close` | 3 |
+| `EditIcon` | `icon_edit` | – |
+| `ExternalLinkIcon` | `icon_externallink` | – |
+| `EyeIcon` | `icon_eye` | – |
 | `HeartFilledIcon` | `icon_heart` (state=filled) | 3 |
 | `HeartIcon` | `icon_heart` (state=default) | 3 |
 | `HelpIcon` | `icon_help` | – |
+| `HomeIcon` | `icon_home` | – |
 | `InfoIcon` | `icon_info` | 1 |
 | `MedalIcon` | `icon_medal` | – |
+| `MenuIcon` | `icon_menu` | – |
 | `MicIcon` | `icon_mic` | – |
 | `MicOffIcon` | `icon_mic_off` | – |
 | `MoneyIcon` | `icon_money` | – |
 | `MyProfileIcon` | `icon_my_profile` | 1 |
+| `RotateCwIcon` | `icon_rotateccw` (모양은 시계 방향) | – |
 | `SearchIcon` | `icon_search` | 1 |
+| `SettingIcon` | `icon_setting` | – |
 | `StarIcon` | `icon_star` | – |
 | `ShareIcon` | `icon_share` | 1 |
 | `SubtractCircleIcon` | `icon_subtract_circle` | – |
 | `SubtractionIcon` | `icon_subtraction` | – |
+| `TrashIcon` | `icon_trash` | – |
 | `UploadIcon` | `icon_upload` | – |
+| `UserIcon` | `icon_user` | – |
 | `VolumeOffIcon` | `icon_volume_off` | – |
 | `VolumeOnIcon` | `icon_volume_on` | – |
 
-`–` 인 20개는 Figma 에서 옮겨왔지만 아직 제품 코드에 호출부가 없다(스토리에만 등장하는 것 포함).
+`–` 인 31개는 Figma 에서 옮겨왔지만 아직 제품 코드에 호출부가 없다(스토리에만 등장하는 것 포함).
 대응하는 lucide 아이콘을 쓰고 있는 자리를 하나씩 바꿔 나가면 된다.
 
 ---
