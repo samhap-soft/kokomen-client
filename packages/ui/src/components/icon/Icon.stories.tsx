@@ -7,7 +7,7 @@ import type { IconProps } from "./index";
 /**
  * 프로젝트 아이콘 목록. 전체 인벤토리는 `docs/icons.md` 에 정리돼 있다.
  *
- * - 디자인 시스템 아이콘 30개 — Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24
+ * - 디자인 시스템 아이콘 43개 — Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24
  * - lucide-react — stroke 기반. 아직 대응 아이콘이 없는 앱 화면에서 쓴다
  */
 const meta: Meta = {

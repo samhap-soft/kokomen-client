@@ -1,10 +1,8 @@
 import { toggleMemberInterviewLike } from "@/domains/members/api";
 import { useMutation } from "@tanstack/react-query";
-import { CheckCircle, Eye, Heart, MessageCircle, Trophy } from "lucide-react";
 import { JSX, useState } from "react";
-import { useToast } from "@kokomen/ui";
 import { isAxiosError } from "axios";
-import { Button } from "@kokomen/ui";
+import { Button, HeartFilledIcon, HeartIcon, useToast } from "@kokomen/ui";
 import { MemberInterviewResult } from "@kokomen/types";
 import { CamelCasedProperties } from "@/utils/convertConvention";
 import { captureButtonEvent } from "@/utils/analytics";
@@ -64,89 +62,57 @@ export default function MemberTotalFeedback({
     }
   });
 
+  const metrics: { label: string; value: string; highlight?: boolean }[] = [
+    { label: "총점", value: `${result.totalScore}점`, highlight: true },
+    { label: "질문 수", value: `${result.feedbacks.length}개` },
+    { label: "좋아요", value: `${totalLikedCount}` },
+    { label: "조회수", value: `${result.interviewViewCount}` }
+  ];
+
   return (
-    <div className="p-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        {/* 총점 */}
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
-            <Trophy className="w-8 h-8 text-white" />
+    <section className="flex flex-col gap-6 rounded-[20px] border border-border bg-bg-elevated p-6 md:p-8">
+      <dl className="grid grid-cols-2 gap-6 md:grid-cols-4">
+        {metrics.map((metric) => (
+          <div key={metric.label} className="flex flex-col gap-1.5">
+            <dt className="text-sm text-text-secondary">{metric.label}</dt>
+            <dd
+              className={`text-3xl font-bold ${
+                metric.highlight ? "text-primary" : "text-text-primary"
+              }`}
+            >
+              {metric.value}
+            </dd>
           </div>
-          <p className="text-2xl font-bold text-gray-900">
-            {result.totalScore}
-          </p>
-          <p className="text-sm text-gray-600">총점</p>
-        </div>
-
-        {/* 질문 수 */}
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <MessageCircle className="w-8 h-8 text-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">
-            {result.feedbacks.length}
-          </p>
-          <p className="text-sm text-gray-600">질문 수</p>
-        </div>
-
-        {/* 전체 좋아요 수 */}
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-8 h-8 text-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">{totalLikedCount}</p>
-          <p className="text-sm text-gray-600">좋아요</p>
-        </div>
-
-        <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-3 to-purple-6 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Eye className="w-8 h-8 text-white" />
-          </div>
-          <p className="text-2xl font-bold text-gray-900">
-            {result.interviewViewCount}
-          </p>
-          <p className="text-sm text-gray-600">조회수</p>
-        </div>
+        ))}
+      </dl>
+      <hr className="border-border" />
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-xl font-semibold text-text-primary">종합 평가</h2>
+        {/* Figma 에는 면접 단위 좋아요 버튼이 없지만 기존 기능을 유지하려고 질문별 좋아요와 같은 모양으로 둔다 */}
+        <Button
+          variant="secondary"
+          aria-busy={isPending}
+          aria-pressed={isTotalLikedIncludesMine}
+          aria-label="전체 인터뷰 좋아요"
+          name={`interview-like-button-${interviewId}`}
+          type="button"
+          onClick={() =>
+            !isPending && toggleInterviewLikeMutation(isTotalLikedIncludesMine)
+          }
+          prefixIcon={
+            isTotalLikedIncludesMine ? (
+              <HeartFilledIcon className="text-primary" />
+            ) : (
+              <HeartIcon />
+            )
+          }
+        >
+          {totalLikedCount}
+        </Button>
       </div>
-
-      <div className="bg-gradient-to-r from-blue-1 to-blue-2 rounded-2xl p-6 border border-blue-3">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-5 to-blue-6 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-white" />
-            </div>
-            <h2 className="text-xl font-bold text-gray-900">종합 평가</h2>
-          </div>
-          <Button
-            optimistic
-            disabled={isPending}
-            aria-busy={isPending}
-            onClick={() =>
-              toggleInterviewLikeMutation(isTotalLikedIncludesMine)
-            }
-            name={`interview-like-button-${interviewId}`}
-            role="button"
-            type="button"
-            variant="secondary"
-            className={
-              isTotalLikedIncludesMine
-                ? "bg-volcano-3 text-volcano-6 hover:bg-volcano-4"
-                : undefined
-            }
-            aria-label="전체 인터뷰 좋아요"
-          >
-            <Heart
-              className={`w-5 h-5 mr-2 ${isTotalLikedIncludesMine ? "fill-current" : ""}`}
-            />
-            <span className="text-sm font-medium">{totalLikedCount}</span>
-          </Button>
-        </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-white/50">
-          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-            {result.totalFeedback}
-          </p>
-        </div>
-      </div>
-    </div>
+      <p className="text-lg whitespace-pre-wrap text-text-secondary">
+        {result.totalFeedback}
+      </p>
+    </section>
   );
 }

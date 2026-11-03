@@ -1,261 +1,223 @@
 import { getInterviewHistory } from "@/domains/dashboard/api";
-import { useInfiniteObserver } from "@kokomen/utils";
+import { formatDotDate } from "@/utils/date";
 import { interviewHistoryKeys } from "@/utils/querykeys";
-import { RoundSpinner, Select } from "@kokomen/ui";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import {
-  Calendar,
-  Clock,
-  Eye,
-  Heart,
-  NotebookPen,
-  TrendingUp,
-  Trophy
-} from "lucide-react";
+  getRouterPage,
+  setRouterPage
+} from "@/domains/dashboard/utils/pageQuery";
+import {
+  Badge,
+  buttonVariants,
+  ChevronRightIcon,
+  Chip,
+  Pagination,
+  RoundSpinner,
+  Select,
+  textButtonVariants
+} from "@kokomen/ui";
+import { InterviewHistory as InterviewHistoryItem } from "@kokomen/types";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { JSX, useState } from "react";
 
-export default function InterviewHistory() {
-  const [sort, setSort] = useState<"desc" | "asc">("desc");
-  const [range, setRange] = useState<"IN_PROGRESS" | "FINISHED" | "ALL">("ALL");
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError
-  } = useInfiniteQuery({
-    queryKey: interviewHistoryKeys.infinite([sort, range]),
-    queryFn: ({ pageParam = 0 }) =>
-      getInterviewHistory({
-        page: pageParam,
-        size: 10,
-        sort: sort,
-        range: range
-      }),
-    getNextPageParam: (lastPage, allPages) => {
-      // 마지막 페이지가 10개 미만이면 더 이상 페이지가 없음
-      if (lastPage.length < 10) {
-        return undefined;
-      }
-      // 다음 페이지 번호 반환 (0부터 시작)
-      return allPages.length;
-    },
-    initialPageParam: 0
+const PAGE_SIZE: number = 10;
+
+type Range = "ALL" | "FINISHED" | "IN_PROGRESS";
+type Sort = "desc" | "asc";
+
+const RANGE_FILTERS: { label: string; value: Range }[] = [
+  { label: "전체", value: "ALL" },
+  { label: "완료", value: "FINISHED" },
+  { label: "진행 중", value: "IN_PROGRESS" }
+];
+
+function Divider(): JSX.Element {
+  return <span aria-hidden className="h-2.5 w-px shrink-0 bg-gray-5" />;
+}
+
+function Dot(): JSX.Element {
+  return (
+    <span
+      aria-hidden
+      className="size-0.5 shrink-0 rounded-full bg-text-secondary"
+    />
+  );
+}
+
+function InterviewRow({
+  interview
+}: {
+  interview: InterviewHistoryItem;
+}): JSX.Element {
+  const isFinished = interview.interview_state === "FINISHED";
+  return (
+    <li className="flex flex-col gap-4 border-b border-border py-6 md:flex-row md:items-center md:gap-6">
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex items-center gap-2">
+          {isFinished && (
+            <Badge appearance="weak" type="brand">
+              완료
+            </Badge>
+          )}
+          <p className="text-sm text-text-secondary">
+            {interview.interview_category}
+          </p>
+        </div>
+        <p className="text-lg font-semibold text-text-primary">
+          {interview.root_question}
+        </p>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-secondary">
+          <div className="flex items-center gap-1.5">
+            <span>{formatDotDate(interview.created_at)}</span>
+            <Divider />
+            <span>
+              {interview.cur_answer_count}/{interview.max_question_count}문제
+            </span>
+            <Dot />
+            <span>
+              {isFinished
+                ? `점수 변동 ${interview.score > 0 ? "+" : ""}${interview.score}점`
+                : "진행 중"}
+            </span>
+          </div>
+          {isFinished && (
+            <Link
+              href={`/members/interviews/${interview.interview_id}`}
+              className={textButtonVariants({
+                variant: "secondary",
+                size: "small"
+              })}
+            >
+              공개된 기록 보기
+              <ChevronRightIcon size={14} />
+            </Link>
+          )}
+        </div>
+      </div>
+      <Link
+        href={
+          isFinished
+            ? `/interviews/${interview.interview_id}/result`
+            : `/interviews/${interview.interview_id}?mode=${interview.interview_mode}`
+        }
+        className={buttonVariants({
+          variant: "secondary",
+          className: "shrink-0 self-start md:self-center"
+        })}
+      >
+        {isFinished ? "보고서 보기" : "이어하기"}
+      </Link>
+    </li>
+  );
+}
+
+export default function InterviewHistory(): JSX.Element {
+  const router = useRouter();
+  const page = getRouterPage(router);
+  const [sort, setSort] = useState<Sort>("desc");
+  const [range, setRange] = useState<Range>("ALL");
+
+  // /interviews/me 는 전체 개수를 주지 않는다. 한 개를 더 받아 다음 페이지가 있는지만 판단한다.
+  const { data, isLoading, isError } = useQuery({
+    queryKey: interviewHistoryKeys.page([sort, range, page]),
+    queryFn: () =>
+      getInterviewHistory({ page, size: PAGE_SIZE + 1, sort, range }),
+    placeholderData: keepPreviousData
   });
 
-  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const interviews = (data ?? []).slice(0, PAGE_SIZE);
+  const hasNext = (data?.length ?? 0) > PAGE_SIZE;
 
-  const handleIntersection = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  useInfiniteObserver(loadMoreRef, handleIntersection);
-
-  // 모든 페이지의 데이터를 평탄화
-  const allInterviews = data?.pages.flat() || [];
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
-  };
-
-  const getStatusBadge = (status: string) => {
-    if (status === "FINISHED") {
-      return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          완료
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-        진행중
-      </span>
-    );
+  const changeFilter = (next: { sort?: Sort; range?: Range }): void => {
+    if (next.sort) setSort(next.sort);
+    if (next.range) setRange(next.range);
+    setRouterPage(router, 0);
   };
 
   return (
-    <div className="flex-1">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">면접 기록</h1>
-        <p className="text-gray-600">나의 면접 히스토리를 확인해보세요</p>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-2xl font-bold text-text-primary">면접 기록</h2>
+        <p className="text-sm text-text-secondary">
+          이전 면접을 복습하거나 진행 중인 면접을 이어가세요.
+        </p>
       </div>
-      <div className="flex gap-2 mb-4">
+
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex gap-2" role="group" aria-label="면접 상태">
+          {RANGE_FILTERS.map((filter) => (
+            <Chip
+              key={filter.value}
+              active={range === filter.value}
+              onClick={() => changeFilter({ range: filter.value })}
+            >
+              {filter.label}
+            </Chip>
+          ))}
+        </div>
         <Select
-          className="md:w-44 w-32"
-          placeholder="면접 상태"
-          value={range}
-          options={[
-            { value: "ALL", label: "전체" },
-            { value: "FINISHED", label: "완료" },
-            { value: "IN_PROGRESS", label: "진행중" }
-          ]}
-          onChange={(value) => {
-            setRange(value as "IN_PROGRESS" | "FINISHED" | "ALL");
-          }}
-        />
-        <Select
-          className="md:w-44 w-32"
-          placeholder="날짜 정렬"
+          className="w-28"
+          size="small"
+          aria-label="날짜 정렬"
           value={sort}
           options={[
-            { value: "desc", label: "최신순", disabled: false },
-            { value: "asc", label: "오래된순", disabled: false }
+            { value: "desc", label: "최신순" },
+            { value: "asc", label: "오래된순" }
           ]}
-          onChange={(value) => setSort(value as "desc" | "asc")}
+          onChange={(value) => changeFilter({ sort: value as Sort })}
         />
       </div>
+
       {isLoading && (
-        <div className="flex justify-center items-center py-12">
+        <div className="flex justify-center py-12">
           <RoundSpinner size="xl" />
         </div>
       )}
 
       {isError && (
-        <div className="text-center py-12">
-          <p className="text-red-600">
-            데이터를 불러오는 중 오류가 발생했습니다.
-          </p>
-        </div>
+        <p className="py-12 text-center text-error">
+          데이터를 불러오는 중 오류가 발생했습니다.
+        </p>
       )}
 
-      {!isLoading && allInterviews.length === 0 && (
-        <div className="text-center py-12">
-          <Trophy className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+      {!isLoading && !isError && interviews.length === 0 && (
+        <div className="flex flex-col items-center gap-4 py-12 text-center">
+          <p className="text-lg font-semibold text-text-primary">
             아직 면접 기록이 없습니다
-          </h3>
-          <p className="text-gray-600 mb-6">첫 번째 면접을 시작해보세요!</p>
+          </p>
+          <p className="text-sm text-text-secondary">
+            첫 번째 면접을 시작해보세요!
+          </p>
           <Link
             href="/interviews"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+            className={buttonVariants({ variant: "primary" })}
           >
             면접 시작하기
           </Link>
         </div>
       )}
 
-      {allInterviews.length > 0 && (
-        <div className="space-y-4">
-          {allInterviews.map((interview) => (
-            <div
-              key={interview.interview_id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between md:flex-row md:w-auto w-full flex-col gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {interview.interview_category}
-                    </h3>
-                    {getStatusBadge(interview.interview_state)}
-                  </div>
-
-                  <p className="text-gray-600 mb-4 line-clamp-2">
-                    {interview.root_question}
-                  </p>
-
-                  <div className="flex items-center gap-6 text-sm text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {formatDate(interview.created_at)}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {interview.cur_answer_count}/
-                      {interview.max_question_count}문제
-                    </div>
-                    {interview.interview_state === "FINISHED" && (
-                      <div
-                        className={`flex items-center gap-1 ${
-                          interview.score > 0
-                            ? "text-green-6"
-                            : "text-volcano-6"
-                        }`}
-                      >
-                        <TrendingUp className="w-4 h-4" />
-                        {interview.score}점
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-6 text-sm text-gray-500 mt-2">
-                    {interview.interview_state === "FINISHED" && (
-                      <>
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-4 h-4" />
-                          {interview.interview_view_count}
-                        </div>
-                        <div
-                          className={`flex items-center gap-1 ${
-                            interview.interview_already_liked &&
-                            "text-volcano-6"
-                          }`}
-                        >
-                          <Heart className="w-4 h-4" />
-                          {interview.interview_like_count}
-                        </div>
-                        <div
-                          className={`flex items-center gap-1 ${
-                            interview.submitted_answer_memo_count > 0 &&
-                            "text-yellow-6"
-                          }`}
-                        >
-                          <NotebookPen className="w-4 h-4" />
-                          {interview.submitted_answer_memo_count}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <div className="md:ml-4 md:w-auto w-full flex flex-col gap-2">
-                  <Link
-                    href={
-                      interview.interview_state === "FINISHED"
-                        ? `/interviews/${interview.interview_id}/result`
-                        : `/interviews/${interview.interview_id}?mode=${interview.interview_mode}`
-                    }
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-primary bg-primary-bg-light transition-colors md:w-auto w-full justify-center"
-                  >
-                    {interview.interview_state === "FINISHED"
-                      ? "보고서 보기"
-                      : "이어하기"}
-                  </Link>
-                  {interview.interview_state === "FINISHED" && (
-                    <Link
-                      href={`/members/interviews/${interview.interview_id}`}
-                      className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary text-text-light-solid md:w-auto w-full justify-center"
-                    >
-                      공개된 결과 보기
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+      {interviews.length > 0 && (
+        <>
+          <ul className="flex flex-col">
+            {interviews.map((interview) => (
+              <InterviewRow
+                key={interview.interview_id}
+                interview={interview}
+              />
+            ))}
+          </ul>
+          {(page > 0 || hasNext) && (
+            <Pagination
+              className="self-center"
+              currentPage={page}
+              hasNext={hasNext}
+              onPageChange={(nextPage) => setRouterPage(router, nextPage)}
+            />
+          )}
+        </>
       )}
-
-      {/* 무한스크롤 트리거 */}
-      <div ref={loadMoreRef} className="py-8">
-        {isFetchingNextPage && (
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-          </div>
-        )}
-        {!hasNextPage && allInterviews.length > 0 && (
-          <div className="text-center text-gray-500 text-sm">
-            모든 면접 기록을 불러왔습니다
-          </div>
-        )}
-      </div>
     </div>
   );
 }

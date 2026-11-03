@@ -2,6 +2,7 @@ import { getUserInfo } from "@/domains/auth/api";
 import { getResumeEvaluationResult } from "@/domains/resume/api";
 import { ResumeEvaluationResult as ResumeEvaluationResultComponent } from "@/domains/resume/components";
 import Header from "@/shared/header";
+import { Footer } from "@/shared/footer";
 import { SEO } from "@/shared/seo";
 import {
   CamelCasedProperties,
@@ -32,6 +33,7 @@ export default function ResumeEvalResultPage({
         <div className="container mx-auto px-6 pt-6">
           <ResumeEvaluationResultComponent report={resumeEvaluationState} />
         </div>
+        <Footer />
       </main>
     </>
   );

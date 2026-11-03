@@ -1,26 +1,31 @@
 import { getUserInfo } from "@/domains/auth/api";
 import Header from "@/shared/header";
+import { Footer } from "@/shared/footer";
 import { withCheckInServer } from "@/utils/auth";
 import {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
   InferGetServerSidePropsType
 } from "next";
-import { Coins, User, Star } from "lucide-react";
 import SelectSection from "@/domains/dashboard/components/selectSection";
 import { JSX } from "react";
-import { getPercentileDisplay } from "@/utils/rankDisplay";
 import { SEO } from "@/shared/seo";
-import { Rank, Percentile } from "@kokomen/ui";
+import { Chip, MyProfileIcon } from "@kokomen/ui";
 import { UserInfo } from "@kokomen/types";
 import Streak from "@/domains/dashboard/components/streak";
 
 export default function Dashboard({
   userInfo
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
-  const percentile = userInfo
-    ? Math.round((userInfo.rank / userInfo.total_member_count) * 100)
-    : 0;
+  const percentile = Math.round(
+    (userInfo.rank / userInfo.total_member_count) * 100
+  );
+  const summaries: string[] = [
+    `${userInfo.rank}위`,
+    `상위 ${percentile}%`,
+    `${userInfo.score ?? 0}점`,
+    `${userInfo.token_count ?? 0} 토큰`
+  ];
 
   return (
     <>
@@ -30,75 +35,54 @@ export default function Dashboard({
         pathname="/dashboard"
       />
 
-      <main className="min-h-screen bg-bg-elevated">
+      <main className="min-h-screen">
         <Header user={userInfo} />
-        <div className="mb-2 p-4 max-w-[1280px] mx-auto">
-          <div className="rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 bg-bg-elevated">
-            <div className="flex items-center justify-between md:flex-row flex-col gap-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary-hover to-primary rounded-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold ">
-                    {userInfo?.nickname || "사용자"}
-                  </h1>
-                </div>
-              </div>
-              <div className="text-right flex items-center gap-5 flex-col md:flex-row">
-                {/* 랭킹 표시 */}
-                <div className="flex items-center gap-2">
-                  <Rank rank={userInfo?.rank} />
-                  <Percentile
-                    rank={userInfo?.rank}
-                    totalMemberCount={userInfo?.total_member_count}
-                  />
-                </div>
-                <div className="flex items-center gap-2 ">
-                  {/* 점수 표시 */}
-                  <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-primary-hover to-primary text-text-light-solid rounded-xl px-4 py-2">
-                    <Star className="w-5 h-5" />
-                    <span>{userInfo?.score || 0}점</span>
-                  </div>
-
-                  {/* 토큰 표시 */}
-                  <div className="flex items-center gap-2 text-lg font-semibold bg-gradient-to-br from-yellow-4 to-yellow-6 text-text-light-solid rounded-xl px-4 py-2">
-                    <Coins className="w-5 h-5" />
-                    <span>{userInfo?.token_count || 0} 토큰</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 랭킹 진행 바 */}
-            {userInfo && (
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm">전체 멤버 중 위치</span>
-                  <span
-                    className={`text-sm font-medium ${
-                      getPercentileDisplay(percentile).color
-                    }`}
-                  >
-                    상위 {percentile}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${100 - percentile}%` }}
-                  />
-                </div>
-                <div className="flex justify-between mt-1 text-xs text-gray-500">
-                  <span>{userInfo.total_member_count}위</span>
-                  <span>1위</span>
-                </div>
-              </div>
-            )}
+        <div className="mx-auto flex w-full max-w-[1182px] flex-col gap-[50px] px-5 pt-8 pb-[100px] xl:px-0">
+          <div className="flex flex-col gap-5">
+            <h1 className="text-[36px] leading-9 font-bold text-text-primary">
+              마이페이지
+            </h1>
+            <p className="text-xl font-medium text-text-secondary">
+              쌓아온 연습을 돌아보고, 다음 면접을 준비해 보세요.
+            </p>
           </div>
-          <Streak />
+
+          <section className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-1.5">
+                <MyProfileIcon size={48} className="text-primary" />
+                <div className="flex flex-col gap-1">
+                  <p className="text-2xl font-bold text-text-primary">
+                    {userInfo.nickname || "사용자"}
+                  </p>
+                  <p className="text-sm text-text-secondary">
+                    나의 면접 성장 기록
+                  </p>
+                </div>
+              </div>
+              <ul
+                className="flex flex-wrap gap-2"
+                aria-label="내 순위와 보유 토큰"
+              >
+                {summaries.map((summary) => (
+                  <li key={summary}>
+                    <Chip
+                      size="large"
+                      className="pointer-events-none"
+                      tabIndex={-1}
+                    >
+                      {summary}
+                    </Chip>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Streak />
+          </section>
+
+          <SelectSection userInfo={userInfo} />
         </div>
-        <SelectSection userInfo={userInfo} />
+        <Footer />
       </main>
     </>
   );

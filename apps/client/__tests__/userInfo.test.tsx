@@ -29,10 +29,9 @@ describe("ChangeNickname 컴포넌트 테스트", () => {
     renderWithProviders(<ChangeNickname userInfo={mockUserInfo} />);
 
     expect(screen.getByText("닉네임 변경")).toBeInTheDocument();
-    expect(
-      screen.getByText("새로운 닉네임으로 변경할 수 있습니다")
-    ).toBeInTheDocument();
     expect(screen.getByText("현재 닉네임")).toBeInTheDocument();
+    expect(screen.getByText("새 닉네임")).toBeInTheDocument();
+    expect(screen.getByText("다시 생성")).toBeInTheDocument();
     expect(screen.getByText("테스트유저")).toBeInTheDocument();
     expect(screen.getByText("저장하기")).toBeInTheDocument();
   });
@@ -228,27 +227,23 @@ describe("Withdrawal 컴포넌트 테스트", () => {
     renderWithProviders(<Withdrawal />);
 
     expect(screen.getByText("회원 탈퇴")).toBeInTheDocument();
-    expect(
-      screen.getByText("계정을 영구적으로 삭제할 수 있습니다")
-    ).toBeInTheDocument();
-    expect(screen.getByText("주의사항")).toBeInTheDocument();
-    expect(screen.getByText("탈퇴 전 확인사항")).toBeInTheDocument();
+    expect(screen.getByText("탈퇴 후에는 복구할 수 없어요")).toBeInTheDocument();
+    expect(screen.getByText("꼭 확인해 주세요")).toBeInTheDocument();
     expect(screen.getByText("회원 탈퇴 진행")).toBeInTheDocument();
+    expect(screen.getByText("돌아가기")).toBeInTheDocument();
   });
 
   it("주의사항이 올바르게 표시됩니다", () => {
     renderWithProviders(<Withdrawal />);
 
     expect(
-      screen.getByText(
-        /회원 탈퇴 시 개인정보는 삭제되지만, 면접 기록은 삭제되지 않습니다/
-      )
+      screen.getByText(/개인정보는 삭제되지만, 면접 기록은 삭제되지 않습니다/)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/점수, 랭킹 등 개인 정보가 모두 삭제됩니다/)
+      screen.getByText(/누적 점수와 랭킹 정보는 삭제됩니다/)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/탈퇴 후에는 복구가 불가능합니다/)
+      screen.getByText(/탈퇴한 계정은 복구할 수 없습니다/)
     ).toBeInTheDocument();
   });
 

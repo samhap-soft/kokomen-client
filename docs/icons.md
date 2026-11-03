@@ -4,7 +4,7 @@
 
 | 갈래 | 개수 | 위치 | 성격 |
 |---|---|---|---|
-| 디자인 시스템 아이콘 | 30 | `packages/ui/src/components/icon/index.tsx` | Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24 |
+| 디자인 시스템 아이콘 | 43 | `packages/ui/src/components/icon/index.tsx` | Figma Foundation/Icon 에서 옮겨온 fill 기반 24x24 |
 | lucide-react | 71 | `lucide-react` 패키지 | stroke 기반. 앱 화면에서 주로 사용 |
 | SVG 에셋 | 19 | `apps/client/public/` | 로고·일러스트. 아이콘 컴포넌트가 아님 |
 
@@ -16,7 +16,7 @@ Storybook: `Foundation/Icon`
 
 ---
 
-## 1. 디자인 시스템 아이콘 (30개)
+## 1. 디자인 시스템 아이콘 (43개)
 
 `@kokomen/ui` 에서 export 된다. 모두 `size`(기본 24)와 `className` 을 받고 색은 `currentColor` 를 따른다.
 
@@ -29,36 +29,53 @@ Storybook: `Foundation/Icon`
 | `ArrowDownwardIcon` | `icon_arrow-downward` | – |
 | `ArrowForwardIcon` | `icon_arrow-forward` | – |
 | `ArrowUpwardIcon` | `icon_arrow-upward` | – |
+| `BellIcon` | `icon_bell` | – |
+| `CameraIcon` | `icon_camera` | – |
 | `ChartIcon` | `icon_chart` | – |
 | `CheckIcon` | `icon_check` | 1 |
 | `CheckCircleIcon` | `icon_check-circle` | 1 |
 | `ChevronDownIcon` | `icon_chevron-down` | 2 |
-| `ChevronLeftIcon` | `icon_chevron_left` | – |
+| `ChevronLeftIcon` | `icon_chevron_left` | 1 |
 | `ChevronRightIcon` | `icon_chevron_right` | 1 |
 | `ChevronUpIcon` | `icon_chevron-up` | 1 |
 | `ClockIcon` | `icon_clock` | – |
 | `CloseIcon` | `icon_close` | 3 |
+| `EditIcon` | `icon_edit` | – |
+| `ExternalLinkIcon` | `icon_externallink` | – |
+| `EyeIcon` | `icon_eye` | – |
+| `HeartFilledIcon` | `icon_heart` (state=filled) | 3 |
+| `HeartIcon` | `icon_heart` (state=default) | 3 |
 | `HelpIcon` | `icon_help` | – |
+| `HomeIcon` | `icon_home` | – |
 | `InfoIcon` | `icon_info` | 1 |
 | `MedalIcon` | `icon_medal` | – |
+| `MenuIcon` | `icon_menu` | – |
 | `MicIcon` | `icon_mic` | – |
 | `MicOffIcon` | `icon_mic_off` | – |
 | `MoneyIcon` | `icon_money` | – |
 | `MyProfileIcon` | `icon_my_profile` | 1 |
+| `RotateCwIcon` | `icon_rotateccw` (모양은 시계 방향) | – |
 | `SearchIcon` | `icon_search` | 1 |
+| `SettingIcon` | `icon_setting` | – |
 | `StarIcon` | `icon_star` | – |
+| `ShareIcon` | `icon_share` | 1 |
 | `SubtractCircleIcon` | `icon_subtract_circle` | – |
 | `SubtractionIcon` | `icon_subtraction` | – |
+| `TrashIcon` | `icon_trash` | – |
 | `UploadIcon` | `icon_upload` | – |
+| `UserIcon` | `icon_user` | – |
 | `VolumeOffIcon` | `icon_volume_off` | – |
 | `VolumeOnIcon` | `icon_volume_on` | – |
 
-`–` 인 20개는 Figma 에서 옮겨왔지만 아직 제품 코드에 호출부가 없다(스토리에만 등장하는 것 포함).
+`–` 인 31개는 Figma 에서 옮겨왔지만 아직 제품 코드에 호출부가 없다(스토리에만 등장하는 것 포함).
 대응하는 lucide 아이콘을 쓰고 있는 자리를 하나씩 바꿔 나가면 된다.
 
 ---
 
 ## 2. lucide-react (71개)
+
+> 2026-11-02: `Heart` 는 `HeartIcon` · `HeartFilledIcon` 으로, 공개 면접 결과의 `Share2` 는 `ShareIcon` 으로 옮겼다.
+> 아래 표의 나머지 개수는 이전 집계 기준이다.
 
 앱과 `packages/ui` 양쪽에서 import 해 쓰는 아이콘이다. 사용 파일 수 순.
 스토리 파일은 집계에서 뺐다.
@@ -74,7 +91,6 @@ Storybook: `Foundation/Icon`
 | `AlertTriangle` | 4 |
 | `Calendar` | 4 |
 | `Eye` | 4 |
-| `Heart` | 4 |
 | `Loader2` | 4 |
 | `MessageSquare` | 4 |
 | `Star` | 4 |

@@ -1,6 +1,13 @@
-import ProfileSettingForm from "@/domains/auth/components/profilesettingForm";
+import {
+  ProfileSetting,
+  ProfileSettingType
+} from "@/domains/auth/components/profilesettingForm";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { useForm } from "react-hook-form";
+// @ts-expect-error : 선언 파일 없음
+import { getRandomNickname } from "@woowa-babble/random-nickname";
 import { UserInfo } from "@kokomen/types";
-import { Modal, Button } from "@kokomen/ui";
+import { Modal, Button, Input } from "@kokomen/ui";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useMutation } from "@tanstack/react-query";
@@ -18,6 +25,15 @@ export default function ChangeNickname({ userInfo }: ChangeNicknameProps) {
   const [formData, setFormData] = useState<{ nickname: string } | null>(null);
   const router = useRouter();
   const { error: errorToast } = useToast();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm<ProfileSettingType>({
+    resolver: standardSchemaResolver(ProfileSetting),
+    defaultValues: { nickname: userInfo.nickname }
+  });
 
   const { mutate: updateUserProfileMutation, isPending } = useMutation({
     mutationFn: updateUserProfile,
@@ -35,7 +51,7 @@ export default function ChangeNickname({ userInfo }: ChangeNicknameProps) {
     }
   });
 
-  const handleFormSubmit = (data: { nickname: string }) => {
+  const handleFormSubmit = (data: ProfileSettingType): void => {
     setFormData(data);
     setIsConfirmModalOpen(true);
   };
@@ -51,30 +67,59 @@ export default function ChangeNickname({ userInfo }: ChangeNicknameProps) {
   };
 
   return (
-    <div className="flex-1">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">닉네임 변경</h1>
-        <p className="text-gray-600">새로운 닉네임으로 변경할 수 있습니다</p>
-      </div>
+    <div className="flex flex-col gap-6">
+      <h2 className="text-2xl font-bold text-text-primary">닉네임 변경</h2>
 
-      <div className="w-full h-full flex justify-center items-center">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-md w-3/4 min-w-[300px]">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              현재 닉네임
-            </h2>
-            <p className="text-gray-600 bg-gray-50 px-3 py-2 rounded-md">
-              {userInfo.nickname}
-            </p>
-          </div>
-
-          <ProfileSettingForm
-            userInfo={userInfo}
-            redirectTo="/dashboard"
-            onFormSubmit={handleFormSubmit}
-          />
+      <section className="flex flex-col gap-6 rounded-[20px] border border-border bg-bg-elevated p-6 md:p-8">
+        <div className="flex flex-col gap-3">
+          <p className="text-sm font-medium text-text-secondary">현재 닉네임</p>
+          <p className="text-xl font-semibold text-text-primary">
+            {userInfo.nickname}
+          </p>
         </div>
-      </div>
+        <hr className="border-border" />
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className="flex flex-col gap-3"
+        >
+          <label
+            htmlFor="nickname"
+            className="text-base font-semibold text-text-primary"
+          >
+            새 닉네임
+          </label>
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <Input
+              id="nickname"
+              type="text"
+              size="lg"
+              placeholder="닉네임을 입력해주세요"
+              className="w-full md:w-[456px]"
+              {...register("nickname")}
+            />
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                size="large"
+                onClick={() =>
+                  setValue("nickname", getRandomNickname("animals"), {
+                    shouldValidate: true
+                  })
+                }
+              >
+                다시 생성
+              </Button>
+              <Button type="submit" size="large">
+                저장하기
+              </Button>
+            </div>
+          </div>
+          {errors.nickname && (
+            <p className="text-sm text-error">{errors.nickname.message}</p>
+          )}
+        </form>
+      </section>
 
       {/* 확인 모달 */}
       <Modal

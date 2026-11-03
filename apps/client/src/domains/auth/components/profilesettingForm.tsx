@@ -15,7 +15,7 @@ import { RotateCcw } from "lucide-react";
 import { getRandomNickname } from "@woowa-babble/random-nickname";
 
 // eslint-disable-next-line @rushstack/typedef-var
-const ProfileSetting = z.object({
+export const ProfileSetting = z.object({
   nickname: z
     .string()
     .min(2, { message: "닉네임은 2자 이상이어야 합니다." })
@@ -24,7 +24,7 @@ const ProfileSetting = z.object({
       message: "닉네임은 한글 조합, 영문, 숫자, 띄어쓰기만 사용할 수 있습니다."
     })
 });
-type ProfileSettingType = z.infer<typeof ProfileSetting>;
+export type ProfileSettingType = z.infer<typeof ProfileSetting>;
 
 export default function ProfileSettingForm({
   userInfo,

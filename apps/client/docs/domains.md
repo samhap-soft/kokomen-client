@@ -125,7 +125,11 @@
 
 ## dashboard (대시보드)
 
-로그인 후 메인 페이지. 닉네임 변경, 면접 기록, 스트릭, 회원 탈퇴.
+로그인 후 마이페이지(`/dashboard`). 면접 기록, 이력서 평가 기록, 아카이브, 닉네임 변경, 회원 탈퇴, 스트릭.
+
+- 섹션은 `?tab=` 쿼리로 고른다(`interviews` | `resume-analyses` | `archive` | `nickname` | `withdrawal`). 잘못된 값이면 `interviews`. 파싱은 `components/selectSection.tsx` 의 `parseDashboardTab`.
+- 목록 페이지 번호는 `?page=`(0부터)로 두고 `utils/pageQuery.ts` 의 `getRouterPage` · `setRouterPage` 로 읽고 쓴다. 다른 쿼리(tab)는 유지된다.
+- 면접 기록 API(`/interviews/me`)는 전체 개수를 주지 않아 `size + 1` 개를 받아 다음 페이지 여부만 판단한다.
 
 ---
 

@@ -38,12 +38,10 @@ export default function ResumePage({
       <ResumeGuideModal />
       <main className="min-h-screen">
         <Header user={userInfo} />
-        <div className="container mx-auto px-6 pt-6">
-          <div className="relative flex flex-col gap-4 border-b border-border mb-6">
-            <ErrorBoundary>
-              <ResumeCombinedForm user={userInfo} />
-            </ErrorBoundary>
-          </div>
+        <div className="mx-auto w-full max-w-[1182px] px-5 pt-8 pb-[100px] xl:px-0">
+          <ErrorBoundary>
+            <ResumeCombinedForm user={userInfo} />
+          </ErrorBoundary>
         </div>
         <Footer />
       </main>

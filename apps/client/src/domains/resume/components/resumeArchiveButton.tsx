@@ -1,5 +1,5 @@
 import { Button, Sidebar } from "@kokomen/ui";
-import { Layers, PackageOpen, X } from "lucide-react";
+import { PackageOpen, X } from "lucide-react";
 import { useSidebar } from "@kokomen/utils";
 import {
   ArchivedResumeAndPortfolio,
@@ -31,8 +31,8 @@ function ArchiveButton({
   };
   return (
     <>
-      <Button variant="primary" type="button" onClick={handleClick}>
-        <Layers />
+      <Button variant="secondary" type="button" onClick={handleClick}>
+        아카이브
       </Button>
       <Sidebar open={open} onClose={closeSidebar}>
         <div>

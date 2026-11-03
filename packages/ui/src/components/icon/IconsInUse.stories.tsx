@@ -31,12 +31,16 @@ const DESIGN_SYSTEM_IN_USE: [string, string][] = [
   ["CheckCircleIcon", "toast"],
   ["CheckIcon", "select"],
   ["ChevronDownIcon", "dropdown · select"],
-  ["ChevronRightIcon", "textButton"],
+  ["ChevronLeftIcon", "pagination"],
+  ["ChevronRightIcon", "textButton · pagination"],
   ["ChevronUpIcon", "dropdown"],
   ["CloseIcon", "modal · sidebar · toast"],
+  ["HeartFilledIcon", "멤버 면접 기록 · 공개 면접 결과 좋아요"],
+  ["HeartIcon", "멤버 면접 기록 · 공개 면접 결과 좋아요"],
   ["InfoIcon", "toast"],
-  ["MyProfileIcon", "gnb"],
-  ["SearchIcon", "select"]
+  ["MyProfileIcon", "gnb · 마이페이지"],
+  ["SearchIcon", "select"],
+  ["ShareIcon", "공개 면접 결과"]
 ];
 
 /** 제품 코드에서 import 하는 lucide 아이콘. */
@@ -69,10 +73,7 @@ const LUCIDE_IN_USE: string[] = [
   "ExternalLink",
   "Eye",
   "FileText",
-  "Heart",
-  "HelpCircle",
   "Home",
-  "Info",
   "Keyboard",
   "Layers",
   "LayoutDashboard",
@@ -83,7 +84,6 @@ const LUCIDE_IN_USE: string[] = [
   "LogOut",
   "Medal",
   "Menu",
-  "MessageCircle",
   "MessageCircleWarning",
   "MessageSquare",
   "Mic",
@@ -96,7 +96,6 @@ const LUCIDE_IN_USE: string[] = [
   "RotateCcw",
   "Search",
   "Settings",
-  "Share2",
   "SidebarIcon",
   "Sparkles",
   "Star",
@@ -108,7 +107,6 @@ const LUCIDE_IN_USE: string[] = [
   "TriangleAlert",
   "Trophy",
   "User",
-  "Users",
   "Volume2",
   "X",
   "XCircle"
@@ -208,7 +206,7 @@ export const DesignSystem: Story = {
     <div className="bg-bg-base p-8">
       <Section
         title={`디자인 시스템 아이콘 (${DESIGN_SYSTEM_IN_USE.length}개)`}
-        description="Figma Foundation/Icon 30개 중 실제 호출부가 있는 것만 추렸다."
+        description="Figma Foundation/Icon 43개 중 실제 호출부가 있는 것만 추렸다."
       >
         <Grid>
           {DESIGN_SYSTEM_IN_USE.map(([name, where]) => {

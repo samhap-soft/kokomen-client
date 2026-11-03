@@ -1,10 +1,9 @@
-import { Select } from "@kokomen/ui";
+import { HeartFilledIcon, HeartIcon, Select } from "@kokomen/ui";
 import {
   Calendar,
   ChevronLeft,
   ChevronRight,
   Eye,
-  Heart,
   TrendingUp,
   Trophy
 } from "lucide-react";
@@ -103,7 +102,11 @@ export default function InterviewHistory({
                           interview.interviewAlreadyLiked && "text-volcano-6"
                         }`}
                       >
-                        <Heart className="w-4 h-4" />
+                        {interview.interviewAlreadyLiked ? (
+                          <HeartFilledIcon size={16} />
+                        ) : (
+                          <HeartIcon size={16} />
+                        )}
                         {interview.interviewLikeCount}
                       </div>
                     </div>
