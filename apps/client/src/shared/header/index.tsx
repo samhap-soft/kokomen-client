@@ -118,7 +118,8 @@ const DesktopProfileDropdown = ({ user }: HeaderProps) => {
 
   return (
     <div className="relative">
-      <GnbProfileButton onClick={handleUserClick} />
+      {/* block 래퍼 안의 inline-flex 는 baseline 여백이 생겨 바 높이가 70을 넘는다. */}
+      <GnbProfileButton className="flex" onClick={handleUserClick} />
 
       {/* 드롭다운 메뉴. Figma GNB 명세에는 없는 앱 확장이다. */}
       <div
@@ -281,8 +282,8 @@ const Header = ({ user }: HeaderProps): JSX.Element => {
               <Image
                 src="/logo.svg"
                 alt="꼬꼬면 로고"
-                width={148}
-                height={50}
+                width={136}
+                height={46}
                 priority
               />
             </Link>
