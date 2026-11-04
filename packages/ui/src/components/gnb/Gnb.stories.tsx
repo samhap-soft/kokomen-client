@@ -14,9 +14,9 @@ const meta: Meta<typeof Gnb> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Storybook 에는 앱의 /logo.svg 가 없어 같은 크기(h 50)의 대체 로고를 쓴다. */
+/** Storybook 에는 앱의 /logo.svg 가 없어 같은 크기(h 46)의 대체 로고를 쓴다. */
 const Logo = (): JSX.Element => (
-  <span className="flex h-[50px] items-center gap-2 text-2xl font-bold text-text-primary">
+  <span className="flex h-[46px] items-center gap-2 text-2xl font-bold text-text-primary">
     <span aria-hidden>🤖</span>꼬꼬면
   </span>
 );

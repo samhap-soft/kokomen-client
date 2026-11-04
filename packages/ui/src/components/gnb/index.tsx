@@ -4,18 +4,19 @@ import { cn } from "../../utils/index.ts";
 import { MyProfileIcon } from "../icon";
 
 /**
- * Figma: Component/GNB (완) — 컴포넌트 504:25 · 메뉴 세트 505:77
+ * Figma: Component/GNB (완) — 컴포넌트 505:186 · 메뉴 세트 505:77
  *
  * 데스크톱 전용 글로벌 내비게이션이다. 흰 배경의 알약 모양 바가 떠 있는
  * 형태로, 좌측에 로고 · 우측에 메뉴와 프로필 아이콘이 붙는다.
  *
  * 실측값:
- *   bar       1182x82 · padding 16/48 · radius full · surface/neutral · shadow/base
+ *   bar       1182x70 · padding 12/32 · radius full · surface/neutral · shadow/base
  *   menu      좌우 묶음 사이 gap 20
  *   menu list gap 12 · 좌우 padding 8
- *   menu item padding 10 · gap 10 · base/medium(16/24) · onsurface/neutral
+ *   logo      136x46
+ *   menu item padding 8/10 · gap 10 · base/medium(16/24) · onsurface/neutral
  *             hover 에서 orange/100 배경 + radius 8
- *   profile   icon_my_profile 48px · primary/600
+ *   profile   icon_my_profile 42px · primary/600
  *
  * NOTE Figma 의 menu 세트에는 default·hover 두 state 만 있고 현재 경로를 나타내는
  * 상태가 없다. 기존 헤더가 활성 메뉴를 primary 색으로 구분하고 있었기 때문에
@@ -52,7 +53,7 @@ export const GnbProfileButton = ({
     )}
     {...props}
   >
-    {children ?? <MyProfileIcon size={48} />}
+    {children ?? <MyProfileIcon size={42} />}
   </button>
 );
 
@@ -67,7 +68,7 @@ export const Gnb = ({
 }: GnbProps): JSX.Element => (
   <nav
     className={cn(
-      "mx-auto flex w-full max-w-[1182px] items-center justify-between rounded-full bg-bg-base px-12 py-4 shadow-base",
+      "mx-auto flex w-full max-w-[1182px] items-center justify-between rounded-full bg-bg-base px-8 py-3 shadow-base",
       className
     )}
     {...props}
@@ -86,7 +87,7 @@ Gnb.displayName = "Gnb";
 
 // eslint-disable-next-line @rushstack/typedef-var
 const gnbMenuItemVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-lg p-2.5 text-base leading-6 font-medium whitespace-nowrap transition-colors duration-200 ease-in-out hover:bg-orange-1",
+  "inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-lg px-2.5 py-2 text-base leading-6 font-medium whitespace-nowrap transition-colors duration-200 ease-in-out hover:bg-orange-1",
   {
     variants: {
       /** Figma 명세 밖 확장. 현재 경로를 표시한다. */
