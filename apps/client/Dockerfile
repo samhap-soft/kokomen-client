@@ -28,6 +28,8 @@ ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
 ARG NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY
 ARG SENTRY_AUTH_TOKEN
 ARG NODE_ENV
+# dev 배포에서만 "enabled". 백엔드가 없는 API(시스템 설계 면접)를 MSW 목으로 응답한다
+ARG NEXT_PUBLIC_API_MOCKING
 
 RUN yarn workspace @kokomen/client build
 
