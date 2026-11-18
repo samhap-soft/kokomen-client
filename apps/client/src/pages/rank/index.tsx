@@ -14,15 +14,110 @@ import { Footer } from "@/shared/footer";
 import { SEO } from "@/shared/seo";
 import { getPaginatedRankList } from "@/domains/members/api";
 import { getUserInfo } from "@/domains/auth/api";
-import PaginationButtons from "@/shared/paginationButtons";
+import { Badge, buttonVariants, Pagination } from "@kokomen/ui";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { JSX } from "react";
+
+type RankItem = CamelCasedProperties<Rank>;
+
+const formatScore = (score: number): string =>
+  `${score.toLocaleString("ko-KR")}점`;
+
+const getNickname = (rank: RankItem): string =>
+  rank.nickname ?? "탈퇴한 회원";
+
+/** 순위 열은 모바일에서 40px, md 이상에서 Figma 와 같은 80px 이다. */
+const rowClassName: string =
+  "flex items-center gap-3 px-3 py-4 md:gap-6 md:p-5";
+const rankColumnClassName: string = "w-10 shrink-0 md:w-20";
+
+/** Figma: 면접 랭킹 / to-be 의 상위 3명 카드 (1149:2365) */
+function TopRankCard({
+  rank,
+  place
+}: {
+  rank: RankItem;
+  place: number;
+}): JSX.Element {
+  return (
+    <li className="flex flex-col gap-2 rounded-[20px] border border-border bg-bg-base px-5 py-4">
+      <div className="flex items-center justify-between gap-2">
+        <Badge appearance="weak" type="brand">
+          {place}위
+        </Badge>
+        <Link
+          href={`/members/${rank.id}`}
+          className={buttonVariants({ variant: "secondary", size: "small" })}
+        >
+          프로필 보기
+        </Link>
+      </div>
+      <div className="flex min-w-0 flex-col gap-1">
+        <p className="truncate text-xl font-semibold text-text-primary md:text-2xl">
+          {getNickname(rank)}
+        </p>
+        <p
+          className={`text-2xl font-bold md:text-3xl ${
+            place === 1 ? "text-primary" : "text-text-primary"
+          }`}
+        >
+          {formatScore(rank.score)}
+        </p>
+      </div>
+    </li>
+  );
+}
+
+/** Figma: 면접 랭킹 / to-be 의 전체 랭킹 행 (1149:2393) */
+function RankRow({
+  rank,
+  place
+}: {
+  rank: RankItem;
+  place: number;
+}): JSX.Element {
+  return (
+    <li>
+      <Link
+        href={`/members/${rank.id}`}
+        className={`${rowClassName} transition-colors hover:bg-fill-quaternary`}
+      >
+        <span
+          className={`${rankColumnClassName} text-lg font-semibold ${
+            place <= 3 ? "text-primary" : "text-text-secondary"
+          }`}
+        >
+          {place}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-lg font-medium text-text-primary">
+          {getNickname(rank)}
+        </span>
+        <span className="shrink-0 text-xl font-semibold whitespace-nowrap text-text-primary md:w-[254px]">
+          {formatScore(rank.score)}
+        </span>
+      </Link>
+    </li>
+  );
+}
 
 export default function RankPage({
   rankList,
   topRank,
   userInfo
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element {
+  const router = useRouter();
+  const { currentPage, totalPages, data } = rankList;
+
+  // 페이지마다 getServerSideProps 가 다시 실행되어야 하므로 shallow 이동을 쓰지 않는다.
+  const handlePageChange = (page: number): void => {
+    router.push({
+      pathname: router.pathname,
+      query: page > 0 ? { page } : {}
+    });
+  };
+
   return (
     <>
       <SEO
@@ -36,106 +131,77 @@ export default function RankPage({
       </SEO>
       <main className="min-h-screen">
         <Header user={userInfo} />
-        <div className="container mx-auto px-6 pt-6 pb-12">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">면접 랭킹</h1>
-            <div className="flex justify-center items-center w-[60%] mx-auto flex-col">
-              <Image
-                src="/kokobot/rank.svg"
-                alt="rank"
-                width={100}
-                height={100}
-                className="w-full"
-              />
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center w-full my-5">
-                {topRank.map((rank, index) => {
-                  // md 이상: 2-1-3 순서, md 미만: 1-2-3 순서
-                  // index 0(1위) -> order-1 md:order-2
-                  // index 1(2위) -> order-2 md:order-1
-                  // index 2(3위) -> order-3 md:order-3
-                  const orderClasses =
-                    index === 0
-                      ? "order-1 md:order-2"
-                      : index === 1
-                        ? "order-2 md:order-1"
-                        : "order-3 md:order-3";
-
-                  return (
-                    <Link
-                      href={`/members/${rank.id}`}
-                      key={rank.id}
-                      className={`flex items-center justify-start gap-2 md:justify-center ${orderClasses} hover:bg-primary-bg-light p-2 rounded-md`}
-                    >
-                      <Image
-                        src={"/kokobot/medal.svg"}
-                        alt="rank"
-                        width={30}
-                        height={30}
-                      />
-                      <span className="shrink-0">{index + 1}위</span>
-                      <p className="text-sm md:text-xl text-primary font-bold">
-                        {rank.nickname ?? "탈퇴한 회원"}
-                      </p>
-                    </Link>
-                  );
-                })}
-              </div>
+        <div className="mx-auto flex w-full max-w-[1182px] flex-col gap-[50px] px-5 pt-8 pb-[100px] xl:px-0">
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <h1 className="text-3xl font-bold text-text-primary">
+                면접 랭킹
+              </h1>
+              <p className="text-lg text-text-secondary">
+                꾸준히 쌓은 실력, 함께 성장하는 면접 연습.
+              </p>
             </div>
 
-            <div className="bg-bg-elevated rounded-3xl border border-border overflow-hidden">
-              {rankList.data.map((rank: CamelCasedProperties<Rank>, index) => {
-                const rankNumber = rankList.currentPage * 10 + index + 1;
-                const isTopThree = rankNumber <= 3;
-
-                return (
-                  <Link
-                    href={`/members/${rank.id}`}
-                    key={rank.id}
-                    className="flex items-center justify-between p-4 border-b border-border last:border-b-0 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div
-                        className={`flex items-center justify-center w-12 h-12 rounded-full font-bold text-lg flex-shrink-0 ${
-                          isTopThree
-                            ? "bg-primary-bg-light text-primary"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {rankNumber}
-                      </div>
-                      <p className="font-semibold text-lg text-gray-900 truncate min-w-0 flex-1">
-                        {rank.nickname ?? "탈퇴한 회원"}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-right">
-                        <p className="text-xl font-bold text-gray-900">
-                          {rank.score}{" "}
-                          <span className="text-sm text-gray-500">점</span>
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-
-              {rankList.data.length === 0 && (
-                <div className="p-12 text-center text-gray-500">
-                  아직 랭킹 데이터가 없습니다.
+            {topRank.length > 0 && (
+              <section
+                aria-label="상위 3명"
+                className="flex flex-col items-center gap-5 lg:flex-row"
+              >
+                <div className="flex w-full max-w-[400px] items-center justify-center lg:max-w-none lg:flex-1 lg:px-[55px] lg:py-[47px]">
+                  <Image
+                    src="/rank/podium.png"
+                    alt="1위, 2위, 3위 시상대에 선 꼬꼬면 캐릭터"
+                    width={954}
+                    height={813}
+                    priority
+                    sizes="(min-width: 1024px) 477px, 400px"
+                    className="h-auto w-full"
+                  />
                 </div>
+                <ol className="flex w-full flex-col gap-2 lg:flex-1">
+                  {topRank.map((rank, index) => (
+                    <TopRankCard key={rank.id} rank={rank} place={index + 1} />
+                  ))}
+                </ol>
+              </section>
+            )}
+          </div>
+
+          <section aria-label="전체 랭킹" className="flex flex-col gap-8">
+            <div>
+              <div
+                className={`${rowClassName} border-b border-border text-sm font-medium text-text-secondary`}
+              >
+                <span className={rankColumnClassName}>순위</span>
+                <span className="min-w-0 flex-1">닉네임</span>
+                <span className="shrink-0 md:w-[254px]">점수</span>
+              </div>
+              {data.length > 0 ? (
+                <ol className="divide-y divide-border border-b border-border">
+                  {data.map((rank, index) => (
+                    <RankRow
+                      key={rank.id}
+                      rank={rank}
+                      place={currentPage * 10 + index + 1}
+                    />
+                  ))}
+                </ol>
+              ) : (
+                <p className="border-b border-border p-12 text-center text-text-secondary">
+                  아직 랭킹 데이터가 없습니다.
+                </p>
               )}
             </div>
 
-            <div className="mt-8">
-              <PaginationButtons
-                currentPage={rankList.currentPage}
-                totalPages={rankList.totalPages}
-                hasNext={rankList.hasNext}
-                options={{}}
-                basePath="rank"
+            {totalPages > 1 && (
+              <Pagination
+                className="self-center"
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
               />
-            </div>
-          </div>
+            )}
+          </section>
         </div>
         <Footer />
       </main>

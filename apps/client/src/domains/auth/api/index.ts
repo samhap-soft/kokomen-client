@@ -68,7 +68,7 @@ const updateUserProfile = async (nickname: string): AxiosPromise<void> => {
 };
 
 const deleteUser = async (): AxiosPromise<void> => {
-  return authServerInstance.delete(`/auth/kakao-withdraw`, {
+  return authServerInstance.delete(`/auth/withdraw`, {
     withCredentials: true
   });
 };
