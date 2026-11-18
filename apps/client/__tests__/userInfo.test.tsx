@@ -295,7 +295,7 @@ describe("Withdrawal 컴포넌트 테스트", () => {
   it("올바른 확인 텍스트 입력 후 탈퇴 확인 버튼을 클릭하면 API가 호출됩니다", async () => {
     server.use(
       http.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/kakao-withdraw`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/withdraw`,
         async () => {
           return HttpResponse.json({});
         }
@@ -324,7 +324,7 @@ describe("Withdrawal 컴포넌트 테스트", () => {
   it("API 호출 시 로딩 모달이 표시됩니다", async () => {
     server.use(
       http.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/kakao-withdraw`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/withdraw`,
         async () => {
           await delay(100);
           return HttpResponse.json({});
@@ -357,7 +357,7 @@ describe("Withdrawal 컴포넌트 테스트", () => {
   it("API 호출 성공 시 성공 모달이 표시됩니다", async () => {
     server.use(
       http.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/kakao-withdraw`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/withdraw`,
         async () => {
           return HttpResponse.json({});
         }
@@ -392,7 +392,7 @@ describe("Withdrawal 컴포넌트 테스트", () => {
   it("성공 모달에서 확인 버튼을 클릭하면 홈페이지로 이동합니다", async () => {
     server.use(
       http.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/kakao-withdraw`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/withdraw`,
         async () => {
           return HttpResponse.json({});
         }
@@ -427,7 +427,7 @@ describe("Withdrawal 컴포넌트 테스트", () => {
   it("API 호출 실패 시 로딩 모달이 닫힙니다", async () => {
     server.use(
       http.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/kakao-withdraw`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/withdraw`,
         async () => {
           return HttpResponse.json(
             { message: "탈퇴 처리에 실패했습니다." },
