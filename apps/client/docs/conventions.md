@@ -77,7 +77,15 @@ const newDomainKeys: QueryKeyFactory<NewDomainMethods> = {
 
 - `__tests__/` 디렉토리에 페이지 단위 테스트
 - MSW로 API 모킹 (`src/mocks/`)
-- 실행: `yarn test` (jest --runInBand)
+- 실행: `yarn test` (jest --runInBand). 로컬에서는 CI 처럼 `NEXT_PUBLIC_API_BASE_URL` 을 줘야 MSW 핸들러 주소가 맞는다
+
+## 백엔드 작업 전 API 목 (MSW 브라우저)
+
+- `yarn dev:mock` 으로 띄우면(`NEXT_PUBLIC_API_MOCKING=enabled`) `src/mocks/browser.ts` 의 핸들러만 응답하고 나머지 요청은 실제 서버로 간다.
+- 목 대상 API 는 요청 전에 `enableMocking()` 을 기다린다(예: `domains/systemDesign/api`). 워커가 켜지기 전 요청이 실서버로 새지 않게 하기 위해서다.
+- 운영 빌드에는 목 코드가 들어가지 않는다. `next.config.ts` 의 `env.NEXT_PUBLIC_API_MOCKING` 을 빈 문자열로라도 정의해야 webpack 이 `import()` 를 빼낸다.
+- 같은 핸들러를 jest 에서 `server.use(...handlers)` 로 다시 쓴다.
+- dev 배포(`deploy-dev.yml`)는 `NEXT_PUBLIC_API_MOCKING=enabled` 로 빌드해서 시스템 설계 면접을 목으로 돌린다. 운영 배포(`deploy.yml`)에는 넣지 않으므로 운영에서는 시스템 설계 탭이 "준비 중"으로 막힌다(`IS_SYSTEM_DESIGN_AVAILABLE`).
 
 ## 빌드 & 배포
 

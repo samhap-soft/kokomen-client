@@ -22,6 +22,10 @@ const config = {
   docs: {
     autodocs: "tag",
   },
+  // 면접관 실사 영상은 앱 public 에 있다. 스토리에서도 같은 경로(/interviewer/...)로 쓰도록 연결한다.
+  staticDirs: [
+    { from: "../../../apps/client/public/interviewer", to: "/interviewer" },
+  ],
 
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),

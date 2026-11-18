@@ -6,6 +6,7 @@
   "main": "dist/packages/nextjs/src/index.js",
   "scripts": {
     "dev": "next dev --experimental-https",
+    "dev:mock": "NEXT_PUBLIC_API_MOCKING=enabled next dev --experimental-https",
     "build": "next build --experimental-debug-memory-usage",
     "start": "next start",
     "analyze": "ANALYZE=true next build",
@@ -73,5 +74,10 @@
     "three": "^0.177.0",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

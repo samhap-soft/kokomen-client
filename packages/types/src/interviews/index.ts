@@ -164,3 +164,4 @@ export type {
   RootQuestionType
 };
 export * from "./resumeBasedInterview";
+export * from "./systemDesign";

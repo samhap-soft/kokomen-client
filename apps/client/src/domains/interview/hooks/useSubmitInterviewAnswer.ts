@@ -12,7 +12,7 @@ import { useToast } from "@kokomen/ui";
 import { getEmotion } from "@kokomen/utils";
 import { useMutation } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
-import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
+import type { InterviewerEmotion } from "@kokomen/types";
 
 const FINISHED_MESSAGE = "면접이 종료되었습니다. 수고하셨습니다.";
 // 분석이 길어질 때 안내를 띄우기까지의 대기 시간(ms)

@@ -2,23 +2,16 @@ import { Interview, InterviewMode } from "@kokomen/types";
 import { useSpeechRecognitionWithEvents } from "@/domains/interview/hooks/useSpeechRecognitionWithEvents";
 import { useSubmitInterviewAnswer } from "@/domains/interview/hooks/useSubmitInterviewAnswer";
 import { useInterviewDraftGuard } from "@/domains/interview/hooks/useInterviewDraftGuard";
-import type { InterviewerEmotion } from "@/pages/interviews/[interviewId]";
 import {
-  Button,
-  LoadingCircles,
-  RoundSpinner,
-  Textarea,
-  useToast
-} from "@kokomen/ui";
-import { ArrowBigUp, CircleStop, Mic, RotateCcw } from "lucide-react";
-import React, {
-  JSX,
-  MouseEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+  clearAnswerDraft,
+  readAnswerDraft,
+  useAnswerDraft
+} from "@/domains/interview/hooks/useAnswerDraft";
+import type { InterviewerEmotion } from "@kokomen/types";
+import { Button, Textarea, useToast } from "@kokomen/ui";
+import { RecordingIndicator } from "@kokomen/ui/domains";
+import { RotateCcw } from "lucide-react";
+import React, { JSX, useCallback, useEffect, useRef, useState } from "react";
 import { publishInterviewEvent } from "@/domains/interview/utils/interviewEventEmitter";
 import { InterviewTimer } from "@/domains/interview/components/interviewTimer";
 import { useAppendOnlyAnswerInput } from "@/domains/interview/hooks/useAppendOnlyAnswerInput";
@@ -26,7 +19,7 @@ import { ANSWER_TIME_LIMIT_SECONDS } from "@/domains/interview/constants";
 
 const TIMEOUT_EMPTY_ANSWER = "시간 초과로 답을 적지 못했습니다";
 
-type InterviewInputProps = Pick<
+export type UseInterviewAnswerOptions = Pick<
   Interview,
   "cur_question_id" | "prev_questions_and_answers"
 > & {
@@ -36,7 +29,6 @@ type InterviewInputProps = Pick<
   updateInterviewData: (updates: Partial<Interview>) => void;
   interviewId: number | string;
   setIsListening: React.Dispatch<React.SetStateAction<boolean>>;
-  totalQuestions: number;
   setInterviewerEmotion: React.Dispatch<
     React.SetStateAction<InterviewerEmotion>
   >;
@@ -52,7 +44,14 @@ type InterviewInputProps = Pick<
   isAppendOnlyEnabled: boolean;
 };
 
-export function InterviewAnswerForm({
+/**
+ * 기본 면접(텍스트 · 음성)의 답변 입력 상태.
+ *
+ * 면접실 개편으로 입력창은 작업 영역에, 제출 · 음성 입력 버튼은 조작 바에 따로 놓인다.
+ * 둘이 같은 상태를 봐야 해서 예전 InterviewAnswerForm 의 동작을 훅으로 옮겼다.
+ * 작성 중인 답변은 면접 · 질문별 초안으로 저장하고, 새로고침하면 되살린다.
+ */
+export function useInterviewAnswer({
   isInterviewStarted,
   cur_question,
   cur_question_id,
@@ -60,7 +59,6 @@ export function InterviewAnswerForm({
   updateInterviewData,
   interviewId,
   setIsListening,
-  totalQuestions,
   setInterviewerEmotion,
   playAudio,
   mode,
@@ -68,7 +66,7 @@ export function InterviewAnswerForm({
   isInterviewerSpeaking,
   isTimeLimitEnabled,
   isAppendOnlyEnabled
-}: InterviewInputProps): JSX.Element {
+}: UseInterviewAnswerOptions) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { info: infoToast, warning: warningToast } = useToast();
   // 제출 실패 후 재시도할 답변. 값이 있으면 재시도 배너를 띄운다.
@@ -109,20 +107,21 @@ export function InterviewAnswerForm({
   // 작성 중인 답변이 있으면 새로고침·탭 닫기 시 확인창을 띄운다
   useInterviewDraftGuard(hasAnswer && !isFinished);
 
-  const adjustTextAreaHeight = useCallback(() => {
-    const element = textAreaRef.current;
-    if (!element) return;
-    element.style.height = "auto";
-    element.style.height = `${element.scrollHeight > 400 ? 400 : element.scrollHeight}px`;
-  }, []);
+  const progressKey = String(cur_question_id);
+  const { isSaved: isDraftSaved } = useAnswerDraft({
+    interviewId,
+    progressKey,
+    value: interviewInput,
+    isEmpty: !hasAnswer,
+    enabled: isInterviewStarted && !isFinished
+  });
 
   const updateInterviewInput = useCallback(
     (result: string) => {
       if (!isInterviewStarted) return;
       setInterviewInput(result);
-      adjustTextAreaHeight();
     },
-    [setInterviewInput, isInterviewStarted, adjustTextAreaHeight]
+    [setInterviewInput, isInterviewStarted]
   );
 
   /**
@@ -162,6 +161,7 @@ export function InterviewAnswerForm({
       setInterviewInput("");
       resetTranscript();
       setFailedAnswer(null);
+      clearAnswerDraft(interviewId);
     },
     onSubmitError: (answer) => {
       // 실패한 답변은 그대로 남겨두고 재시도 배너를 띄운다
@@ -170,11 +170,26 @@ export function InterviewAnswerForm({
     }
   });
 
-  // 질문이 바뀌면 누적된 음성 인식 결과도 함께 비운다
+  // 질문이 바뀌면 누적된 음성 인식 결과를 비우고, 이 질문의 초안이 있으면 되살린다
   useEffect(() => {
     resetTranscript();
     setFailedAnswer(null);
-  }, [cur_question_id, resetTranscript]);
+    const draft = readAnswerDraft<string>(interviewId, String(cur_question_id));
+    if (draft) {
+      setInterviewInput(draft);
+      seedTranscript(draft);
+    }
+  }, [
+    cur_question_id,
+    interviewId,
+    resetTranscript,
+    seedTranscript,
+    setInterviewInput
+  ]);
+
+  useEffect(() => {
+    if (isFinished) clearAnswerDraft(interviewId);
+  }, [isFinished, interviewId]);
 
   const submitAnswer = useCallback(
     (answer: string) => {
@@ -201,13 +216,6 @@ export function InterviewAnswerForm({
       mode
     ]
   );
-
-  const handleSubmit = (
-    e: React.FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
-  ): void => {
-    e.preventDefault();
-    submitAnswer(interviewInput);
-  };
 
   // 제한 시간 초과 시 현재까지 입력한 답변을 자동 제출
   const handleTimeout = useCallback(() => {
@@ -252,211 +260,183 @@ export function InterviewAnswerForm({
     isPending || !isInterviewStarted || isFinished || isVoiceListening;
 
   const answeredCount = prev_questions_and_answers.length;
-  // 첫 질문에서 0/N으로 보이지 않도록 "지금 답하는 질문" 기준으로 표시한다
-  const currentQuestionNumber = isFinished
-    ? answeredCount
-    : Math.min(answeredCount + 1, totalQuestions);
+
+  const startVoiceInput = useCallback(() => {
+    publishInterviewEvent("interview:startVoiceRecognition");
+  }, []);
+  const stopVoiceInput = useCallback(() => {
+    publishInterviewEvent("interview:stopVoiceRecognition");
+  }, []);
+
+  return {
+    mode,
+    textAreaRef,
+    value: interviewInput,
+    hasAnswer,
+    isPending,
+    isInputDisabled,
+    isInterviewStarted,
+    isFinished,
+    isDraftSaved,
+    failedAnswer,
+    answeredCount,
+    isVoiceListening,
+    voiceError,
+    submit: () => submitAnswer(interviewInput),
+    retry: () => {
+      if (failedAnswer !== null) submitAnswer(failedAnswer);
+    },
+    startVoiceInput,
+    stopVoiceInput,
+    setIsListening,
+    textareaHandlers: {
+      onChange: handleManualChange,
+      onCompositionStart: handleCompositionStart,
+      onCompositionEnd: handleCompositionEnd,
+      onCut: handleCut,
+      onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        // 삭제/잘라내기 키로 입력한 답변을 지울 수 없도록 차단(조합 중은 허용)
+        if (guardDeletionKeyDown(e)) return;
+        if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+          e.preventDefault();
+          submitAnswer(interviewInput);
+        }
+      }
+    },
+    timer: isTimeLimitEnabled
+      ? {
+          key: `${cur_question_id}-${timerGeneration}`,
+          isActive:
+            isInterviewStarted &&
+            !isPending &&
+            !isFinished &&
+            !isInterviewerSpeaking,
+          onTimeout: handleTimeout
+        }
+      : null
+  };
+}
+
+export type InterviewAnswerController = ReturnType<typeof useInterviewAnswer>;
+
+/** 답변 입력창. 텍스트 면접은 작업 영역을 채우고, 음성 면접은 인식된 답을 짧게 보여준다. */
+export function AnswerTextarea({
+  answer,
+  compact = false
+}: {
+  answer: InterviewAnswerController;
+  compact?: boolean;
+}): JSX.Element {
+  return (
+    <Textarea
+      ref={answer.textAreaRef}
+      role="textbox"
+      aria-label="interview-answer"
+      variant={"default"}
+      name="interview-answer"
+      className={`block w-full resize-none text-base transition-colors ${
+        compact
+          ? "min-h-[72px] max-h-[120px]"
+          : "min-h-[200px] flex-1 lg:min-h-0"
+      } ${answer.isVoiceListening ? "bg-bg-text-hover motion-safe:animate-pulse" : ""}`}
+      rows={compact ? 2 : 6}
+      {...answer.textareaHandlers}
+      value={answer.value}
+      disabled={answer.isInputDisabled}
+      aria-disabled={answer.isInputDisabled}
+      placeholder={
+        answer.mode === "VOICE"
+          ? "말씀하시면 자동으로 입력돼요. 잘못 인식된 부분은 직접 고칠 수 있어요."
+          : "답변을 입력해주세요..."
+      }
+      onFocus={() => answer.setIsListening(true)}
+      onBlur={() => answer.setIsListening(false)}
+    />
+  );
+}
+
+/** 조작 바 오른쪽의 제출 버튼 */
+export function AnswerSubmitButton({
+  answer,
+  label
+}: {
+  answer: InterviewAnswerController;
+  label: string;
+}): JSX.Element {
+  return (
+    <Button
+      type="button"
+      aria-label="interview-submit"
+      name="interview-submit"
+      size="large"
+      variant="primary"
+      className="min-w-32 md:min-w-48"
+      disabled={!answer.hasAnswer || !answer.isInterviewStarted || answer.isPending}
+      aria-busy={answer.isPending}
+      pendingSpinner={answer.isPending}
+      pendingText="제출 중.."
+      onClick={answer.submit}
+    >
+      {label}
+    </Button>
+  );
+}
+
+/** 질문과 입력창 사이의 안내: 제한 시간 · 제출 실패 · 음성 인식 상태 */
+export function AnswerNotices({
+  answer
+}: {
+  answer: InterviewAnswerController;
+}): JSX.Element | null {
+  const timer = answer.timer;
+  const showVoiceStatus =
+    answer.mode === "TEXT" && (answer.isVoiceListening || answer.voiceError);
+  if (!timer && answer.failedAnswer === null && !showVoiceStatus) return null;
 
   return (
-    <>
+    <div className="flex flex-col gap-2">
       {/*
         질문이 바뀌거나 제출이 실패하면 타이머를 리마운트해서 리셋한다.
         설정을 켠 순간에도 새로 마운트되므로 제한 시간이 그 시점부터 다시 시작된다.
       */}
-      {isTimeLimitEnabled && (
+      {timer && (
         <InterviewTimer
-          key={`${cur_question_id}-${timerGeneration}`}
+          key={timer.key}
           durationSeconds={ANSWER_TIME_LIMIT_SECONDS}
-          isActive={
-            isInterviewStarted &&
-            !isPending &&
-            !isFinished &&
-            !isInterviewerSpeaking
-          }
-          onTimeout={handleTimeout}
+          isActive={timer.isActive}
+          onTimeout={timer.onTimeout}
         />
       )}
-      <form
-        onSubmit={handleSubmit}
-        className="gap-3 p-3 sm:p-4 items-center w-full border border-border-secondary rounded-xl bg-bg-base"
-      >
-        {failedAnswer !== null && (
-          <div
-            role="alert"
-            className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 px-3 py-2 rounded-lg border border-red-2 bg-error-bg"
-          >
-            <span className="flex-1 text-sm text-error">
-              답변을 제출하지 못했어요. 입력한 내용은 그대로 남아 있습니다.
-            </span>
-            <Button
-              type="button"
-              variant={"secondary"}
-              size={"small"}
-              aria-label="interview-retry-submit"
-              onClick={() => submitAnswer(failedAnswer)}
-              disabled={isPending}
-              className="flex items-center gap-1.5 shrink-0"
-            >
-              <RotateCcw className="w-4 h-4" aria-hidden="true" />
-              다시 시도
-            </Button>
-          </div>
-        )}
-
-        <Textarea
-          ref={textAreaRef}
-          role="textbox"
-          aria-label="interview-answer"
-          variant={"default"}
-          name="interview-answer"
-          border={"none"}
-          className={`transition-all block w-full resize-none border-none focus:border-none max-h-[180px] sm:max-h-[250px] mb-2 ${
-            isVoiceListening ? "bg-bg-text-hover motion-safe:animate-pulse" : ""
-          }`}
-          rows={1}
-          onChange={handleManualChange}
-          onCompositionStart={handleCompositionStart}
-          onCompositionEnd={handleCompositionEnd}
-          onCut={handleCut}
-          onKeyDown={(e) => {
-            // 삭제/잘라내기 키로 입력한 답변을 지울 수 없도록 차단(조합 중은 허용)
-            if (guardDeletionKeyDown(e)) return;
-            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-              e.preventDefault();
-              submitAnswer(interviewInput);
-            }
-          }}
-          value={interviewInput}
-          autoAdjust={true}
-          disabled={isInputDisabled}
-          aria-disabled={isInputDisabled}
-          placeholder={
-            mode === "VOICE"
-              ? "말씀하시면 자동으로 입력돼요. 잘못 인식된 부분은 직접 고칠 수 있어요."
-              : "답변을 입력해주세요..."
-          }
-          onFocus={() => setIsListening(true)}
-          onBlur={() => setIsListening(false)}
-        />
-        <div className="relative flex w-full gap-3 sm:gap-5">
-          <div className="flex-1 items-center flex gap-3 sm:gap-5 justify-between min-w-0">
-            <span
-              className="text-text-tertiary font-bold text-sm sm:text-base shrink-0"
-              aria-label={`전체 ${totalQuestions}개 중 ${currentQuestionNumber}번째 질문`}
-            >
-              {currentQuestionNumber} / {totalQuestions}
-            </span>
-            {isVoiceListening && (
-              <div className="absolute -top-1 sm:top-0 left-1/2 -translate-x-1/2 transition-all duration-300 ease-in-out overflow-hidden motion-safe:animate-fade-in-up">
-                <div className="flex items-center justify-center">
-                  <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-4 to-blue-5 rounded-full">
-                    <div className="flex space-x-1">
-                      <LoadingCircles size="xs" />
-                    </div>
-                    <span className="text-text-light-solid font-semibold text-xs sm:text-sm tracking-wide whitespace-nowrap">
-                      🎤 면접관님이 듣고있어요!
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-            {voiceError && !isVoiceListening && (
-              <div
-                role="status"
-                aria-live="polite"
-                className="absolute -top-1 sm:top-0 left-1/2 -translate-x-1/2 transition-all duration-300 ease-in-out overflow-hidden motion-safe:animate-fade-in-up"
-              >
-                <div className="flex items-center justify-center">
-                  <div className="flex items-center gap-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-error-bg to-error-bg-hover rounded-full border border-red-2 shadow-lg">
-                    <span className="text-error font-semibold text-xs sm:text-sm tracking-wide whitespace-nowrap">
-                      ❌ {voiceError}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <VoiceInputButton
-              isVoiceListening={isVoiceListening}
-              disabled={isPending || !isInterviewStarted || isFinished}
-              mode={mode as InterviewMode}
-            />
-          </div>
+      {answer.failedAnswer !== null && (
+        <div
+          role="alert"
+          className="flex flex-col gap-2 rounded-lg border border-red-2 bg-error-bg px-3 py-2 sm:flex-row sm:items-center"
+        >
+          <span className="flex-1 text-sm text-error">
+            답변을 제출하지 못했어요. 입력한 내용은 그대로 남아 있습니다.
+          </span>
           <Button
-            type="submit"
-            role="button"
-            aria-label="interview-submit"
-            name="interview-submit"
-            round
-            className="w-[44px] h-[44px] sm:w-[50px] sm:h-[50px] shrink-0 disabled:opacity-50 disabled:pointer-events-none transition-opacity duration-200"
-            disabled={!hasAnswer || !isInterviewStarted || isPending}
-            aria-busy={isPending}
-            onClick={handleSubmit}
-            variant={"primary"}
+            type="button"
+            variant={"secondary"}
+            size={"small"}
+            aria-label="interview-retry-submit"
+            onClick={answer.retry}
+            disabled={answer.isPending}
+            className="flex shrink-0 items-center gap-1.5"
           >
-            {isPending ? (
-              <>
-                <RoundSpinner />
-                <span className="sr-only">답변 제출 중</span>
-              </>
-            ) : (
-              <ArrowBigUp className="text-primary-content" />
-            )}
+            <RotateCcw className="h-4 w-4" aria-hidden="true" />
+            다시 시도
           </Button>
         </div>
-      </form>
-    </>
-  );
-}
-
-function VoiceInputButton({
-  isVoiceListening,
-  disabled,
-  mode
-}: {
-  isVoiceListening: boolean;
-  disabled: boolean;
-  mode: InterviewMode;
-}): JSX.Element | null {
-  if (mode === "VOICE") return null;
-  if (isVoiceListening) {
-    return (
-      <Button
-        type="button"
-        role="button"
-        aria-label="interview-voice-stop"
-        name="interview-voice-stop"
-        variant={"secondary"}
-        className="flex items-center gap-2"
-        onClick={() => publishInterviewEvent("interview:stopVoiceRecognition")}
-        disabled={disabled}
-      >
-        <CircleStop
-          className="motion-safe:animate-pulse text-volcano-6"
-          aria-hidden="true"
-        />
-        <span className="text-text-tertiary font-bold hidden sm:inline">
-          중지
-        </span>
-      </Button>
-    );
-  }
-
-  return (
-    <Button
-      type="button"
-      role="button"
-      aria-label="interview-voice-start"
-      name="interview-voice-start"
-      variant={"secondary"}
-      className="flex items-center gap-2"
-      onClick={() => publishInterviewEvent("interview:startVoiceRecognition")}
-      disabled={disabled}
-    >
-      <Mic aria-hidden="true" />
-      <span className="text-text-tertiary font-bold hidden sm:inline">
-        음성으로 말하기
-      </span>
-    </Button>
+      )}
+      {answer.mode === "TEXT" && answer.isVoiceListening && (
+        <RecordingIndicator isRecording label="면접관님이 듣고 있어요" />
+      )}
+      {answer.mode === "TEXT" && answer.voiceError && !answer.isVoiceListening && (
+        <p role="status" aria-live="polite" className="text-sm text-error">
+          {answer.voiceError}
+        </p>
+      )}
+    </div>
   );
 }

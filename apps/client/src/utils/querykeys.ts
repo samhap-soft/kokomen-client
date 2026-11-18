@@ -50,6 +50,19 @@ const interviewKeys: QueryKeyFactory<InterviewMethods> = {
     [...interviewKeys.all, id, questionId] as const
 };
 
+// 시스템 설계 면접 (API 초안, 백엔드 작업 전에는 MSW 목으로 동작)
+type SystemDesignMethods = {
+  byInterviewId: (id: number | string) => QueryKey;
+  reportByInterviewId: (id: number | string) => QueryKey;
+};
+const systemDesignKeys: QueryKeyFactory<SystemDesignMethods> = {
+  all: ["systemDesign"] as const,
+  byInterviewId: (id: number | string): QueryKey =>
+    [...systemDesignKeys.all, id] as const,
+  reportByInterviewId: (id: number | string): QueryKey =>
+    [...systemDesignKeys.all, id, "report"] as const
+};
+
 // 인터뷰 루트 질문 관련 도메인
 type InterviewQuestionMethods = {
   byCategory: (category: string) => QueryKey;
@@ -172,6 +185,7 @@ const adminQuestionKeys: QueryKeyFactory<AdminQuestionMethods> = {
 export {
   interviewHistoryKeys,
   interviewKeys,
+  systemDesignKeys,
   interviewQuestionKeys,
   memberKeys,
   archiveKeys,
@@ -190,5 +204,6 @@ export {
   type ResumeAnalysisMethods,
   type AdminQuestionMethods,
   type AdminPaymentMethods,
-  type InterviewQuestionMethods
+  type InterviewQuestionMethods,
+  type SystemDesignMethods
 };

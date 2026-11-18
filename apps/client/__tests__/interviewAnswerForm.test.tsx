@@ -3,10 +3,16 @@
 import "@testing-library/jest-dom";
 import { fireEvent, screen } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
-import { InterviewAnswerForm } from "@/domains/interview/components/interviewAnswerForm";
+import {
+  AnswerNotices,
+  AnswerSubmitButton,
+  AnswerTextarea,
+  useInterviewAnswer
+} from "@/domains/interview/components/interviewAnswerForm";
 
 const BLOCKED_EDIT_MESSAGE = "이미 입력한 답변은 수정하거나 지울 수 없습니다.";
 
+/** 면접실처럼 입력창 · 안내 · 제출 버튼을 같은 답변 상태로 묶어 렌더한다 */
 function AnswerForm({
   isAppendOnlyEnabled = true,
   isTimeLimitEnabled = false
@@ -14,24 +20,28 @@ function AnswerForm({
   isAppendOnlyEnabled?: boolean;
   isTimeLimitEnabled?: boolean;
 }) {
+  const answer = useInterviewAnswer({
+    isInterviewStarted: true,
+    cur_question: "현재 질문",
+    cur_question_id: 2,
+    prev_questions_and_answers: [],
+    updateInterviewData: jest.fn(),
+    interviewId: 1,
+    setIsListening: jest.fn(),
+    setInterviewerEmotion: jest.fn(),
+    playAudio: jest.fn().mockResolvedValue(undefined),
+    mode: "TEXT",
+    isFinished: false,
+    isInterviewerSpeaking: false,
+    isAppendOnlyEnabled,
+    isTimeLimitEnabled
+  });
   return (
-    <InterviewAnswerForm
-      isInterviewStarted={true}
-      cur_question="현재 질문"
-      cur_question_id={2}
-      prev_questions_and_answers={[]}
-      updateInterviewData={jest.fn()}
-      interviewId={1}
-      setIsListening={jest.fn()}
-      totalQuestions={3}
-      setInterviewerEmotion={jest.fn()}
-      playAudio={jest.fn().mockResolvedValue(undefined)}
-      mode="TEXT"
-      isFinished={false}
-      isInterviewerSpeaking={false}
-      isAppendOnlyEnabled={isAppendOnlyEnabled}
-      isTimeLimitEnabled={isTimeLimitEnabled}
-    />
+    <>
+      <AnswerNotices answer={answer} />
+      <AnswerTextarea answer={answer} />
+      <AnswerSubmitButton answer={answer} label="답변 제출" />
+    </>
   );
 }
 
@@ -264,13 +274,5 @@ describe("면접 답변 제출 조건", () => {
     expect(
       screen.getByRole("button", { name: "interview-submit" })
     ).toBeEnabled();
-  });
-});
-
-describe("면접 진행도 표시", () => {
-  it("첫 질문에서 0이 아니라 1번째 질문으로 표시한다", () => {
-    renderWithProviders(<AnswerForm isAppendOnlyEnabled={false} />);
-
-    expect(screen.getByText("1 / 3")).toBeInTheDocument();
   });
 });
