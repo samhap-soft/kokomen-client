@@ -89,6 +89,16 @@ class MockIntersectionObserver {
 global.IntersectionObserver =
   MockIntersectionObserver as unknown as typeof IntersectionObserver;
 
+// jsdom 은 영상 재생을 구현하지 않아 play()/pause() 가 예외를 던진다. 면접관 영상 타일용으로 대체한다.
+Object.defineProperty(window.HTMLMediaElement.prototype, "play", {
+  configurable: true,
+  value: jest.fn().mockResolvedValue(undefined)
+});
+Object.defineProperty(window.HTMLMediaElement.prototype, "pause", {
+  configurable: true,
+  value: jest.fn()
+});
+
 beforeAll(() => server.listen());
 afterEach(() => {
   server.resetHandlers();

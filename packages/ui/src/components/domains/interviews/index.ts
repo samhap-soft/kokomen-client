@@ -1,14 +1,11 @@
 export { default as AiInterviewInterface } from "./AiInterviewInterface";
 export { default as InterviewModals } from "./interviewModals";
-export { default as InterviewSideBar } from "./interviewSideBar";
 export { default as Interviewer } from "./interviewer";
 export { default as InterviewStartModal } from "./interviewStartModal";
 export { default as InterviewQuestion } from "./interviewQuestion";
 export { default as LiveCodingEditor } from "./liveCodingEditor";
 export { default as LiveCodingProblem } from "./liveCodingProblem";
 export { default as LiveCodingTimer } from "./liveCodingTimer";
-export { default as LiveCodingPaper } from "./LiveCodingPaper";
 export { default as LiveCodingTest } from "./liveCodingTest";
 export type { LiveCodingTestProps } from "./liveCodingTest";
-export { useInterviewPhase } from "./useInterviewPhase";
-export type { InterviewPhase } from "./useInterviewPhase";
+export * from "./room";

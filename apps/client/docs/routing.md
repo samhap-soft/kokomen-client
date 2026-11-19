@@ -10,8 +10,9 @@
 | `/login/google/callback` | `pages/login/google/callback.tsx` | Google OAuth 콜백 |
 | `/login/profile` | `pages/login/profile.tsx` | 최초 프로필 설정 |
 | `/interviews` | `pages/interviews/index.tsx` | 면접 메인 (생성) |
-| `/interviews/[interviewId]` | `pages/interviews/[interviewId]/index.tsx` | 면접 진행 |
+| `/interviews/[interviewId]` | `pages/interviews/[interviewId]/index.tsx` | 면접 진행. 쿼리: `mode`(필수, `TEXT`·`VOICE`) · `type`(`CODE`·`SYSTEM_DESIGN`) · `category`(헤더 제목용 분야 키) |
 | `/interviews/[interviewId]/result` | `pages/interviews/[interviewId]/result.tsx` | 면접 결과 |
+| `/interviews/[interviewId]/system-design-report` | `pages/interviews/[interviewId]/system-design-report.tsx` | 시스템 설계 면접 리포트 |
 | `/members/[memberId]` | `pages/members/[memberId]/index.tsx` | 멤버 프로필 |
 | `/members/interviews/[interviewId]` | `pages/members/interviews/[interviewId].tsx` | 멤버 면접 결과 열람 |
 | `/rank` | `pages/rank/index.tsx` | 랭킹 |

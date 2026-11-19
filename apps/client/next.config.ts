@@ -8,6 +8,10 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  env: {
+    // 값이 없어도 빈 문자열로 박아야 webpack 이 목 코드(src/mocks/enableMocking.ts)를 운영 빌드에서 뺀다
+    NEXT_PUBLIC_API_MOCKING: process.env.NEXT_PUBLIC_API_MOCKING ?? ""
+  },
   transpilePackages: ["@kokomen/ui", "@kokomen/types", "@kokomen/utils"],
   allowedDevOrigins: ["*.kokomen.kr"],
   eslint: {

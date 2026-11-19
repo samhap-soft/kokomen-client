@@ -18,12 +18,32 @@
 | `hooks/useAppendOnlyAnswerInput.ts` | 답변 수정 금지(append-only) 입력 상태 |
 | `hooks/useSubmitInterviewAnswer.ts` | 답변 제출 mutation |
 | `utils/interviewEventEmitter.ts` | 면접 내 이벤트 통신 |
-| `components/liveCodingOverlay.tsx` | 라이브 코딩 오버레이 |
-| `components/interviewAnswerForm.tsx` | 답변 입력 UI |
-| `components/cameraPreview.tsx` | 카메라 프리뷰 |
+| `hooks/useCameraStream.ts` | 내 카메라 스트림(입장 화면과 면접실이 공유). 영상은 전송하지 않음 |
+| `hooks/useAnswerDraft.ts` | 작성 중 답변 초안 저장(localStorage `kokomen:interview-draft:{interviewId}`) |
+| `components/room/basicInterviewRoom.tsx` | 기본 면접실(텍스트 · 음성 · 라이브 코딩) |
+| `components/room/useRoomMedia.tsx` | 카메라 · 표정 분석 상태와 조작 바 공통 버튼 |
+| `components/room/roomTiles.tsx` | AI 면접관(3D) 타일 · 내 카메라 타일 |
+| `components/room/interviewLobbyScreen.tsx` | 입장 전 화면(카메라 미리보기 + "면접 입장하기") |
+| `components/interviewAnswerForm.tsx` | 답변 입력 상태 훅(`useInterviewAnswer`)과 입력창 · 제출 버튼 · 안내 |
+| `components/liveCodingWorkspace.tsx` | 라이브 코딩 작업 영역과 상태 훅 |
 | `components/interviewTimer.tsx` | 답변 제한 시간 카운트다운 |
-| `components/interviewSettingsButton.tsx` | 면접 설정 dialog(옵션 on/off) |
+| `components/interviewSettingsModal.tsx` | 면접 설정 dialog(옵션 on/off) |
+| `components/interviewExitModal.tsx` | 면접 중도 종료 확인 dialog |
 | `constants.ts` | 답변 제한 시간(`ANSWER_TIME_LIMIT_SECONDS`) |
+
+### 면접실 구조
+
+Figma `인터뷰 / to-be`(1172:2426 텍스트 · 1172:2473 음성 · 1172:2527 답변 기록) 기준.
+레이아웃은 `@kokomen/ui/domains` 의 `InterviewRoomLayout` 이 맡는다(헤더 · 영상 타일 · 작업 영역 · 조작 바).
+
+- 라우트는 하나(`/interviews/[interviewId]`)이고 `type` 쿼리로 나눈다: 없음(기본) · `CODE`(라이브 코딩) · `SYSTEM_DESIGN`.
+- 배치(`variant`): 텍스트 `split`, 음성 `focus`, 라이브 코딩 · 시스템 설계 `stage`(작업 영역을 넓게, 영상은 작은 타일).
+- 입장: 노크 · 문 열림 연출 대신 입장 화면을 거친다. 이미 끝난 면접은 입장 화면 없이 종료 dialog 를 띄운다.
+- 조작 바: 설정 · (음성)녹음 · 카메라 아이콘 버튼은 항상 보이고, 글자 버튼(표정 분석 · 음성으로 말하기 · 면접 중도 종료)은 lg 미만에서 "더보기" 메뉴로 묶인다.
+- 헤더의 "OO 모의면접" 제목은 `category` 쿼리(분야 키)로 서버에서 찾는다. 없으면 "모의면접".
+- 초안은 면접마다 하나만 두고 지금 답하는 질문(progressKey)이 같을 때만 되살린다. 제출하거나 면접이 끝나면 지운다.
+- 면접관은 실사 영상 클립(`public/interviewer/{id}/`)이다. 영상을 불러오지 못하면 같은 면접관의 정지 사진, 사진도 없으면 안내 문구를 보여 주고 면접은 계속된다.
+- 화면 세로가 짧아도 영상 타일과 작업 영역이 패널 밖으로 넘치지 않는다. xl 의 영상 열은 size 컨테이너로 높이에 맞춰 타일을 줄이고, 작업 영역은 모자라면 패널 안에서 스크롤한다.
 
 ### 면접 모드
 
@@ -37,9 +57,9 @@
 
 ### 면접 설정 (답변 시간 제한 / 답변 수정 금지)
 
-두 옵션은 기본값이 꺼짐이고, 면접 중에도 좌측 상단 설정 버튼으로 켜고 끌 수 있다.
-상태는 페이지(`pages/interviews/[interviewId]/index.tsx`)의 `useInterviewSettings`가 갖고
-`InterviewAnswerForm`에 prop으로 내려준다. 변경한 값은 localStorage(`interview-settings`)에 저장된다.
+두 옵션은 기본값이 꺼짐이고, 면접 중에도 조작 바의 설정 버튼으로 켜고 끌 수 있다.
+상태는 `BasicInterviewRoom` 의 `useInterviewSettings`가 갖고
+`useInterviewAnswer`에 넘긴다. 변경한 값은 localStorage(`interview-settings`)에 저장된다.
 
 - 답변 시간 제한: 켜져 있을 때만 `InterviewTimer`를 렌더한다. 옵션을 켜면 컴포넌트가 새로
   마운트되므로 제한 시간이 그 순간부터 시작된다(질문이 바뀔 때는 `key={cur_question_id}`로 리셋).
@@ -51,6 +71,25 @@
 - `interviewAnswer.ts`의 interceptor는 요청별 retry 상태를 Map으로 관리함 — 전역 상태가 아님
 - 폴링 로직은 interceptor 내부에서 재귀적으로 동작하므로, 무한루프 방지를 위해 maxRetries 확인 필수
 - `interviewEventEmitter`는 컴포넌트 간 결합을 낮추기 위한 pub/sub 패턴
+
+---
+
+## systemDesign (시스템 설계 면접)
+
+요구사항(역질문 최대 5개) → 개략 설계(질문 최대 3개) → 심화(질문 최대 3개). TEXT 전용.
+**백엔드 작업 전**이라 API 는 초안이고, 개발 환경에서는 MSW 목이 응답한다.
+
+| 파일 | 역할 |
+|------|------|
+| `api/index.ts` | API 초안(`/interviews/system-design/...`). 타입은 `@kokomen/types` 의 `interviews/systemDesign.ts` |
+| `hooks/useSystemDesignInterview.ts` | 조회 + 역질문 · 요구사항 완료 · 답변 제출 mutation |
+| `components/systemDesignRoom.tsx` | 면접실(stage 배치). 페이지에서 dynamic import 해서 React Flow 를 기본 면접에 싣지 않는다 |
+| `components/systemDesignReport.tsx` | 리포트(`/interviews/[id]/system-design-report`) |
+| `constants.ts` | 난이도 라벨 · 최대 질문 수 |
+
+- 다이어그램 에디터는 `@kokomen/ui/systemDesign` 의 `DiagramEditor`(React Flow). 저장 형식은 블록(`id · kind · label · props · position`)과 연결(`source → target · label`)만 담는다.
+- LLM 에 보낼 텍스트 변환은 서버에서만 한다(클라이언트는 JSON 만 보낸다). 입력 상한은 `DIAGRAM_LIMITS` 와 같게 서버도 검증해야 한다.
+- 목: `src/mocks/handlers/systemDesign.ts`(상태는 sessionStorage 에도 저장), 문제 데이터 `src/mocks/fixtures/systemDesign.ts`.
 
 ---
 

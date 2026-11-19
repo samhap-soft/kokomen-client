@@ -4,15 +4,25 @@ import { isAxiosError } from "axios";
 import { startNewInterview } from "../api";
 import { captureFormSubmitEvent } from "@/utils/analytics";
 import { createCustomInterview } from "@/domains/interview/api/questions";
+import { startSystemDesignInterview } from "@/domains/systemDesign/api";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
-import { InterviewMode, RootQuestionType } from "@kokomen/types";
+import {
+  InterviewDifficulty,
+  InterviewMode,
+  RootQuestionType
+} from "@kokomen/types";
 
 type CreateCustomInterviewVariables = {
   rootQuestionId: number;
   maxQuestionCount: number;
   mode: InterviewMode;
   questionType?: RootQuestionType;
+  /** 면접실 헤더에 분야 이름을 보여주려고 쿼리로 넘긴다 */
+  category: string;
 };
+
+const buildRoomSearch = (params: Record<string, string>): string =>
+  new URLSearchParams(params).toString();
 
 const useInterviewCreateMutation = ({
   onMutate
@@ -37,7 +47,10 @@ const useInterviewCreateMutation = ({
     onSuccess: (data, variables) => {
       router.push({
         pathname: `/interviews/${data.interview_id}`,
-        search: `mode=${variables.mode}`
+        search: buildRoomSearch({
+          mode: variables.mode,
+          category: variables.category
+        })
       });
     },
     onError: (error) => {
@@ -71,6 +84,8 @@ const useInterviewCreateMutation = ({
     mutationFn: ({
       // eslint-disable-next-line no-unused-vars
       questionType: _questionType,
+      // eslint-disable-next-line no-unused-vars
+      category: _category,
       ...payload
     }: CreateCustomInterviewVariables) => createCustomInterview(payload),
     onMutate: (data) => {
@@ -86,13 +101,13 @@ const useInterviewCreateMutation = ({
       });
     },
     onSuccess: (data, variables) => {
-      const search =
-        variables.questionType === "CODE"
-          ? `mode=${variables.mode}&type=CODE`
-          : `mode=${variables.mode}`;
       router.push({
         pathname: `/interviews/${data.interview_id}`,
-        search
+        search: buildRoomSearch({
+          mode: variables.mode,
+          ...(variables.questionType === "CODE" ? { type: "CODE" } : {}),
+          category: variables.category
+        })
       });
     },
     onError: (error) => {
@@ -118,9 +133,38 @@ const useInterviewCreateMutation = ({
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
+  const createSystemDesignInterviewMutation = useMutation({
+    mutationFn: (variables: { difficulty: InterviewDifficulty }) =>
+      startSystemDesignInterview(variables),
+    onMutate: (data) => {
+      captureFormSubmitEvent({
+        name: "startNewInterview",
+        properties: { interviewType: "SYSTEM_DESIGN", difficulty: data.difficulty }
+      });
+    },
+    onSuccess: (data) => {
+      router.push({
+        pathname: `/interviews/${data.interview_id}`,
+        search: buildRoomSearch({ mode: "TEXT", type: "SYSTEM_DESIGN" })
+      });
+    },
+    onError: (error) => {
+      if (isAxiosError(error) && error.response?.status === 401) {
+        router.navigateToLogin();
+        return;
+      }
+      errorToast({
+        title: "면접 생성 실패",
+        description: isAxiosError(error)
+          ? error.response?.data?.message
+          : "잠시 후 다시 시도해주세요."
+      });
+    }
+  });
   return {
     createRandomInterviewMutation,
-    createCustomInterviewMutation
+    createCustomInterviewMutation,
+    createSystemDesignInterviewMutation
   };
 };
 

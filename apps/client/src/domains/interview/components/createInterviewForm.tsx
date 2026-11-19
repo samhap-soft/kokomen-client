@@ -1,6 +1,10 @@
 import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
-import { InterviewMode, InterviewQuestion } from "@kokomen/types";
+import {
+  InterviewDifficulty,
+  InterviewMode,
+  InterviewQuestion
+} from "@kokomen/types";
 import { useModal } from "@kokomen/utils";
 import {
   AddIcon,
@@ -35,6 +39,16 @@ import {
 } from "@/domains/interview/constants";
 import { getQuestions } from "@/domains/interview/api/questions";
 import { interviewQuestionKeys } from "@/utils/querykeys";
+import {
+  DIFFICULTY_OPTIONS,
+  IS_SYSTEM_DESIGN_AVAILABLE,
+  SYSTEM_DESIGN_ESTIMATED_MINUTES,
+  SYSTEM_DESIGN_MAX_QUESTION_COUNT,
+  SYSTEM_DESIGN_MAX_REQUIREMENT_QUESTION_COUNT
+} from "@/domains/systemDesign/constants";
+
+/** 코드 리뷰는 기획만 있고 아직 만들지 않았다 */
+type InterviewKindOption = "BASIC" | "SYSTEM_DESIGN";
 
 type QuestionCountSelectorProps = {
   questionCount: number;
@@ -130,6 +144,117 @@ const InterviewTypeSelector: MemoExoticComponent<
 );
 InterviewTypeSelector.displayName = "InterviewTypeSelector";
 
+const InterviewKindSelector = ({
+  selectedKind,
+  onChange
+}: {
+  selectedKind: InterviewKindOption;
+  // eslint-disable-next-line no-unused-vars
+  onChange: (kind: InterviewKindOption) => void;
+}): JSX.Element => (
+  <div className="flex flex-col gap-2">
+    <h3 className="text-base font-medium text-text-secondary">면접 유형</h3>
+    <Tab aria-label="면접 유형">
+      <Tab.Item
+        selected={selectedKind === "BASIC"}
+        onClick={() => onChange("BASIC")}
+      >
+        기본
+      </Tab.Item>
+      <Tooltip className="flex flex-1" tabIndex={0}>
+        <Tab.Item disabled selected={false}>
+          코드 리뷰
+        </Tab.Item>
+        <Tooltip.Content>준비 중이에요</Tooltip.Content>
+      </Tooltip>
+      {IS_SYSTEM_DESIGN_AVAILABLE ? (
+        <Tab.Item
+          selected={selectedKind === "SYSTEM_DESIGN"}
+          onClick={() => onChange("SYSTEM_DESIGN")}
+        >
+          시스템 설계
+        </Tab.Item>
+      ) : (
+        <Tooltip className="flex flex-1" tabIndex={0}>
+          <Tab.Item disabled selected={false}>
+            시스템 설계
+          </Tab.Item>
+          <Tooltip.Content>준비 중이에요</Tooltip.Content>
+        </Tooltip>
+      )}
+    </Tab>
+  </div>
+);
+
+const DifficultySelector = ({
+  selected,
+  onChange
+}: {
+  selected: InterviewDifficulty;
+  // eslint-disable-next-line no-unused-vars
+  onChange: (difficulty: InterviewDifficulty) => void;
+}): JSX.Element => (
+  <div className="flex flex-col gap-2">
+    <h3 className="text-base font-medium text-text-secondary">난이도</h3>
+    <Tab aria-label="난이도">
+      {DIFFICULTY_OPTIONS.map((option) => (
+        <Tab.Item
+          key={option.value}
+          selected={selected === option.value}
+          onClick={() => onChange(option.value)}
+        >
+          {option.label}
+          <span className="ml-1 text-xs font-normal text-text-tertiary">
+            {option.description}
+          </span>
+        </Tab.Item>
+      ))}
+    </Tab>
+  </div>
+);
+
+/** 시스템 설계를 고르면 왼쪽 분야 선택 자리에 진행 방식을 보여준다 */
+const SystemDesignIntro = (): JSX.Element => (
+  <div className="flex flex-col gap-8 rounded-[20px] border border-border bg-bg-elevated px-6 py-8 sm:px-[30px] sm:py-10">
+    <div className="flex flex-col gap-2.5">
+      <h1 className="text-3xl font-bold text-text-primary">시스템 설계</h1>
+      <p className="text-lg text-text-tertiary">
+        주제를 받고 면접관에게 요구사항을 물어본 뒤, 다이어그램과 설명으로 설계를
+        제출해요.
+      </p>
+    </div>
+    <ol className="flex flex-col gap-4">
+      {[
+        {
+          title: "요구사항 확인",
+          description: `트래픽 · 데이터 크기 같은 조건을 최대 ${SYSTEM_DESIGN_MAX_REQUIREMENT_QUESTION_COUNT}번 물어봐요. 역질문은 토큰을 쓰지 않아요.`
+        },
+        {
+          title: "개략 설계",
+          description: "블록과 연결선으로 전체 구조를 그리고 설명해요. 꼬리질문이 최대 3개 이어져요."
+        },
+        {
+          title: "심화",
+          description: "확장성 · 장애 대응 같은 꼬리질문에 답해요. 최대 3개예요."
+        }
+      ].map((step, index) => (
+        <li key={step.title} className="flex gap-3">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary-bg-light text-sm font-semibold text-primary-text">
+            {index + 1}
+          </span>
+          <div className="flex flex-col gap-1">
+            <p className="text-lg font-semibold text-text-primary">{step.title}</p>
+            <p className="text-base text-text-secondary">{step.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <p className="text-sm text-text-tertiary">
+      다이어그램은 화면이 넓은 태블릿이나 PC에서 그릴 수 있어요.
+    </p>
+  </div>
+);
+
 const InterviewStartModal = ({
   isOpen,
   closeModal,
@@ -137,7 +262,9 @@ const InterviewStartModal = ({
   questionCount,
   categoryTitle,
   interviewType,
-  isLiveCoding
+  isLiveCoding,
+  kind,
+  difficultyLabel
 }: {
   isOpen: boolean;
   closeModal: () => void;
@@ -146,19 +273,30 @@ const InterviewStartModal = ({
   categoryTitle: string;
   interviewType: InterviewMode;
   isLiveCoding: boolean;
+  kind: InterviewKindOption;
+  difficultyLabel: string;
 }) => {
-  const effectiveType: InterviewMode = isLiveCoding ? "TEXT" : interviewType;
-  const requiredToken =
-    effectiveType === "VOICE" ? questionCount * 2 : questionCount;
+  const isSystemDesign = kind === "SYSTEM_DESIGN";
+  const effectiveType: InterviewMode =
+    isLiveCoding || isSystemDesign ? "TEXT" : interviewType;
+  const requiredToken = isSystemDesign
+    ? SYSTEM_DESIGN_MAX_QUESTION_COUNT
+    : effectiveType === "VOICE"
+      ? questionCount * 2
+      : questionCount;
   return (
     <Modal isOpen={isOpen} onClose={closeModal} title="면접 시작하기">
       <div className="space-y-6">
         <div className="text-center">
           <h3 className="text-lg font-semibold text-text-heading mb-2">
-            {categoryTitle} 면접을 시작하시겠습니까?
+            {isSystemDesign
+              ? `${difficultyLabel} 시스템 설계 면접을 시작하시겠습니까?`
+              : `${categoryTitle} 면접을 시작하시겠습니까?`}
           </h3>
           <p className="text-sm text-text-description">
-            선택한 카테고리의 {questionCount}개 문제로 면접을 진행합니다
+            {isSystemDesign
+              ? "주제는 고른 난이도에 맞춰 무작위로 나와요"
+              : `선택한 카테고리의 ${questionCount}개 문제로 면접을 진행합니다`}
           </p>
         </div>
         {isLiveCoding && interviewType === "VOICE" && (
@@ -180,19 +318,27 @@ const InterviewStartModal = ({
               면접 진행 중 주의사항
             </span>
           </div>
-          <ul className="text-sm text-text-description space-y-1 ml-5">
-            <li>• 면접 진행 중에는 면접 중단이 불가능합니다</li>
-            <li>
-              •{" "}
-              {isLiveCoding
-                ? "라이브 코딩(텍스트)"
-                : effectiveType === "VOICE"
-                  ? "음성"
-                  : "텍스트"}{" "}
-              방식으로 면접이 진행됩니다
-            </li>
-            <li>• 총 {questionCount}개의 문제가 출제됩니다</li>
-          </ul>
+          {isSystemDesign ? (
+            <ul className="text-sm text-text-description space-y-1 ml-5">
+              <li>• 텍스트와 다이어그램으로만 진행됩니다</li>
+              <li>• 질문은 최대 {SYSTEM_DESIGN_MAX_QUESTION_COUNT}개이고, 실제로 받은 질문 수만큼만 토큰이 차감됩니다</li>
+              <li>• 요구사항 단계의 역질문은 토큰을 쓰지 않습니다</li>
+            </ul>
+          ) : (
+            <ul className="text-sm text-text-description space-y-1 ml-5">
+              <li>• 면접 진행 중에는 면접 중단이 불가능합니다</li>
+              <li>
+                •{" "}
+                {isLiveCoding
+                  ? "라이브 코딩(텍스트)"
+                  : effectiveType === "VOICE"
+                    ? "음성"
+                    : "텍스트"}{" "}
+                방식으로 면접이 진행됩니다
+              </li>
+              <li>• 총 {questionCount}개의 문제가 출제됩니다</li>
+            </ul>
+          )}
         </div>
 
         <div className="flex gap-3">
@@ -212,7 +358,9 @@ const InterviewStartModal = ({
             onClick={onPressStart}
             className="flex-1"
           >
-            시작하기(토큰 {requiredToken}개 소모)
+            {isSystemDesign
+              ? `시작하기(토큰 최대 ${requiredToken}개)`
+              : `시작하기(토큰 ${requiredToken}개 소모)`}
           </Button>
         </div>
       </div>
@@ -304,14 +452,21 @@ const CreateInterviewForm = ({
     );
   const [selectedQuestions, setSelectedQuestions] =
     useState<InterviewQuestion | null>(null);
+  const [interviewKind, setInterviewKind] =
+    useState<InterviewKindOption>("BASIC");
+  const [difficulty, setDifficulty] = useState<InterviewDifficulty>("JUNIOR");
+  const isSystemDesign = interviewKind === "SYSTEM_DESIGN";
   const { isOpen, openModal, closeModal } = useModal();
   const {
     isOpen: isQuestionListOpen,
     openModal: openQuestionListModal,
     closeModal: closeQuestionListModal
   } = useModal();
-  const { createRandomInterviewMutation, createCustomInterviewMutation } =
-    useInterviewCreateMutation({ onMutate: () => closeQuestionListModal() });
+  const {
+    createRandomInterviewMutation,
+    createCustomInterviewMutation,
+    createSystemDesignInterviewMutation
+  } = useInterviewCreateMutation({ onMutate: () => closeQuestionListModal() });
 
   const handleQuestionCountChange = useCallback((event: "plus" | "minus") => {
     setQuestionCount((prev) =>
@@ -333,7 +488,8 @@ const CreateInterviewForm = ({
           rootQuestionId: selectedQuestions.id,
           maxQuestionCount: questionCount,
           mode: isCode ? "TEXT" : selectedInterviewType,
-          questionType: selectedQuestions.question_type
+          questionType: selectedQuestions.question_type,
+          category: selectedCategory.key
         });
       } else {
         createRandomInterviewMutation.mutate({
@@ -362,19 +518,34 @@ const CreateInterviewForm = ({
 
   const handleConfirmStart = useCallback(() => {
     closeModal();
+    if (isSystemDesign) {
+      createSystemDesignInterviewMutation.mutate({ difficulty });
+      return;
+    }
     handleNewInterview(selectedQuestions);
-  }, [closeModal, handleNewInterview, selectedQuestions]);
+  }, [
+    closeModal,
+    isSystemDesign,
+    createSystemDesignInterviewMutation,
+    difficulty,
+    handleNewInterview,
+    selectedQuestions
+  ]);
 
   const handleSelectQuestion = (question: InterviewQuestion) =>
     setSelectedQuestions(question);
 
   const isPending =
     createCustomInterviewMutation.isPending ||
-    createRandomInterviewMutation.isPending;
+    createRandomInterviewMutation.isPending ||
+    createSystemDesignInterviewMutation.isPending;
 
   const groupedCategories = groupCategories(categories);
   const requiredToken =
     selectedInterviewType === "VOICE" ? questionCount * 2 : questionCount;
+  const difficultyLabel =
+    DIFFICULTY_OPTIONS.find((option) => option.value === difficulty)?.label ??
+    "";
 
   return (
     <form
@@ -382,6 +553,10 @@ const CreateInterviewForm = ({
       onSubmit={handleSubmit}
     >
       <div className="flex min-w-0 flex-col gap-[30px] lg:w-[680px] lg:shrink-0">
+        {isSystemDesign ? (
+          <SystemDesignIntro />
+        ) : (
+          <>
         {/* 분야 선택 */}
         <nav className="flex flex-col gap-4" aria-label="면접 분야">
           {groupedCategories.map((group) => (
@@ -431,37 +606,64 @@ const CreateInterviewForm = ({
           </div>
           <SampleQuestions category={selectedCategory.key} />
         </div>
+          </>
+        )}
       </div>
 
       {/* 설정 */}
       <div className="flex flex-col justify-center gap-7 rounded-[20px] border border-border bg-fill-quaternary px-6 py-10 sm:px-[30px] lg:flex-1 lg:py-[60px]">
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <p className="text-base font-medium text-text-secondary">
-              출제 분야
-            </p>
-            <p className="text-3xl font-bold text-text-primary">
-              {selectedCategory.title}
-            </p>
-          </div>
-          <QuestionCountSelector
-            questionCount={questionCount}
-            handleQuestionCountChange={handleQuestionCountChange}
+          <InterviewKindSelector
+            selectedKind={interviewKind}
+            onChange={setInterviewKind}
           />
-          <InterviewTypeSelector
-            selectedInterviewType={selectedInterviewType}
-            handleInterviewTypeChange={handleInterviewTypeChange}
-          />
+          {isSystemDesign ? (
+            <>
+              <DifficultySelector selected={difficulty} onChange={setDifficulty} />
+              <p className="text-sm text-text-tertiary">
+                시스템 설계 면접은 텍스트로만 진행돼요.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col gap-2">
+                <p className="text-base font-medium text-text-secondary">
+                  출제 분야
+                </p>
+                <p className="text-3xl font-bold text-text-primary">
+                  {selectedCategory.title}
+                </p>
+              </div>
+              <QuestionCountSelector
+                questionCount={questionCount}
+                handleQuestionCountChange={handleQuestionCountChange}
+              />
+              <InterviewTypeSelector
+                selectedInterviewType={selectedInterviewType}
+                handleInterviewTypeChange={handleInterviewTypeChange}
+              />
+            </>
+          )}
         </div>
         <hr className="border-gray-3" />
         <dl className="flex flex-col gap-2 text-base font-medium text-text-secondary">
           <div className="flex justify-between">
             <dt>예상 소요</dt>
-            <dd>약 {questionCount * MINUTES_PER_QUESTION}분</dd>
+            <dd>
+              약{" "}
+              {isSystemDesign
+                ? SYSTEM_DESIGN_ESTIMATED_MINUTES
+                : questionCount * MINUTES_PER_QUESTION}
+              분
+            </dd>
           </div>
           <div className="flex justify-between">
             <dt>사용 토큰</dt>
-            <dd>{requiredToken}개</dd>
+            <dd>
+              {isSystemDesign
+                ? `최대 ${SYSTEM_DESIGN_MAX_QUESTION_COUNT}개 (진행한 질문 수만큼)`
+                : `${requiredToken}개`}
+            </dd>
           </div>
         </dl>
         <div className="flex flex-col gap-2">
@@ -472,18 +674,24 @@ const CreateInterviewForm = ({
             className="w-full"
             variant="primary"
           >
-            {isPending ? "면접 시작 중..." : "랜덤 질문으로 시작하기"}
+            {isPending
+              ? "면접 시작 중..."
+              : isSystemDesign
+                ? "시스템 설계 면접 시작하기"
+                : "랜덤 질문으로 시작하기"}
           </Button>
-          <Button
-            type="button"
-            variant={"secondary"}
-            disabled={isPending}
-            size={"xl"}
-            className="w-full bg-bg-elevated"
-            onClick={openQuestionListModal}
-          >
-            질문 직접 고르기
-          </Button>
+          {!isSystemDesign && (
+            <Button
+              type="button"
+              variant={"secondary"}
+              disabled={isPending}
+              size={"xl"}
+              className="w-full bg-bg-elevated"
+              onClick={openQuestionListModal}
+            >
+              질문 직접 고르기
+            </Button>
+          )}
         </div>
       </div>
 
@@ -501,6 +709,8 @@ const CreateInterviewForm = ({
         categoryTitle={selectedCategory.title}
         interviewType={selectedInterviewType}
         isLiveCoding={selectedQuestions?.question_type === "CODE"}
+        kind={interviewKind}
+        difficultyLabel={difficultyLabel}
       />
     </form>
   );

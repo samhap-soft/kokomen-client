@@ -8,13 +8,15 @@
   },
   "exports": {
     ".": "./src/components/index.ts",
-    "./domains": "./src/components/domains/index.ts"
+    "./domains": "./src/components/domains/index.ts",
+    "./systemDesign": "./src/components/domains/systemDesign/index.ts"
   },
   "dependencies": {
     "@kokomen/utils": "workspace:*",
     "@monaco-editor/react": "^4.7.0",
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
+    "@xyflow/react": "^12.12.1",
     "lucide-react": "^0.511.0",
     "motion": "^12.23.12",
     "react": "^19.1.0",

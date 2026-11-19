@@ -40,7 +40,11 @@ const NEGATIVE_CONSECUTIVE_THRESHOLD = 4;
 const NEUTRAL_COOLDOWN_MS = 30000;
 
 interface UseFacialExpressionAnalysisOptions {
+  /** 분석을 켤지. 카메라가 켜져 있어야(video 가 재생 중이어야) 실제로 돈다 */
   enabled: boolean;
+  /** 카메라 스트림이 붙은 video. 카메라는 useCameraStream 이 관리한다 */
+  videoElement: HTMLVideoElement | null;
+  isCameraOn: boolean;
   analysisIntervalMs?: number;
   warningCooldownMs?: number;
   negativeThreshold?: number;
@@ -48,20 +52,25 @@ interface UseFacialExpressionAnalysisOptions {
 
 let modelsLoaded = false;
 
+/**
+ * 카메라 프레임으로 표정을 분석해 부정적인 표정이 이어지면 토스트로 알려준다.
+ *
+ * 예전에는 카메라를 켜는 것과 분석이 한 버튼이었다. 면접실 개편 후에는
+ * 카메라(조작 바의 카메라 버튼)와 분석("표정 분석 켜기")을 따로 켠다.
+ */
 export function useFacialExpressionAnalysis({
   enabled,
+  videoElement,
+  isCameraOn,
   analysisIntervalMs = 1500,
   warningCooldownMs = 15000,
   negativeThreshold = 0.7
 }: UseFacialExpressionAnalysisOptions) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const faceApiRef = useRef<typeof import("face-api.js") | null>(null);
   // 이전 추론이 아직 끝나지 않았는지 표시한다
   const isAnalyzingRef = useRef<boolean>(false);
 
-  const [isCameraOn, setIsCameraOn] = useState(false);
   const [isModelLoading, setIsModelLoading] = useState(false);
   const [currentExpression, setCurrentExpression] = useState<string | null>(
     null
@@ -98,38 +107,12 @@ export function useFacialExpressionAnalysis({
     }
   }, []);
 
-  const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 160, height: 120, facingMode: "user" }
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-    } catch (e) {
-      console.error("Camera access failed:", e);
-      setIsCameraOn(false);
-    }
-  }, []);
-
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-  }, []);
-
   const analyzeFrame = useCallback(async () => {
     const faceapi = faceApiRef.current;
-    if (!faceapi || !videoRef.current) return;
+    if (!faceapi || !videoElement || videoElement.readyState < 2) return;
     const detection = await faceapi
       .detectSingleFace(
-        videoRef.current,
+        videoElement,
         new faceapi.TinyFaceDetectorOptions({ inputSize: 224 })
       )
       .withFaceExpressions();
@@ -199,7 +182,7 @@ export function useFacialExpressionAnalysis({
         consecutiveNeutralRef.current = 0;
       }
     }
-  }, [negativeThreshold, warningCooldownMs, warning, info]);
+  }, [videoElement, negativeThreshold, warningCooldownMs, warning, info]);
 
   /**
    * 추론이 분석 간격보다 오래 걸리면 호출이 쌓여 3D 캔버스와 함께
@@ -234,49 +217,26 @@ export function useFacialExpressionAnalysis({
     }
   }, []);
 
-  const toggleCamera = useCallback(async () => {
-    if (isCameraOn) {
+  const isActive = enabled && isCameraOn && videoElement !== null;
+
+  useEffect(() => {
+    if (!enabled) return;
+    loadModels();
+  }, [enabled, loadModels]);
+
+  useEffect(() => {
+    if (!isActive || isModelLoading) return;
+    startAnalysisLoop();
+    return () => {
       stopAnalysisLoop();
-      stopCamera();
-      setIsCameraOn(false);
       setCurrentExpression(null);
       consecutiveNegativeRef.current = 0;
       consecutiveNeutralRef.current = 0;
-    } else {
-      await loadModels();
-      setIsCameraOn(true);
-    }
-  }, [isCameraOn, loadModels, stopCamera, stopAnalysisLoop]);
-
-  useEffect(() => {
-    if (isCameraOn && !streamRef.current) {
-      startCamera().then(() => {
-        startAnalysisLoop();
-      });
-    }
-  }, [isCameraOn, startCamera, startAnalysisLoop]);
-
-  useEffect(() => {
-    if (!enabled && isCameraOn) {
-      stopAnalysisLoop();
-      stopCamera();
-      setIsCameraOn(false);
-      setCurrentExpression(null);
-    }
-  }, [enabled, isCameraOn, stopAnalysisLoop, stopCamera]);
-
-  useEffect(() => {
-    return () => {
-      stopAnalysisLoop();
-      stopCamera();
     };
-  }, [stopAnalysisLoop, stopCamera]);
+  }, [isActive, isModelLoading, startAnalysisLoop, stopAnalysisLoop]);
 
   return {
-    videoRef,
-    isCameraOn,
-    toggleCamera,
     isModelLoading,
-    currentExpression
+    currentExpression: isActive ? currentExpression : null
   };
 }

@@ -7,12 +7,15 @@ import { useRouter } from "next/router";
 type InterviewFinishModalProps = {
   interviewState: Interview["interview_state"];
   interviewId: number | string;
+  /** 기본은 /interviews/{id}/result. 시스템 설계는 type 쿼리를 붙인다 */
+  resultPath?: string;
 };
 const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
   memo(
     ({
       interviewState,
-      interviewId
+      interviewId,
+      resultPath
     }: InterviewFinishModalProps): JSX.Element => {
       const router = useRouter();
       return (
@@ -43,7 +46,7 @@ const InterviewFinishModal: MemoExoticComponent<FC<InterviewFinishModalProps>> =
               role="button"
               aria-label="go-to-result-button"
               onClick={() =>
-                router.replace(`/interviews/${interviewId}/result`)
+                router.replace(resultPath ?? `/interviews/${interviewId}/result`)
               }
               variant={"primary"}
               size={"xl"}

@@ -3,15 +3,23 @@
 import "@testing-library/jest-dom";
 import { fireEvent, screen } from "@testing-library/react";
 import { renderWithProviders } from "@/utils/test-utils";
-import InterviewSettingsButton from "@/domains/interview/components/interviewSettingsButton";
+import { InterviewSettingsModal } from "@/domains/interview/components/interviewSettingsModal";
+import { useModal } from "@kokomen/utils";
 import { useInterviewSettings } from "@/domains/interview/hooks/useInterviewSettings";
 
-/** 실제 페이지처럼 설정 훅과 설정 dialog를 함께 렌더한다 */
+/** 실제 면접실처럼 조작 바의 설정 버튼으로 설정 dialog를 연다 */
 function SettingsHarness() {
   const { settings, toggleSetting } = useInterviewSettings();
+  const { isOpen, openModal, closeModal } = useModal();
   return (
     <>
-      <InterviewSettingsButton settings={settings} onToggle={toggleSetting} />
+      <button type="button" aria-label="면접 설정 열기" onClick={openModal} />
+      <InterviewSettingsModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        settings={settings}
+        onToggle={toggleSetting}
+      />
       <span data-testid="time-limit">
         {String(settings.isTimeLimitEnabled)}
       </span>
