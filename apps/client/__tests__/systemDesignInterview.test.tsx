@@ -81,7 +81,7 @@ describe("시스템 설계 면접", () => {
   });
 
   it("역질문은 숨은 요구사항으로 답하고, 없는 내용은 가정하라고 답한다", async () => {
-    const { interview_id } = await startSystemDesignInterview({ difficulty: "JUNIOR" });
+    const { interview_id } = await startSystemDesignInterview();
     renderWithProviders(<SystemDesignInterviewRoom interviewId={interview_id} />);
     await joinRoom();
 
@@ -100,7 +100,7 @@ describe("시스템 설계 면접", () => {
   });
 
   it("역질문 5개를 다 쓰면 입력창이 사라지고 정리 완료 버튼만 남는다", async () => {
-    const { interview_id } = await startSystemDesignInterview({ difficulty: "JUNIOR" });
+    const { interview_id } = await startSystemDesignInterview();
     renderWithProviders(<SystemDesignInterviewRoom interviewId={interview_id} />);
     await joinRoom();
 
@@ -122,7 +122,7 @@ describe("시스템 설계 면접", () => {
   });
 
   it("요구사항 → 개략 설계 → 심화를 거쳐 6번째 답변 후 종료되고 리포트에 결과가 나온다", async () => {
-    const { interview_id } = await startSystemDesignInterview({ difficulty: "JUNIOR" });
+    const { interview_id } = await startSystemDesignInterview();
     const { unmount } = renderWithProviders(
       <SystemDesignInterviewRoom interviewId={interview_id} />
     );

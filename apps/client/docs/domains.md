@@ -85,7 +85,7 @@ Figma `인터뷰 / to-be`(1172:2426 텍스트 · 1172:2473 음성 · 1172:2527 �
 | `hooks/useSystemDesignInterview.ts` | 조회 + 역질문 · 요구사항 완료 · 답변 제출 mutation |
 | `components/systemDesignRoom.tsx` | 면접실(stage 배치). 페이지에서 dynamic import 해서 React Flow 를 기본 면접에 싣지 않는다 |
 | `components/systemDesignReport.tsx` | 리포트(`/interviews/[id]/system-design-report`) |
-| `constants.ts` | 난이도 라벨 · 최대 질문 수 |
+| `constants.ts` | 최대 질문 수 · 노출 여부(`IS_SYSTEM_DESIGN_AVAILABLE`) |
 
 - 다이어그램 에디터는 `@kokomen/ui/systemDesign` 의 `DiagramEditor`(React Flow). 저장 형식은 블록(`id · kind · label · props · position`)과 연결(`source → target · label`)만 담는다.
 - LLM 에 보낼 텍스트 변환은 서버에서만 한다(클라이언트는 JSON 만 보낸다). 입력 상한은 `DIAGRAM_LIMITS` 와 같게 서버도 검증해야 한다.

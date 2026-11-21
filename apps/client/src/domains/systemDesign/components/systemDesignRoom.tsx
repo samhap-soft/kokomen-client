@@ -15,10 +15,9 @@ import {
   useAnswerDraft
 } from "@/domains/interview/hooks/useAnswerDraft";
 import { useInterviewDraftGuard } from "@/domains/interview/hooks/useInterviewDraftGuard";
-import { getDifficultyLabel } from "@/domains/systemDesign/constants";
 import { useSystemDesignInterview } from "@/domains/systemDesign/hooks/useSystemDesignInterview";
 import { SystemDesignDiagram, SystemDesignInterview } from "@kokomen/types";
-import { Badge, Button, LoadingFullScreen, Textarea } from "@kokomen/ui";
+import { Button, LoadingFullScreen, Textarea } from "@kokomen/ui";
 import {
   CurrentQuestion,
   InterviewControlBar,
@@ -139,7 +138,6 @@ function SystemDesignRoomContent({
   }, [isFinished, interviewId]);
 
   const isRequirements = data.stage === "REQUIREMENTS";
-  const difficultyLabel = getDifficultyLabel(data.difficulty);
   const currentNumber = isFinished
     ? data.cur_question_count
     : isRequirements
@@ -152,7 +150,7 @@ function SystemDesignRoomContent({
         title="시스템 설계 모의면접"
         details={[
           `${data.topic.title}`,
-          `텍스트 면접 · ${difficultyLabel} · 질문 최대 ${data.max_question_count}개`,
+          `텍스트 면접 · 질문 최대 ${data.max_question_count}개`,
           "요구사항 확인 → 개략 설계 → 심화 순서로 진행해요."
         ]}
         media={media}
@@ -232,7 +230,7 @@ function SystemDesignRoomContent({
         header={
           <InterviewRoomHeader
             title="시스템 설계 모의면접"
-            subtitle={`텍스트 면접 · ${difficultyLabel}`}
+            subtitle="텍스트 면접"
             current={currentNumber}
             total={data.max_question_count}
           />
@@ -249,11 +247,6 @@ function SystemDesignRoomContent({
         workspace={
           <SystemDesignWorkspace
             topic={data.topic}
-            topicMeta={
-              <Badge appearance="weak" type="brand">
-                {difficultyLabel}
-              </Badge>
-            }
             stepper={<StageStepper current={data.stage} isFinished={isFinished} />}
             sidePanel={sidePanel}
             editor={

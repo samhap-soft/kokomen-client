@@ -2,11 +2,11 @@ import { enableMocking, isApiMockingEnabled } from "@/mocks/enableMocking";
 import axios, { AxiosInstance } from "axios";
 import {
   CompleteRequirementsResponse,
-  InterviewDifficulty,
   RequirementQuestionResponse,
   SystemDesignAnswerRequest,
   SystemDesignAnswerResponse,
   SystemDesignInterview,
+  StartSystemDesignInterviewResponse,
   SystemDesignReport
 } from "@kokomen/types";
 
@@ -31,14 +31,15 @@ if (isApiMockingEnabled()) {
   });
 }
 
-export const startSystemDesignInterview = async (data: {
-  difficulty: InterviewDifficulty;
-}): Promise<{ interview_id: number }> => {
-  const { data: responseData } = await systemDesignApiInstance.post<{
-    interview_id: number;
-  }>(BASE_PATH, data);
-  return responseData;
-};
+/** 본문 없이 보낸다. 서버가 난이도를 BASIC 으로 정한다 */
+export const startSystemDesignInterview =
+  async (): Promise<StartSystemDesignInterviewResponse> => {
+    const { data } =
+      await systemDesignApiInstance.post<StartSystemDesignInterviewResponse>(
+        BASE_PATH
+      );
+    return data;
+  };
 
 export const getSystemDesignInterview = async (
   interviewId: number | string

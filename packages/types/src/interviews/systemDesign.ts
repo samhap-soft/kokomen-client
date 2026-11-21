@@ -7,14 +7,17 @@ import type { AnswerScore } from "./index";
  * 필드 이름은 기존 면접 API 와 같이 snake_case 를 쓴다.
  */
 
-/** POST /interviews/system-design → { interview_id } */
-type StartSystemDesignInterviewRequest = { difficulty: InterviewDifficulty };
+/** POST /interviews/system-design (본문 없음) → { interview_id } */
+type StartSystemDesignInterviewResponse = { interview_id: number };
 
 /** 면접 유형. 기본 면접은 기존 API 와 같고, 나머지는 TEXT 전용이다. */
-type InterviewKind = "BASIC" | "CODE_REVIEW" | "SYSTEM_DESIGN";
+type InterviewType = "BASIC" | "CODE" | "SYSTEM_DESIGN";
 
-/** 주니어(0~2년) · 미들(3~5년) · 시니어(6년 이상) */
-type InterviewDifficulty = "JUNIOR" | "MIDDLE" | "SENIOR";
+/**
+ * 시스템 설계 면접 난이도. 지금은 BASIC 하나만 연다.
+ * 난이도가 늘어도 응답 구조가 바뀌지 않도록 응답에는 지금부터 넣는다.
+ */
+type SystemDesignDifficulty = "BASIC";
 
 /** 요구사항 → 개략 설계 → 심화 */
 type SystemDesignStage = "REQUIREMENTS" | "HIGH_LEVEL" | "DEEP_DIVE";
@@ -83,7 +86,7 @@ type SystemDesignInterview = {
   interview_id: number;
   interview_type: "SYSTEM_DESIGN";
   interview_state: "IN_PROGRESS" | "FINISHED";
-  difficulty: InterviewDifficulty;
+  difficulty: SystemDesignDifficulty;
   topic: SystemDesignTopic;
   stage: SystemDesignStage;
   requirement_questions: RequirementQuestion[];
@@ -140,7 +143,7 @@ type SystemDesignAnswerFeedback = SystemDesignAnswer & {
 type SystemDesignReport = {
   interview_id: number;
   topic: SystemDesignTopic;
-  difficulty: InterviewDifficulty;
+  difficulty: SystemDesignDifficulty;
   total_score: number;
   total_feedback: string;
   difficulty_comment: string;
@@ -153,9 +156,9 @@ type SystemDesignReport = {
 };
 
 export type {
-  StartSystemDesignInterviewRequest,
-  InterviewKind,
-  InterviewDifficulty,
+  StartSystemDesignInterviewResponse,
+  InterviewType,
+  SystemDesignDifficulty,
   SystemDesignStage,
   DiagramBlockKind,
   DiagramBlockProp,

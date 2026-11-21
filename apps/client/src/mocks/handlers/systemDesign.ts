@@ -1,6 +1,5 @@
 import type {
   AnswerScore,
-  InterviewDifficulty,
   RequirementQuestion,
   SystemDesignAnswer,
   SystemDesignDiagram,
@@ -34,6 +33,7 @@ const STORAGE_KEY = "kokomen:mock:system-design";
 const MOCK_ID_START = 900001;
 
 type MockState = SystemDesignInterview & {
+  problem_index: number;
   stage_question_index: number;
   asked_requirement_names: string[];
   ranks: AnswerScore[];
@@ -75,7 +75,9 @@ export const resetSystemDesignMock = (): void => {
   }
 };
 
-const getProblem = (state: MockState) => SYSTEM_DESIGN_PROBLEMS[state.difficulty];
+// 이전 형식으로 저장된 세션(problem_index 없음)은 첫 문제로 본다
+const getProblem = (state: MockState) =>
+  SYSTEM_DESIGN_PROBLEMS[state.problem_index] ?? SYSTEM_DESIGN_PROBLEMS[0];
 
 const getStageQuestions = (
   state: MockState,
@@ -89,6 +91,7 @@ const getStageQuestions = (
 const toPublic = (state: MockState): SystemDesignInterview => {
   /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
   const {
+    problem_index: _problem,
     stage_question_index: _index,
     asked_requirement_names: _asked,
     ranks: _ranks,
@@ -192,22 +195,18 @@ const buildReport = (state: MockState): SystemDesignReport => {
 const BASE = "*/interviews/system-design";
 
 export const systemDesignHandlers = [
-  http.post(`${BASE}`, async ({ request }) => {
+  http.post(`${BASE}`, async () => {
     restore();
-    const body = (await request.json().catch(() => null)) as {
-      difficulty?: InterviewDifficulty;
-    } | null;
-    const difficulty = body?.difficulty;
-    if (!difficulty || !(difficulty in SYSTEM_DESIGN_PROBLEMS)) {
-      return badRequest("난이도를 골라 주세요.");
-    }
     const id = Math.max(MOCK_ID_START - 1, ...store.keys()) + 1;
-    const problem = SYSTEM_DESIGN_PROBLEMS[difficulty];
+    // 실제 서버는 무작위로 고른다. 목은 테스트가 같은 결과를 내도록 차례로 돌린다
+    const problemIndex = (id - MOCK_ID_START) % SYSTEM_DESIGN_PROBLEMS.length;
+    const problem = SYSTEM_DESIGN_PROBLEMS[problemIndex];
     store.set(id, {
+      problem_index: problemIndex,
       interview_id: id,
       interview_type: "SYSTEM_DESIGN",
       interview_state: "IN_PROGRESS",
-      difficulty,
+      difficulty: "BASIC",
       topic: problem.topic,
       stage: "REQUIREMENTS",
       requirement_questions: [],

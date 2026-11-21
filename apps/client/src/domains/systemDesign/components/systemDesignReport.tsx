@@ -1,7 +1,6 @@
 import { RankLabel } from "@/domains/interviewReport/components/rankLabel";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import { getSystemDesignReport } from "@/domains/systemDesign/api";
-import { getDifficultyLabel } from "@/domains/systemDesign/constants";
 import { systemDesignKeys } from "@/utils/querykeys";
 import { SystemDesignReport, SystemDesignStage } from "@kokomen/types";
 import { Badge, Button, CheckIcon, CloseIcon, Skeleton } from "@kokomen/ui";
@@ -73,9 +72,6 @@ function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element 
             <Badge appearance="weak" type="brand">
               시스템 설계
             </Badge>
-            <Badge appearance="weak" type="neutral">
-              {getDifficultyLabel(report.difficulty)}
-            </Badge>
           </div>
           <h1 className="text-3xl font-bold text-text-primary">{report.topic.title}</h1>
           <p className="text-lg text-text-secondary">{report.topic.description}</p>
@@ -85,11 +81,9 @@ function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element 
           variant="secondary"
           size="large"
           disabled={createSystemDesignInterviewMutation.isPending}
-          onClick={() =>
-            createSystemDesignInterviewMutation.mutate({ difficulty: report.difficulty })
-          }
+          onClick={() => createSystemDesignInterviewMutation.mutate()}
         >
-          같은 주제로 다시 하기
+          새 면접 시작하기
         </Button>
       </div>
 
