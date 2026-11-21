@@ -84,7 +84,7 @@ export function useSystemDesignInterview(interviewId: number) {
     }) =>
       submitSystemDesignAnswer({
         interviewId,
-        question_id: variables.questionId,
+        questionId: variables.questionId,
         answer: variables.answer,
         diagram: variables.diagram
       }),

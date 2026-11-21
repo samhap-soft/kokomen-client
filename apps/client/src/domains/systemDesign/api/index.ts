@@ -3,8 +3,9 @@ import axios, { AxiosInstance } from "axios";
 import {
   CompleteRequirementsResponse,
   RequirementQuestionResponse,
+  SystemDesignAnswerPolling,
   SystemDesignAnswerRequest,
-  SystemDesignAnswerResponse,
+  SystemDesignAnswerResult,
   SystemDesignInterview,
   StartSystemDesignInterviewResponse,
   SystemDesignReport
@@ -74,17 +75,47 @@ export const completeRequirements = async (
   return data;
 };
 
+const POLLING_INTERVAL_MS = 1000;
+const POLLING_MAX_COUNT = 30;
+
+const wait = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+/** 기존 면접 답변과 같이, 처리가 끝날 때까지 1초마다 최대 30번 조회한다 */
+const pollSystemDesignAnswer = async (
+  interviewId: number | string,
+  questionId: number
+): Promise<SystemDesignAnswerResult> => {
+  for (let count = 0; count < POLLING_MAX_COUNT; count += 1) {
+    const { data } = await systemDesignApiInstance.get<SystemDesignAnswerPolling>(
+      `${BASE_PATH}/${interviewId}/questions/${questionId}`
+    );
+    if (data.proceed_state === "COMPLETED") {
+      const { proceed_state: _state, ...result } = data; // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+      return result;
+    }
+    if (data.proceed_state === "LLM_FAILED") {
+      throw new Error("답변에 대한 처리를 하던 중 오류가 발생했습니다.");
+    }
+    await wait(POLLING_INTERVAL_MS);
+  }
+  throw new Error("서버가 응답하지 않습니다.");
+};
+
+/** 답변을 제출(202)한 뒤 평가가 끝날 때까지 폴링한다 */
 export const submitSystemDesignAnswer = async ({
   interviewId,
+  questionId,
   ...body
 }: SystemDesignAnswerRequest & {
   interviewId: number | string;
-}): Promise<SystemDesignAnswerResponse> => {
-  const { data } = await systemDesignApiInstance.post<SystemDesignAnswerResponse>(
-    `${BASE_PATH}/${interviewId}/answers`,
+  questionId: number;
+}): Promise<SystemDesignAnswerResult> => {
+  await systemDesignApiInstance.post(
+    `${BASE_PATH}/${interviewId}/questions/${questionId}/answers`,
     body
   );
-  return data;
+  return pollSystemDesignAnswer(interviewId, questionId);
 };
 
 export const getSystemDesignReport = async (

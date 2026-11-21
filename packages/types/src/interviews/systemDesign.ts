@@ -116,18 +116,27 @@ type CompleteRequirementsResponse = {
 };
 
 /** POST /interviews/system-design/{interviewId}/answers */
+/**
+ * POST /interviews/system-design/{interviewId}/questions/{questionId}/answers → 202
+ * 평가는 기존 면접처럼 비동기로 하고, 결과는 SystemDesignAnswerPolling 으로 조회한다.
+ */
 type SystemDesignAnswerRequest = {
-  question_id: number;
   answer: string;
   diagram: SystemDesignDiagram;
 };
-type SystemDesignAnswerResponse = {
+type SystemDesignAnswerResult = {
   interview_state: "IN_PROGRESS" | "FINISHED";
   stage: SystemDesignStage;
   cur_answer_rank: AnswerScore;
   next_question_id: number | null;
   next_question: string | null;
 };
+
+/** GET /interviews/system-design/{interviewId}/questions/{questionId}. TEXT 전용이라 TTS 상태는 없다 */
+type SystemDesignAnswerPolling =
+  | { proceed_state: "LLM_PENDING" }
+  | { proceed_state: "LLM_FAILED" }
+  | ({ proceed_state: "COMPLETED" } & SystemDesignAnswerResult);
 
 type SystemDesignEvaluationPoint = {
   description: string;
@@ -153,6 +162,11 @@ type SystemDesignReport = {
   requirement_questions: RequirementQuestion[];
   feedbacks: SystemDesignAnswerFeedback[];
   final_diagram: SystemDesignDiagram;
+  /** 랭킹 점수와 등급. 기존 면접 리포트와 같은 필드다 */
+  user_cur_score: number;
+  user_prev_score: number;
+  user_cur_rank: string;
+  user_prev_rank: string;
 };
 
 export type {
@@ -173,7 +187,8 @@ export type {
   RequirementQuestionResponse,
   CompleteRequirementsResponse,
   SystemDesignAnswerRequest,
-  SystemDesignAnswerResponse,
+  SystemDesignAnswerResult,
+  SystemDesignAnswerPolling,
   SystemDesignEvaluationPoint,
   SystemDesignAnswerFeedback,
   SystemDesignReport
