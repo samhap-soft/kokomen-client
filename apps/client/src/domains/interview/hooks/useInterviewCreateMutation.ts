@@ -7,7 +7,6 @@ import { createCustomInterview } from "@/domains/interview/api/questions";
 import { startSystemDesignInterview } from "@/domains/systemDesign/api";
 import useExtendedRouter from "@/hooks/useExtendedRouter";
 import {
-  InterviewDifficulty,
   InterviewMode,
   RootQuestionType
 } from "@kokomen/types";
@@ -134,12 +133,11 @@ const useInterviewCreateMutation = ({
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
   const createSystemDesignInterviewMutation = useMutation({
-    mutationFn: (variables: { difficulty: InterviewDifficulty }) =>
-      startSystemDesignInterview(variables),
-    onMutate: (data) => {
+    mutationFn: () => startSystemDesignInterview(),
+    onMutate: () => {
       captureFormSubmitEvent({
         name: "startNewInterview",
-        properties: { interviewType: "SYSTEM_DESIGN", difficulty: data.difficulty }
+        properties: { interviewType: "SYSTEM_DESIGN" }
       });
     },
     onSuccess: (data) => {

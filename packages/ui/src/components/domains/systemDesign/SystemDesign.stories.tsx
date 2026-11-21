@@ -6,7 +6,6 @@ import type {
   SystemDesignStage
 } from "@kokomen/types";
 import { JSX, useState } from "react";
-import { Badge } from "../../badge";
 import { Button } from "../../button";
 import { CameraIcon, SettingIcon } from "../../icon";
 import { Textarea } from "../../textarea";
@@ -162,7 +161,6 @@ function SystemDesignRoom({
             title: "URL 단축기를 설계해 보세요",
             description: "긴 URL 을 짧은 URL 로 바꾸고, 짧은 URL 로 접속하면 원래 주소로 보내는 서비스입니다."
           }}
-          topicMeta={<Badge appearance="weak" type="brand">미들</Badge>}
           stepper={<StageStepper current={stage} />}
           sidePanel={
             stage === "REQUIREMENTS" ? (

@@ -1,5 +1,4 @@
 import type {
-  InterviewDifficulty,
   SystemDesignDiagram,
   SystemDesignTopic
 } from "@kokomen/types";
@@ -93,7 +92,7 @@ const URL_SHORTENER: SystemDesignProblem = {
     "같은 긴 URL 을 여러 번 단축하면 같은 키를 돌려줘야 할까요? 이유와 함께 설명해 주세요."
   ],
   difficultyComment:
-    "주니어 기준으로는 읽기 경로에 캐시를 두는 이유와 단축 키 생성 방식을 설명하면 충분해요."
+    "기본 난이도에서는 읽기 경로에 캐시를 두는 이유와 단축 키 생성 방식을 설명하면 충분해요."
 };
 
 const CHAT_SERVICE: SystemDesignProblem = {
@@ -153,7 +152,7 @@ const CHAT_SERVICE: SystemDesignProblem = {
     "채팅 서버 한 대가 갑자기 내려가면 연결된 사용자는 어떻게 되나요?"
   ],
   difficultyComment:
-    "미들 기준으로는 서버가 여러 대일 때의 메시지 라우팅과 순서 보장을 함께 설명해야 해요."
+    "기본 난이도에서는 서버가 여러 대일 때의 메시지 라우팅과 순서 보장을 함께 설명하면 좋아요."
 };
 
 const NEWS_FEED: SystemDesignProblem = {
@@ -207,17 +206,15 @@ const NEWS_FEED: SystemDesignProblem = {
     "피드 캐시가 통째로 날아가면 어떻게 복구하나요?"
   ],
   difficultyComment:
-    "시니어 기준으로는 팔로워 수 편차에 따른 하이브리드 전파와 장애 시 재처리 전략까지 다뤄야 해요."
+    "기본 난이도에서는 팔로워가 많은 계정의 글을 어떻게 전파할지 설명하면 충분해요."
 };
 
-export const SYSTEM_DESIGN_PROBLEMS: Record<
-  InterviewDifficulty,
-  SystemDesignProblem
-> = {
-  JUNIOR: URL_SHORTENER,
-  MIDDLE: CHAT_SERVICE,
-  SENIOR: NEWS_FEED
-};
+/** 난이도는 BASIC 하나뿐이라 모든 문제가 BASIC 이다 */
+export const SYSTEM_DESIGN_PROBLEMS: readonly SystemDesignProblem[] = [
+  URL_SHORTENER,
+  CHAT_SERVICE,
+  NEWS_FEED
+];
 
 /** 숨은 요구사항에 없는 질문에 대한 답 (기획서 규칙) */
 export const UNKNOWN_REQUIREMENT_ANSWER: string =
