@@ -53,7 +53,12 @@ import {
   resetSystemDesignMock,
   systemDesignHandlers
 } from "@/mocks/handlers/systemDesign";
-import { startSystemDesignInterview } from "@/domains/systemDesign/api";
+import {
+  completeRequirements,
+  startSystemDesignInterview,
+  submitSystemDesignAnswer
+} from "@/domains/systemDesign/api";
+import { http, HttpResponse } from "msw";
 import { SystemDesignInterviewRoom } from "@/domains/systemDesign/components/systemDesignRoom";
 import { SystemDesignReportView } from "@/domains/systemDesign/components/systemDesignReport";
 import { toDiagram, toFlowEdges } from "@kokomen/ui/systemDesign";
@@ -176,6 +181,73 @@ describe("시스템 설계 면접", () => {
     expect(screen.queryByText("응답 지연 목표")).not.toBeInTheDocument();
     expect(screen.getByText("읽기 전용 다이어그램")).toBeInTheDocument();
     expect(screen.getAllByText(/등급/)).toHaveLength(6);
+  });
+});
+
+describe("시스템 설계 답변 폴링", () => {
+  beforeEach(() => {
+    resetSystemDesignMock();
+    server.use(...systemDesignHandlers);
+  });
+
+  const startAtFirstQuestion = async () => {
+    const { interview_id } = await startSystemDesignInterview();
+    const { cur_question_id } = await completeRequirements(interview_id);
+    return { interviewId: interview_id, questionId: cur_question_id };
+  };
+
+  it("평가가 끝날 때까지 기다렸다가 결과를 돌려준다", async () => {
+    const { interviewId, questionId } = await startAtFirstQuestion();
+    let polls = 0;
+    server.use(
+      http.get("*/interviews/system-design/:interviewId/questions/:questionId", () => {
+        polls += 1;
+        return polls === 1
+          ? HttpResponse.json({ proceed_state: "LLM_PENDING" })
+          : HttpResponse.json({
+              proceed_state: "COMPLETED",
+              interview_state: "IN_PROGRESS",
+              stage: "HIGH_LEVEL",
+              cur_answer_rank: "B",
+              next_question_id: questionId + 1,
+              next_question: "다음 질문"
+            });
+      })
+    );
+
+    const result = await submitSystemDesignAnswer({
+      interviewId,
+      questionId,
+      answer: "캐시를 둡니다.",
+      diagram: DRAWN_DIAGRAM
+    });
+
+    expect(polls).toBe(2);
+    expect(result).toEqual({
+      interview_state: "IN_PROGRESS",
+      stage: "HIGH_LEVEL",
+      cur_answer_rank: "B",
+      next_question_id: questionId + 1,
+      next_question: "다음 질문"
+    });
+  });
+
+  it("평가에 실패하면 오류로 끝낸다", async () => {
+    const { interviewId, questionId } = await startAtFirstQuestion();
+    server.use(
+      http.get("*/interviews/system-design/:interviewId/questions/:questionId", () =>
+        HttpResponse.json({ proceed_state: "LLM_FAILED" })
+      )
+    );
+
+    await expect(
+      submitSystemDesignAnswer({
+        interviewId,
+        questionId,
+        answer: "캐시를 둡니다.",
+        diagram: DRAWN_DIAGRAM
+      })
+    ).rejects.toThrow("답변에 대한 처리를 하던 중 오류가 발생했습니다.");
   });
 });
 

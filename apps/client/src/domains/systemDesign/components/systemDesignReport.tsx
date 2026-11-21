@@ -63,6 +63,7 @@ export function SystemDesignReportView({
 function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element {
   const { createSystemDesignInterviewMutation } = useInterviewCreateMutation({});
   const metCount = report.evaluation_points.filter((point) => point.is_met).length;
+  const scoreDiff = report.user_cur_score - report.user_prev_score;
 
   return (
     <div className="flex flex-col gap-8">
@@ -92,7 +93,14 @@ function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element 
           <h2 id="sd-summary" className="text-xl font-bold text-text-primary">
             종합 평가
           </h2>
-          <p className="text-3xl font-bold text-primary">{report.total_score}점</p>
+          <div className="flex items-center gap-3">
+            {/* 기존 면접 결과와 같이 랭킹 점수 변화를 보여 준다 */}
+            <Badge appearance="weak" type={scoreDiff < 0 ? "error" : "brand"}>
+              {report.user_cur_rank} · {scoreDiff > 0 ? "+" : ""}
+              {scoreDiff}점
+            </Badge>
+            <p className="text-3xl font-bold text-primary">{report.total_score}점</p>
+          </div>
         </div>
         <p className="text-base text-text-primary">{report.total_feedback}</p>
         <p className="rounded-xl bg-bg-layout px-4 py-3 text-sm text-text-secondary">
