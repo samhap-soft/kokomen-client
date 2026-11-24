@@ -1,4 +1,3 @@
-import { Button } from "@kokomen/ui";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -12,20 +11,22 @@ const FeedbackButton = () => {
     return null;
   }
 
+  // 이미지 모서리에 회색 배경이 있어서 원으로 잘라 보여준다(Figma 1198:2468)
   return (
-    <Button
+    <button
+      type="button"
       onClick={handleFeedbackButtonClick}
-      className="fixed bottom-5 right-5 z-50 w-15 h-15 bg-orange-3 hover:bg-orange-5 animate-bounce"
-      round
+      aria-label="문의하기"
+      className="fixed bottom-5 right-5 z-50 size-15 cursor-pointer overflow-hidden rounded-full shadow-lg transition-transform hover:scale-105 animate-bounce"
     >
       <Image
-        src="/hurray.svg"
-        alt="feedback"
-        width={20}
-        height={20}
-        className="absolute top-0 left-0 w-full"
+        src="/kokobot/inquiry.png"
+        alt=""
+        width={60}
+        height={54}
+        className="size-full object-cover"
       />
-    </Button>
+    </button>
   );
 };
 
