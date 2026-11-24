@@ -1,3 +1,5 @@
+import type { InterviewType } from "../interviews";
+
 type Rank = {
   id: number;
   nickname: string;
@@ -7,6 +9,7 @@ type Rank = {
 
 type InterviewSummary = {
   interview_id: number;
+  interview_type: InterviewType;
   interview_category: string;
   created_at: string;
   root_question: string;

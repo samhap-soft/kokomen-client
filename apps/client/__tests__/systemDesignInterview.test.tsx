@@ -62,7 +62,7 @@ import { http, HttpResponse } from "msw";
 import { SystemDesignInterviewRoom } from "@/domains/systemDesign/components/systemDesignRoom";
 import { SystemDesignReportView } from "@/domains/systemDesign/components/systemDesignReport";
 import { toDiagram, toFlowEdges } from "@kokomen/ui/systemDesign";
-import type { SystemDesignDiagram } from "@kokomen/types";
+import type { SystemDesignDiagram, SystemDesignInterview } from "@kokomen/types";
 
 const joinRoom = async () => {
   fireEvent.click(await screen.findByRole("button", { name: "면접 입장하기" }));
@@ -100,7 +100,7 @@ describe("시스템 설계 면접", () => {
 
     fireEvent.change(input, { target: { value: "결제 기능도 있나요?" } });
     fireEvent.click(screen.getByRole("button", { name: "질문하기" }));
-    expect(await screen.findByText(/합리적으로 가정하고 진행하세요/)).toBeInTheDocument();
+    expect(await screen.findByText(/등록되지 않은 내용이에요/)).toBeInTheDocument();
     expect(screen.getByText("남은 질문 3 / 5")).toBeInTheDocument();
   });
 
@@ -218,6 +218,7 @@ describe("시스템 설계 답변 폴링", () => {
     const result = await submitSystemDesignAnswer({
       interviewId,
       questionId,
+      isLastQuestion: false,
       answer: "캐시를 둡니다.",
       diagram: DRAWN_DIAGRAM
     });
@@ -232,6 +233,61 @@ describe("시스템 설계 답변 폴링", () => {
     });
   });
 
+  it("채점 중에 새로고침하면 같은 질문의 결과를 이어서 기다린다", async () => {
+    const base: SystemDesignInterview = {
+      interview_id: 7,
+      interview_type: "SYSTEM_DESIGN",
+      interview_state: "IN_PROGRESS",
+      difficulty: "BASIC",
+      topic: { title: "URL 단축기를 설계해 보세요", description: "설명" },
+      stage: "HIGH_LEVEL",
+      requirement_questions: [],
+      max_requirement_question_count: 5,
+      cur_question_id: 1,
+      cur_question: "첫 질문",
+      prev_questions_and_answers: [],
+      cur_question_count: 0,
+      max_question_count: 6,
+      diagram: { blocks: [], connections: [] },
+      cur_answer_proceed_state: "LLM_PENDING"
+    };
+    let isGraded = false;
+    const polledIds: string[] = [];
+    server.use(
+      http.get("*/interviews/system-design/:interviewId", () =>
+        HttpResponse.json(
+          isGraded
+            ? {
+                ...base,
+                cur_question_id: 2,
+                cur_question: "두 번째 질문",
+                cur_question_count: 1,
+                cur_answer_proceed_state: "NONE"
+              }
+            : base
+        )
+      ),
+      http.get("*/interviews/system-design/:interviewId/questions/:questionId", ({ params }) => {
+        polledIds.push(String(params.questionId));
+        isGraded = true;
+        return HttpResponse.json({
+          proceed_state: "COMPLETED",
+          interview_state: "IN_PROGRESS",
+          stage: "HIGH_LEVEL",
+          cur_answer_rank: "B",
+          next_question_id: 2,
+          next_question: "두 번째 질문"
+        });
+      })
+    );
+
+    renderWithProviders(<SystemDesignInterviewRoom interviewId={7} />);
+    await joinRoom();
+
+    expect(await screen.findByText("두 번째 질문")).toBeInTheDocument();
+    expect(polledIds).toEqual(["1"]);
+  });
+
   it("평가에 실패하면 오류로 끝낸다", async () => {
     const { interviewId, questionId } = await startAtFirstQuestion();
     server.use(
@@ -244,10 +300,11 @@ describe("시스템 설계 답변 폴링", () => {
       submitSystemDesignAnswer({
         interviewId,
         questionId,
+        isLastQuestion: false,
         answer: "캐시를 둡니다.",
         diagram: DRAWN_DIAGRAM
       })
-    ).rejects.toThrow("답변에 대한 처리를 하던 중 오류가 발생했습니다.");
+    ).rejects.toThrow("채점에 실패했어요. 같은 답변을 다시 제출해 주세요.");
   });
 });
 

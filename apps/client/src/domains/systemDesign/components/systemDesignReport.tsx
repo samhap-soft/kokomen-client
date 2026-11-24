@@ -94,9 +94,9 @@ function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element 
             종합 평가
           </h2>
           <div className="flex items-center gap-3">
-            {/* 기존 면접 결과와 같이 랭킹 점수 변화를 보여 준다 */}
+            {/* 회원 점수(랭킹)의 변화. 리포트 점수(total_score)와 다른 값이다 */}
             <Badge appearance="weak" type={scoreDiff < 0 ? "error" : "brand"}>
-              {report.user_cur_rank} · {scoreDiff > 0 ? "+" : ""}
+              랭킹 점수 {scoreDiff > 0 ? "+" : ""}
               {scoreDiff}점
             </Badge>
             <p className="text-3xl font-bold text-primary">{report.total_score}점</p>

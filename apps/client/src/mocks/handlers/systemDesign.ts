@@ -102,7 +102,10 @@ const toPublic = (state: MockState): SystemDesignInterview => {
     ...rest
   } = state;
   /* eslint-enable no-unused-vars, @typescript-eslint/no-unused-vars */
-  return rest;
+  // 목은 답변을 받자마자 다음 질문으로 넘기므로 현재 질문의 채점 상태는 늘 NONE 이다
+  return rest.cur_question_id === null
+    ? rest
+    : { ...rest, cur_answer_proceed_state: "NONE" };
 };
 
 const findState = (id: string | readonly string[] | undefined): MockState | null => {
@@ -198,9 +201,7 @@ const buildReport = (state: MockState): SystemDesignReport => {
     final_diagram: state.diagram,
     // 목에서는 이번 점수만큼 오른 것으로 보여 준다
     user_prev_score: 1200,
-    user_cur_score: 1200 + Math.round((metCount / evaluationPoints.length) * 100),
-    user_prev_rank: "BRONZE",
-    user_cur_rank: "BRONZE"
+    user_cur_score: 1200 + Math.round((metCount / evaluationPoints.length) * 100)
   };
 };
 
@@ -251,7 +252,7 @@ export const systemDesignHandlers = [
     if (!state) return notFound();
     const body = (await request.json().catch(() => null)) as { question?: string } | null;
     const question = body?.question?.trim() ?? "";
-    if (state.stage !== "REQUIREMENTS") return badRequest("요구사항 단계가 끝났어요.");
+    if (state.stage !== "REQUIREMENTS") return conflict("요구사항 단계가 끝났어요.");
     if (!question || question.length > MAX_QUESTION_LENGTH) {
       return badRequest(`질문은 1~${MAX_QUESTION_LENGTH}자로 적어 주세요.`);
     }
@@ -275,7 +276,7 @@ export const systemDesignHandlers = [
   http.post(`${BASE}/:interviewId/requirements/complete`, async ({ params }) => {
     const state = findState(params.interviewId);
     if (!state) return notFound();
-    if (state.stage !== "REQUIREMENTS") return badRequest("이미 설계 단계예요.");
+    if (state.stage !== "REQUIREMENTS") return conflict("이미 설계 단계예요.");
     state.stage = "HIGH_LEVEL";
     state.stage_question_index = 0;
     state.cur_question_id = 1;
@@ -296,8 +297,8 @@ export const systemDesignHandlers = [
       answer?: string;
       diagram?: SystemDesignDiagram;
     } | null;
-    if (state.interview_state === "FINISHED") return badRequest("이미 끝난 면접이에요.");
-    if (state.stage === "REQUIREMENTS") return badRequest("요구사항 정리를 먼저 끝내 주세요.");
+    if (state.interview_state === "FINISHED") return conflict("이미 끝난 면접이에요.");
+    if (state.stage === "REQUIREMENTS") return conflict("요구사항 정리를 먼저 끝내 주세요.");
     if (Number(params.questionId) !== state.cur_question_id) return conflict("지금 질문이 아니에요.");
     const answer = body?.answer?.trim() ?? "";
     if (!answer || answer.length > MAX_ANSWER_LENGTH) {
@@ -354,8 +355,14 @@ export const systemDesignHandlers = [
   http.get(`${BASE}/:interviewId/questions/:questionId`, async ({ params }) => {
     const state = findState(params.interviewId);
     if (!state) return notFound();
-    const entry = state.answer_results?.[Number(params.questionId)];
-    if (!entry) return notFound();
+    const questionId = Number(params.questionId);
+    const entry = state.answer_results?.[questionId];
+    if (!entry) {
+      // 지금 질문이면 낸 기록이 없는 것(LLM_FAILED), 아직 없는 질문이면 404 다
+      return questionId === state.cur_question_id
+        ? HttpResponse.json({ proceed_state: "LLM_FAILED" })
+        : HttpResponse.json({ message: "질문을 찾을 수 없어요." }, { status: 404 });
+    }
     await respondAfter(200);
     if (entry.remaining_polls > 0) {
       entry.remaining_polls -= 1;
@@ -369,7 +376,7 @@ export const systemDesignHandlers = [
     const state = findState(params.interviewId);
     if (!state) return notFound();
     if (state.interview_state !== "FINISHED") {
-      return badRequest("면접이 끝나야 리포트를 볼 수 있어요.");
+      return conflict("면접이 끝나야 리포트를 볼 수 있어요.");
     }
     await respondAfter(300);
     return HttpResponse.json(buildReport(state));

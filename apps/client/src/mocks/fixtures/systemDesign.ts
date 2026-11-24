@@ -218,4 +218,4 @@ export const SYSTEM_DESIGN_PROBLEMS: readonly SystemDesignProblem[] = [
 
 /** 숨은 요구사항에 없는 질문에 대한 답 (기획서 규칙) */
 export const UNKNOWN_REQUIREMENT_ANSWER: string =
-  "그 부분은 정해 두지 않았어요. 합리적으로 가정하고 진행하세요.";
+  "등록되지 않은 내용이에요. 가정하고 진행하세요.";

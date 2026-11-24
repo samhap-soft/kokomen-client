@@ -112,6 +112,8 @@ export default function InterviewHistory({
                     </div>
                   </div>
 
+                  {/* 시스템 설계 면접은 공개 기록 화면이 아직 없다 */}
+                  {interview.interviewType !== "SYSTEM_DESIGN" && (
                   <div className="md:ml-4 md:w-auto w-full">
                     <Link
                       onClick={() => {
@@ -130,6 +132,7 @@ export default function InterviewHistory({
                       인터뷰 조회하기
                     </Link>
                   </div>
+                  )}
                 </div>
               </div>
             ))}

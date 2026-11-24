@@ -47,7 +47,7 @@ const DiagramEditor = dynamic(
   }
 );
 
-/** 답변 최대 길이. 서버도 같은 값으로 검증해야 한다(API 초안). */
+/** 답변 최대 길이. 서버도 같은 값(앞뒤 공백을 지운 뒤 1~3,000자)으로 검증한다 */
 const ANSWER_MAX_LENGTH = 3000;
 
 type SystemDesignDraft = {
@@ -86,7 +86,7 @@ function SystemDesignRoomContent({
   data: SystemDesignInterview;
   controller: ReturnType<typeof useSystemDesignInterview>;
 }): JSX.Element {
-  const { askMutation, completeMutation, submitMutation } = controller;
+  const { askMutation, completeMutation, submitMutation, resumeMutation } = controller;
   const [isJoined, setIsJoined] = useState<boolean>(false);
   const {
     emotion: interviewerEmotion,
@@ -137,6 +137,24 @@ function SystemDesignRoomContent({
     if (isFinished) clearAnswerDraft(interviewId);
   }, [isFinished, interviewId]);
 
+  // 채점 중에 새로고침했으면 같은 질문의 결과를 이어서 기다린다(질문마다 한 번)
+  const resumedQuestionIdRef = useRef<number | null>(null);
+  const pendingQuestionId =
+    data.cur_answer_proceed_state === "LLM_PENDING" ? data.cur_question_id : null;
+  useEffect(() => {
+    if (pendingQuestionId === null) return;
+    if (resumedQuestionIdRef.current === pendingQuestionId) return;
+    resumedQuestionIdRef.current = pendingQuestionId;
+    resumeMutation.mutate(pendingQuestionId, {
+      onSuccess: (response) => {
+        setAnswer("");
+        setInterviewerEmotion(getEmotion(response.cur_answer_rank));
+      }
+    });
+  }, [pendingQuestionId, resumeMutation, setInterviewerEmotion]);
+  const isGrading =
+    submitMutation.isPending || resumeMutation.isPending || pendingQuestionId !== null;
+
   const isRequirements = data.stage === "REQUIREMENTS";
   const currentNumber = isFinished
     ? data.cur_question_count
@@ -162,7 +180,7 @@ function SystemDesignRoomContent({
   }
 
   const submitAnswer = (): void => {
-    if (!hasAnswer || data.cur_question_id === null || submitMutation.isPending) {
+    if (!hasAnswer || data.cur_question_id === null || isGrading) {
       return;
     }
     submitMutation.mutate(
@@ -214,7 +232,7 @@ function SystemDesignRoomContent({
         value={answer}
         maxLength={ANSWER_MAX_LENGTH}
         onChange={(event) => setAnswer(event.target.value)}
-        disabled={isFinished || submitMutation.isPending}
+        disabled={isFinished || isGrading}
         placeholder="설계 의도와 선택한 이유를 적어 주세요. 제출하면 지금 그린 다이어그램도 함께 보내요."
         className="min-h-[160px] w-full flex-1 resize-none lg:min-h-28"
       />
@@ -269,9 +287,9 @@ function SystemDesignRoomContent({
                   variant="primary"
                   size="large"
                   onClick={submitAnswer}
-                  disabled={!hasAnswer || submitMutation.isPending}
-                  pendingSpinner={submitMutation.isPending}
-                  pendingText="제출 중.."
+                  disabled={!hasAnswer || isGrading}
+                  pendingSpinner={isGrading}
+                  pendingText="채점 중.."
                   className="min-w-32 md:min-w-48"
                 >
                   설계 제출

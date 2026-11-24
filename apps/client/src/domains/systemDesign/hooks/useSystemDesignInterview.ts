@@ -2,13 +2,27 @@ import {
   askRequirementQuestion,
   completeRequirements,
   getSystemDesignInterview,
-  submitSystemDesignAnswer
+  pollSystemDesignAnswer,
+  submitSystemDesignAnswer,
+  SystemDesignAnswerError
 } from "@/domains/systemDesign/api";
 import { systemDesignKeys } from "@/utils/querykeys";
 import { SystemDesignDiagram, SystemDesignInterview } from "@kokomen/types";
 import { useToast } from "@kokomen/ui";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import { useCallback } from "react";
+
+const NETWORK_ERROR_DESCRIPTION: string = "네트워크 상태를 확인한 뒤 다시 시도해주세요.";
+
+/** 서버 오류 문구({ message })는 명세대로 그대로 보여 준다 */
+const getErrorDescription = (error: unknown): string => {
+  if (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) {
+    return error.response.data.message;
+  }
+  if (error instanceof SystemDesignAnswerError) return error.message;
+  return NETWORK_ERROR_DESCRIPTION;
+};
 
 /**
  * 시스템 설계 면접 조회와 진행(역질문 → 요구사항 완료 → 답변 제출).
@@ -23,6 +37,8 @@ export function useSystemDesignInterview(interviewId: number) {
     queryKey,
     queryFn: () => getSystemDesignInterview(interviewId)
   });
+  const isLastQuestion = (questionId: number): boolean =>
+    questionId >= (query.data?.max_question_count ?? Number.POSITIVE_INFINITY);
 
   const update = useCallback(
     (
@@ -37,14 +53,20 @@ export function useSystemDesignInterview(interviewId: number) {
   );
 
   const notifyError = useCallback(
-    (title: string) =>
+    (title: string, error: unknown) =>
       errorToast({
         title,
-        description: "네트워크 상태를 확인한 뒤 다시 시도해주세요.",
+        description: getErrorDescription(error),
         duration: 5000,
         position: "top-center"
       }),
     [errorToast]
+  );
+
+  /** 서버 상태와 화면이 어긋났을 수 있을 때 다시 조회한다(다음 질문으로 넘어갔거나 면접이 끝났을 수 있다) */
+  const refetch = useCallback(
+    () => queryClient.invalidateQueries({ queryKey }),
+    [queryClient, queryKey]
   );
 
   const askMutation = useMutation({
@@ -59,7 +81,7 @@ export function useSystemDesignInterview(interviewId: number) {
         ]
       }));
     },
-    onError: () => notifyError("질문을 보내지 못했어요")
+    onError: (error) => notifyError("질문을 보내지 못했어요", error)
   });
 
   const completeMutation = useMutation({
@@ -72,7 +94,7 @@ export function useSystemDesignInterview(interviewId: number) {
         cur_question: data.cur_question
       }));
     },
-    onError: () => notifyError("다음 단계로 넘어가지 못했어요")
+    onError: (error) => notifyError("다음 단계로 넘어가지 못했어요", error)
   });
 
   const submitMutation = useMutation({
@@ -85,6 +107,7 @@ export function useSystemDesignInterview(interviewId: number) {
       submitSystemDesignAnswer({
         interviewId,
         questionId: variables.questionId,
+        isLastQuestion: isLastQuestion(variables.questionId),
         answer: variables.answer,
         diagram: variables.diagram
       }),
@@ -113,8 +136,30 @@ export function useSystemDesignInterview(interviewId: number) {
         };
       });
     },
-    onError: () => notifyError("답변을 제출하지 못했어요")
+    onError: (error) => {
+      notifyError("답변을 제출하지 못했어요", error);
+      // 채점 실패(LLM_FAILED)는 같은 질문에 다시 내면 되므로 화면을 그대로 둔다.
+      // 그 밖의 경우(시간 초과, 409 등)는 서버에서 이미 다음 질문으로 넘어갔을 수 있어 다시 조회한다
+      if (!(error instanceof SystemDesignAnswerError && error.kind === "FAILED")) {
+        refetch();
+      }
+    }
   });
 
-  return { query, askMutation, completeMutation, submitMutation };
+  /**
+   * 채점 중에 새로고침하면 면접 조회가 cur_answer_proceed_state = LLM_PENDING 을 준다.
+   * 그때는 같은 질문의 결과를 이어서 기다리고, 끝나면 저장된 답변을 다시 조회한다.
+   */
+  const resumeMutation = useMutation({
+    mutationFn: (questionId: number) =>
+      pollSystemDesignAnswer({
+        interviewId,
+        questionId,
+        isLastQuestion: isLastQuestion(questionId)
+      }),
+    onSettled: () => refetch(),
+    onError: (error) => notifyError("채점 결과를 받지 못했어요", error)
+  });
+
+  return { query, askMutation, completeMutation, submitMutation, resumeMutation };
 }

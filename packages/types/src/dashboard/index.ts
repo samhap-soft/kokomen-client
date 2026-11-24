@@ -1,7 +1,8 @@
-import { InterviewMode } from "../interviews";
+import { InterviewMode, InterviewType } from "../interviews";
 
 type InterviewHistory = {
   interview_id: number;
+  interview_type: InterviewType;
   interview_state: "FINISHED" | "IN_PROGRESS";
   interview_category: string;
   interview_mode: InterviewMode;

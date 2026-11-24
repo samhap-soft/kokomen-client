@@ -51,6 +51,15 @@ function InterviewRow({
   interview: InterviewHistoryItem;
 }): JSX.Element {
   const isFinished = interview.interview_state === "FINISHED";
+  // 시스템 설계 면접은 결과 · 진행 화면이 따로 있고, 공개 기록 화면은 아직 없다
+  const isSystemDesign = interview.interview_type === "SYSTEM_DESIGN";
+  const href = isSystemDesign
+    ? isFinished
+      ? `/interviews/${interview.interview_id}/system-design-report`
+      : `/interviews/${interview.interview_id}?mode=TEXT&type=SYSTEM_DESIGN`
+    : isFinished
+      ? `/interviews/${interview.interview_id}/result`
+      : `/interviews/${interview.interview_id}?mode=${interview.interview_mode}`;
   return (
     <li className="flex flex-col gap-4 border-b border-border py-6 md:flex-row md:items-center md:gap-6">
       <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -81,7 +90,7 @@ function InterviewRow({
                 : "진행 중"}
             </span>
           </div>
-          {isFinished && (
+          {isFinished && !isSystemDesign && (
             <Link
               href={`/members/interviews/${interview.interview_id}`}
               className={textButtonVariants({
@@ -96,11 +105,7 @@ function InterviewRow({
         </div>
       </div>
       <Link
-        href={
-          isFinished
-            ? `/interviews/${interview.interview_id}/result`
-            : `/interviews/${interview.interview_id}?mode=${interview.interview_mode}`
-        }
+        href={href}
         className={buttonVariants({
           variant: "secondary",
           className: "shrink-0 self-start md:self-center"
