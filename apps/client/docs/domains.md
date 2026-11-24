@@ -77,18 +77,20 @@ Figma `인터뷰 / to-be`(1172:2426 텍스트 · 1172:2473 음성 · 1172:2527 �
 ## systemDesign (시스템 설계 면접)
 
 요구사항(역질문 최대 5개) → 개략 설계(질문 최대 3개) → 심화(질문 최대 3개). TEXT 전용.
-**백엔드 작업 전**이라 API 는 초안이고, 개발 환경에서는 MSW 목이 응답한다.
+API 명세는 dev 백엔드 문서(https://api-dev.kokomen.kr/docs/index.html) 5장이다. `yarn dev:mock` 에서는 MSW 목이 응답한다.
 
 | 파일 | 역할 |
 |------|------|
-| `api/index.ts` | API 초안(`/interviews/system-design/...`). 타입은 `@kokomen/types` 의 `interviews/systemDesign.ts` |
+| `api/index.ts` | API(`/interviews/system-design/...`). 답변은 202 로 받고 1초마다 폴링한다(1~5번째 30번, 마지막 90번). 타입은 `@kokomen/types` 의 `interviews/systemDesign.ts` |
 | `hooks/useSystemDesignInterview.ts` | 조회 + 역질문 · 요구사항 완료 · 답변 제출 mutation |
 | `components/systemDesignRoom.tsx` | 면접실(stage 배치). 페이지에서 dynamic import 해서 React Flow 를 기본 면접에 싣지 않는다 |
 | `components/systemDesignReport.tsx` | 리포트(`/interviews/[id]/system-design-report`) |
-| `constants.ts` | 난이도 라벨 · 최대 질문 수 |
+| `constants.ts` | 최대 질문 수 · 노출 여부(`IS_SYSTEM_DESIGN_AVAILABLE`) |
 
 - 다이어그램 에디터는 `@kokomen/ui/systemDesign` 의 `DiagramEditor`(React Flow). 저장 형식은 블록(`id · kind · label · props · position`)과 연결(`source → target · label`)만 담는다.
 - LLM 에 보낼 텍스트 변환은 서버에서만 한다(클라이언트는 JSON 만 보낸다). 입력 상한은 `DIAGRAM_LIMITS` 와 같게 서버도 검증해야 한다.
+- 채점 중에 새로고침하면 면접 조회가 `cur_answer_proceed_state = LLM_PENDING` 을 준다. 면접실은 같은 질문의 폴링을 이어 간다. 채점 실패(`LLM_FAILED`)는 저장되지 않으므로 입력한 답변과 다이어그램을 그대로 두고 다시 내게 한다.
+- 서버 오류 문구(`{ message }`)는 토스트에 그대로 보여 준다.
 - 목: `src/mocks/handlers/systemDesign.ts`(상태는 sessionStorage 에도 저장), 문제 데이터 `src/mocks/fixtures/systemDesign.ts`.
 
 ---

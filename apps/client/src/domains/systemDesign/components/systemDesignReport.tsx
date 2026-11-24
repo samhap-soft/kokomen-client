@@ -1,7 +1,6 @@
 import { RankLabel } from "@/domains/interviewReport/components/rankLabel";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import { getSystemDesignReport } from "@/domains/systemDesign/api";
-import { getDifficultyLabel } from "@/domains/systemDesign/constants";
 import { systemDesignKeys } from "@/utils/querykeys";
 import { SystemDesignReport, SystemDesignStage } from "@kokomen/types";
 import { Badge, Button, CheckIcon, CloseIcon, Skeleton } from "@kokomen/ui";
@@ -64,6 +63,7 @@ export function SystemDesignReportView({
 function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element {
   const { createSystemDesignInterviewMutation } = useInterviewCreateMutation({});
   const metCount = report.evaluation_points.filter((point) => point.is_met).length;
+  const scoreDiff = report.user_cur_score - report.user_prev_score;
 
   return (
     <div className="flex flex-col gap-8">
@@ -72,9 +72,6 @@ function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element 
           <div className="flex flex-wrap items-center gap-2">
             <Badge appearance="weak" type="brand">
               시스템 설계
-            </Badge>
-            <Badge appearance="weak" type="neutral">
-              {getDifficultyLabel(report.difficulty)}
             </Badge>
           </div>
           <h1 className="text-3xl font-bold text-text-primary">{report.topic.title}</h1>
@@ -85,11 +82,9 @@ function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element 
           variant="secondary"
           size="large"
           disabled={createSystemDesignInterviewMutation.isPending}
-          onClick={() =>
-            createSystemDesignInterviewMutation.mutate({ difficulty: report.difficulty })
-          }
+          onClick={() => createSystemDesignInterviewMutation.mutate()}
         >
-          같은 주제로 다시 하기
+          새 면접 시작하기
         </Button>
       </div>
 
@@ -98,7 +93,14 @@ function ReportContent({ report }: { report: SystemDesignReport }): JSX.Element 
           <h2 id="sd-summary" className="text-xl font-bold text-text-primary">
             종합 평가
           </h2>
-          <p className="text-3xl font-bold text-primary">{report.total_score}점</p>
+          <div className="flex items-center gap-3">
+            {/* 회원 점수(랭킹)의 변화. 리포트 점수(total_score)와 다른 값이다 */}
+            <Badge appearance="weak" type={scoreDiff < 0 ? "error" : "brand"}>
+              랭킹 점수 {scoreDiff > 0 ? "+" : ""}
+              {scoreDiff}점
+            </Badge>
+            <p className="text-3xl font-bold text-primary">{report.total_score}점</p>
+          </div>
         </div>
         <p className="text-base text-text-primary">{report.total_feedback}</p>
         <p className="rounded-xl bg-bg-layout px-4 py-3 text-sm text-text-secondary">

@@ -1,8 +1,8 @@
 import type {
   AnswerScore,
-  InterviewDifficulty,
   RequirementQuestion,
   SystemDesignAnswer,
+  SystemDesignAnswerResult,
   SystemDesignDiagram,
   SystemDesignInterview,
   SystemDesignReport,
@@ -34,6 +34,9 @@ const STORAGE_KEY = "kokomen:mock:system-design";
 const MOCK_ID_START = 900001;
 
 type MockState = SystemDesignInterview & {
+  problem_index: number;
+  /** 질문 id 별 평가 결과. remaining_polls 만큼 LLM_PENDING 을 먼저 돌려준다 */
+  answer_results: Record<number, { result: SystemDesignAnswerResult; remaining_polls: number }>;
   stage_question_index: number;
   asked_requirement_names: string[];
   ranks: AnswerScore[];
@@ -75,7 +78,9 @@ export const resetSystemDesignMock = (): void => {
   }
 };
 
-const getProblem = (state: MockState) => SYSTEM_DESIGN_PROBLEMS[state.difficulty];
+// 이전 형식으로 저장된 세션(problem_index 없음)은 첫 문제로 본다
+const getProblem = (state: MockState) =>
+  SYSTEM_DESIGN_PROBLEMS[state.problem_index] ?? SYSTEM_DESIGN_PROBLEMS[0];
 
 const getStageQuestions = (
   state: MockState,
@@ -89,13 +94,18 @@ const getStageQuestions = (
 const toPublic = (state: MockState): SystemDesignInterview => {
   /* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
   const {
+    problem_index: _problem,
+    answer_results: _results,
     stage_question_index: _index,
     asked_requirement_names: _asked,
     ranks: _ranks,
     ...rest
   } = state;
   /* eslint-enable no-unused-vars, @typescript-eslint/no-unused-vars */
-  return rest;
+  // 목은 답변을 받자마자 다음 질문으로 넘기므로 현재 질문의 채점 상태는 늘 NONE 이다
+  return rest.cur_question_id === null
+    ? rest
+    : { ...rest, cur_answer_proceed_state: "NONE" };
 };
 
 const findState = (id: string | readonly string[] | undefined): MockState | null => {
@@ -109,6 +119,9 @@ const notFound = (): HttpResponse<{ message: string }> =>
 
 const badRequest = (message: string): HttpResponse<{ message: string }> =>
   HttpResponse.json({ message }, { status: 400 });
+
+const conflict = (message: string): HttpResponse<{ message: string }> =>
+  HttpResponse.json({ message }, { status: 409 });
 
 const isValidDiagram = (diagram: SystemDesignDiagram | undefined): boolean =>
   Boolean(diagram) &&
@@ -185,29 +198,29 @@ const buildReport = (state: MockState): SystemDesignReport => {
       .map((requirement) => requirement.name),
     requirement_questions: state.requirement_questions,
     feedbacks,
-    final_diagram: state.diagram
+    final_diagram: state.diagram,
+    // 목에서는 이번 점수만큼 오른 것으로 보여 준다
+    user_prev_score: 1200,
+    user_cur_score: 1200 + Math.round((metCount / evaluationPoints.length) * 100)
   };
 };
 
 const BASE = "*/interviews/system-design";
 
 export const systemDesignHandlers = [
-  http.post(`${BASE}`, async ({ request }) => {
+  http.post(`${BASE}`, async () => {
     restore();
-    const body = (await request.json().catch(() => null)) as {
-      difficulty?: InterviewDifficulty;
-    } | null;
-    const difficulty = body?.difficulty;
-    if (!difficulty || !(difficulty in SYSTEM_DESIGN_PROBLEMS)) {
-      return badRequest("난이도를 골라 주세요.");
-    }
     const id = Math.max(MOCK_ID_START - 1, ...store.keys()) + 1;
-    const problem = SYSTEM_DESIGN_PROBLEMS[difficulty];
+    // 실제 서버는 무작위로 고른다. 목은 테스트가 같은 결과를 내도록 차례로 돌린다
+    const problemIndex = (id - MOCK_ID_START) % SYSTEM_DESIGN_PROBLEMS.length;
+    const problem = SYSTEM_DESIGN_PROBLEMS[problemIndex];
     store.set(id, {
+      problem_index: problemIndex,
+      answer_results: {},
       interview_id: id,
       interview_type: "SYSTEM_DESIGN",
       interview_state: "IN_PROGRESS",
-      difficulty,
+      difficulty: "BASIC",
       topic: problem.topic,
       stage: "REQUIREMENTS",
       requirement_questions: [],
@@ -239,7 +252,7 @@ export const systemDesignHandlers = [
     if (!state) return notFound();
     const body = (await request.json().catch(() => null)) as { question?: string } | null;
     const question = body?.question?.trim() ?? "";
-    if (state.stage !== "REQUIREMENTS") return badRequest("요구사항 단계가 끝났어요.");
+    if (state.stage !== "REQUIREMENTS") return conflict("요구사항 단계가 끝났어요.");
     if (!question || question.length > MAX_QUESTION_LENGTH) {
       return badRequest(`질문은 1~${MAX_QUESTION_LENGTH}자로 적어 주세요.`);
     }
@@ -263,7 +276,7 @@ export const systemDesignHandlers = [
   http.post(`${BASE}/:interviewId/requirements/complete`, async ({ params }) => {
     const state = findState(params.interviewId);
     if (!state) return notFound();
-    if (state.stage !== "REQUIREMENTS") return badRequest("이미 설계 단계예요.");
+    if (state.stage !== "REQUIREMENTS") return conflict("이미 설계 단계예요.");
     state.stage = "HIGH_LEVEL";
     state.stage_question_index = 0;
     state.cur_question_id = 1;
@@ -277,17 +290,16 @@ export const systemDesignHandlers = [
     });
   }),
 
-  http.post(`${BASE}/:interviewId/answers`, async ({ params, request }) => {
+  http.post(`${BASE}/:interviewId/questions/:questionId/answers`, async ({ params, request }) => {
     const state = findState(params.interviewId);
     if (!state) return notFound();
     const body = (await request.json().catch(() => null)) as {
-      question_id?: number;
       answer?: string;
       diagram?: SystemDesignDiagram;
     } | null;
-    if (state.interview_state === "FINISHED") return badRequest("이미 끝난 면접이에요.");
-    if (state.stage === "REQUIREMENTS") return badRequest("요구사항 정리를 먼저 끝내 주세요.");
-    if (body?.question_id !== state.cur_question_id) return badRequest("지금 질문이 아니에요.");
+    if (state.interview_state === "FINISHED") return conflict("이미 끝난 면접이에요.");
+    if (state.stage === "REQUIREMENTS") return conflict("요구사항 정리를 먼저 끝내 주세요.");
+    if (Number(params.questionId) !== state.cur_question_id) return conflict("지금 질문이 아니에요.");
     const answer = body?.answer?.trim() ?? "";
     if (!answer || answer.length > MAX_ANSWER_LENGTH) {
       return badRequest(`답변은 1~${MAX_ANSWER_LENGTH}자로 적어 주세요.`);
@@ -324,22 +336,47 @@ export const systemDesignHandlers = [
       state.cur_question_id = (state.cur_question_id ?? 0) + 1;
       state.cur_question = getStageQuestions(state, nextStage)[state.stage_question_index];
     }
+    state.answer_results[record.question_id] = {
+      result: {
+        interview_state: state.interview_state,
+        stage: state.stage,
+        cur_answer_rank: rank,
+        next_question_id: state.cur_question_id,
+        next_question: state.cur_question
+      },
+      // 화면에서는 평가 대기를 한 번 보여 주고, jest 에서는 바로 끝낸다
+      remaining_polls: process.env.NODE_ENV === "test" ? 0 : 1
+    };
     persist();
-    await respondAfter(900);
-    return HttpResponse.json({
-      interview_state: state.interview_state,
-      stage: state.stage,
-      cur_answer_rank: rank,
-      next_question_id: state.cur_question_id,
-      next_question: state.cur_question
-    });
+    await respondAfter(300);
+    return new HttpResponse(null, { status: 202 });
+  }),
+
+  http.get(`${BASE}/:interviewId/questions/:questionId`, async ({ params }) => {
+    const state = findState(params.interviewId);
+    if (!state) return notFound();
+    const questionId = Number(params.questionId);
+    const entry = state.answer_results?.[questionId];
+    if (!entry) {
+      // 지금 질문이면 낸 기록이 없는 것(LLM_FAILED), 아직 없는 질문이면 404 다
+      return questionId === state.cur_question_id
+        ? HttpResponse.json({ proceed_state: "LLM_FAILED" })
+        : HttpResponse.json({ message: "질문을 찾을 수 없어요." }, { status: 404 });
+    }
+    await respondAfter(200);
+    if (entry.remaining_polls > 0) {
+      entry.remaining_polls -= 1;
+      persist();
+      return HttpResponse.json({ proceed_state: "LLM_PENDING" });
+    }
+    return HttpResponse.json({ proceed_state: "COMPLETED", ...entry.result });
   }),
 
   http.get(`${BASE}/:interviewId/report`, async ({ params }) => {
     const state = findState(params.interviewId);
     if (!state) return notFound();
     if (state.interview_state !== "FINISHED") {
-      return badRequest("면접이 끝나야 리포트를 볼 수 있어요.");
+      return conflict("면접이 끝나야 리포트를 볼 수 있어요.");
     }
     await respondAfter(300);
     return HttpResponse.json(buildReport(state));

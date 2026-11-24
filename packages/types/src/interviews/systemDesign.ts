@@ -7,14 +7,28 @@ import type { AnswerScore } from "./index";
  * 필드 이름은 기존 면접 API 와 같이 snake_case 를 쓴다.
  */
 
-/** POST /interviews/system-design → { interview_id } */
-type StartSystemDesignInterviewRequest = { difficulty: InterviewDifficulty };
+/** POST /interviews/system-design (본문 없음) → { interview_id } */
+type StartSystemDesignInterviewResponse = { interview_id: number };
 
-/** 면접 유형. 기본 면접은 기존 API 와 같고, 나머지는 TEXT 전용이다. */
-type InterviewKind = "BASIC" | "CODE_REVIEW" | "SYSTEM_DESIGN";
+/** 면접 유형. 면접 기록 목록(interview_type)에 같은 값이 온다 */
+type InterviewType =
+  | "CATEGORY_BASED"
+  | "RESUME_BASED"
+  | "LIVE_CODING"
+  | "PERSONALITY"
+  | "SYSTEM_DESIGN";
 
-/** 주니어(0~2년) · 미들(3~5년) · 시니어(6년 이상) */
-type InterviewDifficulty = "JUNIOR" | "MIDDLE" | "SENIOR";
+/**
+ * 현재 질문에 낸 답변의 채점 상태.
+ * NONE: 내지 않았거나 기록이 사라짐, LLM_PENDING: 채점 중, LLM_FAILED: 실패(같은 질문에 다시 낸다)
+ */
+type SystemDesignAnswerProceedState = "NONE" | "LLM_PENDING" | "LLM_FAILED";
+
+/**
+ * 시스템 설계 면접 난이도. 지금은 BASIC 하나만 연다.
+ * 난이도가 늘어도 응답 구조가 바뀌지 않도록 응답에는 지금부터 넣는다.
+ */
+type SystemDesignDifficulty = "BASIC";
 
 /** 요구사항 → 개략 설계 → 심화 */
 type SystemDesignStage = "REQUIREMENTS" | "HIGH_LEVEL" | "DEEP_DIVE";
@@ -83,7 +97,7 @@ type SystemDesignInterview = {
   interview_id: number;
   interview_type: "SYSTEM_DESIGN";
   interview_state: "IN_PROGRESS" | "FINISHED";
-  difficulty: InterviewDifficulty;
+  difficulty: SystemDesignDifficulty;
   topic: SystemDesignTopic;
   stage: SystemDesignStage;
   requirement_questions: RequirementQuestion[];
@@ -97,6 +111,8 @@ type SystemDesignInterview = {
   max_question_count: number;
   /** 마지막으로 제출한 다이어그램. 제출 전에는 시작 다이어그램이다. */
   diagram: SystemDesignDiagram;
+  /** 현재 질문이 없는 요구사항 단계와 면접이 끝난 뒤에는 키가 없다 */
+  cur_answer_proceed_state?: SystemDesignAnswerProceedState;
 };
 
 /** POST /interviews/system-design/{interviewId}/requirement-questions */
@@ -113,18 +129,27 @@ type CompleteRequirementsResponse = {
 };
 
 /** POST /interviews/system-design/{interviewId}/answers */
+/**
+ * POST /interviews/system-design/{interviewId}/questions/{questionId}/answers → 202
+ * 평가는 기존 면접처럼 비동기로 하고, 결과는 SystemDesignAnswerPolling 으로 조회한다.
+ */
 type SystemDesignAnswerRequest = {
-  question_id: number;
   answer: string;
   diagram: SystemDesignDiagram;
 };
-type SystemDesignAnswerResponse = {
+type SystemDesignAnswerResult = {
   interview_state: "IN_PROGRESS" | "FINISHED";
   stage: SystemDesignStage;
   cur_answer_rank: AnswerScore;
   next_question_id: number | null;
   next_question: string | null;
 };
+
+/** GET /interviews/system-design/{interviewId}/questions/{questionId}. TEXT 전용이라 TTS 상태는 없다 */
+type SystemDesignAnswerPolling =
+  | { proceed_state: "LLM_PENDING" }
+  | { proceed_state: "LLM_FAILED" }
+  | ({ proceed_state: "COMPLETED" } & SystemDesignAnswerResult);
 
 type SystemDesignEvaluationPoint = {
   description: string;
@@ -140,7 +165,7 @@ type SystemDesignAnswerFeedback = SystemDesignAnswer & {
 type SystemDesignReport = {
   interview_id: number;
   topic: SystemDesignTopic;
-  difficulty: InterviewDifficulty;
+  difficulty: SystemDesignDifficulty;
   total_score: number;
   total_feedback: string;
   difficulty_comment: string;
@@ -150,12 +175,16 @@ type SystemDesignReport = {
   requirement_questions: RequirementQuestion[];
   feedbacks: SystemDesignAnswerFeedback[];
   final_diagram: SystemDesignDiagram;
+  /** 회원 점수(랭킹). prev 는 이번 면접의 등급 점수 합을 뺀 값이다. total_score 와 다르다 */
+  user_cur_score: number;
+  user_prev_score: number;
 };
 
 export type {
-  StartSystemDesignInterviewRequest,
-  InterviewKind,
-  InterviewDifficulty,
+  StartSystemDesignInterviewResponse,
+  InterviewType,
+  SystemDesignAnswerProceedState,
+  SystemDesignDifficulty,
   SystemDesignStage,
   DiagramBlockKind,
   DiagramBlockProp,
@@ -170,7 +199,8 @@ export type {
   RequirementQuestionResponse,
   CompleteRequirementsResponse,
   SystemDesignAnswerRequest,
-  SystemDesignAnswerResponse,
+  SystemDesignAnswerResult,
+  SystemDesignAnswerPolling,
   SystemDesignEvaluationPoint,
   SystemDesignAnswerFeedback,
   SystemDesignReport

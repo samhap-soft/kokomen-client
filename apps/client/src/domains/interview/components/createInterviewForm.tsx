@@ -1,7 +1,6 @@
 import { Category } from "@/api/category";
 import useInterviewCreateMutation from "@/domains/interview/hooks/useInterviewCreateMutation";
 import {
-  InterviewDifficulty,
   InterviewMode,
   InterviewQuestion
 } from "@kokomen/types";
@@ -40,7 +39,6 @@ import {
 import { getQuestions } from "@/domains/interview/api/questions";
 import { interviewQuestionKeys } from "@/utils/querykeys";
 import {
-  DIFFICULTY_OPTIONS,
   IS_SYSTEM_DESIGN_AVAILABLE,
   SYSTEM_DESIGN_ESTIMATED_MINUTES,
   SYSTEM_DESIGN_MAX_QUESTION_COUNT,
@@ -186,33 +184,6 @@ const InterviewKindSelector = ({
   </div>
 );
 
-const DifficultySelector = ({
-  selected,
-  onChange
-}: {
-  selected: InterviewDifficulty;
-  // eslint-disable-next-line no-unused-vars
-  onChange: (difficulty: InterviewDifficulty) => void;
-}): JSX.Element => (
-  <div className="flex flex-col gap-2">
-    <h3 className="text-base font-medium text-text-secondary">난이도</h3>
-    <Tab aria-label="난이도">
-      {DIFFICULTY_OPTIONS.map((option) => (
-        <Tab.Item
-          key={option.value}
-          selected={selected === option.value}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-          <span className="ml-1 text-xs font-normal text-text-tertiary">
-            {option.description}
-          </span>
-        </Tab.Item>
-      ))}
-    </Tab>
-  </div>
-);
-
 /** 시스템 설계를 고르면 왼쪽 분야 선택 자리에 진행 방식을 보여준다 */
 const SystemDesignIntro = (): JSX.Element => (
   <div className="flex flex-col gap-8 rounded-[20px] border border-border bg-bg-elevated px-6 py-8 sm:px-[30px] sm:py-10">
@@ -263,8 +234,7 @@ const InterviewStartModal = ({
   categoryTitle,
   interviewType,
   isLiveCoding,
-  kind,
-  difficultyLabel
+  kind
 }: {
   isOpen: boolean;
   closeModal: () => void;
@@ -274,7 +244,6 @@ const InterviewStartModal = ({
   interviewType: InterviewMode;
   isLiveCoding: boolean;
   kind: InterviewKindOption;
-  difficultyLabel: string;
 }) => {
   const isSystemDesign = kind === "SYSTEM_DESIGN";
   const effectiveType: InterviewMode =
@@ -290,12 +259,12 @@ const InterviewStartModal = ({
         <div className="text-center">
           <h3 className="text-lg font-semibold text-text-heading mb-2">
             {isSystemDesign
-              ? `${difficultyLabel} 시스템 설계 면접을 시작하시겠습니까?`
+              ? "시스템 설계 면접을 시작하시겠습니까?"
               : `${categoryTitle} 면접을 시작하시겠습니까?`}
           </h3>
           <p className="text-sm text-text-description">
             {isSystemDesign
-              ? "주제는 고른 난이도에 맞춰 무작위로 나와요"
+              ? "주제는 무작위로 나와요"
               : `선택한 카테고리의 ${questionCount}개 문제로 면접을 진행합니다`}
           </p>
         </div>
@@ -454,7 +423,6 @@ const CreateInterviewForm = ({
     useState<InterviewQuestion | null>(null);
   const [interviewKind, setInterviewKind] =
     useState<InterviewKindOption>("BASIC");
-  const [difficulty, setDifficulty] = useState<InterviewDifficulty>("JUNIOR");
   const isSystemDesign = interviewKind === "SYSTEM_DESIGN";
   const { isOpen, openModal, closeModal } = useModal();
   const {
@@ -519,7 +487,7 @@ const CreateInterviewForm = ({
   const handleConfirmStart = useCallback(() => {
     closeModal();
     if (isSystemDesign) {
-      createSystemDesignInterviewMutation.mutate({ difficulty });
+      createSystemDesignInterviewMutation.mutate();
       return;
     }
     handleNewInterview(selectedQuestions);
@@ -527,7 +495,6 @@ const CreateInterviewForm = ({
     closeModal,
     isSystemDesign,
     createSystemDesignInterviewMutation,
-    difficulty,
     handleNewInterview,
     selectedQuestions
   ]);
@@ -543,9 +510,6 @@ const CreateInterviewForm = ({
   const groupedCategories = groupCategories(categories);
   const requiredToken =
     selectedInterviewType === "VOICE" ? questionCount * 2 : questionCount;
-  const difficultyLabel =
-    DIFFICULTY_OPTIONS.find((option) => option.value === difficulty)?.label ??
-    "";
 
   return (
     <form
@@ -618,12 +582,9 @@ const CreateInterviewForm = ({
             onChange={setInterviewKind}
           />
           {isSystemDesign ? (
-            <>
-              <DifficultySelector selected={difficulty} onChange={setDifficulty} />
-              <p className="text-sm text-text-tertiary">
-                시스템 설계 면접은 텍스트로만 진행돼요.
-              </p>
-            </>
+            <p className="text-sm text-text-tertiary">
+              시스템 설계 면접은 텍스트로만 진행돼요.
+            </p>
           ) : (
             <>
               <div className="flex flex-col gap-2">
@@ -710,7 +671,6 @@ const CreateInterviewForm = ({
         interviewType={selectedInterviewType}
         isLiveCoding={selectedQuestions?.question_type === "CODE"}
         kind={interviewKind}
-        difficultyLabel={difficultyLabel}
       />
     </form>
   );

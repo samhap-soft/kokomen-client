@@ -60,8 +60,8 @@ jobs:
             NEXT_PUBLIC_NOTIFICATION_API_BASE_URL=https://notification-api-dev.kokomen.kr/api/v1
             NEXT_PUBLIC_V3_API_BASE_URL=https://api-dev.kokomen.kr/api/v3
             NEXT_PUBLIC_GRAPHQL_URL=https://api-dev.kokomen.kr/api/v3/graphql
-            # 백엔드가 아직 없는 시스템 설계 면접 API 를 브라우저 MSW 목으로 응답한다. 운영(deploy.yml)에는 넣지 않는다
-            NEXT_PUBLIC_API_MOCKING=enabled
+            # 시스템 설계 면접은 dev 백엔드에만 있어서 dev 배포에서만 연다. 운영(deploy.yml)에는 넣지 않는다
+            NEXT_PUBLIC_SYSTEM_DESIGN_ENABLED=true
       - name: Build summary
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

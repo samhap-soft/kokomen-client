@@ -53,11 +53,16 @@ import {
   resetSystemDesignMock,
   systemDesignHandlers
 } from "@/mocks/handlers/systemDesign";
-import { startSystemDesignInterview } from "@/domains/systemDesign/api";
+import {
+  completeRequirements,
+  startSystemDesignInterview,
+  submitSystemDesignAnswer
+} from "@/domains/systemDesign/api";
+import { http, HttpResponse } from "msw";
 import { SystemDesignInterviewRoom } from "@/domains/systemDesign/components/systemDesignRoom";
 import { SystemDesignReportView } from "@/domains/systemDesign/components/systemDesignReport";
 import { toDiagram, toFlowEdges } from "@kokomen/ui/systemDesign";
-import type { SystemDesignDiagram } from "@kokomen/types";
+import type { SystemDesignDiagram, SystemDesignInterview } from "@kokomen/types";
 
 const joinRoom = async () => {
   fireEvent.click(await screen.findByRole("button", { name: "면접 입장하기" }));
@@ -81,7 +86,7 @@ describe("시스템 설계 면접", () => {
   });
 
   it("역질문은 숨은 요구사항으로 답하고, 없는 내용은 가정하라고 답한다", async () => {
-    const { interview_id } = await startSystemDesignInterview({ difficulty: "JUNIOR" });
+    const { interview_id } = await startSystemDesignInterview();
     renderWithProviders(<SystemDesignInterviewRoom interviewId={interview_id} />);
     await joinRoom();
 
@@ -95,12 +100,12 @@ describe("시스템 설계 면접", () => {
 
     fireEvent.change(input, { target: { value: "결제 기능도 있나요?" } });
     fireEvent.click(screen.getByRole("button", { name: "질문하기" }));
-    expect(await screen.findByText(/합리적으로 가정하고 진행하세요/)).toBeInTheDocument();
+    expect(await screen.findByText(/등록되지 않은 내용이에요/)).toBeInTheDocument();
     expect(screen.getByText("남은 질문 3 / 5")).toBeInTheDocument();
   });
 
   it("역질문 5개를 다 쓰면 입력창이 사라지고 정리 완료 버튼만 남는다", async () => {
-    const { interview_id } = await startSystemDesignInterview({ difficulty: "JUNIOR" });
+    const { interview_id } = await startSystemDesignInterview();
     renderWithProviders(<SystemDesignInterviewRoom interviewId={interview_id} />);
     await joinRoom();
 
@@ -122,7 +127,7 @@ describe("시스템 설계 면접", () => {
   });
 
   it("요구사항 → 개략 설계 → 심화를 거쳐 6번째 답변 후 종료되고 리포트에 결과가 나온다", async () => {
-    const { interview_id } = await startSystemDesignInterview({ difficulty: "JUNIOR" });
+    const { interview_id } = await startSystemDesignInterview();
     const { unmount } = renderWithProviders(
       <SystemDesignInterviewRoom interviewId={interview_id} />
     );
@@ -176,6 +181,130 @@ describe("시스템 설계 면접", () => {
     expect(screen.queryByText("응답 지연 목표")).not.toBeInTheDocument();
     expect(screen.getByText("읽기 전용 다이어그램")).toBeInTheDocument();
     expect(screen.getAllByText(/등급/)).toHaveLength(6);
+  });
+});
+
+describe("시스템 설계 답변 폴링", () => {
+  beforeEach(() => {
+    resetSystemDesignMock();
+    server.use(...systemDesignHandlers);
+  });
+
+  const startAtFirstQuestion = async () => {
+    const { interview_id } = await startSystemDesignInterview();
+    const { cur_question_id } = await completeRequirements(interview_id);
+    return { interviewId: interview_id, questionId: cur_question_id };
+  };
+
+  it("평가가 끝날 때까지 기다렸다가 결과를 돌려준다", async () => {
+    const { interviewId, questionId } = await startAtFirstQuestion();
+    let polls = 0;
+    server.use(
+      http.get("*/interviews/system-design/:interviewId/questions/:questionId", () => {
+        polls += 1;
+        return polls === 1
+          ? HttpResponse.json({ proceed_state: "LLM_PENDING" })
+          : HttpResponse.json({
+              proceed_state: "COMPLETED",
+              interview_state: "IN_PROGRESS",
+              stage: "HIGH_LEVEL",
+              cur_answer_rank: "B",
+              next_question_id: questionId + 1,
+              next_question: "다음 질문"
+            });
+      })
+    );
+
+    const result = await submitSystemDesignAnswer({
+      interviewId,
+      questionId,
+      isLastQuestion: false,
+      answer: "캐시를 둡니다.",
+      diagram: DRAWN_DIAGRAM
+    });
+
+    expect(polls).toBe(2);
+    expect(result).toEqual({
+      interview_state: "IN_PROGRESS",
+      stage: "HIGH_LEVEL",
+      cur_answer_rank: "B",
+      next_question_id: questionId + 1,
+      next_question: "다음 질문"
+    });
+  });
+
+  it("채점 중에 새로고침하면 같은 질문의 결과를 이어서 기다린다", async () => {
+    const base: SystemDesignInterview = {
+      interview_id: 7,
+      interview_type: "SYSTEM_DESIGN",
+      interview_state: "IN_PROGRESS",
+      difficulty: "BASIC",
+      topic: { title: "URL 단축기를 설계해 보세요", description: "설명" },
+      stage: "HIGH_LEVEL",
+      requirement_questions: [],
+      max_requirement_question_count: 5,
+      cur_question_id: 1,
+      cur_question: "첫 질문",
+      prev_questions_and_answers: [],
+      cur_question_count: 0,
+      max_question_count: 6,
+      diagram: { blocks: [], connections: [] },
+      cur_answer_proceed_state: "LLM_PENDING"
+    };
+    let isGraded = false;
+    const polledIds: string[] = [];
+    server.use(
+      http.get("*/interviews/system-design/:interviewId", () =>
+        HttpResponse.json(
+          isGraded
+            ? {
+                ...base,
+                cur_question_id: 2,
+                cur_question: "두 번째 질문",
+                cur_question_count: 1,
+                cur_answer_proceed_state: "NONE"
+              }
+            : base
+        )
+      ),
+      http.get("*/interviews/system-design/:interviewId/questions/:questionId", ({ params }) => {
+        polledIds.push(String(params.questionId));
+        isGraded = true;
+        return HttpResponse.json({
+          proceed_state: "COMPLETED",
+          interview_state: "IN_PROGRESS",
+          stage: "HIGH_LEVEL",
+          cur_answer_rank: "B",
+          next_question_id: 2,
+          next_question: "두 번째 질문"
+        });
+      })
+    );
+
+    renderWithProviders(<SystemDesignInterviewRoom interviewId={7} />);
+    await joinRoom();
+
+    expect(await screen.findByText("두 번째 질문")).toBeInTheDocument();
+    expect(polledIds).toEqual(["1"]);
+  });
+
+  it("평가에 실패하면 오류로 끝낸다", async () => {
+    const { interviewId, questionId } = await startAtFirstQuestion();
+    server.use(
+      http.get("*/interviews/system-design/:interviewId/questions/:questionId", () =>
+        HttpResponse.json({ proceed_state: "LLM_FAILED" })
+      )
+    );
+
+    await expect(
+      submitSystemDesignAnswer({
+        interviewId,
+        questionId,
+        isLastQuestion: false,
+        answer: "캐시를 둡니다.",
+        diagram: DRAWN_DIAGRAM
+      })
+    ).rejects.toThrow("채점에 실패했어요. 같은 답변을 다시 제출해 주세요.");
   });
 });
 
